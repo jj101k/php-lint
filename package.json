@@ -1,10 +1,26 @@
 {
   "name": "php-lint",
   "version": "0.2.0",
-  "description": "Lints PHP files",
-  "license": "BSD-2-Clause",
-  "repository": "https://github.com/jj101k/php-lint",
+  "description": "Utility for linting PHP scripts",
+  "main": "index.js",
   "dependencies": {
     "php-parser": "^1.0.2"
-  }
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jj101k/php-lint.git"
+  },
+  "keywords": [
+    "php"
+  ],
+  "author": "Jim Driscoll",
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/jj101k/php-lint/issues"
+  },
+  "homepage": "https://github.com/jj101k/php-lint#readme"
 }
