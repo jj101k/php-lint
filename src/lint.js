@@ -22,14 +22,28 @@ Lint.PHPStrictError = class extends Error {
 };
 Lint.ShadowTree = {
     Node: class {
-        /** @property {Location|null} loc
-          * @property {string} kind
-          */
         constructor(node) {
             Object.assign(
                 this,
-                node
+                {
+                    _cache: {},
+                    node: node
+                }
             );
+        }
+        /** @property {string} kind */
+        get kind() {
+            return this.node.kind;
+        }
+        /** @property {Location|null} loc */
+        get loc() {
+            return this.node.loc;
+        }
+        cacheProperty(name, f) {
+            if(!this._cache.hasOwnProperty(name)) {
+                this._cache[name] = f(this.node[name]);
+            }
+            return this._cache[name];
         }
         check(ns) {
             return true;
@@ -56,14 +70,17 @@ Object.assign(
     Lint.ShadowTree,
     {
         Assign: class extends Lint.ShadowTree.Statement {
-            /** @property {Expression} left
-              * @property {Expression} right
-              * @property {string} operator
-              */
-            constructor(node) {
-                super(node);
-                this.left = Lint.ShadowTree.Node.typed(node.left);
-                this.right = Lint.ShadowTree.Node.typed(node.right);
+            /** @property {string} operator */
+            get operator() {
+                return this.node.operator;
+            }
+            /** @property {Expression} left */
+            get left() {
+                return this.cacheProperty("left", subnode => Lint.ShadowTree.Node.typed(subnode))
+            }
+            /** @property {Expression} right */
+            get right() {
+                return this.cacheProperty("right", subnode => Lint.ShadowTree.Node.typed(subnode))
             }
             check(ns) {
                 ns.push(this.left.name);
@@ -73,9 +90,11 @@ Object.assign(
         },
         Block: class extends Lint.ShadowTree.Statement {
             /** @property {Node[]} children */
-            constructor(node) {
-                super(node);
-                this.children = node.children.map(child => Lint.ShadowTree.Node.typed(child));
+            get children() {
+                return this.cacheProperty(
+                    "children",
+                    nodes => nodes.map(child => Lint.ShadowTree.Node.typed(child))
+                );
             }
         },
         Literal: class extends Lint.ShadowTree.Expression {
@@ -83,20 +102,30 @@ Object.assign(
         },
         Sys: class extends Lint.ShadowTree.Statement {
             /** @property {Node[]} arguments */
-            constructor(node) {
-                super(node);
-                this.arguments = node.arguments.map(child => Lint.ShadowTree.Node.typed(child));
+            get arguments() {
+                return this.cacheProperty(
+                    "arguments",
+                    nodes => nodes.map(child => Lint.ShadowTree.Node.typed(child))
+                );
             }
         },
         Variable: class extends Lint.ShadowTree.Expression {
-            /** @property {string|Node} name
-              * @property {bool} byref
-              */
-            constructor(node) {
-                super(node);
-                if(typeof this.name == "object") {
-                    this.name = Lint.ShadowTree.Node.typed(child);
-                }
+            /** @property {bool} byref */
+            get byref() {
+                return this.node.byref;
+            }
+            /** @property {string|Node} name */
+            get name() {
+                return this.cacheProperty(
+                    "name",
+                    node => {
+                        if(typeof node == "object") {
+                            return Lint.ShadowTree.Node.typed(child);
+                        } else {
+                            return node;
+                        }
+                    }
+                );
             }
             check(ns) {
                 if(!ns.find(name => name == this.name)) {
