@@ -2,9 +2,9 @@ var phpLint = require("../src/index");
 var glob = require("glob");
 
 var good_code = "<?php $foo = '1234'; echo $foo;";
-var good_files = glob.sync('test/good-*.php');
+var good_files = glob.sync('test/good/*.php');
 var bad_code = "<?php echo $foo;";
-var bad_files = glob.sync('test/bad-*.php');
+var bad_files = glob.sync('test/bad/*.php');
 
 exports["test async"] = (assert, done) => {
     return Promise.all(
