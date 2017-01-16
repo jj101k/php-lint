@@ -4,6 +4,7 @@
   "description": "Utility for linting PHP scripts",
   "main": "index.js",
   "dependencies": {
+    "glob": "^7.1.1",
     "php-parser": "^1.0.2"
   },
   "devDependencies": {},
