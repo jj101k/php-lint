@@ -40,6 +40,11 @@ Lint.ShadowTree = {
         get loc() {
             return this.node.loc;
         }
+        assertHasName(ns, name) {
+            if(!ns.find(n => n == name)) {
+                throw new Lint.PHPStrictError(`Name ${name} is not defined in this namespace`);
+            }
+        }
         cacheNode(name) {
             return this.cacheProperty(
                 name,
@@ -111,7 +116,7 @@ Object.assign(
                 return this.cacheNode("right")
             }
             check(ns) {
-                ns.push(this.left.name);
+                ns.push('$' + this.left.name);
                 this.right.check(ns);
                 return super.check(ns);
             }
@@ -154,9 +159,7 @@ Object.assign(
                 );
             }
             check(ns) {
-                if(!ns.find(name => name == this.name)) {
-                    throw new Lint.PHPStrictError(`Name \$${this.name} is not defined in this namespace`);
-                }
+                this.assertHasName(ns, '$' + this.name);
                 return super.check(ns);
             }
         },
