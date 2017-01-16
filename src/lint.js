@@ -97,6 +97,20 @@ Object.assign(
         },
         Statement: class extends Lint.ShadowTree.Node {
         },
+        TraitUse: class extends Lint.ShadowTree.Node {
+            /** @property {Identifier[]} adaptations */
+            get adaptations() {
+                return this.cacheNodeArray("adaptations");
+            }
+            /** @property {Node[]|null} traits */
+            get traits() {
+                if(this.node.traits) {
+                    return this.cacheNodeArray("traits");
+                } else {
+                    return null;
+                }
+            }
+        },
     }
 );
 Object.assign(
@@ -128,6 +142,36 @@ Object.assign(
             }
             check(ns) {
                 this.children.forEach(node => node.check(ns));
+                return super.check(ns);
+            }
+        },
+        Closure: class extends Lint.ShadowTree.Statement {
+            /** @property {Parameter[]} arguments */
+            get arguments() {
+                return this.cacheNodeArray("arguments");
+            }
+            /** @property {Block|null} body */
+            get body() {
+                return this.cacheNode("body");
+            }
+            /** @property {bool} byref */
+            get byref() {
+                return this.node.byref;
+            }
+            /** @property {bool} nullable */
+            get nullable() {
+                return this.node.nullable;
+            }
+            /** @property {object[]} type */
+            get type() {
+                return this.node.type;
+            }
+            check(ns) {
+                this.type.forEach(t => this.assertHasName(ns, t[1]));
+                var inner_ns = [];
+                this.arguments.forEach(node => inner_ns.push('$' + node.name));
+                this.type.forEach(t => inner_ns.push(t[1]));
+                if(this.body) this.body.check(inner_ns);
                 return super.check(ns);
             }
         },
@@ -173,6 +217,8 @@ Object.assign(
                 this.arguments.forEach(child => child.check(ns));
                 return super.check(ns);
             }
+        },
+        Number: class extends Lint.ShadowTree.Literal {
         },
         Program: class extends Lint.ShadowTree.Block {
             /** @property {Error[]} errors */
