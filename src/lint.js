@@ -192,6 +192,12 @@ Object.assign(
                 return []
             }
         },
+        Declaration: class extends Lint.ShadowTree.Statement {
+            /** @type {string} */
+            get name() {
+                return this.node.name
+            }
+        },
         Closure: class extends Lint.ShadowTree.Statement {
             /** @type {Parameter[]} */
             get arguments() {
@@ -281,10 +287,78 @@ Object.assign(
                 return []
             }
         },
+        _Function: class extends Lint.ShadowTree.Declaration {
+            /** @type {Parameter[]} */
+            get arguments() {
+                return this.cacheNodeArray("arguments");
+            }
+            /** @type {?Block} */
+            get body() {
+                return this.cacheNode("body");
+            }
+            /** @type {bool} */
+            get byref() {
+                return this.node.byref;
+            }
+            /** @type {bool} */
+            get nullable() {
+                return this.node.nullable;
+            }
+            /** @type {object[]} */
+            get type() {
+                return this.node.type;
+            }
+            check(context) {
+                super.check(context)
+                var inner_context = new Context()
+
+                this.arguments.forEach(
+                    node => inner_context.addName(
+                        node.name,
+                        (node.type ? [node.type.name] : []).concat(
+                            node.nullable ? ["null"] : []
+                        )
+                    )
+                )
+                if(this.type) {
+                    this.type.forEach(
+                        t => inner_context.addName(
+                            t[1],
+                            this.assertHasName(context, t[1])
+                        )
+                    )
+                }
+
+                if(this.body) this.body.check(inner_context)
+                return ["function"]
+            }
+        },
         Number: class extends Lint.ShadowTree.Literal {
             check(context) {
                 super.check(context)
                 return ["number"]
+            }
+        },
+        Parameter: class extends Lint.ShadowTree.Declaration {
+            /** @type {bool} */
+            get byref() {
+                return this.node.byref
+            }
+            /** @type {bool} */
+            get nullable() {
+                return this.node.nullable
+            }
+            /** @type {object[]} */
+            get type() {
+                return this.node.type
+            }
+            /** @type {*} */
+            get value() {
+                return this.node.value
+            }
+            /** @type {boolean} */
+            get variadic() {
+                return this.node.variadic
             }
         },
         Program: class extends Lint.ShadowTree.Block {
