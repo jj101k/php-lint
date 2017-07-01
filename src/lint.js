@@ -60,11 +60,11 @@ Lint.ShadowTree = {
                 }
             );
         }
-        /** @property {string} kind */
+        /** @type {string} */
         get kind() {
             return this.node.kind;
         }
-        /** @property {Location|null} loc */
+        /** @type {?Location} */
         get loc() {
             return this.node.loc;
         }
@@ -113,11 +113,11 @@ Object.assign(
         Expression: class extends Lint.ShadowTree.Node {
         },
         Identifier: class extends Lint.ShadowTree.Node {
-            /** @property {string} name */
+            /** @type {string} */
             get name() {
                 return this.node.name;
             }
-            /** @property {string} resolution One of UNQUALIFIED_NAME,
+            /** @type {string} One of UNQUALIFIED_NAME,
               *     QUALIFIED_NAME, FULL_QUALIFIED_NAME or RELATIVE_NAME */
             get resolution() {
                 return this.node.resolution;
@@ -126,11 +126,11 @@ Object.assign(
         Statement: class extends Lint.ShadowTree.Node {
         },
         TraitUse: class extends Lint.ShadowTree.Node {
-            /** @property {Identifier[]} adaptations */
+            /** @type {Identifier[]} */
             get adaptations() {
                 return this.cacheNodeArray("adaptations");
             }
-            /** @property {Node[]|null} traits */
+            /** @type {?Node[]} */
             get traits() {
                 if(this.node.traits) {
                     return this.cacheNodeArray("traits");
@@ -145,15 +145,15 @@ Object.assign(
     Lint.ShadowTree,
     {
         Assign: class extends Lint.ShadowTree.Statement {
-            /** @property {string} operator */
+            /** @type {string} */
             get operator() {
                 return this.node.operator;
             }
-            /** @property {Expression} left */
+            /** @type {Expression} */
             get left() {
                 return this.cacheNode("left")
             }
-            /** @property {Expression} right */
+            /** @type {Expression} */
             get right() {
                 return this.cacheNode("right")
             }
@@ -164,7 +164,7 @@ Object.assign(
             }
         },
         Block: class extends Lint.ShadowTree.Statement {
-            /** @property {Node[]} children */
+            /** @type {Node[]} */
             get children() {
                 return this.cacheNodeArray("children");
             }
@@ -174,23 +174,23 @@ Object.assign(
             }
         },
         Closure: class extends Lint.ShadowTree.Statement {
-            /** @property {Parameter[]} arguments */
+            /** @type {Parameter[]} */
             get arguments() {
                 return this.cacheNodeArray("arguments");
             }
-            /** @property {Block|null} body */
+            /** @type {?Block} */
             get body() {
                 return this.cacheNode("body");
             }
-            /** @property {bool} byref */
+            /** @type {bool} */
             get byref() {
                 return this.node.byref;
             }
-            /** @property {bool} nullable */
+            /** @type {bool} */
             get nullable() {
                 return this.node.nullable;
             }
-            /** @property {object[]} type */
+            /** @type {object[]} */
             get type() {
                 return this.node.type;
             }
@@ -204,20 +204,23 @@ Object.assign(
             }
         },
         Literal: class extends Lint.ShadowTree.Expression {
-            /** @property {Node|string|number|boolean|null} value */
+            /** @type {Node|string|number|boolean|null} */
+            get value() {
+                return this.node.value
+            }
         },
         Sys: class extends Lint.ShadowTree.Statement {
-            /** @property {Node[]} arguments */
+            /** @type {Node[]} */
             get arguments() {
                 return this.cacheNodeArray("arguments");
             }
         },
         Variable: class extends Lint.ShadowTree.Expression {
-            /** @property {bool} byref */
+            /** @type {bool} */
             get byref() {
                 return this.node.byref;
             }
-            /** @property {string|Node} name */
+            /** @type {string|Node} */
             get name() {
                 return this.cacheProperty(
                     "name",
@@ -249,7 +252,10 @@ Object.assign(
         Number: class extends Lint.ShadowTree.Literal {
         },
         Program: class extends Lint.ShadowTree.Block {
-            /** @property {Error[]} errors */
+            /** @type {Error[]} */
+            get errors() {
+                return this.node.errors
+            }
             check(context) {
                 var inner_context = new Context();
                 this.children.forEach(child => child.check(inner_context));
@@ -257,7 +263,10 @@ Object.assign(
             }
         },
         String: class extends Lint.ShadowTree.Literal {
-            /** @property {string} label */
+            /** @type {string} */
+            get label() {
+                return this.node.label
+            }
         },
     }
 );
