@@ -99,6 +99,10 @@ Lint.ShadowTree = {
             }
             return this._cache[name];
         }
+        /**
+         * Checks that syntax seems ok
+         * @param {Context} context
+         */
         check(context) {
             return true;
         }
