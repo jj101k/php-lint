@@ -192,12 +192,6 @@ Object.assign(
                 return []
             }
         },
-        Declaration: class extends Lint.ShadowTree.Statement {
-            /** @type {string} */
-            get name() {
-                return this.node.name
-            }
-        },
         Closure: class extends Lint.ShadowTree.Statement {
             /** @type {Parameter[]} */
             get arguments() {
@@ -238,6 +232,12 @@ Object.assign(
                 )
                 if(this.body) this.body.check(inner_context)
                 return ["closure"]
+            }
+        },
+        Declaration: class extends Lint.ShadowTree.Statement {
+            /** @type {string} */
+            get name() {
+                return this.node.name
             }
         },
         Literal: class extends Lint.ShadowTree.Expression {
