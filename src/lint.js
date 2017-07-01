@@ -34,6 +34,11 @@ class Context {
     }
 }
 
+/**
+ * @typedef ParserNode
+ * @property {function} constructor
+ */
+
 class Lint {
     constructor(tree, filename = null, namespace = []) {
         Object.assign(
@@ -132,7 +137,7 @@ class Node {
     }
     /**
      * Returns the shadow tree counterpart of the given node.
-     * @param {Node} node
+     * @param {ParserNode} node
      * @returns {Node}
      */
     static typed(node) {
