@@ -8,14 +8,18 @@ class Context {
      * Builds the object
      */
     constructor() {
-        this.ns = []
+        this.ns = {}
     }
     /**
      * Adds a name to the namespace list.
      * @param {string} name eg. "$foo"
+     * @param {?Node} assignment_node
      */
-    addName(name) {
-        this.ns.push(name)
+    addName(name, assignment_node) {
+        if(!this.ns[name]) {
+            this.ns[name] = []
+        }
+        this.ns[name].push(assignment_node)
     }
     /**
      * If the name is in the namespace, returns it.
@@ -23,7 +27,7 @@ class Context {
      * @returns {?string}
      */
     findName(name) {
-        return this.ns.find(n => n == name)
+        return Object.keys(this.ns).find(n => n == name)
     }
 }
 
@@ -158,9 +162,9 @@ Object.assign(
                 return this.cacheNode("right")
             }
             check(context) {
-                context.addName('$' + this.left.name);
-                this.right.check(context);
-                return super.check(context);
+                context.addName('$' + this.left.name, this.node)
+                this.right.check(context)
+                return super.check(context)
             }
         },
         Block: class extends Lint.ShadowTree.Statement {
@@ -197,8 +201,8 @@ Object.assign(
             check(context) {
                 this.type.forEach(t => this.assertHasName(context, t[1]));
                 var inner_context = new Context();
-                this.arguments.forEach(node => inner_context.addName('$' + node.name));
-                this.type.forEach(t => inner_context.addName(t[1]));
+                this.arguments.forEach(node => inner_context.addName('$' + node.name, node));
+                this.type.forEach(t => inner_context.addName(t[1], null));
                 if(this.body) this.body.check(inner_context);
                 return super.check(context);
             }
