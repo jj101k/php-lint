@@ -84,6 +84,11 @@ Lint.ShadowTree = {
             }
             return types
         }
+        /**
+         * Returns a shadow tree node wrapping the given node (caches)
+         * @param {string} name
+         * @returns {Lint.ShadowTree.Node}
+         */
         cacheNode(name) {
             return this.cacheProperty(
                 name,
@@ -92,6 +97,12 @@ Lint.ShadowTree = {
                     subnode
             );
         }
+        /**
+         * Returns a nominal array of shadow tree nodes wrapping the given nodes
+         * (caches)
+         * @param {string} name
+         * @returns {?Lint.ShadowTree.Node[]}
+         */
         cacheNodeArray(name) {
             return this.cacheProperty(
                 name,
@@ -100,6 +111,12 @@ Lint.ShadowTree = {
                 ) : subnodes
             );
         }
+        /**
+         * Returns a cached copy of the named property, calling f(node_property)
+         * if needed.
+         * @param {string} name
+         * @param {function} f
+         */
         cacheProperty(name, f) {
             if(!this._cache.hasOwnProperty(name)) {
                 this._cache[name] = f(this.node[name]);
@@ -114,6 +131,11 @@ Lint.ShadowTree = {
         check(context) {
             return []
         }
+        /**
+         * Returns the shadow tree counterpart of the given node.
+         * @param {Node} node
+         * @returns {Lint.ShadowTree.Node}
+         */
         static typed(node) {
             var c = Lint.ShadowTree[node.constructor.name];
             if(!c) {
