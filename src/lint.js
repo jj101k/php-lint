@@ -79,7 +79,7 @@ Lint.ShadowTree = {
             var types = context.findName(name)
             if(!types) {
                 throw new Lint.PHPStrictError(
-                    `Name ${name} is not defined in this namespace`
+                    `Name ${name} is not defined in this namespace, contents are: ${Object.keys(context.ns)}`
                 );
             }
             return types
