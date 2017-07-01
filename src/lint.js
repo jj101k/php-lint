@@ -46,7 +46,7 @@ class Lint {
         );
     }
     check() {
-        return Lint.ShadowTree.Node.typed(this.tree).check(new Context());
+        return Node.typed(this.tree).check(new Context());
     }
     static check(tree, filename = null) {
         var l = new Lint(tree, filename);
@@ -56,406 +56,413 @@ class Lint {
 
 Lint.PHPStrictError = class extends Error {
 };
-Lint.ShadowTree = {
-    Node: class {
-        constructor(node) {
-            Object.assign(
-                this,
-                {
-                    _cache: {},
-                    node: node
-                }
+class Node {
+    constructor(node) {
+        Object.assign(
+            this,
+            {
+                _cache: {},
+                node: node
+            }
+        );
+    }
+    /** @type {string} */
+    get kind() {
+        return this.node.kind;
+    }
+    /** @type {?Location} */
+    get loc() {
+        return this.node.loc;
+    }
+    assertHasName(context, name) {
+        var types = context.findName(name)
+        if(!types) {
+            throw new Lint.PHPStrictError(
+                `Name ${name} is not defined in this namespace, contents are: ${Object.keys(context.ns)}`
             );
         }
-        /** @type {string} */
-        get kind() {
-            return this.node.kind;
+        return types
+    }
+    /**
+     * Returns a shadow tree node wrapping the given node (caches)
+     * @param {string} name
+     * @returns {Node}
+     */
+    cacheNode(name) {
+        return this.cacheProperty(
+            name,
+            subnode => subnode ?
+                Node.typed(subnode) :
+                subnode
+        );
+    }
+    /**
+     * Returns a nominal array of shadow tree nodes wrapping the given nodes
+     * (caches)
+     * @param {string} name
+     * @returns {?Node[]}
+     */
+    cacheNodeArray(name) {
+        return this.cacheProperty(
+            name,
+            subnodes => subnodes ? subnodes.map(
+                subnode => Node.typed(subnode)
+            ) : subnodes
+        );
+    }
+    /**
+     * Returns a cached copy of the named property, calling f(node_property)
+     * if needed.
+     * @param {string} name
+     * @param {function} f
+     */
+    cacheProperty(name, f) {
+        if(!this._cache.hasOwnProperty(name)) {
+            this._cache[name] = f(this.node[name]);
         }
-        /** @type {?Location} */
-        get loc() {
-            return this.node.loc;
+        return this._cache[name];
+    }
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?string[]} The set of types applicable to this value
+     */
+    check(context) {
+        return []
+    }
+    /**
+     * Returns the shadow tree counterpart of the given node.
+     * @param {Node} node
+     * @returns {Node}
+     */
+    static typed(node) {
+        var c = Lint.ShadowTree[node.constructor.name];
+        if(!c) {
+            throw new Error(`No handler for ${node.constructor.name}`);
         }
-        assertHasName(context, name) {
-            var types = context.findName(name)
-            if(!types) {
-                throw new Lint.PHPStrictError(
-                    `Name ${name} is not defined in this namespace, contents are: ${Object.keys(context.ns)}`
-                );
-            }
-            return types
+        return new c(node);
+    }
+}
+class Expression extends Node {
+}
+class Identifier extends Node {
+    /** @type {string} */
+    get name() {
+        return this.node.name;
+    }
+    /** @type {string} One of UNQUALIFIED_NAME,
+         *     QUALIFIED_NAME, FULL_QUALIFIED_NAME or RELATIVE_NAME */
+    get resolution() {
+        return this.node.resolution;
+    }
+}
+class Statement extends Node {
+}
+class TraitUse extends Node {
+    /** @type {Identifier[]} */
+    get adaptations() {
+        return this.cacheNodeArray("adaptations");
+    }
+    /** @type {?Node[]} */
+    get traits() {
+        if(this.node.traits) {
+            return this.cacheNodeArray("traits");
+        } else {
+            return null;
         }
-        /**
-         * Returns a shadow tree node wrapping the given node (caches)
-         * @param {string} name
-         * @returns {Lint.ShadowTree.Node}
-         */
-        cacheNode(name) {
-            return this.cacheProperty(
-                name,
-                subnode => subnode ?
-                    Lint.ShadowTree.Node.typed(subnode) :
-                    subnode
-            );
-        }
-        /**
-         * Returns a nominal array of shadow tree nodes wrapping the given nodes
-         * (caches)
-         * @param {string} name
-         * @returns {?Lint.ShadowTree.Node[]}
-         */
-        cacheNodeArray(name) {
-            return this.cacheProperty(
-                name,
-                subnodes => subnodes ? subnodes.map(
-                    subnode => Lint.ShadowTree.Node.typed(subnode)
-                ) : subnodes
-            );
-        }
-        /**
-         * Returns a cached copy of the named property, calling f(node_property)
-         * if needed.
-         * @param {string} name
-         * @param {function} f
-         */
-        cacheProperty(name, f) {
-            if(!this._cache.hasOwnProperty(name)) {
-                this._cache[name] = f(this.node[name]);
-            }
-            return this._cache[name];
-        }
-        /**
-         * Checks that syntax seems ok
-         * @param {Context} context
-         * @returns {?string[]} The set of types applicable to this value
-         */
-        check(context) {
-            return []
-        }
-        /**
-         * Returns the shadow tree counterpart of the given node.
-         * @param {Node} node
-         * @returns {Lint.ShadowTree.Node}
-         */
-        static typed(node) {
-            var c = Lint.ShadowTree[node.constructor.name];
-            if(!c) {
-                throw new Error(`No handler for ${node.constructor.name}`);
-            }
-            return new c(node);
-        }
-    },
-};
-Object.assign(
-    Lint.ShadowTree,
-    {
-        Expression: class extends Lint.ShadowTree.Node {
-        },
-        Identifier: class extends Lint.ShadowTree.Node {
-            /** @type {string} */
-            get name() {
-                return this.node.name;
-            }
-            /** @type {string} One of UNQUALIFIED_NAME,
-              *     QUALIFIED_NAME, FULL_QUALIFIED_NAME or RELATIVE_NAME */
-            get resolution() {
-                return this.node.resolution;
-            }
-        },
-        Statement: class extends Lint.ShadowTree.Node {
-        },
-        TraitUse: class extends Lint.ShadowTree.Node {
-            /** @type {Identifier[]} */
-            get adaptations() {
-                return this.cacheNodeArray("adaptations");
-            }
-            /** @type {?Node[]} */
-            get traits() {
-                if(this.node.traits) {
-                    return this.cacheNodeArray("traits");
+    }
+}
+class Assign extends Statement {
+    /** @type {string} */
+    get operator() {
+        return this.node.operator;
+    }
+    /**
+     * @type {Expression}
+     */
+    get left() {
+        return this.cacheNode("left")
+    }
+    /** @type {Expression} */
+    get right() {
+        return this.cacheNode("right")
+    }
+    check(context) {
+        super.check(context)
+        return context.addName(
+            '$' + this.left.name,
+            this.right.check(context)
+        )
+    }
+}
+class Block extends Statement {
+    /** @type {Node[]} */
+    get children() {
+        return this.cacheNodeArray("children");
+    }
+    check(context) {
+        super.check(context)
+        this.children.forEach(node => node.check(context))
+        return []
+    }
+}
+class Call extends Statement {
+    /**
+     * @type {object[]}
+     */
+    get arguments() {
+        return this.node.arguments
+    }
+    /**
+     * @type {?object}
+     */
+    get what() {
+        return this.node.what
+    }
+}
+class Closure extends Statement {
+    /** @type {Parameter[]} */
+    get arguments() {
+        return this.cacheNodeArray("arguments");
+    }
+    /** @type {?Block} */
+    get body() {
+        return this.cacheNode("body");
+    }
+    /** @type {bool} */
+    get byref() {
+        return this.node.byref;
+    }
+    /** @type {bool} */
+    get nullable() {
+        return this.node.nullable;
+    }
+    /** @type {object[]} */
+    get type() {
+        return this.node.type;
+    }
+    check(context) {
+        super.check(context)
+        var inner_context = new Context()
+        this.arguments.forEach(
+            node => inner_context.addName(
+                '$' + node.name,
+                (node.type ? [node.type.name] : []).concat(
+                    node.nullable ? ["null"] : []
+                )
+            )
+        )
+        this.type.forEach(
+            t => inner_context.addName(
+                t[1],
+                this.assertHasName(context, t[1])
+            )
+        )
+        if(this.body) this.body.check(inner_context)
+        return ["closure"]
+    }
+}
+class Declaration extends Statement {
+    /** @type {string} */
+    get name() {
+        return this.node.name
+    }
+}
+class Literal extends Expression {
+    /** @type {Node|string|number|boolean|null} */
+    get value() {
+        return this.node.value
+    }
+}
+class Sys extends Statement {
+    /** @type {Node[]} */
+    get arguments() {
+        return this.cacheNodeArray("arguments");
+    }
+}
+class Variable extends Expression {
+    /** @type {bool} */
+    get byref() {
+        return this.node.byref;
+    }
+    /** @type {string|Node} */
+    get name() {
+        return this.cacheProperty(
+            "name",
+            node => {
+                if(typeof node == "object") {
+                    return Node.typed(child);
                 } else {
-                    return null;
+                    return node;
                 }
             }
-        },
+        );
     }
-);
-Object.assign(
-    Lint.ShadowTree,
-    {
-        Assign: class extends Lint.ShadowTree.Statement {
-            /** @type {string} */
-            get operator() {
-                return this.node.operator;
-            }
-            /** @type {Expression} */
-            get left() {
-                return this.cacheNode("left")
-            }
-            /** @type {Expression} */
-            get right() {
-                return this.cacheNode("right")
-            }
-            check(context) {
-                super.check(context)
-                return context.addName(
-                    '$' + this.left.name,
-                    this.right.check(context)
-                )
-            }
-        },
-        Block: class extends Lint.ShadowTree.Statement {
-            /** @type {Node[]} */
-            get children() {
-                return this.cacheNodeArray("children");
-            }
-            check(context) {
-                super.check(context)
-                this.children.forEach(node => node.check(context))
-                return []
-            }
-        },
-        Call: class extends Lint.ShadowTree.Statement {
-            /**
-             * @type {object[]}
-             */
-            get arguments() {
-                return this.node.arguments
-            }
-            /**
-             * @type {?object}
-             */
-            get what() {
-                return this.node.what
-            }
-        },
-        Closure: class extends Lint.ShadowTree.Statement {
-            /** @type {Parameter[]} */
-            get arguments() {
-                return this.cacheNodeArray("arguments");
-            }
-            /** @type {?Block} */
-            get body() {
-                return this.cacheNode("body");
-            }
-            /** @type {bool} */
-            get byref() {
-                return this.node.byref;
-            }
-            /** @type {bool} */
-            get nullable() {
-                return this.node.nullable;
-            }
-            /** @type {object[]} */
-            get type() {
-                return this.node.type;
-            }
-            check(context) {
-                super.check(context)
-                var inner_context = new Context()
-                this.arguments.forEach(
-                    node => inner_context.addName(
-                        '$' + node.name,
-                        (node.type ? [node.type.name] : []).concat(
-                            node.nullable ? ["null"] : []
-                        )
-                    )
-                )
-                this.type.forEach(
-                    t => inner_context.addName(
-                        t[1],
-                        this.assertHasName(context, t[1])
-                    )
-                )
-                if(this.body) this.body.check(inner_context)
-                return ["closure"]
-            }
-        },
-        Declaration: class extends Lint.ShadowTree.Statement {
-            /** @type {string} */
-            get name() {
-                return this.node.name
-            }
-        },
-        Literal: class extends Lint.ShadowTree.Expression {
-            /** @type {Node|string|number|boolean|null} */
-            get value() {
-                return this.node.value
-            }
-        },
-        Sys: class extends Lint.ShadowTree.Statement {
-            /** @type {Node[]} */
-            get arguments() {
-                return this.cacheNodeArray("arguments");
-            }
-        },
-        Variable: class extends Lint.ShadowTree.Expression {
-            /** @type {bool} */
-            get byref() {
-                return this.node.byref;
-            }
-            /** @type {string|Node} */
-            get name() {
-                return this.cacheProperty(
-                    "name",
-                    node => {
-                        if(typeof node == "object") {
-                            return Lint.ShadowTree.Node.typed(child);
-                        } else {
-                            return node;
-                        }
-                    }
-                );
-            }
-            check(context) {
-                super.check(context)
-                return this.assertHasName(context, '$' + this.name)
-            }
-        },
+    check(context) {
+        super.check(context)
+        return this.assertHasName(context, '$' + this.name)
     }
-);
-Object.assign(
-    Lint.ShadowTree,
-    {
-        Class: class extends Lint.ShadowTree.Declaration {
-            /**
-             * @type {object[]}
-             */
-            get body() {
-                return this.node.body
-            }
-            /**
-             * @type {?object}
-             */
-            get extends() {
-                return this.node.extends
-            }
-            /**
-             * @type {object[]}
-             */
-            get implements() {
-                return this.node.implements
-            }
-            /**
-             * @type {boolean}
-             */
-            get isAbstract() {
-                return this.node.isAbstract
-            }
-            /**
-             * @type {boolean}
-             */
-            get isAnonymous() {
-                return this.node.isAnonymous
-            }
-            /**
-             * @type {boolean}
-             */
-            get isFinal() {
-                return this.node.isFinal
-            }
-        },
-        Echo: class extends Lint.ShadowTree.Sys {
-            check(context) {
-                super.check(context)
-                this.arguments.forEach(child => child.check(context))
-                return []
-            }
-        },
-        _Function: class extends Lint.ShadowTree.Declaration {
-            /** @type {Parameter[]} */
-            get arguments() {
-                return this.cacheNodeArray("arguments");
-            }
-            /** @type {?Block} */
-            get body() {
-                return this.cacheNode("body");
-            }
-            /** @type {bool} */
-            get byref() {
-                return this.node.byref;
-            }
-            /** @type {bool} */
-            get nullable() {
-                return this.node.nullable;
-            }
-            /** @type {object[]} */
-            get type() {
-                return this.node.type;
-            }
-            check(context) {
-                super.check(context)
-                var inner_context = new Context()
+}
+class Class extends Declaration {
+    /**
+     * @type {object[]}
+     */
+    get body() {
+        return this.node.body
+    }
+    /**
+     * @type {?object}
+     */
+    get extends() {
+        return this.node.extends
+    }
+    /**
+     * @type {object[]}
+     */
+    get implements() {
+        return this.node.implements
+    }
+    /**
+     * @type {boolean}
+     */
+    get isAbstract() {
+        return this.node.isAbstract
+    }
+    /**
+     * @type {boolean}
+     */
+    get isAnonymous() {
+        return this.node.isAnonymous
+    }
+    /**
+     * @type {boolean}
+     */
+    get isFinal() {
+        return this.node.isFinal
+    }
+}
+class Echo extends Sys {
+    check(context) {
+        super.check(context)
+        this.arguments.forEach(child => child.check(context))
+        return []
+    }
+}
+class _Function extends Declaration {
+    /** @type {Parameter[]} */
+    get arguments() {
+        return this.cacheNodeArray("arguments");
+    }
+    /** @type {?Block} */
+    get body() {
+        return this.cacheNode("body");
+    }
+    /** @type {bool} */
+    get byref() {
+        return this.node.byref;
+    }
+    /** @type {bool} */
+    get nullable() {
+        return this.node.nullable;
+    }
+    /** @type {object[]} */
+    get type() {
+        return this.node.type;
+    }
+    check(context) {
+        super.check(context)
+        var inner_context = new Context()
 
-                this.arguments.forEach(
-                    node => inner_context.addName(
-                        node.name,
-                        (node.type ? [node.type.name] : []).concat(
-                            node.nullable ? ["null"] : []
-                        )
-                    )
+        this.arguments.forEach(
+            node => inner_context.addName(
+                node.name,
+                (node.type ? [node.type.name] : []).concat(
+                    node.nullable ? ["null"] : []
                 )
-                if(this.type) {
-                    this.type.forEach(
-                        t => inner_context.addName(
-                            t[1],
-                            this.assertHasName(context, t[1])
-                        )
-                    )
-                }
+            )
+        )
+        if(this.type) {
+            this.type.forEach(
+                t => inner_context.addName(
+                    t[1],
+                    this.assertHasName(context, t[1])
+                )
+            )
+        }
 
-                if(this.body) this.body.check(inner_context)
-                return ["function"]
-            }
-        },
-        Number: class extends Lint.ShadowTree.Literal {
-            check(context) {
-                super.check(context)
-                return ["number"]
-            }
-        },
-        Parameter: class extends Lint.ShadowTree.Declaration {
-            /** @type {bool} */
-            get byref() {
-                return this.node.byref
-            }
-            /** @type {bool} */
-            get nullable() {
-                return this.node.nullable
-            }
-            /** @type {object[]} */
-            get type() {
-                return this.node.type
-            }
-            /** @type {*} */
-            get value() {
-                return this.node.value
-            }
-            /** @type {boolean} */
-            get variadic() {
-                return this.node.variadic
-            }
-        },
-        Program: class extends Lint.ShadowTree.Block {
-            /** @type {Error[]} */
-            get errors() {
-                return this.node.errors
-            }
-            check(context) {
-                var inner_context = new Context();
-                this.children.forEach(child => child.check(inner_context));
-                return super.check(context);
-            }
-        },
-        String: class extends Lint.ShadowTree.Literal {
-            /** @type {string} */
-            get label() {
-                return this.node.label
-            }
-            check(context) {
-                super.check(context)
-                return ["string"]
-            }
-        },
+        if(this.body) this.body.check(inner_context)
+        return ["function"]
     }
-);
+}
+class Number extends Literal {
+    check(context) {
+        super.check(context)
+        return ["number"]
+    }
+}
+class Parameter extends Declaration {
+    /** @type {bool} */
+    get byref() {
+        return this.node.byref
+    }
+    /** @type {bool} */
+    get nullable() {
+        return this.node.nullable
+    }
+    /** @type {object[]} */
+    get type() {
+        return this.node.type
+    }
+    /** @type {*} */
+    get value() {
+        return this.node.value
+    }
+    /** @type {boolean} */
+    get variadic() {
+        return this.node.variadic
+    }
+}
+class Program extends Block {
+    /** @type {Error[]} */
+    get errors() {
+        return this.node.errors
+    }
+    check(context) {
+        var inner_context = new Context();
+        this.children.forEach(child => child.check(inner_context));
+        return super.check(context);
+    }
+}
+class String extends Literal {
+    /** @type {string} */
+    get label() {
+        return this.node.label
+    }
+    check(context) {
+        super.check(context)
+        return ["string"]
+    }
+}
+Lint.ShadowTree = {
+    Assign: Assign,
+    Block: Block,
+    Call: Call,
+    Class: Class,
+    Closure: Closure,
+    Declaration: Declaration,
+    Echo: Echo,
+    Expression: Expression,
+    _Function: _Function,
+    Identifier: Identifier,
+    Literal: Literal,
+    Node: Node,
+    Number: Number,
+    Parameter: Parameter,
+    Program: Program,
+    Statement: Statement,
+    String: String,
+    Sys: Sys,
+    TraitUse: TraitUse,
+    Variable: Variable,
+}
 module.exports = Lint;
