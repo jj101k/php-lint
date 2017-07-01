@@ -24,10 +24,11 @@ class Context {
     /**
      * If the name is in the namespace, returns it.
      * @param {string} name eg "$bar"
-     * @returns {?string}
+     * @returns {boolean}
      */
     findName(name) {
-        return Object.keys(this.ns).find(n => n == name)
+        var assignments = this.ns[name]
+        return !!assignments
     }
 }
 
