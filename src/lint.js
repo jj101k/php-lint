@@ -39,6 +39,20 @@ class Context {
  * @property {function} constructor
  */
 
+/**
+ * @typedef ParserPosition
+ * @property {number} line
+ * @property {number} column
+ * @property {number} offset
+ */
+
+/**
+ * @typedef ParserLocation
+ * @property {?string} source
+ * @property {ParserPosition} start
+ * @property {ParserPosition} end
+ */
+
 class Lint {
     constructor(tree, filename = null, namespace = []) {
         Object.assign(
@@ -75,7 +89,7 @@ class Node {
     get kind() {
         return this.node.kind;
     }
-    /** @type {?Location} */
+    /** @type {?ParserLocation} */
     get loc() {
         return this.node.loc;
     }
