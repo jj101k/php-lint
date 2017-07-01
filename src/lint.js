@@ -192,6 +192,20 @@ Object.assign(
                 return []
             }
         },
+        Call: class extends Lint.ShadowTree.Statement {
+            /**
+             * @type {object[]}
+             */
+            get arguments() {
+                return this.node.arguments
+            }
+            /**
+             * @type {?object}
+             */
+            get what() {
+                return this.node.what
+            }
+        },
         Closure: class extends Lint.ShadowTree.Statement {
             /** @type {Parameter[]} */
             get arguments() {
@@ -280,6 +294,44 @@ Object.assign(
 Object.assign(
     Lint.ShadowTree,
     {
+        Class: class extends Lint.ShadowTree.Declaration {
+            /**
+             * @type {object[]}
+             */
+            get body() {
+                return this.node.body
+            }
+            /**
+             * @type {?object}
+             */
+            get extends() {
+                return this.node.extends
+            }
+            /**
+             * @type {object[]}
+             */
+            get implements() {
+                return this.node.implements
+            }
+            /**
+             * @type {boolean}
+             */
+            get isAbstract() {
+                return this.node.isAbstract
+            }
+            /**
+             * @type {boolean}
+             */
+            get isAnonymous() {
+                return this.node.isAnonymous
+            }
+            /**
+             * @type {boolean}
+             */
+            get isFinal() {
+                return this.node.isFinal
+            }
+        },
         Echo: class extends Lint.ShadowTree.Sys {
             check(context) {
                 super.check(context)
