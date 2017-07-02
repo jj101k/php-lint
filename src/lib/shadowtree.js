@@ -112,7 +112,7 @@ class Node {
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
     check(context) {
-        return new PHPTypeUnion()
+        return PHPTypeUnion.empty
     }
     /**
      * Returns the shadow tree counterpart of the given node.
@@ -229,7 +229,7 @@ class Block extends Statement {
      */
     check(context) {
         super.check(context)
-        let types = new PHPTypeUnion()
+        let types = PHPTypeUnion.empty
         this.children.forEach(node => {
             types.addTypesFrom(node.check(context))
         })
@@ -258,7 +258,7 @@ class Call extends Statement {
         super.check(context)
         this.arguments.forEach(arg => arg.check(context))
         let callable_types = this.what.check(context)
-        let types = new PHPTypeUnion()
+        let types = PHPTypeUnion.empty
         callable_types.types.forEach(t => types.addType(t))
         return types
     }
@@ -317,8 +317,7 @@ class Closure extends Statement {
         if(this.body) {
             return_type = this.body.check(inner_context)
         }
-        let types = new PHPTypeUnion()
-        types.addType(new PHPFunctionType(arg_types, return_type))
+        let types = new PHPTypeUnion(new PHPFunctionType(arg_types, return_type))
         return types
     }
 }
@@ -428,7 +427,7 @@ class Class extends Declaration {
         this.body.forEach(
             b => b.check(inner_context)
         )
-        return new PHPTypeUnion()
+        return PHPTypeUnion.empty
     }
 }
 class Echo extends Sys {
@@ -442,7 +441,7 @@ class Echo extends Sys {
         this.arguments.forEach(child => {
             let types = child.check(context)
         })
-        return new PHPTypeUnion()
+        return PHPTypeUnion.empty
     }
 }
 class _Function extends Declaration {
@@ -497,8 +496,7 @@ class _Function extends Declaration {
         if(this.body) {
             return_type = this.body.check(inner_context)
         }
-        let types = new PHPTypeUnion()
-        types.addType(new PHPFunctionType(arg_types, return_type))
+        let types = new PHPTypeUnion(new PHPFunctionType(arg_types, return_type))
         return types
     }
 }
@@ -531,7 +529,7 @@ class Method extends _Function {
             this.isStatic,
             super.check(context)
         )
-        return new PHPTypeUnion()
+        return PHPTypeUnion.empty
     }
 }
 class _Number extends Literal {
@@ -542,8 +540,7 @@ class _Number extends Literal {
      */
     check(context) {
         super.check(context)
-        let types = new PHPTypeUnion()
-        types.addType(new PHPSimpleType("number"))
+        let types = new PHPTypeUnion(new PHPSimpleType("number"))
         return types
     }
 }
@@ -619,7 +616,7 @@ class StaticLookup extends Lookup {
             console.log(this.node)
             console.log("TODO don't know how to check this kind of lookup")
         }
-        return new PHPTypeUnion()
+        return PHPTypeUnion.empty
     }
 }
 class _String extends Literal {
@@ -634,8 +631,7 @@ class _String extends Literal {
      */
     check(context) {
         super.check(context)
-        let types = new PHPTypeUnion()
-        types.addType(new PHPSimpleType("string"))
+        let types = new PHPTypeUnion(new PHPSimpleType("string"))
         return types
     }
 }
@@ -670,7 +666,7 @@ class Bin extends Operation {
         super.check(context)
         let left_types = this.left.check(context)
         let right_types = this.right.check(context)
-        let types = new PHPTypeUnion()
+        let types = PHPTypeUnion.empty
         switch(this.type) {
             case "|":
             case "&":

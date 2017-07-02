@@ -35,10 +35,20 @@ class PHPFunctionType extends PHPType {
 }
 class PHPTypeUnion {
     /**
-     *
+     * Returns an empty type union
+     * @returns {PHPTypeUnion}
      */
-    constructor() {
+    static get empty() {
+        return new PHPTypeUnion()
+    }
+    /**
+     * @param {?PHPType} initial_type
+     */
+    constructor(initial_type) {
         this.uniqueTypes = {}
+        if(initial_type) {
+            this.addType(initial_type)
+        }
     }
     /**
      * @type {PHPType[]}
