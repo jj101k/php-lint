@@ -170,6 +170,11 @@ class Assign extends Statement {
     get right() {
         return this.cacheNode("right")
     }
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?string[]} The set of types applicable to this value
+     */
     check(context) {
         super.check(context)
         return context.addName(
@@ -183,6 +188,11 @@ class Block extends Statement {
     get children() {
         return this.cacheNodeArray("children");
     }
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?string[]} The set of types applicable to this value
+     */
     check(context) {
         super.check(context)
         this.children.forEach(node => node.check(context))
@@ -202,6 +212,11 @@ class Call extends Statement {
     get what() {
         return this.cacheNode("what")
     }
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?string[]} The set of types applicable to this value
+     */
     check(context) {
         super.check(context)
         this.arguments.forEach(arg => arg.check(context))
@@ -237,6 +252,11 @@ class Closure extends Statement {
     get type() {
         return this.node.type
     }
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?string[]} The set of types applicable to this value
+     */
     check(context) {
         super.check(context)
         var inner_context = new Context()
@@ -295,6 +315,11 @@ class Variable extends Expression {
     get name() {
         return this.cacheOptionalNode("name")
     }
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?string[]} The set of types applicable to this value
+     */
     check(context) {
         super.check(context)
         return this.assertHasName(context, '$' + this.name)
@@ -337,6 +362,11 @@ class Class extends Declaration {
     get isFinal() {
         return this.node.isFinal
     }
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?string[]} The set of types applicable to this value
+     */
     check(context) {
         super.check(context)
         this.body.forEach(
@@ -346,6 +376,11 @@ class Class extends Declaration {
     }
 }
 class Echo extends Sys {
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?string[]} The set of types applicable to this value
+     */
     check(context) {
         super.check(context)
         this.arguments.forEach(child => {
@@ -375,6 +410,11 @@ class _Function extends Declaration {
     get type() {
         return this.node.type
     }
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?string[]} The set of types applicable to this value
+     */
     check(context) {
         super.check(context)
         var inner_context = new Context()
@@ -417,12 +457,22 @@ class Method extends _Function {
     get visibility() {
         return this.node.visibility
     }
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?string[]} The set of types applicable to this value
+     */
     check(context) {
         super.check(context)
         return []
     }
 }
 class Number extends Literal {
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?string[]} The set of types applicable to this value
+     */
     check(context) {
         super.check(context)
         return ["number"]
@@ -455,18 +505,33 @@ class Program extends Block {
     get errors() {
         return this.cacheNodeArray("errors")
     }
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?string[]} The set of types applicable to this value
+     */
     check(context) {
-        var inner_context = new Context();
+        var inner_context = context.childContext();
         this.children.forEach(child => child.check(inner_context));
         return super.check(context);
     }
 }
 class PropertyLookup extends Lookup {
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?string[]} The set of types applicable to this value
+     */
     check(context) {
         return super.check(context)
     }
 }
 class StaticLookup extends Lookup {
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?string[]} The set of types applicable to this value
+     */
     check(context) {
         if(
             this.what instanceof Identifier &&
@@ -483,6 +548,11 @@ class String extends Literal {
     get label() {
         return this.node.label
     }
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?string[]} The set of types applicable to this value
+     */
     check(context) {
         super.check(context)
         return ["string"]
