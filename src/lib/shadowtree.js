@@ -461,6 +461,11 @@ class Program extends Block {
         return super.check(context);
     }
 }
+class PropertyLookup extends Lookup {
+    check(context) {
+        return super.check(context)
+    }
+}
 class StaticLookup extends Lookup {
     check(context) {
         if(
@@ -501,6 +506,7 @@ const ShadowTree = {
     Number: Number,
     Parameter: Parameter,
     Program: Program,
+    PropertyLookup: PropertyLookup,
     Return: Return,
     Statement: Statement,
     StaticLookup: StaticLookup,
