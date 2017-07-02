@@ -127,10 +127,23 @@ class Identifier extends Node {
     get name() {
         return this.node.name;
     }
-    /** @type {string} One of UNQUALIFIED_NAME,
-         *     QUALIFIED_NAME, FULL_QUALIFIED_NAME or RELATIVE_NAME */
+    /**
+     * @type {string} eg. "fqn"
+     */
     get resolution() {
         return this.node.resolution;
+    }
+    /**
+     * The fully resolved name
+     * @param {Context} context
+     * @returns {string}
+     */
+    resolvedName(context) {
+        if(this.resolution == "fqn") {
+            return this.name
+        } else {
+            // FIXME
+        }
     }
 }
 class Return extends Node {
@@ -363,14 +376,26 @@ class Class extends Declaration {
         return this.node.isFinal
     }
     /**
+     * The fully resolved name
+     * @param {Context} context
+     * @returns {string}
+     */
+    resolvedName(context) {
+        return "\\" + this.name // FIXME
+    }
+    /**
      * Checks that syntax seems ok
      * @param {Context} context
      * @returns {?string[]} The set of types applicable to this value
      */
     check(context) {
         super.check(context)
+        let inner_context = context.childContext()
+        inner_context.classContext = inner_context.globalContext.addClass(
+            this.resolvedName(context)
+        )
         this.body.forEach(
-            b => b.check(context)
+            b => b.check(inner_context)
         )
         return []
     }
@@ -464,6 +489,7 @@ class Method extends _Function {
      */
     check(context) {
         super.check(context)
+        context.classContext.addMethod(this.name, this.visibility, this.isStatic)
         return []
     }
 }
@@ -538,7 +564,12 @@ class StaticLookup extends Lookup {
             this.what.resolution == "fqn" && // FIXME
             this.offset instanceof ConstRef
         ) {
-            console.log(this.what.name + "::" + this.offset.name)
+            let class_context = context.globalContext.findClass(this.what.name)
+            if(class_context) {
+                console.log(class_context.staticMethods[this.offset.name])
+            } else {
+                console.log(`Unable to find class named ${this.what.name}`)
+            }
         } 
         return super.check(context)
     }
