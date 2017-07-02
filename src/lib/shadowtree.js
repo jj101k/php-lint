@@ -259,7 +259,7 @@ class Closure extends Statement {
      */
     check(context) {
         super.check(context)
-        var inner_context = new Context()
+        var inner_context = context.childContext()
         this.arguments.forEach(
             node => inner_context.addName(
                 '$' + node.name,
@@ -417,7 +417,7 @@ class _Function extends Declaration {
      */
     check(context) {
         super.check(context)
-        var inner_context = new Context()
+        var inner_context = context.childContext()
 
         this.arguments.forEach(
             node => inner_context.addName(
