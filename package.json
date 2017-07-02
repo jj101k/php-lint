@@ -7,6 +7,9 @@
     "glob": "^7.1.1",
     "php-parser": "^1.0.2"
   },
+  "bin": {
+    "php-lint": "src/index.js"
+  },
   "devDependencies": {},
   "scripts": {
     "test": "node test/test-all.js"
