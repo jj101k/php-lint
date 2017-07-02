@@ -1,5 +1,6 @@
 import PHPStrictError from "./phpstricterror"
 import Context from "./context"
+import {PHPFunctionType, PHPSimpleType} from "./phptype"
 
 /**
  * @typedef ParserNode
@@ -39,6 +40,12 @@ class Node {
     get loc() {
         return this.node.loc;
     }
+    /**
+     * Returns the types for the local name, or throws
+     * @param {Context} context
+     * @param {string} name
+     * @returns {?PHPType[]}
+     */
     assertHasName(context, name) {
         var types = context.findName(name)
         if(!types) {
@@ -102,7 +109,7 @@ class Node {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @returns {?string[]} The set of types applicable to this value
+     * @returns {?PHPType[]} The set of types applicable to this value
      */
     check(context) {
         return []
@@ -120,6 +127,7 @@ class Node {
         return new c(node);
     }
 }
+
 class Expression extends Node {
 }
 class Identifier extends Node {
@@ -190,7 +198,7 @@ class Assign extends Statement {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @returns {?string[]} The set of types applicable to this value
+     * @returns {?PHPType[]} The set of types applicable to this value
      */
     check(context) {
         super.check(context)
@@ -208,7 +216,7 @@ class Block extends Statement {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @returns {?string[]} The set of types applicable to this value
+     * @returns {?PHPType[]} The set of types applicable to this value
      */
     check(context) {
         super.check(context)
@@ -232,7 +240,7 @@ class Call extends Statement {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @returns {?string[]} The set of types applicable to this value
+     * @returns {?PHPType[]} The set of types applicable to this value
      */
     check(context) {
         super.check(context)
@@ -272,18 +280,19 @@ class Closure extends Statement {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @returns {?string[]} The set of types applicable to this value
+     * @returns {?PHPType[]} The set of types applicable to this value
      */
     check(context) {
         super.check(context)
         var inner_context = context.childContext()
+        let arg_types = []
         this.arguments.forEach(
-            node => inner_context.addName(
+            node => arg_types.push(inner_context.addName(
                 '$' + node.name,
                 (node.type ? [node.type.name] : []).concat(
                     node.nullable ? ["null"] : []
                 )
-            )
+            ))
         )
         this.type.forEach(
             t => inner_context.addName(
@@ -291,8 +300,11 @@ class Closure extends Statement {
                 this.assertHasName(context, t[1])
             )
         )
-        if(this.body) this.body.check(inner_context)
-        return ["closure"]
+        let return_type
+        if(this.body) {
+            return_type = this.body.check(inner_context)
+        }
+        return [new PHPFunctionType(arg_types, return_type)]
     }
 }
 class Declaration extends Statement {
@@ -335,7 +347,7 @@ class Variable extends Expression {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @returns {?string[]} The set of types applicable to this value
+     * @returns {?PHPType[]} The set of types applicable to this value
      */
     check(context) {
         super.check(context)
@@ -390,7 +402,7 @@ class Class extends Declaration {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @returns {?string[]} The set of types applicable to this value
+     * @returns {?PHPType[]} The set of types applicable to this value
      */
     check(context) {
         super.check(context)
@@ -408,7 +420,7 @@ class Echo extends Sys {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @returns {?string[]} The set of types applicable to this value
+     * @returns {?PHPType[]} The set of types applicable to this value
      */
     check(context) {
         super.check(context)
@@ -442,19 +454,20 @@ class _Function extends Declaration {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @returns {?string[]} The set of types applicable to this value
+     * @returns {?PHPType[]} The set of types applicable to this value
      */
     check(context) {
         super.check(context)
         var inner_context = context.childContext()
 
+        let arg_types = []
         this.arguments.forEach(
-            node => inner_context.addName(
+            node => arg_types.push(inner_context.addName(
                 node.name,
                 (node.type ? [node.type.name] : []).concat(
                     node.nullable ? ["null"] : []
                 )
-            )
+            ))
         )
         if(this.type) {
             this.type.forEach(
@@ -465,8 +478,11 @@ class _Function extends Declaration {
             )
         }
 
-        if(this.body) this.body.check(inner_context)
-        return ["function"]
+        let return_type
+        if(this.body) {
+            return_type = this.body.check(inner_context)
+        }
+        return [new PHPFunctionType(arg_types, return_type)]
     }
 }
 class Method extends _Function {
@@ -489,11 +505,15 @@ class Method extends _Function {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @returns {?string[]} The set of types applicable to this value
+     * @returns {?PHPType[]} The set of types applicable to this value
      */
     check(context) {
-        super.check(context)
-        context.classContext.addIdentifier(this.name, this.visibility, this.isStatic)
+        context.classContext.addIdentifier(
+            this.name,
+            this.visibility,
+            this.isStatic,
+            super.check(context)
+        )
         return []
     }
 }
@@ -501,11 +521,11 @@ class Number extends Literal {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @returns {?string[]} The set of types applicable to this value
+     * @returns {?PHPType[]} The set of types applicable to this value
      */
     check(context) {
         super.check(context)
-        return ["number"]
+        return [new PHPSimpleType("number")]
     }
 }
 class Parameter extends Declaration {
@@ -538,7 +558,7 @@ class Program extends Block {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @returns {?string[]} The set of types applicable to this value
+     * @returns {?PHPType[]} The set of types applicable to this value
      */
     check(context) {
         var inner_context = context.childContext();
@@ -550,7 +570,7 @@ class PropertyLookup extends Lookup {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @returns {?string[]} The set of types applicable to this value
+     * @returns {?PHPType[]} The set of types applicable to this value
      */
     check(context) {
         return super.check(context)
@@ -560,7 +580,7 @@ class StaticLookup extends Lookup {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @returns {?string[]} The set of types applicable to this value
+     * @returns {?PHPType[]} The set of types applicable to this value
      */
     check(context) {
         if(
@@ -591,11 +611,11 @@ class String extends Literal {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @returns {?string[]} The set of types applicable to this value
+     * @returns {?PHPType[]} The set of types applicable to this value
      */
     check(context) {
         super.check(context)
-        return ["string"]
+        return [new PHPSimpleType("string")]
     }
 }
 const ShadowTree = {

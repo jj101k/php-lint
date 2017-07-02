@@ -1,3 +1,5 @@
+import {PHPFunctionType, PHPSimpleType, PHPType} from "./phptype"
+
 /**
  * Defines content in a specific class
  */
@@ -15,16 +17,19 @@ class ClassContext {
      * Adds a known identifier
      * @param {string} name
      * @param {string} scope "public", "private" or "protected"
+     * @param {PHPType[]} types
      * @param {boolean} is_static
      */
-    addIdentifier(name, scope, is_static) {
+    addIdentifier(name, scope, is_static, types) {
         if(is_static) {
             this.staticIdentifiers[name] = {
                 scope: scope,
+                types: types,
             }
         } else {
             this.instanceIdentifiers[name] = {
-                scope: scope
+                scope: scope,
+                types: types,
             }
         }
     }
@@ -105,8 +110,8 @@ export default class Context {
     /**
      * Adds a name to the namespace list.
      * @param {string} name eg. "$foo"
-     * @param {string[]} types
-     * @returns {string[]} The original types
+     * @param {PHPType[]} types
+     * @returns {PHPType[]} The original types
      */
     addName(name, types) {
         if(!this.ns[name]) {
