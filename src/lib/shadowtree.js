@@ -644,6 +644,7 @@ class Constant extends Declaration {
     get value() {
         return this.cacheNode("value")
     }
+    // TODO add to global namespace?
 }
 class Operation extends Expression {
 }
