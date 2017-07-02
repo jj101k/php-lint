@@ -1,25 +1,5 @@
 "use strict"
 
-/**
- * @typedef ParserNode
- * @property {function} constructor
- * @property {string} kind
- */
-
-/**
- * @typedef ParserPosition
- * @property {number} line
- * @property {number} column
- * @property {number} offset
- */
-
-/**
- * @typedef ParserLocation
- * @property {?string} source
- * @property {ParserPosition} start
- * @property {ParserPosition} end
- */
-
 const Context = require("./context")
 const ShadowTree = require("./shadowtree")
 

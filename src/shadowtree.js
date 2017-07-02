@@ -1,5 +1,26 @@
 const PHPStrictError = require("./phpstricterror")
 const Context = require("./context")
+
+/**
+ * @typedef ParserNode
+ * @property {function} constructor
+ * @property {string} kind
+ */
+
+/**
+ * @typedef ParserPosition
+ * @property {number} line
+ * @property {number} column
+ * @property {number} offset
+ */
+
+/**
+ * @typedef ParserLocation
+ * @property {?string} source
+ * @property {ParserPosition} start
+ * @property {ParserPosition} end
+ */
+
 class Node {
     constructor(node) {
         Object.assign(
