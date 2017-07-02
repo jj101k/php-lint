@@ -534,7 +534,7 @@ class Method extends _Function {
         return new PHPTypeUnion()
     }
 }
-class Number extends Literal {
+class _Number extends Literal {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
@@ -570,10 +570,6 @@ class Parameter extends Declaration {
     }
 }
 class Program extends Block {
-    /** @type {Error[]} */
-    get errors() {
-        return this.cacheNodeArray("errors")
-    }
     /**
      * Checks that syntax seems ok
      * @param {Context} context
@@ -626,7 +622,7 @@ class StaticLookup extends Lookup {
         return new PHPTypeUnion()
     }
 }
-class String extends Literal {
+class _String extends Literal {
     /** @type {string} */
     get label() {
         return this.node.label
@@ -643,31 +639,627 @@ class String extends Literal {
         return types
     }
 }
+class Constant extends Declaration {
+    /** @type {?Node} */
+    get value() {
+        return this.cacheNode("value")
+    }
+}
+class Operation extends Expression {
+}
+class Bool extends Operation {
+    /** @type {string} */
+    get type() {
+        return this.node.type
+    }
+    /** @type {Expression} */
+    get left() {
+        return this.cacheNode("left")
+    }
+    /** @type {Expression} */
+    get right() {
+        return this.cacheNode("right")
+    }
+}
+class _Boolean extends Literal {
+}
+class Break extends Node {
+    /** @type {?Number} */
+    get level() {
+        return this.cacheNode("level")
+    }
+}
+class Case extends Node {
+    /** @type {?Expression} */
+    get test() {
+        return this.cacheNode("test")
+    }
+    /** @type {?Block} */
+    get body() {
+        return this.cacheNode("body")
+    }
+}
+class Cast extends Operation {
+    /** @type {string} */
+    get type() {
+        return this.node.type
+    }
+    /** @type {Expression} */
+    get what() {
+        return this.cacheNode("what")
+    }
+}
+class Catch extends Statement {
+    /** @type {Identifier[]} */
+    get what() {
+        return this.cacheNodeArray("what")
+    }
+    /** @type {Variable} */
+    get variable() {
+        return this.cacheNode("variable")
+    }
+    /** @type {Statement} */
+    get body() {
+        return this.cacheNode("body")
+    }
+}
+class ClassConstant extends Constant {
+    /** @type {boolean} */
+    get isStatic() {
+        return this.node.isStatic
+    }
+    /** @type {string} */
+    get visibility() {
+        return this.node.visibility
+    }
+}
+class Clone extends Statement {
+    /** @type {Expression} */
+    get what() {
+        return this.cacheNode("what")
+    }
+}
+class Coalesce extends Operation {
+    /** @type {Expression} */
+    get test() {
+        return this.cacheNode("test")
+    }
+    /** @type {Expression} */
+    get ifnull() {
+        return this.cacheNode("ifnull")
+    }
+}
+class Continue extends Node {
+    /** @type {?Number} */
+    get level() {
+        return this.cacheNode("level")
+    }
+}
+class Declare extends Block {
+    /** @type {Expression[]} */
+    get what() {
+        return this.cacheNodeArray("what")
+    }
+    /** @type {string} */
+    get mode() {
+        return this.node.mode
+    }
+}
+class Do extends Statement {
+    /** @type {Expression} */
+    get test() {
+        return this.cacheNode("test")
+    }
+    /** @type {Statement} */
+    get body() {
+        return this.cacheNode("body")
+    }
+}
+class Doc extends Node {
+    /** @type {boolean} */
+    get isDoc() {
+        return this.node.isDoc
+    }
+    /** @type {string[]} */
+    get lines() {
+        return this.node.lines
+    }
+}
+class Empty extends Sys {
+}
+class Encapsed extends Literal {
+    /** @type {string} */
+    get type() {
+        return this.node.type
+    }
+    /** @type {?string} */
+    get label() {
+        return this.node.label
+    }
+}
+class Entry extends Node {
+    /** @type {?Node} */
+    get key() {
+        return this.cacheNode("key")
+    }
+    /** @type {Node} */
+    get value() {
+        return this.cacheNode("value")
+    }
+}
+class Eval extends Statement {
+    /** @type {Node} */
+    get source() {
+        return this.cacheNode("source")
+    }
+}
+class Exit extends Statement {
+    /** @type {?Node} */
+    get status() {
+        return this.cacheNode("status")
+    }
+}
+class For extends Statement {
+    /** @type {Expression[]} */
+    get init() {
+        return this.cacheNodeArray("init")
+    }
+    /** @type {Expression[]} */
+    get test() {
+        return this.cacheNodeArray("test")
+    }
+    /** @type {Expression[]} */
+    get increment() {
+        return this.cacheNodeArray("increment")
+    }
+    /** @type {Statement} */
+    get body() {
+        return this.cacheNode("body")
+    }
+    /** @type {boolean} */
+    get shortForm() {
+        return this.node.shortForm
+    }
+}
+class Foreach extends Statement {
+    /** @type {Expression} */
+    get source() {
+        return this.cacheNode("source")
+    }
+    /** @type {?Expression} */
+    get key() {
+        return this.cacheNode("key")
+    }
+    /** @type {Expression} */
+    get value() {
+        return this.cacheNode("value")
+    }
+    /** @type {Statement} */
+    get body() {
+        return this.cacheNode("body")
+    }
+    /** @type {boolean} */
+    get shortForm() {
+        return this.node.shortForm
+    }
+}
+class Global extends Statement {
+    /** @type {Variable[]} */
+    get items() {
+        return this.cacheNodeArray("items")
+    }
+}
+class Goto extends Statement {
+    /** @type {string} */
+    get label() {
+        return this.node.label
+    }
+}
+class Halt extends Statement {
+    /** @type {string} */
+    get after() {
+        return this.node.after
+    }
+}
+class If extends Statement {
+    /** @type {Expression} */
+    get test() {
+        return this.cacheNode("test")
+    }
+    /** @type {Block} */
+    get body() {
+        return this.cacheNode("body")
+    }
+    /** @type {Block|If|null} */
+    get alternate() {
+        return this.cacheNode("alternate")
+    }
+    /** @type {boolean} */
+    get shortForm() {
+        return this.node.shortForm
+    }
+}
+class Include extends Statement {
+    /** @type {Node} */
+    get target() {
+        return this.cacheNode("target")
+    }
+    /** @type {boolean} */
+    get once() {
+        return this.node.once
+    }
+    /** @type {boolean} */
+    get require() {
+        return this.node.require
+    }
+}
+class Inline extends Literal {
+}
+class Interface extends Declaration {
+    /** @type {Identifier[]} */
+    get extends() {
+        return this.cacheNodeArray("extends")
+    }
+    /** @type {Declaration[]} */
+    get body() {
+        return this.cacheNodeArray("body")
+    }
+}
+class Isset extends Sys {
+}
+class Label extends Node {
+    /** @type {string} */
+    get name() {
+        return this.node.name
+    }
+}
+class List extends Sys {
+}
+class Magic extends Literal {
+}
+class Namespace extends Block {
+    /** @type {Identifier} */
+    get name() {
+        return this.cacheNode("name")
+    }
+    /** @type {Boolean} */
+    get withBrackets() {
+        return this.node.withBrackets
+    }
+}
+class New extends Statement {
+    /** @type {Identifier|Variable|Class} */
+    get what() {
+        return this.cacheNode("what")
+    }
+    /** @type {Node[]} */
+    get arguments() {
+        return this.cacheNodeArray("arguments")
+    }
+}
+class Nowdoc extends Literal {
+    /** @type {string} */
+    get label() {
+        return this.node.label
+    }
+}
+class OffsetLookup extends Lookup {
+}
+class Parenthesis extends Operation {
+    /** @type {Expression} */
+    get inner() {
+        return this.cacheNode("inner")
+    }
+}
+class Post extends Operation {
+    /** @type {string} */
+    get type() {
+        return this.node.type
+    }
+    /** @type {Variable} */
+    get what() {
+        return this.cacheNode("what")
+    }
+}
+class Pre extends Operation {
+    /** @type {string} */
+    get type() {
+        return this.node.type
+    }
+    /** @type {Variable} */
+    get what() {
+        return this.cacheNode("what")
+    }
+}
+class Print extends Sys {
+}
+class Property extends Declaration {
+    /** @type {boolean} */
+    get isFinal() {
+        return this.node.isFinal
+    }
+    /** @type {boolean} */
+    get isStatic() {
+        return this.node.isStatic
+    }
+    /** @type {string} */
+    get visibility() {
+        return this.node.visibility
+    }
+    /** @type {?Node} */
+    get value() {
+        return this.cacheNode("value")
+    }
+}
+class RetIf extends Statement {
+    /** @type {Expression} */
+    get test() {
+        return this.cacheNode("test")
+    }
+    /** @type {Expression} */
+    get trueExpr() {
+        return this.cacheNode("trueExpr")
+    }
+    /** @type {Expression} */
+    get falseExpr() {
+        return this.cacheNode("falseExpr")
+    }
+}
+class Shell extends Literal {
+}
+class Silent extends Statement {
+    /** @type {Expression} */
+    get expr() {
+        return this.cacheNode("expr")
+    }
+}
+class Static extends Statement {
+    /** @type {Variable[]|Assign[]} */
+    get items() {
+        return this.cacheNodeArray("items")
+    }
+}
+class Switch extends Statement {
+    /** @type {Expression} */
+    get test() {
+        return this.cacheNode("test")
+    }
+    /** @type {Block} */
+    get body() {
+        return this.cacheNode("body")
+    }
+    /** @type {boolean} */
+    get shortForm() {
+        return this.node.shortForm
+    }
+}
+class Throw extends Statement {
+    /** @type {Expression} */
+    get what() {
+        return this.cacheNode("what")
+    }
+}
+class Trait extends Declaration {
+    /** @type {?Identifier} */
+    get extends() {
+        return this.cacheNode("extends")
+    }
+    /** @type {Identifier[]} */
+    get implements() {
+        return this.cacheNodeArray("implements")
+    }
+    /** @type {Declaration[]} */
+    get body() {
+        return this.cacheNodeArray("body")
+    }
+}
+class TraitAlias extends Node {
+    /** @type {?Identifier} */
+    get trait() {
+        return this.cacheNode("trait")
+    }
+    /** @type {string} */
+    get method() {
+        return this.node.method
+    }
+    /** @type {?string} */
+    get as() {
+        return this.cacheNode("as")
+    }
+    /** @type {?string} */
+    get visibility() {
+        return this.cacheNode("visibility")
+    }
+}
+class TraitPrecedence extends Node {
+    /** @type {?Identifier} */
+    get trait() {
+        return this.cacheNode("trait")
+    }
+    /** @type {string} */
+    get method() {
+        return this.node.method
+    }
+    /** @type {Identifier[]} */
+    get instead() {
+        return this.cacheNodeArray("instead")
+    }
+}
+class Try extends Statement {
+    /** @type {Block} */
+    get body() {
+        return this.cacheNode("body")
+    }
+    /** @type {Catch[]} */
+    get catches() {
+        return this.cacheNodeArray("catches")
+    }
+    /** @type {Block} */
+    get always() {
+        return this.cacheNode("always")
+    }
+}
+class Unary extends Operation {
+    /** @type {string} */
+    get type() {
+        return this.node.type
+    }
+    /** @type {Expression} */
+    get what() {
+        return this.cacheNode("what")
+    }
+}
+class Unset extends Sys {
+}
+class UseGroup extends Statement {
+    /** @type {?Identifier} */
+    get name() {
+        return this.cacheNode("name")
+    }
+    /** @type {?string} */
+    get type() {
+        return this.node.type
+    }
+    /** @type {UseItem[]} */
+    get item() {
+        return this.cacheNodeArray("item")
+    }
+}
+class UseItem extends Statement {
+    /** @type {Identifier} */
+    get name() {
+        return this.cacheNode("name")
+    }
+    /** @type {?string} */
+    get type() {
+        return this.node.type
+    }
+    /** @type {?string} */
+    get alias() {
+        return this.node.alias
+    }
+}
+class Variadic extends Expression {
+    /** @type {Array|Expression} */
+    get what() {
+        return this.cacheNode("what")
+    }
+}
+class While extends Statement {
+    /** @type {Expression} */
+    get test() {
+        return this.cacheNode("test")
+    }
+    /** @type {Statement} */
+    get body() {
+        return this.cacheNode("body")
+    }
+    /** @type {boolean} */
+    get shortForm() {
+        return this.node.shortForm
+    }
+}
+class Yield extends Expression {
+    /** @type {?Expression} */
+    get value() {
+        return this.cacheNode("value")
+    }
+    /** @type {?Expression} */
+    get key() {
+        return this.cacheNode("key")
+    }
+}
+class YieldFrom extends Expression {
+    /** @type {Expression} */
+    get value() {
+        return this.cacheNode("value")
+    }
+}
 const ShadowTree = {
     Assign: Assign,
     Block: Block,
+    Bool: Bool,
+    Boolean: _Boolean,
+    Break: Break,
     Call: Call,
+    Case: Case,
+    Cast: Cast,
+    Catch: Catch,
     Class: Class,
+    ClassConstant: ClassConstant,
+    Clone: Clone,
     Closure: Closure,
+    Coalesce: Coalesce,
     ConstRef: ConstRef,
+    Constant: Constant,
+    Continue: Continue,
     Declaration: Declaration,
+    Declare: Declare,
+    Do: Do,
+    Doc: Doc,
     Echo: Echo,
+    Empty: Empty,
+    Encapsed: Encapsed,
+    Entry: Entry,
+    Eval: Eval,
+    Exit: Exit,
     Expression: Expression,
-    _Function: _Function,
+    For: For,
+    Foreach: Foreach,
+    Global: Global,
+    Goto: Goto,
+    Halt: Halt,
     Identifier: Identifier,
+    If: If,
+    Include: Include,
+    Inline: Inline,
+    Interface: Interface,
+    Isset: Isset,
+    Label: Label,
+    List: List,
     Literal: Literal,
+    Magic: Magic,
     Method: Method,
+    Namespace: Namespace,
+    New: New,
     Node: Node,
-    Number: Number,
+    Nowdoc: Nowdoc,
+    Number: _Number,
+    OffsetLookup: OffsetLookup,
+    Operation: Operation,
     Parameter: Parameter,
+    Parenthesis: Parenthesis,
+    Post: Post,
+    Pre: Pre,
+    Print: Print,
     Program: Program,
+    Property: Property,
     PropertyLookup: PropertyLookup,
+    RetIf: RetIf,
     Return: Return,
+    Shell: Shell,
+    Silent: Silent,
     Statement: Statement,
+    Static: Static,
     StaticLookup: StaticLookup,
-    String: String,
+    String: _String,
+    Switch: Switch,
     Sys: Sys,
+    Throw: Throw,
+    Trait: Trait,
+    TraitAlias: TraitAlias,
+    TraitPrecedence: TraitPrecedence,
     TraitUse: TraitUse,
+    Try: Try,
+    Unary: Unary,
+    Unset: Unset,
+    UseGroup: UseGroup,
+    UseItem: UseItem,
     Variable: Variable,
+    Variadic: Variadic,
+    While: While,
+    Yield: Yield,
+    YieldFrom: YieldFrom,
+    _Function: _Function,
 }
 export default ShadowTree
