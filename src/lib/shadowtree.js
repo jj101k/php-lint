@@ -570,7 +570,9 @@ class StaticLookup extends Lookup {
             let resolved_name = this.what.resolvedName(context)
             let class_context = context.globalContext.findClass(resolved_name)
             if(class_context) {
-                console.log(class_context.staticMethods[this.offset.name])
+                if(!class_context.staticMethods[this.offset.name]) {
+                    throw new PHPStrictError(`No accessible method ${resolved_name}::${this.offset.name}`)
+                }
             } else {
                 console.log(`Unable to find class named ${resolved_name}`)
             }
