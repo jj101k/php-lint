@@ -1,6 +1,6 @@
 import PHPStrictError from "./phpstricterror"
 import Context from "./context"
-import {PHPFunctionType, PHPSimpleType} from "./phptype"
+import {PHPFunctionType, PHPSimpleType, PHPTypeUnion} from "./phptype"
 
 /**
  * @typedef ParserNode
@@ -44,7 +44,7 @@ class Node {
      * Returns the types for the local name, or throws
      * @param {Context} context
      * @param {string} name
-     * @returns {?PHPType[]}
+     * @returns {?PHPTypeUnion}
      */
     assertHasName(context, name) {
         var types = context.findName(name)
@@ -109,10 +109,10 @@ class Node {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @returns {?PHPType[]} The set of types applicable to this value
+     * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
     check(context) {
-        return []
+        return new PHPTypeUnion()
     }
     /**
      * Returns the shadow tree counterpart of the given node.
@@ -163,6 +163,15 @@ class Return extends Node {
     get expr() {
         return this.cacheNode("expr")
     }
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?PHPTypeUnion} The set of types applicable to this value
+     */
+    check(context) {
+        super.check(context)
+        return this.expr.check(context)
+    }
 }
 class Statement extends Node {
 }
@@ -198,7 +207,7 @@ class Assign extends Statement {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @returns {?PHPType[]} The set of types applicable to this value
+     * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
     check(context) {
         super.check(context)
@@ -216,12 +225,15 @@ class Block extends Statement {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @returns {?PHPType[]} The set of types applicable to this value
+     * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
     check(context) {
         super.check(context)
-        this.children.forEach(node => node.check(context))
-        return []
+        let types = new PHPTypeUnion()
+        this.children.forEach(node => {
+            types.addTypesFrom(node.check(context))
+        })
+        return types
     }
 }
 class Call extends Statement {
@@ -240,14 +252,15 @@ class Call extends Statement {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @returns {?PHPType[]} The set of types applicable to this value
+     * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
     check(context) {
         super.check(context)
         this.arguments.forEach(arg => arg.check(context))
         let callable_types = this.what.check(context)
-        console.log(callable_types)
-        return []
+        let types = new PHPTypeUnion()
+        callable_types.types.forEach(t => types.addType(t))
+        return types
     }
 }
 class ConstRef extends Expression {
@@ -280,7 +293,7 @@ class Closure extends Statement {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @returns {?PHPType[]} The set of types applicable to this value
+     * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
     check(context) {
         super.check(context)
@@ -288,9 +301,9 @@ class Closure extends Statement {
         let arg_types = []
         this.arguments.forEach(
             node => arg_types.push(inner_context.addName(
-                '$' + node.name,
+                node.name,
                 (node.type ? [node.type.name] : []).concat(
-                    node.nullable ? ["null"] : []
+                    node.nullable ? [new PHPSimpleType("null")] : []
                 )
             ))
         )
@@ -304,7 +317,9 @@ class Closure extends Statement {
         if(this.body) {
             return_type = this.body.check(inner_context)
         }
-        return [new PHPFunctionType(arg_types, return_type)]
+        let types = new PHPTypeUnion()
+        types.addType(new PHPFunctionType(arg_types, return_type))
+        return types
     }
 }
 class Declaration extends Statement {
@@ -347,7 +362,7 @@ class Variable extends Expression {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @returns {?PHPType[]} The set of types applicable to this value
+     * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
     check(context) {
         super.check(context)
@@ -402,7 +417,7 @@ class Class extends Declaration {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @returns {?PHPType[]} The set of types applicable to this value
+     * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
     check(context) {
         super.check(context)
@@ -413,21 +428,21 @@ class Class extends Declaration {
         this.body.forEach(
             b => b.check(inner_context)
         )
-        return []
+        return new PHPTypeUnion()
     }
 }
 class Echo extends Sys {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @returns {?PHPType[]} The set of types applicable to this value
+     * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
     check(context) {
         super.check(context)
         this.arguments.forEach(child => {
             let types = child.check(context)
         })
-        return []
+        return new PHPTypeUnion()
     }
 }
 class _Function extends Declaration {
@@ -454,7 +469,7 @@ class _Function extends Declaration {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @returns {?PHPType[]} The set of types applicable to this value
+     * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
     check(context) {
         super.check(context)
@@ -465,7 +480,7 @@ class _Function extends Declaration {
             node => arg_types.push(inner_context.addName(
                 node.name,
                 (node.type ? [node.type.name] : []).concat(
-                    node.nullable ? ["null"] : []
+                    node.nullable ? [new PHPSimpleType("null")] : []
                 )
             ))
         )
@@ -482,7 +497,9 @@ class _Function extends Declaration {
         if(this.body) {
             return_type = this.body.check(inner_context)
         }
-        return [new PHPFunctionType(arg_types, return_type)]
+        let types = new PHPTypeUnion()
+        types.addType(new PHPFunctionType(arg_types, return_type))
+        return types
     }
 }
 class Method extends _Function {
@@ -505,7 +522,7 @@ class Method extends _Function {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @returns {?PHPType[]} The set of types applicable to this value
+     * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
     check(context) {
         context.classContext.addIdentifier(
@@ -514,18 +531,20 @@ class Method extends _Function {
             this.isStatic,
             super.check(context)
         )
-        return []
+        return new PHPTypeUnion()
     }
 }
 class Number extends Literal {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @returns {?PHPType[]} The set of types applicable to this value
+     * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
     check(context) {
         super.check(context)
-        return [new PHPSimpleType("number")]
+        let types = new PHPTypeUnion()
+        types.addType(new PHPSimpleType("number"))
+        return types
     }
 }
 class Parameter extends Declaration {
@@ -558,7 +577,7 @@ class Program extends Block {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @returns {?PHPType[]} The set of types applicable to this value
+     * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
     check(context) {
         var inner_context = context.childContext();
@@ -570,7 +589,7 @@ class PropertyLookup extends Lookup {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @returns {?PHPType[]} The set of types applicable to this value
+     * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
     check(context) {
         return super.check(context)
@@ -580,9 +599,10 @@ class StaticLookup extends Lookup {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @returns {?PHPType[]} The set of types applicable to this value
+     * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
     check(context) {
+        super.check(context)
         if(
             this.what instanceof Identifier &&
             this.offset instanceof ConstRef
@@ -590,9 +610,12 @@ class StaticLookup extends Lookup {
             let resolved_name = this.what.resolvedName(context)
             let class_context = context.globalContext.findClass(resolved_name)
             if(class_context) {
-                if(!class_context.findStaticIdentifier(this.offset.name, context.classContext)) {
+                let types = class_context.findStaticIdentifier(this.offset.name, context.classContext)
+                if(!types) {
                     throw new PHPStrictError(`No accessible method ${resolved_name}::${this.offset.name}`)
                 }
+                console.log(types[0])
+                return types
             } else {
                 console.log(`Unable to find class named ${resolved_name}`)
             }
@@ -600,7 +623,7 @@ class StaticLookup extends Lookup {
             console.log(this.node)
             console.log("TODO don't know how to check this kind of lookup")
         }
-        return super.check(context)
+        return new PHPTypeUnion()
     }
 }
 class String extends Literal {
@@ -611,11 +634,13 @@ class String extends Literal {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @returns {?PHPType[]} The set of types applicable to this value
+     * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
     check(context) {
         super.check(context)
-        return [new PHPSimpleType("string")]
+        let types = new PHPTypeUnion()
+        types.addType(new PHPSimpleType("string"))
+        return types
     }
 }
 const ShadowTree = {

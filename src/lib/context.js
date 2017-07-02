@@ -1,4 +1,4 @@
-import {PHPFunctionType, PHPSimpleType, PHPType} from "./phptype"
+import {PHPFunctionType, PHPSimpleType, PHPTypeUnion} from "./phptype"
 
 /**
  * Defines content in a specific class
@@ -17,7 +17,7 @@ class ClassContext {
      * Adds a known identifier
      * @param {string} name
      * @param {string} scope "public", "private" or "protected"
-     * @param {PHPType[]} types
+     * @param {PHPTypeUnion} types
      * @param {boolean} is_static
      */
     addIdentifier(name, scope, is_static, types) {
@@ -37,30 +37,33 @@ class ClassContext {
      * Finds the named identifier
      * @param {string} name
      * @param {?ClassContext} from_class_context
-     * @returns {boolean}
+     * @returns {?PHPTypeUnion}
      */
     findInstanceIdentifier(name, from_class_context) {
         let m = this.instanceIdentifiers[name]
         if(m) {
-            return(from_class_context === this || m.scope == "public")
-        } else {
-            return false
+            if(from_class_context === this || m.scope == "public") {
+                return m.types
+            }
+            // TODO inheritance
         }
+        return null
     }
     /**
      * Finds the named identifier
      * @param {string} name
      * @param {?ClassContext} from_class_context
-     * @returns {boolean}
+     * @returns {?PHPTypeUnion}
      */
     findStaticIdentifier(name, from_class_context) {
         let m = this.staticIdentifiers[name]
         if(m) {
-            return(from_class_context === this || m.scope == "public")
-        // TODO inheritance
-        } else {
-            return false
+            if(from_class_context === this || m.scope == "public") {
+                return m.types
+            }
+            // TODO inheritance
         }
+        return null
     }
 }
 
@@ -110,14 +113,15 @@ export default class Context {
     /**
      * Adds a name to the namespace list.
      * @param {string} name eg. "$foo"
-     * @param {PHPType[]} types
-     * @returns {PHPType[]} The original types
+     * @param {PHPTypeUnion} types
+     * @returns {PHPTypeUnion} The original types
      */
     addName(name, types) {
         if(!this.ns[name]) {
-            this.ns[name] = []
+            this.ns[name] = new PHPTypeUnion()
         }
-        this.ns[name] = this.ns[name].concat(types)
+        this.ns[name].addTypesFrom(types)
+        console.log(`Types for ${name} are: ${this.ns[name]}`)
         return types
     }
     /**
