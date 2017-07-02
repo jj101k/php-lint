@@ -1,5 +1,6 @@
 var phpParser = require("php-parser");
 var fs = require("fs");
+require("import-export")
 var lint = require("./lint");
 
 var parser = new phpParser({

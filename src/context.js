@@ -1,7 +1,7 @@
 /**
  * This defines the entire context applying to the current node.
  */
-class Context {
+export default class Context {
     /**
      * Builds the object
      */
@@ -31,4 +31,3 @@ class Context {
         return types
     }
 }
-module.exports = Context

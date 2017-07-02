@@ -1,3 +1,3 @@
 class PHPStrictError extends Error {
 }
-module.exports = PHPStrictError
+export default PHPStrictError

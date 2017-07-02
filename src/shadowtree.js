@@ -1,5 +1,5 @@
-const PHPStrictError = require("./phpstricterror")
-const Context = require("./context")
+import PHPStrictError from "./phpstricterror"
+import Context from "./context"
 
 /**
  * @typedef ParserNode
@@ -509,4 +509,4 @@ const ShadowTree = {
     TraitUse: TraitUse,
     Variable: Variable,
 }
-module.exports = ShadowTree
+export default ShadowTree

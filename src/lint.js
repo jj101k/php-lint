@@ -1,7 +1,7 @@
 "use strict"
 
-const Context = require("./context")
-const ShadowTree = require("./shadowtree")
+import Context from "./context"
+import ShadowTree from "./shadowtree"
 
 class Lint {
     constructor(tree, filename = null, namespace = []) {
@@ -23,6 +23,7 @@ class Lint {
     }
 };
 
-Lint.PHPStrictError = require("./phpstricterror");
+import PHPStrictError from "./phpstricterror"
+Lint.PHPStrictError = PHPStrictError
 Lint.ShadowTree = ShadowTree
 module.exports = Lint;
