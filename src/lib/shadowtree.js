@@ -139,10 +139,14 @@ class Identifier extends Node {
      * @returns {string}
      */
     resolvedName(context) {
-        if(this.resolution == "fqn") {
-            return this.name
-        } else {
-            // FIXME
+        switch(this.resolution) {
+            case "fqn":
+                return this.name
+            case "uqn":
+                return "\\" + this.name // TODO namespaces
+            default:
+                console.log(this.node)
+                console.log("TODO don't know how to resolve")
         }
     }
 }
@@ -561,16 +565,19 @@ class StaticLookup extends Lookup {
     check(context) {
         if(
             this.what instanceof Identifier &&
-            this.what.resolution == "fqn" && // FIXME
             this.offset instanceof ConstRef
         ) {
-            let class_context = context.globalContext.findClass(this.what.name)
+            let resolved_name = this.what.resolvedName(context)
+            let class_context = context.globalContext.findClass(resolved_name)
             if(class_context) {
                 console.log(class_context.staticMethods[this.offset.name])
             } else {
-                console.log(`Unable to find class named ${this.what.name}`)
+                console.log(`Unable to find class named ${resolved_name}`)
             }
-        } 
+        } else {
+            console.log(this.node)
+            console.log("TODO don't know how to check this kind of lookup")
+        }
         return super.check(context)
     }
 }
