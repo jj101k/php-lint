@@ -2,8 +2,15 @@
 
 import Context from "./context"
 import ShadowTree from "./shadowtree"
+import PHPStrictError from "./phpstricterror"
 
 class Lint {
+    static get PHPStrictError() {
+        return PHPStrictError
+    }
+    static get ShadowTree() {
+        return ShadowTree
+    }
     constructor(tree, filename = null, namespace = []) {
         Object.assign(
             this,
@@ -23,7 +30,4 @@ class Lint {
     }
 };
 
-import PHPStrictError from "./phpstricterror"
-Lint.PHPStrictError = PHPStrictError
-Lint.ShadowTree = ShadowTree
 module.exports = Lint;
