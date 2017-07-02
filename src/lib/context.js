@@ -28,6 +28,35 @@ class ClassContext {
             }
         }
     }
+    /**
+     * Finds the named method
+     * @param {string} name
+     * @param {?ClassContext} from_class_context
+     * @returns {boolean}
+     */
+    findInstanceMethod(name, from_class_context) {
+        let m = this.instanceMethods[name]
+        if(m) {
+            return(from_class_context === this || m.scope == "public")
+        } else {
+            return false
+        }
+    }
+    /**
+     * Finds the named method
+     * @param {string} name
+     * @param {?ClassContext} from_class_context
+     * @returns {boolean}
+     */
+    findStaticMethod(name, from_class_context) {
+        let m = this.staticMethods[name]
+        if(m) {
+            return(from_class_context === this || m.scope == "public")
+        // TODO inheritance
+        } else {
+            return false
+        }
+    }
 }
 
 /**
