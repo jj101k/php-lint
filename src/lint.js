@@ -131,6 +131,18 @@ class Node {
         );
     }
     /**
+     * Like cacheNode, but includes cases where random other objects are present.
+     * @param {string} name
+     * @returns {Node|*}
+     */
+    cacheOptionalNode(name) {
+        if(this.node[name] && this.node[name].kind) {
+            return this.cacheNode(name)
+        } else {
+            return this.node[name]
+        }
+    }
+    /**
      * Returns a cached copy of the named property, calling f(node_property)
      * if needed.
      * @param {string} name
@@ -228,38 +240,38 @@ class Block extends Statement {
 }
 class Call extends Statement {
     /**
-     * @type {object[]}
+     * @type {Object[]}
      */
     get arguments() {
-        return this.node.arguments
+        return this.cacheNodeArray("arguments")
     }
     /**
-     * @type {?object}
+     * @type {Identifier|Variable|null}
      */
     get what() {
-        return this.node.what
+        return this.cacheNode("what")
     }
 }
 class Closure extends Statement {
     /** @type {Parameter[]} */
     get arguments() {
-        return this.cacheNodeArray("arguments");
+        return this.cacheNodeArray("arguments")
     }
     /** @type {?Block} */
     get body() {
-        return this.cacheNode("body");
+        return this.cacheNode("body")
     }
-    /** @type {bool} */
+    /** @type {boolean} */
     get byref() {
-        return this.node.byref;
+        return this.node.byref
     }
-    /** @type {bool} */
+    /** @type {boolean} */
     get nullable() {
-        return this.node.nullable;
+        return this.node.nullable
     }
-    /** @type {object[]} */
+    /** @type {Array[]} */
     get type() {
-        return this.node.type;
+        return this.node.type
     }
     check(context) {
         super.check(context)
@@ -291,13 +303,13 @@ class Declaration extends Statement {
 class Literal extends Expression {
     /** @type {Node|string|number|boolean|null} */
     get value() {
-        return this.node.value
+        return this.cacheOptionalNode("value")
     }
 }
 class Sys extends Statement {
     /** @type {Node[]} */
     get arguments() {
-        return this.cacheNodeArray("arguments");
+        return this.cacheNodeArray("arguments")
     }
 }
 class Variable extends Expression {
@@ -307,16 +319,7 @@ class Variable extends Expression {
     }
     /** @type {string|Node} */
     get name() {
-        return this.cacheProperty(
-            "name",
-            node => {
-                if(typeof node == "object") {
-                    return Node.typed(child);
-                } else {
-                    return node;
-                }
-            }
-        );
+        return this.cacheOptionalNode("name")
     }
     check(context) {
         super.check(context)
@@ -325,22 +328,22 @@ class Variable extends Expression {
 }
 class Class extends Declaration {
     /**
-     * @type {object[]}
+     * @type {Declaration[]}
      */
     get body() {
-        return this.node.body
+        return this.cacheNodeArray("body")
     }
     /**
-     * @type {?object}
+     * @type {?Identifier}
      */
     get extends() {
-        return this.node.extends
+        return this.cacheNode("extends")
     }
     /**
-     * @type {object[]}
+     * @type {Identifier[]}
      */
     get implements() {
-        return this.node.implements
+        return this.cacheNode("implements")
     }
     /**
      * @type {boolean}
@@ -371,23 +374,23 @@ class Echo extends Sys {
 class _Function extends Declaration {
     /** @type {Parameter[]} */
     get arguments() {
-        return this.cacheNodeArray("arguments");
+        return this.cacheNodeArray("arguments")
     }
     /** @type {?Block} */
     get body() {
-        return this.cacheNode("body");
+        return this.cacheNode("body")
     }
     /** @type {bool} */
     get byref() {
-        return this.node.byref;
+        return this.node.byref
     }
     /** @type {bool} */
     get nullable() {
-        return this.node.nullable;
+        return this.node.nullable
     }
-    /** @type {object[]} */
+    /** @type {Array[]} */
     get type() {
-        return this.node.type;
+        return this.node.type
     }
     check(context) {
         super.check(context)
@@ -429,13 +432,13 @@ class Parameter extends Declaration {
     get nullable() {
         return this.node.nullable
     }
-    /** @type {object[]} */
+    /** @type {Node} */
     get type() {
-        return this.node.type
+        return this.cacheNode("type")
     }
-    /** @type {*} */
+    /** @type {?Node} */
     get value() {
-        return this.node.value
+        return this.cacheNode("value")
     }
     /** @type {boolean} */
     get variadic() {
@@ -445,7 +448,7 @@ class Parameter extends Declaration {
 class Program extends Block {
     /** @type {Error[]} */
     get errors() {
-        return this.node.errors
+        return this.cacheNodeArray("errors")
     }
     check(context) {
         var inner_context = new Context();
