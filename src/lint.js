@@ -106,7 +106,7 @@ class Node {
     /**
      * Returns a shadow tree node wrapping the given node (caches)
      * @param {string} name
-     * @returns {Node}
+     * @returns {?Node}
      */
     cacheNode(name) {
         return this.cacheProperty(
