@@ -8,34 +8,34 @@ class ClassContext {
      */
     constructor(name) {
         this.name = name
-        this.staticMethods = {}
-        this.instanceMethods = {}
+        this.staticIdentifiers = {}
+        this.instanceIdentifiers = {}
     }
     /**
-     * Adds a known method
+     * Adds a known identifier
      * @param {string} name
      * @param {string} scope "public", "private" or "protected"
      * @param {boolean} is_static
      */
-    addMethod(name, scope, is_static) {
+    addIdentifier(name, scope, is_static) {
         if(is_static) {
-            this.staticMethods[name] = {
+            this.staticIdentifiers[name] = {
                 scope: scope,
             }
         } else {
-            this.instanceMethods[name] = {
+            this.instanceIdentifiers[name] = {
                 scope: scope
             }
         }
     }
     /**
-     * Finds the named method
+     * Finds the named identifier
      * @param {string} name
      * @param {?ClassContext} from_class_context
      * @returns {boolean}
      */
-    findInstanceMethod(name, from_class_context) {
-        let m = this.instanceMethods[name]
+    findInstanceIdentifier(name, from_class_context) {
+        let m = this.instanceIdentifiers[name]
         if(m) {
             return(from_class_context === this || m.scope == "public")
         } else {
@@ -43,13 +43,13 @@ class ClassContext {
         }
     }
     /**
-     * Finds the named method
+     * Finds the named identifier
      * @param {string} name
      * @param {?ClassContext} from_class_context
      * @returns {boolean}
      */
-    findStaticMethod(name, from_class_context) {
-        let m = this.staticMethods[name]
+    findStaticIdentifier(name, from_class_context) {
+        let m = this.staticIdentifiers[name]
         if(m) {
             return(from_class_context === this || m.scope == "public")
         // TODO inheritance

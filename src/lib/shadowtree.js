@@ -493,7 +493,7 @@ class Method extends _Function {
      */
     check(context) {
         super.check(context)
-        context.classContext.addMethod(this.name, this.visibility, this.isStatic)
+        context.classContext.addIdentifier(this.name, this.visibility, this.isStatic)
         return []
     }
 }
@@ -570,7 +570,7 @@ class StaticLookup extends Lookup {
             let resolved_name = this.what.resolvedName(context)
             let class_context = context.globalContext.findClass(resolved_name)
             if(class_context) {
-                if(!class_context.findStaticMethod(this.offset.name, context.classContext)) {
+                if(!class_context.findStaticIdentifier(this.offset.name, context.classContext)) {
                     throw new PHPStrictError(`No accessible method ${resolved_name}::${this.offset.name}`)
                 }
             } else {
