@@ -647,7 +647,7 @@ class Constant extends Declaration {
 }
 class Operation extends Expression {
 }
-class Bool extends Operation {
+class Bin extends Operation {
     /** @type {string} */
     get type() {
         return this.node.type
@@ -659,6 +659,43 @@ class Bool extends Operation {
     /** @type {Expression} */
     get right() {
         return this.cacheNode("right")
+    }
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?PHPTypeUnion} The set of types applicable to this value
+     */
+    check(context) {
+        super.check(context)
+        let left_types = this.left.check(context)
+        let right_types = this.right.check(context)
+        let types = new PHPTypeUnion()
+        switch(this.type) {
+            case "|":
+            case "&":
+                types.addType(new PHPSimpleType("boolean"))
+                break
+            case "*":
+            case "/":
+            case "-":
+                types.addType(new PHPSimpleType("number"))
+                break
+            case "+":
+                if(left_types.types.length == 1 && "" + left_types[0] == "array") {
+                    types.addTypesFrom(left_types)
+                } else {
+                    types.addType(new PHPSimpleType("number"))
+                }
+                break
+            case ".":
+                types.addType(new PHPSimpleType("string"))
+                break
+            default:
+                console.log(`Don't know how to parse operator type ${this.type}`)
+                types.addTypesFrom(left_type)
+                types.addTypesFrom(right_type)
+        }
+        return types
     }
 }
 class _Boolean extends Literal {
@@ -1177,8 +1214,9 @@ class YieldFrom extends Expression {
 }
 const ShadowTree = {
     Assign: Assign,
+    Bin: Bin,
     Block: Block,
-    Bool: Bool,
+    Bool: Bin,
     Boolean: _Boolean,
     Break: Break,
     Call: Call,
