@@ -37,6 +37,7 @@ class Context {
 /**
  * @typedef ParserNode
  * @property {function} constructor
+ * @property {string} kind
  */
 
 /**
