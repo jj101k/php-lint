@@ -115,14 +115,16 @@ export default class Context {
      * @param {?GlobalContext} global_context
      * @param {?ClassContext} class_context
      * @param {FileContext} file_context
-     * @param {Object.<string,PHPTypeUnion} ns
+     * @param {?Object.<string,PHPTypeUnion} ns
      */
-    constructor(file_context, global_context, class_context, ns = {}) {
+    constructor(file_context, global_context, class_context, ns = null) {
         this.classContext = class_context
         this.globalContext = global_context || new GlobalContext()
         this.fileContext = file_context
         this.isAssigning = false
-        this.ns = ns
+        this.ns = ns || {
+            '$argv': new PHPTypeUnion(new PHPSimpleType("array")),
+        }
     }
     /**
      * Adds a name to the namespace list.
@@ -148,7 +150,7 @@ export default class Context {
             this.fileContext,
             this.globalContext,
             this.classContext,
-            keep_ns ? this.ns : {}
+            keep_ns ? this.ns : null
         )
     }
     /**
