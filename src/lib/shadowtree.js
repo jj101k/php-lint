@@ -219,10 +219,10 @@ class Assign extends Statement {
      */
     check(context) {
         super.check(context)
-        return context.addName(
-            '$' + this.left.name,
-            this.right.check(context)
-        )
+        let left_context = context.childContext(true)
+        left_context.isAssigning = this.right.check(context)
+        this.left.check(left_context)
+        return left_context.isAssigning
     }
 }
 class Block extends Statement {
@@ -373,7 +373,14 @@ class Variable extends Expression {
      */
     check(context) {
         super.check(context)
-        return this.assertHasName(context, '$' + this.name)
+        if(context.isAssigning) {
+            return context.addName(
+                '$' + this.name,
+                context.isAssigning
+            )
+        } else {
+            return this.assertHasName(context, '$' + this.name)
+        }
     }
 }
 class Class extends Declaration {

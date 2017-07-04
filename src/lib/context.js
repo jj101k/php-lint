@@ -115,12 +115,14 @@ export default class Context {
      * @param {?GlobalContext} global_context
      * @param {?ClassContext} class_context
      * @param {FileContext} file_context
+     * @param {Object.<string,PHPTypeUnion} ns
      */
-    constructor(file_context, global_context, class_context) {
+    constructor(file_context, global_context, class_context, ns = {}) {
         this.classContext = class_context
         this.globalContext = global_context || new GlobalContext()
         this.fileContext = file_context
-        this.ns = {}
+        this.isAssigning = false
+        this.ns = ns
     }
     /**
      * Adds a name to the namespace list.
@@ -138,10 +140,16 @@ export default class Context {
     }
     /**
      * Returns a new context which inherits from this one.
+     * @param {boolean} keep_ns
      * @returns {Context}
      */
-    childContext() {
-        return new Context(this.fileContext, this.globalContext, this.classContext)
+    childContext(keep_ns = false) {
+        return new Context(
+            this.fileContext,
+            this.globalContext,
+            this.classContext,
+            keep_ns ? this.ns : {}
+        )
     }
     /**
      * If the name is in the namespace, returns its possible types
