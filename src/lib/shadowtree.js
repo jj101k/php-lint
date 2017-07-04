@@ -728,8 +728,8 @@ class Bin extends Operation {
                 break
             default:
                 console.log(`Don't know how to parse operator type ${this.type}`)
-                types.addTypesFrom(left_type)
-                types.addTypesFrom(right_type)
+                types.addTypesFrom(left_types)
+                types.addTypesFrom(right_types)
         }
         return types
     }
