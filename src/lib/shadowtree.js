@@ -178,7 +178,11 @@ class Return extends Node {
      */
     check(context) {
         super.check(context)
-        return this.expr.check(context)
+        if(this.expr) {
+            return this.expr.check(context)
+        } else {
+            return new PHPTypeUnion(new PHPSimpleType("null"))
+        }
     }
 }
 class Statement extends Node {
