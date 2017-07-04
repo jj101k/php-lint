@@ -348,6 +348,9 @@ class Closure extends Statement {
                 this.assertHasName(context, t[1])
             )
         )
+        if(context.findName("$this")) {
+            inner_context.addName("$this", context.findName("$this"))
+        }
         let return_type
         if(this.body) {
             return_type = this.body.check(inner_context)
@@ -466,6 +469,10 @@ class Class extends Declaration {
         inner_context.classContext = inner_context.globalContext.addClass(
             this.resolvedName(context)
         )
+        inner_context.addName(
+            "$this",
+            new PHPTypeUnion(new PHPSimpleType(this.resolvedName(context)))
+        )
         this.body.forEach(
             b => b.check(inner_context)
         )
@@ -532,6 +539,9 @@ class _Function extends Declaration {
                     this.assertHasName(context, t[1])
                 )
             )
+        }
+        if(context.findName("$this")) {
+            inner_context.addName("$this", context.findName("$this"))
         }
 
         let return_type
