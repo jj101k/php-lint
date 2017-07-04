@@ -672,10 +672,12 @@ class _Array extends Expression {
      */
     check(context) {
         super.check(context)
-        this.items.forEach(
-            item => item.check(context)
-        )
-        return ["array"]
+        if(this.items) {
+            this.items.forEach(
+                item => item.check(context)
+            )
+        }
+        return new PHPTypeUnion(new PHPSimpleType("array"))
     }
 }
 class Bin extends Operation {
