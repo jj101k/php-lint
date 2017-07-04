@@ -648,7 +648,11 @@ class StaticLookup extends Lookup {
      */
     check(context) {
         super.check(context)
-        if(
+        if(this.what instanceof Variable) {
+            this.what.check(context)
+            this.offset.check(context)
+            return new PHPTypeUnion(new PHPSimpleType("mixed"))
+        } else if(
             this.what instanceof Identifier &&
             this.offset instanceof ConstRef
         ) {
