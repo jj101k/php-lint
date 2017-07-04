@@ -1435,9 +1435,13 @@ class RetIf extends Statement {
      */
     check(context) {
         super.check(context)
-        this.test.check(context)
+        let test_type = this.test.check(context)
         let types = PHPTypeUnion.empty
-        types.addTypesFrom(this.trueExpr.check(context))
+        if(this.trueExpr) {
+            types.addTypesFrom(this.trueExpr.check(context))
+        } else {
+            types.addTypesFrom(test_type)
+        }
         types.addTypesFrom(this.falseExpr.check(context))
         return types
     }
