@@ -1,2 +1,4 @@
 PHPLint = require("./index")
-PHPLint.checkFileSync(process.argv[2])
+process.argv.slice(2).forEach(
+    filename => PHPLint.checkFileSync(filename)
+)
