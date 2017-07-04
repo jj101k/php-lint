@@ -723,6 +723,9 @@ class Bin extends Operation {
             case ".":
                 types.addType(new PHPSimpleType("string"))
                 break
+            case "~":
+                types.addType(new PHPSimpleType("boolean"))
+                break
             default:
                 console.log(`Don't know how to parse operator type ${this.type}`)
                 types.addTypesFrom(left_type)
