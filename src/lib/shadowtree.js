@@ -990,8 +990,8 @@ class Do extends Statement {
      */
     check(context) {
         super.check(context)
-        this.test.check(context)
         this.body.check(context)
+        this.test.check(context)
         return PHPTypeUnion.empty
     }
 }
