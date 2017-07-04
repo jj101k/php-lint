@@ -827,6 +827,21 @@ class Case extends Node {
     get body() {
         return this.cacheNode("body")
     }
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?PHPTypeUnion} The set of types applicable to this value
+     */
+    check(context) {
+        super.check(context)
+        if(this.test) {
+            this.test.check(context)
+        }
+        if(this.body) {
+            this.body.check(context)
+        }
+        return PHPTypeUnion.empty
+    }
 }
 class Cast extends Operation {
     /** @type {string} */
@@ -969,6 +984,25 @@ class For extends Statement {
     get shortForm() {
         return this.node.shortForm
     }
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?PHPTypeUnion} The set of types applicable to this value
+     */
+    check(context) {
+        super.check(context)
+        this.init.forEach(
+            n => n.check(context)
+        )
+        this.test.forEach(
+            n => n.check(context)
+        )
+        this.increment.forEach(
+            n => n.check(context)
+        )
+        this.body.check(context)
+        return PHPTypeUnion.empty
+    }
 }
 class Foreach extends Statement {
     /** @type {Expression} */
@@ -990,6 +1024,23 @@ class Foreach extends Statement {
     /** @type {boolean} */
     get shortForm() {
         return this.node.shortForm
+    }
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?PHPTypeUnion} The set of types applicable to this value
+     */
+    check(context) {
+        super.check(context)
+        this.source.check(context)
+        let assign_context = context.childContext(true)
+        assign_context.isAssigning = true
+        if(this.key) {
+            this.key.check(assign_context)
+        }
+        this.value.check(assign_context)
+        this.body.check(context)
+        return PHPTypeUnion.empty
     }
 }
 class Global extends Statement {
@@ -1027,6 +1078,20 @@ class If extends Statement {
     get shortForm() {
         return this.node.shortForm
     }
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?PHPTypeUnion} The set of types applicable to this value
+     */
+    check(context) {
+        super.check(context)
+        this.test.check(context)
+        this.body.check(context)
+        if(this.alternate) {
+            this.alternate.check(context)
+        }
+        return PHPTypeUnion.empty
+    }
 }
 class Include extends Statement {
     /** @type {Node} */
@@ -1063,6 +1128,28 @@ class Label extends Node {
     }
 }
 class List extends Sys {
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?PHPTypeUnion} The set of types applicable to this value
+     */
+    check(context) {
+        super.check(context)
+        if(context.isAssigning) {
+            this.arguments.forEach(
+                arg => {
+                    let inner_context = context.childContext(true)
+                    inner_context.isAssigning = new PHPTypeUnion(
+                        new PHPSimpleType("mixed")
+                    )
+                    arg.check(inner_context)
+                }
+            )
+            return PHPTypeUnion.empty
+        } else {
+            return super.check(context)
+        }
+    }
 }
 class Magic extends Literal {
 }
@@ -1098,6 +1185,15 @@ class Parenthesis extends Operation {
     /** @type {Expression} */
     get inner() {
         return this.cacheNode("inner")
+    }
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?PHPTypeUnion} The set of types applicable to this value
+     */
+    check(context) {
+        super.check(context)
+        return this.inner.check(context)
     }
 }
 class Post extends Operation {
@@ -1161,11 +1257,33 @@ class Silent extends Statement {
     get expr() {
         return this.cacheNode("expr")
     }
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?PHPTypeUnion} The set of types applicable to this value
+     */
+    check(context) {
+        super.check(context)
+        return this.expr.check(context)
+    }
 }
 class Static extends Statement {
     /** @type {Variable[]|Assign[]} */
     get items() {
         return this.cacheNodeArray("items")
+    }
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?PHPTypeUnion} The set of types applicable to this value
+     */
+    check(context) {
+        super.check(context)
+        let inner_context = context.childContext(true)
+        this.items.forEach(
+            i => i.check(inner_context)
+        )
+        return PHPTypeUnion.empty
     }
 }
 class Switch extends Statement {
@@ -1180,6 +1298,17 @@ class Switch extends Statement {
     /** @type {boolean} */
     get shortForm() {
         return this.node.shortForm
+    }
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?PHPTypeUnion} The set of types applicable to this value
+     */
+    check(context) {
+        super.check(context)
+        this.test.check(context)
+        this.body.check(context)
+        return PHPTypeUnion.empty
     }
 }
 class Throw extends Statement {
@@ -1243,9 +1372,25 @@ class Try extends Statement {
     get catches() {
         return this.cacheNodeArray("catches")
     }
-    /** @type {Block} */
+    /** @type {?Block} */
     get always() {
         return this.cacheNode("always")
+    }
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?PHPTypeUnion} The set of types applicable to this value
+     */
+    check(context) {
+        super.check(context)
+        this.body.check(context)
+        this.catches.forEach(
+            c => c.check(context)
+        )
+        if(this.always) {
+            this.always.check(context)
+        }
+        return PHPTypeUnion.empty
     }
 }
 class Unary extends Operation {
