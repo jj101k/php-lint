@@ -49,8 +49,16 @@ class Node {
     assertHasName(context, name) {
         var types = context.findName(name)
         if(!types) {
+            let loc = this.loc
+            if(!loc) {
+                loc = Object.keys(this.node).map(
+                    k => this.node[k] && this.node[k].loc
+                ).find(l => l)
+            }
             throw new PHPStrictError(
-                `Name ${name} is not defined in this namespace, contents are: ${Object.keys(context.ns)}`
+                `Name ${name} is not defined in this namespace, contents are: ${Object.keys(context.ns)}`,
+                context,
+                loc
             );
         }
         return types
@@ -605,7 +613,11 @@ class StaticLookup extends Lookup {
             if(class_context) {
                 let types = class_context.findStaticIdentifier(this.offset.name, context.classContext)
                 if(!types) {
-                    throw new PHPStrictError(`No accessible method ${resolved_name}::${this.offset.name}`)
+                    throw new PHPStrictError(
+                        `No accessible method ${resolved_name}::${this.offset.name}`,
+                        context,
+                        this.loc
+                    )
                 }
                 console.log(types[0])
                 return types
