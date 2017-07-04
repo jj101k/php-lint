@@ -965,6 +965,17 @@ class Do extends Statement {
     get body() {
         return this.cacheNode("body")
     }
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?PHPTypeUnion} The set of types applicable to this value
+     */
+    check(context) {
+        super.check(context)
+        this.test.check(context)
+        this.body.check(context)
+        return PHPTypeUnion.empty
+    }
 }
 class Doc extends Node {
     /** @type {boolean} */
@@ -977,6 +988,18 @@ class Doc extends Node {
     }
 }
 class Empty extends Sys {
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?PHPTypeUnion} The set of types applicable to this value
+     */
+    check(context) {
+        super.check(context)
+        this.arguments.forEach(
+            a => a.check(context)
+        )
+        return PHPTypeUnion.empty // FIXME?
+    }
 }
 class Encapsed extends Literal {
     /** @type {string} */
@@ -997,17 +1020,51 @@ class Entry extends Node {
     get value() {
         return this.cacheNode("value")
     }
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?PHPTypeUnion} The set of types applicable to this value
+     */
+    check(context) {
+        super.check(context)
+        if(this.key) {
+            this.key.check(context)
+        }
+        this.value.check(context)
+        return PHPTypeUnion.empty
+    }
 }
 class Eval extends Statement {
     /** @type {Node} */
     get source() {
         return this.cacheNode("source")
     }
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?PHPTypeUnion} The set of types applicable to this value
+     */
+    check(context) {
+        super.check(context)
+        FIXME
+    }
 }
 class Exit extends Statement {
     /** @type {?Node} */
     get status() {
         return this.cacheNode("status")
+    }
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?PHPTypeUnion} The set of types applicable to this value
+     */
+    check(context) {
+        super.check(context)
+        if(this.status) {
+            this.status.check(context)
+        }
+        return PHPTypeUnion.empty
     }
 }
 class For extends Statement {
@@ -1304,8 +1361,29 @@ class Pre extends Operation {
     get what() {
         return this.cacheNode("what")
     }
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?PHPTypeUnion} The set of types applicable to this value
+     */
+    check(context) {
+        super.check(context)
+        FIXME
+    }
 }
 class Print extends Sys {
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?PHPTypeUnion} The set of types applicable to this value
+     */
+    check(context) {
+        super.check(context)
+        this.arguments.forEach(
+            a => a.check(context)
+        )
+        return PHPTypeUnion.empty
+    }
 }
 class Property extends Declaration {
     /** @type {boolean} */
@@ -1526,8 +1604,27 @@ class Unary extends Operation {
     get what() {
         return this.cacheNode("what")
     }
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?PHPTypeUnion} The set of types applicable to this value
+     */
+    check(context) {
+        super.check(context)
+        return this.what.check(context)
+    }
 }
 class Unset extends Sys {
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?PHPTypeUnion} The set of types applicable to this value
+     */
+    check(context) {
+        super.check(context)
+        // More or less no-op
+        return PHPTypeUnion.empty
+    }
 }
 class UseGroup extends Statement {
     /** @type {?Identifier} */
