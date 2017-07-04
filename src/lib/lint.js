@@ -6,6 +6,8 @@ import PHPStrictError from "./phpstricterror"
 
 var fs = require("fs")
 
+const ShowContextLines = 10
+
 class Lint {
     static get PHPStrictError() {
         return PHPStrictError
@@ -39,8 +41,8 @@ class Lint {
                 console.log(e.message)
                 if(filename) {
                     var lines = fs.readFileSync(filename, "utf8").split(/\n/)
-                    if(e.loc.start.line >= 5) {
-                        console.log(lines.slice(e.loc.start.line - 5, e.loc.start.line).join("\n"))
+                    if(e.loc.start.line >= ShowContextLines) {
+                        console.log(lines.slice(e.loc.start.line - ShowContextLines, e.loc.start.line).join("\n"))
                     } else {
                         console.log(lines.slice(0, e.loc.start.line).join("\n"))
                     }
