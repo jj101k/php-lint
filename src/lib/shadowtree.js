@@ -387,7 +387,14 @@ class Lookup extends Expression {
 class Sys extends Statement {
     /** @type {Node[]} */
     get arguments() {
-        return this.cacheNodeArray("arguments")
+        if(
+            this.node.arguments instanceof Array ||
+            !this.node.arguments
+        ) {
+            return this.cacheNodeArray("arguments")
+        } else {
+            return [this.cacheNode("arguments")] // TODO
+        }
     }
 }
 class Variable extends Expression {
