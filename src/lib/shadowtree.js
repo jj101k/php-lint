@@ -686,13 +686,16 @@ class StaticLookup extends Lookup {
                 console.log(`Unable to find class named ${resolved_name}`)
             }
         } else if(
-            this.what instanceof Identifier &&
+            (
+                this.what instanceof Identifier ||
+                this.what instanceof ConstRef
+            ) &&
             (
                 this.offset instanceof OffsetLookup ||
                 this.offset instanceof Variable
             )
         ) {
-            // self::$FOO
+            // Bar::$FOO
             // TODO
             //this.offset.check(context)
         } else {
