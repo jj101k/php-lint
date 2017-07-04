@@ -1,6 +1,6 @@
 "use strict"
 
-import Context from "./context"
+import Context, {FileContext} from "./context"
 import ShadowTree from "./shadowtree"
 import PHPStrictError from "./phpstricterror"
 
@@ -22,7 +22,11 @@ class Lint {
         );
     }
     check() {
-        return ShadowTree.Node.typed(this.tree).check(new Context());
+        return ShadowTree.Node.typed(this.tree).check(
+            new Context(
+                new FileContext(this.filename)
+            )
+        )
     }
     static check(tree, filename = null) {
         var l = new Lint(tree, filename);

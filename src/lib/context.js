@@ -1,5 +1,15 @@
 import {PHPFunctionType, PHPSimpleType, PHPTypeUnion} from "./phptype"
 
+export class FileContext {
+    /**
+     *
+     * @param {string} filename
+     */
+    constructor(filename) {
+        this.filename = filename
+    }
+}
+
 /**
  * Defines content in a specific class
  */
@@ -104,10 +114,12 @@ export default class Context {
      * Builds the object
      * @param {?GlobalContext} global_context
      * @param {?ClassContext} class_context
+     * @param {FileContext} file_context
      */
-    constructor(global_context, class_context) {
+    constructor(file_context, global_context, class_context) {
         this.classContext = class_context
         this.globalContext = global_context || new GlobalContext()
+        this.fileContext = file_context
         this.ns = {}
     }
     /**
@@ -129,7 +141,7 @@ export default class Context {
      * @returns {Context}
      */
     childContext() {
-        return new Context(this.globalContext, this.classContext)
+        return new Context(this.fileContext, this.globalContext, this.classContext)
     }
     /**
      * If the name is in the namespace, returns its possible types
