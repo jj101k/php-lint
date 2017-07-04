@@ -376,7 +376,7 @@ class Lookup extends Expression {
     get what() {
         return this.cacheNode("what")
     }
-    /** @type {Expression} */
+    /** @type {?Expression} */
     get offset() {
         return this.cacheNode("offset")
     }
