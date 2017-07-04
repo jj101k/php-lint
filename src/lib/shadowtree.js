@@ -672,6 +672,16 @@ class StaticLookup extends Lookup {
             } else {
                 console.log(`Unable to find class named ${resolved_name}`)
             }
+        } else if(
+            this.what instanceof Identifier &&
+            (
+                this.offset instanceof OffsetLookup ||
+                this.offset instanceof Variable
+            )
+        ) {
+            // self::$FOO
+            // TODO
+            //this.offset.check(context)
         } else {
             console.log(this.node)
             console.log("TODO don't know how to check this kind of lookup")
