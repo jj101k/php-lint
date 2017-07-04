@@ -644,6 +644,28 @@ class Constant extends Declaration {
 }
 class Operation extends Expression {
 }
+class _Array extends Expression {
+     /** @type {Entry[]} */
+     get items() {
+         return this.cacheNodeArray("items")
+     }
+     /** @type {boolean} */
+     get shortForm() {
+         return this.node.shortForm
+     }
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?PHPTypeUnion} The set of types applicable to this value
+     */
+    check(context) {
+        super.check(context)
+        this.items.forEach(
+            item => item.check(context)
+        )
+        return ["array"]
+    }
+}
 class Bin extends Operation {
     /** @type {string} */
     get type() {
@@ -1219,6 +1241,7 @@ class YieldFrom extends Expression {
     }
 }
 const ShadowTree = {
+    Array: _Array,
     Assign: Assign,
     Bin: Bin,
     Block: Block,
