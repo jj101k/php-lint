@@ -852,6 +852,16 @@ class Cast extends Operation {
     get what() {
         return this.cacheNode("what")
     }
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?PHPTypeUnion} The set of types applicable to this value
+     */
+    check(context) {
+        super.check(context)
+        this.what.check(context)
+        return new PHPTypeUnion(new PHPSimpleType(this.type))
+    }
 }
 class Catch extends Statement {
     /** @type {Identifier[]} */
@@ -865,6 +875,23 @@ class Catch extends Statement {
     /** @type {Statement} */
     get body() {
         return this.cacheNode("body")
+    }
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?PHPTypeUnion} The set of types applicable to this value
+     */
+    check(context) {
+        super.check(context)
+        let types = PHPTypeUnion.empty
+        this.what.forEach(
+            w => types.addType(new PHPTypeUnion(w.name))
+        )
+        let inner_context = context.childContext(true)
+        inner_context.isAssigning = true
+        this.variable.check(inner_context)
+        this.body.check(context)
+        return PHPTypeUnion.empty
     }
 }
 class ClassConstant extends Constant {
@@ -881,6 +908,15 @@ class Clone extends Statement {
     /** @type {Expression} */
     get what() {
         return this.cacheNode("what")
+    }
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?PHPTypeUnion} The set of types applicable to this value
+     */
+    check(context) {
+        super.check(context)
+        return this.what.check(context)
     }
 }
 class Coalesce extends Operation {
@@ -1106,6 +1142,16 @@ class Include extends Statement {
     get require() {
         return this.node.require
     }
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?PHPTypeUnion} The set of types applicable to this value
+     */
+    check(context) {
+        super.check(context)
+        this.target.check(context)
+        return PHPTypeUnion.empty
+    }
 }
 class Inline extends Literal {
 }
@@ -1120,6 +1166,16 @@ class Interface extends Declaration {
     }
 }
 class Isset extends Sys {
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?PHPTypeUnion} The set of types applicable to this value
+     */
+    check(context) {
+        super.check(context)
+        // no-op
+        return new PHPTypeUnion(new PHPSimpleType("boolean"))
+    }
 }
 class Label extends Node {
     /** @type {string} */
@@ -1172,6 +1228,19 @@ class New extends Statement {
     get arguments() {
         return this.cacheNodeArray("arguments")
     }
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?PHPTypeUnion} The set of types applicable to this value
+     */
+    check(context) {
+        super.check(context)
+        this.what.check(context)
+        this.arguments.forEach(
+            arg => arg.check(context)
+        )
+        return new PHPTypeUnion(new PHPSimpleType(this.what.name || "mixed"))
+    }
 }
 class Nowdoc extends Literal {
     /** @type {string} */
@@ -1205,6 +1274,15 @@ class Post extends Operation {
     get what() {
         return this.cacheNode("what")
     }
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?PHPTypeUnion} The set of types applicable to this value
+     */
+    check(context) {
+        super.check(context)
+        return this.what.check(context)
+    }
 }
 class Pre extends Operation {
     /** @type {string} */
@@ -1235,6 +1313,18 @@ class Property extends Declaration {
     get value() {
         return this.cacheNode("value")
     }
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?PHPTypeUnion} The set of types applicable to this value
+     */
+    check(context) {
+        super.check(context)
+        if(this.value) {
+            this.value.check(context)
+        }
+        return PHPTypeUnion.empty
+    }
 }
 class RetIf extends Statement {
     /** @type {Expression} */
@@ -1248,6 +1338,19 @@ class RetIf extends Statement {
     /** @type {Expression} */
     get falseExpr() {
         return this.cacheNode("falseExpr")
+    }
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?PHPTypeUnion} The set of types applicable to this value
+     */
+    check(context) {
+        super.check(context)
+        this.test.check(context)
+        let types = PHPTypeUnion.empty
+        types.addTypesFrom(this.trueExpr.check(context))
+        types.addTypesFrom(this.falseExpr.check(context))
+        return types
     }
 }
 class Shell extends Literal {
@@ -1315,6 +1418,16 @@ class Throw extends Statement {
     /** @type {Expression} */
     get what() {
         return this.cacheNode("what")
+    }
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?PHPTypeUnion} The set of types applicable to this value
+     */
+    check(context) {
+        super.check(context)
+        this.what.check(context)
+        return PHPTypeUnion.empty
     }
 }
 class Trait extends Declaration {
@@ -1451,6 +1564,17 @@ class While extends Statement {
     /** @type {boolean} */
     get shortForm() {
         return this.node.shortForm
+    }
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?PHPTypeUnion} The set of types applicable to this value
+     */
+    check(context) {
+        super.check(context)
+        this.test.check(context)
+        this.body.check(context)
+        return PHPTypeUnion.empty
     }
 }
 class Yield extends Expression {
