@@ -39,7 +39,7 @@ exports.checkFile = function(filename) {
             } else {
                 try {
                     var tree = parser.parseCode(data, filename);
-                    resolve(lint.check(tree));
+                    resolve(lint.check(tree, filename));
                 } catch(e) {
                     reject(e);
                 }
@@ -51,5 +51,5 @@ exports.checkFileSync = function(filename) {
     //
     var data = fs.readFileSync(filename, "utf8");
     var tree = parser.parseCode(data, filename);
-    return lint.check(tree);
+    return lint.check(tree, filename);
 };
