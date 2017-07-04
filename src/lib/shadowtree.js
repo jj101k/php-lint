@@ -727,6 +727,18 @@ class Constant extends Declaration {
         return this.cacheNode("value")
     }
     // TODO add to global namespace?
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?PHPTypeUnion} The set of types applicable to this value
+     */
+    check(context) {
+        super.check(context)
+        if(this.value) {
+            this.value.check(context)
+        }
+        return PHPTypeUnion.empty
+    }
 }
 class Operation extends Expression {
 }
@@ -1052,7 +1064,8 @@ class Eval extends Statement {
      */
     check(context) {
         super.check(context)
-        FIXME
+        this.source.check(context)
+        return new PHPTypeUnion(new PHPSimpleType("mixed"))
     }
 }
 class Exit extends Statement {
@@ -1157,6 +1170,18 @@ class Global extends Statement {
     /** @type {Variable[]} */
     get items() {
         return this.cacheNodeArray("items")
+    }
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?PHPTypeUnion} The set of types applicable to this value
+     */
+    check(context) {
+        super.check(context)
+        let inner_context = context.childContext(true)
+        inner_context.isAssigning = true
+        this.items.forEach(item => item.check(inner_context))
+        return PHPTypeUnion.empty
     }
 }
 class Goto extends Statement {
@@ -1374,7 +1399,7 @@ class Pre extends Operation {
      */
     check(context) {
         super.check(context)
-        FIXME
+        return this.what.check(context)
     }
 }
 class Print extends Sys {
@@ -1668,6 +1693,16 @@ class Variadic extends Expression {
     /** @type {Array|Expression} */
     get what() {
         return this.cacheNode("what")
+    }
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?PHPTypeUnion} The set of types applicable to this value
+     */
+    check(context) {
+        super.check(context)
+        this.what.check(context)
+        return PHPTypeUnion.empty
     }
 }
 class While extends Statement {
