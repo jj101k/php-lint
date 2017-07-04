@@ -268,7 +268,30 @@ class Call extends Statement {
      */
     check(context) {
         super.check(context)
-        this.arguments.forEach(arg => arg.check(context))
+        let pbr_positions
+        if(this.what instanceof Identifier) {
+            switch(this.what.name) {
+                case "pcntl_waitpid":
+                    pbr_positions = {1: true}
+                    break
+                case "preg_match":
+                    pbr_positions = {2: true}
+                    break
+                default:
+                    pbr_positions = {}
+            }
+        } else {
+            pbr_positions = {}
+        }
+        this.arguments.forEach((arg, i) => {
+            if(pbr_positions[i]) {
+                let inner_context = context.childContext(true)
+                inner_context.isAssigning = true
+                arg.check(inner_context)
+            } else {
+                arg.check(context)
+            }
+        })
         let callable_types = this.what.check(context)
         let types = PHPTypeUnion.empty
         callable_types.types.forEach(t => types.addType(t))
