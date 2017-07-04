@@ -56,7 +56,7 @@ class Node {
                 ).find(l => l)
             }
             throw new PHPStrictError(
-                `Name ${name} is not defined in this namespace, contents are: ${Object.keys(context.ns)}`,
+                `Name ${name} is not defined in this namespace, contents are: ${Object.keys(context.ns).join(", ")}`,
                 context,
                 loc
             );
