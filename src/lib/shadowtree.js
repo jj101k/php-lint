@@ -769,6 +769,7 @@ class Bin extends Operation {
             case "*":
             case "/":
             case "-":
+            case "%":
                 types.addType(new PHPSimpleType("number"))
                 break
             case "+":
@@ -782,6 +783,14 @@ class Bin extends Operation {
                 types.addType(new PHPSimpleType("string"))
                 break
             case "~":
+            case "!~":
+            case "=":
+            case "!=":
+            case "?":
+            case "<":
+            case "<=":
+            case ">":
+            case "=>":
                 types.addType(new PHPSimpleType("boolean"))
                 break
             default:
