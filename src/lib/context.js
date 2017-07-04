@@ -154,7 +154,7 @@ export default class Context {
     /**
      * If the name is in the namespace, returns its possible types
      * @param {string} name eg "$bar"
-     * @returns {boolean}
+     * @returns {PHPTypeUnion}
      */
     findName(name) {
         var types = this.ns[name]
