@@ -696,6 +696,15 @@ class Bin extends Operation {
     }
 }
 class _Boolean extends Literal {
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?PHPTypeUnion} The set of types applicable to this value
+     */
+    check(context) {
+        super.check(context)
+        return new PHPTypeUnion(new PHPSimpleType("boolean"))
+    }
 }
 class Break extends Node {
     /** @type {?Number} */
