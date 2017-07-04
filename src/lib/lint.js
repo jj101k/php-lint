@@ -4,6 +4,8 @@ import Context, {FileContext} from "./context"
 import ShadowTree from "./shadowtree"
 import PHPStrictError from "./phpstricterror"
 
+var fs = require("fs")
+
 class Lint {
     static get PHPStrictError() {
         return PHPStrictError
@@ -29,8 +31,35 @@ class Lint {
         )
     }
     static check(tree, filename = null) {
-        var l = new Lint(tree, filename);
-        return l.check();
+        var l = new Lint(tree, filename)
+        try {
+            return l.check()
+        } catch(e) {
+            if(e instanceof PHPStrictError) {
+                console.log(e.message)
+                if(filename) {
+                    var lines = fs.readFileSync(filename, "utf8").split(/\n/)
+                    if(e.loc.start.line >= 5) {
+                        console.log(lines.slice(e.loc.start.line - 5, e.loc.start.line).join("\n"))
+                    } else {
+                        console.log(lines.slice(0, e.loc.start.line).join("\n"))
+                    }
+                    if(e.loc.start.line == e.loc.end.line) {
+                        console.log(
+                            " ".repeat(e.loc.start.column) + "^" +
+                            "~".repeat(e.loc.end.column - e.loc.start.column - 1)
+                        )
+                    } else {
+                        console.log(
+                            " ".repeat(e.loc.start.column) + "^"
+                        )
+                    }
+                }
+                return null
+            } else {
+                throw e
+            }
+        }
     }
 };
 
