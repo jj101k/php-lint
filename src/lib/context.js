@@ -133,7 +133,7 @@ export default class Context {
             this.ns[name] = new PHPTypeUnion()
         }
         this.ns[name].addTypesFrom(types)
-        console.log(`Types for ${name} are: ${this.ns[name]}`)
+        //console.log(`Types for ${name} are: ${this.ns[name]}`)
         return types
     }
     /**
