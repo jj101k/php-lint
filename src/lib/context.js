@@ -5,6 +5,9 @@ const fs = require("fs")
 const path = require("path")
 const phpLint = require("../index") // TODO improve
 
+/** @type {boolean} If true, this will dump out type info */
+const DEBUG_TYPES = false
+
 export class FileContext {
     /**
      *
@@ -338,7 +341,9 @@ export default class Context {
             this.ns[name] = new PHPTypeUnion()
         }
         this.ns[name].addTypesFrom(types)
-        //console.log(`Types for ${name} are: ${this.ns[name]}`)
+        if(DEBUG_TYPES) {
+            console.log(`Types for ${name} are: ${this.ns[name]}`)
+        }
         return types
     }
     /**
