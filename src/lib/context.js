@@ -59,12 +59,15 @@ class ClassContext {
     /**
      * Builds the object
      * @param {string} name Fully qualified only
+     * @param {?ClassContext} superclass
      */
-    constructor(name) {
+    constructor(name, superclass = null) {
         this.name = name
         this.staticIdentifiers = {}
         this.instanceIdentifiers = {}
+        this.superclass = superclass
     }
+
     /**
      * Adds a known identifier
      * @param {string} name
@@ -98,6 +101,11 @@ class ClassContext {
                 return m.types
             }
             // TODO inheritance
+        } else if(this.superclass) {
+            let superclass_types = this.superclass.findInstanceIdentifier(name, from_class_context)
+            if(superclass_types) {
+                return superclass_types
+            }
         }
         return null
     }
@@ -113,7 +121,11 @@ class ClassContext {
             if(from_class_context === this || m.scope == "public") {
                 return m.types
             }
-            // TODO inheritance
+        } else if(this.superclass) {
+            let superclass_types = this.superclass.findStaticIdentifier(name, from_class_context)
+            if(superclass_types) {
+                return superclass_types
+            }
         }
         return null
     }
@@ -209,10 +221,14 @@ export class GlobalContext {
     /**
      * Adds a known class
      * @param {string} name Fully qualified only
+     * @param {?ClassContext} superclass
      * @returns {ClassContext}
      */
-    addClass(name) {
-        return this.classes[name] = this.classes[name] || new ClassContext(name)
+    addClass(name, superclass = null) {
+        return this.classes[name] = this.classes[name] || new ClassContext(
+            name,
+            superclass
+        )
     }
 
     /**

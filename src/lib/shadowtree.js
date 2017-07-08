@@ -457,7 +457,10 @@ class Class extends Declaration {
         super.check(context)
         let inner_context = context.childContext()
         inner_context.classContext = inner_context.globalContext.addClass(
-            context.resolveNodeName(this)
+            context.resolveNodeName(this),
+            this.extends ?
+                context.findClass(context.resolveNodeName(this.extends)) :
+                null
         )
         inner_context.addName(
             "$this",
