@@ -184,7 +184,30 @@ class TraitUse extends Node {
             return null;
         }
     }
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?PHPTypeUnion} The set of types applicable to this value
+     */
+    check(context) {
+        super.check(context)
+        // TODO adaptations not yet supported
+        if(this.traits) {
+            this.traits.forEach(
+                t => {
+                    let info = context.findClass(context.resolveNodeName(t))
+                    for(var k in info.staticIdentifiers) {
+                        context.classContext.staticIdentifiers[k] = info.staticIdentifiers[k]
+                    }
+                    for(var k in info.instanceIdentifiers) {
+                        context.classContext.instanceIdentifiers[k] = info.instanceIdentifiers[k]
+                    }
+                }
+            )
+        }
+    }
 }
+
 class Assign extends Statement {
     /** @type {string} */
     get operator() {
@@ -1556,6 +1579,30 @@ class Trait extends Declaration {
     /** @type {Declaration[]} */
     get body() {
         return this.cacheNodeArray("body")
+    }
+
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?PHPTypeUnion} The set of types applicable to this value
+     */
+    check(context) {
+        super.check(context)
+        let inner_context = context.childContext()
+        inner_context.classContext = inner_context.globalContext.addClass(
+            context.resolveNodeName(this),
+            this.extends ?
+                context.findClass(context.resolveNodeName(this.extends)) :
+                null
+        )
+        inner_context.addName(
+            "$this",
+            new PHPTypeUnion(new PHPSimpleType(context.resolveNodeName(this)))
+        )
+        this.body.forEach(
+            b => b.check(inner_context)
+        )
+        return PHPTypeUnion.empty
     }
 }
 class TraitAlias extends Node {
