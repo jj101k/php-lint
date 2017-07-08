@@ -1763,8 +1763,8 @@ class UseGroup extends Statement {
         return this.node.type
     }
     /** @type {UseItem[]} */
-    get item() {
-        return this.cacheNodeArray("item")
+    get items() {
+        return this.cacheNodeArray("items")
     }
     /**
      * Checks that syntax seems ok
@@ -1773,7 +1773,7 @@ class UseGroup extends Statement {
      */
     check(context) {
         super.check(context)
-        this.item.forEach(
+        this.items.forEach(
             item => item.check(context)
         )
         // More or less no-op
