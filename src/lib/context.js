@@ -1,5 +1,9 @@
 import {PHPFunctionType, PHPSimpleType, PHPTypeUnion} from "./phptype"
 
+const fs = require("fs")
+const path = require("path")
+const phpLint = require("../index") // TODO improve
+
 export class FileContext {
     /**
      *
@@ -81,13 +85,72 @@ class ClassContext {
  * This defines content that's defined from the global scope, ie. everything
  * that is not anonymous.
  */
-class GlobalContext {
+export class GlobalContext {
+    /**
+     * This returns autoload config from the given composer.json
+     * @param {?string} filename eg. /foo/bar/composer.json
+     * @param {?string} vendor_path If unset, this will be based on the filename
+     * @returns {?Object.<string,string[]>} Class name prefixes mapped to arrays
+     * of paths. Each path should end with a /, and most prefixes will also.
+     */
+    static autoloadFromComposer(filename, vendor_path = null) {
+        if(!filename) return null
+        /** @type {string} The current module (or whole project) root */
+        let current_module_path = path.dirname(filename)
+        let composer_config = JSON.parse(fs.readFileSync(filename, "utf8"))
+        let autoload_paths = {}
+        if(composer_config.autoload) {
+            let psr0 = composer_config.autoload["psr-0"]
+            if(psr0) {
+                Object.keys(psr0).forEach(
+                    prefix => {
+                        autoload_paths[prefix] = [psr0[prefix]].map(
+                            path => `${current_module_path}/${path}/${prefix.replace(/[_\\]/g, "")}/`
+                        )
+                    }
+                )
+            }
+            let psr4 = composer_config.autoload["psr-4"]
+            if(psr4) {
+                Object.keys(psr4).forEach(
+                    prefix => {
+                        autoload_paths[prefix] = (psr4[prefix] instanceof Array ?
+                            psr4[prefix] :
+                            [psr4[prefix]]
+                        ).map(
+                            path => `${current_module_path}/${path}`
+                        )
+                    }
+                )
+            }
+        }
+        if(!vendor_path) {
+            vendor_path = path.dirname(filename) + "/vendor"
+        }
+        if(composer_config.require) {
+            Object.keys(composer_config.require).filter(
+                uid => uid.match(/\//)
+            ).forEach(
+                uid => autoload_paths = Object.assign(
+                    {},
+                    this.autoloadFromComposer(
+                        `${vendor_path}/${uid}/composer.json`,
+                        vendor_path
+                    ),
+                    autoload_paths
+                )
+            )
+        }
+        return autoload_paths
+    }
+
     /**
      * Builds the context
      */
     constructor() {
         this.classes = {}
     }
+
     /**
      * Adds a known class
      * @param {string} name Fully qualified only
@@ -96,12 +159,71 @@ class GlobalContext {
     addClass(name) {
         return this.classes[name] = this.classes[name] || new ClassContext(name)
     }
+
+    /**
+     * Given a path for the current file, walks up the tree looking for composer.json.
+     *
+     * @param {string} actual_path eg. /foo/bar/lib/Baz/
+     * @return {?string} eg. /foo/bar/composer.json
+     */
+    findComposerConfig(actual_path) {
+        while(actual_path.match(/^\/+[^\/]/)) {
+            if(fs.existsSync(`${actual_path}/composer.json`)) {
+                return `${actual_path}/composer.json`
+            }
+            actual_path = path.dirname(actual_path)
+        }
+        return null
+    }
+
     /**
      * Finds the class context with the given name
      * @param {string} name Fully qualified only
+     * @param {FileContext} file_context
      * @returns {?ClassContext}
      */
-    findClass(name) {
+    findClass(name, file_context) {
+        if(name.match(/^\\\\/)) {
+            throw new Error(`Invalid class name ${name}`)
+        }
+        let filename = file_context.filename
+        if(this.classes.hasOwnProperty(name)) {
+            return this.classes[name]
+        } else {
+            // Autoload go!
+            if(!this.autoloadPaths) {
+                let dir = path.dirname(path.resolve(filename))
+                this.autoloadPaths = GlobalContext.autoloadFromComposer(
+                    this.findComposerConfig(dir)
+                )
+            }
+            let canonical_class_name = name.replace(/^\\+/, "").replace(/_/g, '\\')
+            let paths = Object.keys(this.autoloadPaths)
+            paths.sort((a, b) => b.length - a.length || a.localeCompare(b))
+            for(let k of paths) {
+                if(
+                    k.length < canonical_class_name.length &&
+                    k == canonical_class_name.substr(0, k.length)
+                ) {
+                    let path_tail = canonical_class_name.substr(k.length).replace(/\\/g, "/") + ".php"
+                    let full_path = this.autoloadPaths[k].map(
+                        path => path + path_tail
+                    ).find(
+                        path => fs.existsSync(path)
+                    )
+                    if(full_path) {
+                        phpLint.checkFileSync(full_path)
+                        if(!this.classes[name]) {
+                            console.log(`Class ${name} not found at ${full_path}`)
+                        }
+                        return this.classes[name]
+                    }
+
+                }
+            }
+            console.log(`Could not load ${name}`)
+            this.classes[name] = null
+        }
         return this.classes[name]
     }
 }
@@ -160,7 +282,7 @@ export default class Context {
      * @returns {?ClassContext}
      */
     findClass(name) {
-        return this.globalContext.findClass(name)
+        return this.globalContext.findClass(name, this.fileContext)
     }
 
     /**

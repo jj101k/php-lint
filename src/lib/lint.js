@@ -1,6 +1,6 @@
 "use strict"
 
-import Context, {FileContext} from "./context"
+import Context, {FileContext, GlobalContext} from "./context"
 import ShadowTree from "./shadowtree"
 import PHPStrictError from "./phpstricterror"
 
@@ -9,6 +9,12 @@ var fs = require("fs")
 const ShowContextLines = 10
 
 class Lint {
+    static get globalContext() {
+        if(!this._globalContext) {
+            this._globalContext = new GlobalContext()
+        }
+        return this._globalContext
+    }
     static get PHPStrictError() {
         return PHPStrictError
     }
@@ -28,7 +34,8 @@ class Lint {
     check() {
         return ShadowTree.Node.typed(this.tree).check(
             new Context(
-                new FileContext(this.filename)
+                new FileContext(this.filename),
+                Lint.globalContext
             )
         )
     }
