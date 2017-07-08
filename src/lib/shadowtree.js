@@ -159,10 +159,14 @@ class Identifier extends Node {
             case "fqn":
                 return this.name
             case "uqn":
-                return "\\" + this.name // TODO namespaces
+                if(context.fileContext.namespace) {
+                    return `\\${context.fileContext.namespace}\\${this.name}`
+                } else {
+                    return `\\${this.name}`
+                }
             default:
                 console.log(this.node)
-                console.log("TODO don't know how to resolve")
+                throw new Error(`TODO don't know how to resolve ${this.resolution}`)
         }
     }
 }
@@ -305,6 +309,20 @@ class Call extends Statement {
     }
 }
 class ConstRef extends Expression {
+    /**
+     * The fully resolved name
+     * @param {Context} context
+     * @returns {string}
+     */
+    resolvedName(context) {
+        if(this.name == "self") {
+            return context.classContext.name
+        } else if(this.name == "static") {
+            return context.classContext.name
+        } else {
+            return this.name
+        }
+    }
     /** @type {Node|string} */
     get name() {
         return this.cacheOptionalNode("name")
@@ -469,7 +487,11 @@ class Class extends Declaration {
      * @returns {string}
      */
     resolvedName(context) {
-        return "\\" + this.name // FIXME
+        if(context.fileContext.namespace) {
+            return `\\${context.fileContext.namespace}\\${this.name}`
+        } else {
+            return `\\${this.name}`
+        }
     }
     /**
      * Checks that syntax seems ok
@@ -726,7 +748,7 @@ class Constant extends Declaration {
     get value() {
         return this.cacheNode("value")
     }
-    // TODO add to global namespace?
+
     /**
      * Checks that syntax seems ok
      * @param {Context} context
@@ -1317,6 +1339,16 @@ class Namespace extends Block {
     get withBrackets() {
         return this.node.withBrackets
     }
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?PHPTypeUnion} The set of types applicable to this value
+     */
+    check(context) {
+        context.fileContext.namespace = this.name.name
+        super.check(context)
+        return PHPTypeUnion.empty
+    }
 }
 class New extends Statement {
     /** @type {Identifier|Variable|Class} */
@@ -1566,6 +1598,18 @@ class Trait extends Declaration {
     /** @type {Declaration[]} */
     get body() {
         return this.cacheNodeArray("body")
+    }
+    /**
+     * The fully resolved name
+     * @param {Context} context
+     * @returns {string}
+     */
+    resolvedName(context) {
+        if(context.fileContext.namespace) {
+            return `\\${context.fileContext.namespace}\\${this.name}`
+        } else {
+            return `\\${this.name}`
+        }
     }
 }
 class TraitAlias extends Node {

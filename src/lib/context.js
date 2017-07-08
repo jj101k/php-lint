@@ -11,6 +11,15 @@ export class FileContext {
      */
     constructor(filename) {
         this.filename = filename
+        this._namespace = null
+    }
+
+    /** @type {?string} eg "\\Foo" for the class \Foo\Bar */
+    get namespace() {
+        return this._namespace
+    }
+    set namespace(v) {
+        this._namespace = v
     }
 }
 
