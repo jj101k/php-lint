@@ -13,6 +13,7 @@ export class FileContext {
     constructor(filename) {
         this.filename = filename
         this._namespace = null
+        this.aliases = {}
     }
 
     /** @type {?string} eg "\\Foo" for the class \Foo\Bar */
@@ -24,11 +25,25 @@ export class FileContext {
     }
 
     /**
+     * Creates an alias, as from `use \Foo\Bar` or `use \Foo as Bar`
+     *
+     * @param {string} real_name eg "\\Foo\\Bar"
+     * @param {string} alias eg. "Bar"
+     */
+    alias(real_name, alias) {
+        this.aliases[alias] = real_name.replace(/^\\+/, "")
+    }
+
+    /**
      * The fully resolved name
+     *
      * @param {string} name
      * @returns {string}
      */
     resolveName(name) {
+        if(this.aliases[name]) {
+            return "\\" + this.aliases[name]
+        }
         if(this.namespace) {
             return `\\${this.namespace}\\${name}`
         } else {

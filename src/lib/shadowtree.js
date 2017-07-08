@@ -1661,6 +1661,19 @@ class UseGroup extends Statement {
     get item() {
         return this.cacheNodeArray("item")
     }
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?PHPTypeUnion} The set of types applicable to this value
+     */
+    check(context) {
+        super.check(context)
+        this.item.forEach(
+            item => item.check(context)
+        )
+        // More or less no-op
+        return PHPTypeUnion.empty
+    }
 }
 class UseItem extends Statement {
     /** @type {Identifier} */
@@ -1674,6 +1687,17 @@ class UseItem extends Statement {
     /** @type {?string} */
     get alias() {
         return this.node.alias
+    }
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?PHPTypeUnion} The set of types applicable to this value
+     */
+    check(context) {
+        super.check(context)
+        var local_alias = this.alias || this.name.name.replace(/.*\\/, "")
+        context.fileContext.alias(this.name.name, local_alias)
+        return PHPTypeUnion.empty
     }
 }
 class Variadic extends Expression {
