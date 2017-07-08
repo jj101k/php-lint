@@ -686,22 +686,25 @@ class StaticLookup extends Lookup {
             this.offset.check(context)
             return new PHPTypeUnion(new PHPSimpleType("mixed"))
         } else if(
-            this.what instanceof Identifier &&
+            (
+                this.what instanceof Identifier ||
+                this.what instanceof ConstRef
+            ) &&
             this.offset instanceof ConstRef
         ) {
             let resolved_name = context.resolveNodeName(this.what)
             let class_context = context.findClass(resolved_name)
             if(class_context) {
                 let types = class_context.findStaticIdentifier(this.offset.name, context.classContext)
-                if(!types) {
+                if(types) {
+                    return types
+                } else {
                     throw new PHPStrictError(
                         `No accessible method ${resolved_name}::${this.offset.name}`,
                         context,
                         this.loc
                     )
                 }
-                console.log(types[0])
-                return types
             } else {
                 console.log(`Unable to find class named ${resolved_name}`)
             }
