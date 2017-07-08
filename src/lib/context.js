@@ -96,11 +96,15 @@ class ClassContext {
      */
     findInstanceIdentifier(name, from_class_context) {
         let m = this.instanceIdentifiers[name]
+        let wrong_case
         if(m) {
             if(from_class_context === this || m.scope == "public") {
                 return m.types
             }
             // TODO inheritance
+        } else if(wrong_case = Object.keys(this.instanceIdentifiers).find(n => n.toLowerCase() == name.toLowerCase())) {
+            console.log(`Wrong case for identifier, ${name} != ${wrong_case}`)
+            return this.findInstanceIdentifier(wrong_case, from_class_context)
         } else if(this.superclass) {
             let superclass_types = this.superclass.findInstanceIdentifier(name, from_class_context)
             if(superclass_types) {
@@ -117,10 +121,14 @@ class ClassContext {
      */
     findStaticIdentifier(name, from_class_context) {
         let m = this.staticIdentifiers[name]
+        let wrong_case
         if(m) {
             if(from_class_context === this || m.scope == "public") {
                 return m.types
             }
+        } else if(wrong_case = Object.keys(this.staticIdentifiers).find(n => n.toLowerCase() == name.toLowerCase())) {
+            console.log(`Wrong case for identifier, ${name} != ${wrong_case}`)
+            return this.findStaticIdentifier(wrong_case, from_class_context)
         } else if(this.superclass) {
             let superclass_types = this.superclass.findStaticIdentifier(name, from_class_context)
             if(superclass_types) {
