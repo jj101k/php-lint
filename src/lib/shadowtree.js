@@ -771,9 +771,13 @@ class Constant extends Declaration {
      */
     check(context) {
         super.check(context)
+        let types
         if(this.value) {
-            this.value.check(context)
+            types = this.value.check(context)
+        } else {
+            types = new PHPTypeUnion(new PHPSimpleType("mixed"))
         }
+        context.classContext.addIdentifier(this.name, "public", true, types)
         return PHPTypeUnion.empty
     }
 }
