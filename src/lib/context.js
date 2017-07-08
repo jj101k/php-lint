@@ -142,6 +142,22 @@ class ClassContext {
     }
 
     /**
+     * Returns true if this is a subclass of that class.
+     * @param {ClassContext} other_class
+     * @returns {boolean}
+     */
+    isSubclassOf(other_class) {
+        if(this.superclass) {
+            return(
+                this.superclass === other_class ||
+                this.superclass.isSubclassOf(other_class)
+            )
+        } else {
+            return false
+        }
+    }
+
+    /**
      * The fully resolved name
      * @param {string} context
      * @returns {?string}

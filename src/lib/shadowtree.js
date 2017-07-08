@@ -695,7 +695,20 @@ class StaticLookup extends Lookup {
             let resolved_name = context.resolveNodeName(this.what)
             let class_context = context.findClass(resolved_name)
             if(class_context) {
-                let types = class_context.findStaticIdentifier(this.offset.name, context.classContext)
+                let types
+                if(
+                    context.classContext &&
+                    context.classContext.isSubclassOf(class_context) &&
+                    context.findName("$this")
+                ) {
+                    // TODO this doesn't distinguish between methods and constants
+                    types = class_context.findInstanceIdentifier(this.offset.name, context.classContext)
+                    if(!types) {
+                        types = class_context.findStaticIdentifier(this.offset.name, context.classContext)
+                    }
+                } else {
+                    types = class_context.findStaticIdentifier(this.offset.name, context.classContext)
+                }
                 if(types) {
                     return types
                 } else {
