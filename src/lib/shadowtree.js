@@ -716,13 +716,11 @@ class StaticLookup extends Lookup {
                     return new PHPTypeUnion(new PHPSimpleType("mixed"))
                 } else {
                     throw new PHPStrictError(
-                        `No accessible method ${resolved_name}::${this.offset.name}`,
+                        `No accessible identifier ${resolved_name}::${this.offset.name}`,
                         context,
                         this.loc
                     )
                 }
-            } else {
-                console.log(`Unable to find class named ${resolved_name}`)
             }
         } else if(
             (
