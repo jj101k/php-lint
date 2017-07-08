@@ -490,6 +490,23 @@ class Class extends Declaration {
             new PHPTypeUnion(new PHPSimpleType(context.resolveNodeName(this)))
         )
         this.body.forEach(
+            b => {
+                if(b instanceof Method) {
+                    inner_context.classContext.addIdentifier(
+                        b.name,
+                        b.visibility,
+                        b.isStatic,
+                        new PHPTypeUnion(
+                            new PHPFunctionType(
+                                [new PHPTypeUnion(new PHPSimpleType("mixed"))],
+                                new PHPTypeUnion(new PHPSimpleType("mixed"))
+                            )
+                        )
+                    )
+                }
+            }
+        )
+        this.body.forEach(
             b => b.check(inner_context)
         )
         return PHPTypeUnion.empty
@@ -1598,6 +1615,23 @@ class Trait extends Declaration {
         inner_context.addName(
             "$this",
             new PHPTypeUnion(new PHPSimpleType(context.resolveNodeName(this)))
+        )
+        this.body.forEach(
+            b => {
+                if(b instanceof Method) {
+                    inner_context.classContext.addIdentifier(
+                        b.name,
+                        b.visibility,
+                        b.isStatic,
+                        new PHPTypeUnion(
+                            new PHPFunctionType(
+                                [new PHPTypeUnion(new PHPSimpleType("mixed"))],
+                                new PHPTypeUnion(new PHPSimpleType("mixed"))
+                            )
+                        )
+                    )
+                }
+            }
         )
         this.body.forEach(
             b => b.check(inner_context)
