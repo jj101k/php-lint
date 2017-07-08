@@ -149,26 +149,6 @@ class Identifier extends Node {
     get resolution() {
         return this.node.resolution;
     }
-    /**
-     * The fully resolved name
-     * @param {Context} context
-     * @returns {string}
-     */
-    resolvedName(context) {
-        switch(this.resolution) {
-            case "fqn":
-                return this.name
-            case "uqn":
-                if(context.fileContext.namespace) {
-                    return `\\${context.fileContext.namespace}\\${this.name}`
-                } else {
-                    return `\\${this.name}`
-                }
-            default:
-                console.log(this.node)
-                throw new Error(`TODO don't know how to resolve ${this.resolution}`)
-        }
-    }
 }
 class Return extends Node {
     /** @type {?Expression} */
@@ -309,20 +289,6 @@ class Call extends Statement {
     }
 }
 class ConstRef extends Expression {
-    /**
-     * The fully resolved name
-     * @param {Context} context
-     * @returns {string}
-     */
-    resolvedName(context) {
-        if(this.name == "self") {
-            return context.classContext.name
-        } else if(this.name == "static") {
-            return context.classContext.name
-        } else {
-            return this.name
-        }
-    }
     /** @type {Node|string} */
     get name() {
         return this.cacheOptionalNode("name")
@@ -481,18 +447,7 @@ class Class extends Declaration {
     get isFinal() {
         return this.node.isFinal
     }
-    /**
-     * The fully resolved name
-     * @param {Context} context
-     * @returns {string}
-     */
-    resolvedName(context) {
-        if(context.fileContext.namespace) {
-            return `\\${context.fileContext.namespace}\\${this.name}`
-        } else {
-            return `\\${this.name}`
-        }
-    }
+
     /**
      * Checks that syntax seems ok
      * @param {Context} context
@@ -502,11 +457,11 @@ class Class extends Declaration {
         super.check(context)
         let inner_context = context.childContext()
         inner_context.classContext = inner_context.globalContext.addClass(
-            this.resolvedName(context)
+            context.resolveNodeName(this)
         )
         inner_context.addName(
             "$this",
-            new PHPTypeUnion(new PHPSimpleType(this.resolvedName(context)))
+            new PHPTypeUnion(new PHPSimpleType(context.resolveNodeName(this)))
         )
         this.body.forEach(
             b => b.check(inner_context)
@@ -691,7 +646,7 @@ class StaticLookup extends Lookup {
             this.what instanceof Identifier &&
             this.offset instanceof ConstRef
         ) {
-            let resolved_name = this.what.resolvedName(context)
+            let resolved_name = context.resolveNodeName(this.what)
             let class_context = context.findClass(resolved_name)
             if(class_context) {
                 let types = class_context.findStaticIdentifier(this.offset.name, context.classContext)
@@ -1599,18 +1554,6 @@ class Trait extends Declaration {
     get body() {
         return this.cacheNodeArray("body")
     }
-    /**
-     * The fully resolved name
-     * @param {Context} context
-     * @returns {string}
-     */
-    resolvedName(context) {
-        if(context.fileContext.namespace) {
-            return `\\${context.fileContext.namespace}\\${this.name}`
-        } else {
-            return `\\${this.name}`
-        }
-    }
 }
 class TraitAlias extends Node {
     /** @type {?Identifier} */
@@ -1880,3 +1823,4 @@ const ShadowTree = {
     _Function: _Function,
 }
 export default ShadowTree
+export {Identifier}

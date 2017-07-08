@@ -1,4 +1,5 @@
 import {PHPFunctionType, PHPSimpleType, PHPTypeUnion} from "./phptype"
+import {Identifier} from "./shadowtree"
 
 const fs = require("fs")
 const path = require("path")
@@ -20,6 +21,19 @@ export class FileContext {
     }
     set namespace(v) {
         this._namespace = v
+    }
+
+    /**
+     * The fully resolved name
+     * @param {string} name
+     * @returns {string}
+     */
+    resolveName(name) {
+        if(this.namespace) {
+            return `\\${this.namespace}\\${name}`
+        } else {
+            return `\\${name}`
+        }
     }
 }
 
@@ -87,6 +101,23 @@ class ClassContext {
             // TODO inheritance
         }
         return null
+    }
+
+    /**
+     * The fully resolved name
+     * @param {string} context
+     * @returns {?string}
+     */
+    resolveName(name) {
+        if(name == "parent") {
+            return this.superclass.name
+        } else if(name == "self") {
+            return this.name
+        } else if(name == "static") {
+            return this.name
+        } else {
+            return null
+        }
     }
 }
 
@@ -302,5 +333,42 @@ export default class Context {
     findName(name) {
         var types = this.ns[name]
         return types
+    }
+
+    /**
+     * The fully resolved name
+     * @param {string} name
+     * @returns {string}
+     */
+    resolveName(name) {
+        if(this.classContext) {
+            let class_name = this.classContext.resolveName(name)
+            if(class_name) {
+                return class_name
+            }
+        }
+        return this.fileContext.resolveName(name)
+    }
+
+    /**
+     * Given that the node has a name, returns its fully resolved form.
+     *
+     * @param {Identifier|Node} node
+     * @returns {string}
+     */
+    resolveNodeName(node) {
+        if(node instanceof Identifier) {
+            switch(node.resolution) {
+                case "fqn":
+                    return node.name
+                case "uqn":
+                    return this.resolveName(node.name)
+                default:
+                    console.log(node.node)
+                    throw new Error(`TODO don't know how to resolve ${node.resolution}`)
+            }
+        } else {
+            return this.resolveName(node.name)
+        }
     }
 }
