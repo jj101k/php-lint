@@ -176,7 +176,7 @@ class TraitUse extends Node {
     get adaptations() {
         return this.cacheNodeArray("adaptations");
     }
-    /** @type {?Node[]} */
+    /** @type {?Identifier[]} */
     get traits() {
         if(this.node.traits) {
             return this.cacheNodeArray("traits");
