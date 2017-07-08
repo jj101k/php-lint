@@ -670,7 +670,7 @@ class StaticLookup extends Lookup {
             this.offset instanceof ConstRef
         ) {
             let resolved_name = this.what.resolvedName(context)
-            let class_context = context.globalContext.findClass(resolved_name)
+            let class_context = context.findClass(resolved_name)
             if(class_context) {
                 let types = class_context.findStaticIdentifier(this.offset.name, context.classContext)
                 if(!types) {

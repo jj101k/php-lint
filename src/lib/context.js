@@ -153,6 +153,16 @@ export default class Context {
             keep_ns ? this.ns : null
         )
     }
+
+    /**
+     * Finds the class context with the given name
+     * @param {string} name Fully qualified only
+     * @returns {?ClassContext}
+     */
+    findClass(name) {
+        return this.globalContext.findClass(name)
+    }
+
     /**
      * If the name is in the namespace, returns its possible types
      * @param {string} name eg "$bar"
