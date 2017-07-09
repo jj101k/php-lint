@@ -450,6 +450,8 @@ export default class Context {
     static get superGlobals() {
         return {
             '$argv': new PHPTypeUnion(new PHPSimpleType("array")),
+            '$_FILES': new PHPTypeUnion(new PHPSimpleType("array")),
+            '$_POST': new PHPTypeUnion(new PHPSimpleType("array")),
             '$_SERVER': new PHPTypeUnion(new PHPSimpleType("array")),
         }
     }
