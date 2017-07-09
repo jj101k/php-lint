@@ -274,16 +274,15 @@ class Call extends Statement {
         let pbr_positions
         if(this.what instanceof Identifier) {
             switch(this.what.name) {
-                case "curl_multi_exec":
-                    pbr_positions = {1: true}
-                    break
                 case "pcntl_wait":
                     pbr_positions = {0: true}
                     break
+                case "curl_multi_exec":
                 case "pcntl_waitpid":
                     pbr_positions = {1: true}
                     break
                 case "preg_match":
+                case "preg_match_all":
                     pbr_positions = {2: true}
                     break
                 default:
