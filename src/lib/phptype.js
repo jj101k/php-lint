@@ -47,7 +47,7 @@ class PHPTypeUnion {
      * @type {PHPTypeUnion}
      */
     static get mixed() {
-        return new PHPTypeUnion(new PHPSimpleType())
+        return new PHPTypeUnion(new PHPSimpleType("mixed"))
     }
 
     /**
