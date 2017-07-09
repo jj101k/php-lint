@@ -833,6 +833,12 @@ class StaticLookup extends Lookup {
                         context,
                         this.node.loc
                     )
+                    class_context.addIdentifier(
+                        this.offset.name,
+                        "public",
+                        true,
+                        PHPTypeUnion.mixed
+                    )
                     return PHPTypeUnion.mixed
                 } else {
                     throw new PHPStrictError(
