@@ -312,7 +312,7 @@ class Call extends Statement {
         return types
     }
 }
-export class ConstRef extends Expression {
+class ConstRef extends Expression {
     /** @type {string} */
     get name() {
         return this.cacheOptionalNode("name")
@@ -453,7 +453,7 @@ class Variable extends Expression {
         }
     }
 }
-export class Class extends Declaration {
+class Class extends Declaration {
     /**
      * @type {Declaration[]}
      */
@@ -2163,4 +2163,4 @@ const ShadowTree = {
     _Function: _Function,
 }
 export default ShadowTree
-export {Identifier}
+export {Class, Identifier, ConstRef}
