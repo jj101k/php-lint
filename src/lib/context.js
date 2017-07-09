@@ -369,6 +369,17 @@ export class GlobalContext {
  */
 export default class Context {
     /**
+     * @type {Object.<string,PHPTypeUnion>} A map of names to types for the
+     * "always global" core PHP variables.
+     */
+    static get superGlobals() {
+        return {
+            '$argv': new PHPTypeUnion(new PHPSimpleType("array")),
+            '$_SERVER': new PHPTypeUnion(new PHPSimpleType("array")),
+        }
+    }
+
+    /**
      * Builds the object
      * @param {?GlobalContext} global_context
      * @param {?ClassContext} class_context
@@ -380,9 +391,7 @@ export default class Context {
         this.globalContext = global_context || new GlobalContext()
         this.fileContext = file_context
         this.isAssigning = false
-        this.ns = ns || {
-            '$argv': new PHPTypeUnion(new PHPSimpleType("array")),
-        }
+        this.ns = ns || Context.superGlobals
     }
     /**
      * Adds a name to the namespace list.
