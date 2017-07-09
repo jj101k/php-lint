@@ -305,7 +305,7 @@ class Call extends Statement {
                 arg.check(context)
             }
         })
-        let callable_types = this.what.check(context)
+        let callable_types = this.what.check(context, true)
         let types = PHPTypeUnion.empty
         callable_types.types.forEach(t => types.addType(t))
         return types
@@ -662,9 +662,10 @@ class PropertyLookup extends Lookup {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
+     * @param {boolean} [in_call]
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
-    check(context) {
+    check(context, in_call = false) {
         super.check(context)
         if(
             (
@@ -681,7 +682,7 @@ class PropertyLookup extends Lookup {
                 type_union.types.map(t => {
                     if(!t.typeName) return // FIXME
                     let class_context = context.findClass(t.typeName)
-                    let identifier_types = class_context.findInstanceIdentifier(this.offset.name, context.classContext)
+                    let identifier_types = class_context.findInstanceIdentifier(this.offset.name, context.classContext, in_call)
                     if(identifier_types) {
                         types_out.addTypesFrom(identifier_types)
                     } else {
@@ -723,7 +724,7 @@ class PropertyLookup extends Lookup {
                 types_in.types.map(t => {
                     if(!t.typeName) return // FIXME
                     let class_context = context.findClass(t.typeName)
-                    let identifier_types = class_context.findInstanceIdentifier(this.offset.name, context.classContext)
+                    let identifier_types = class_context.findInstanceIdentifier(this.offset.name, context.classContext, in_call)
                     if(identifier_types) {
                         types_out.addTypesFrom(identifier_types)
                     } else {
