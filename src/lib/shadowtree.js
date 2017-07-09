@@ -725,7 +725,11 @@ class StaticLookup extends Lookup {
                 if(types) {
                     return types
                 } else if(this.what.name == "static") {
-                    console.log(`Undeclared static property static::${this.offset.name}`)
+                    PHPStrictError.warn(
+                        `Undeclared static property static::${this.offset.name}`,
+                        context,
+                        this.node.loc
+                    )
                     return new PHPTypeUnion(new PHPSimpleType("mixed"))
                 } else {
                     throw new PHPStrictError(

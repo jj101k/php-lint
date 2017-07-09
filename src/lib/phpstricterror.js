@@ -14,6 +14,20 @@ import Context from "./context"
 
 class PHPStrictError extends Error {
     /**
+     * Just issues a structured warning.
+     *
+     * @param {string} message
+     * @param {Context} context
+     * @param {ParserLocation} location
+     */
+    static warn(message, context, location) {
+        console.log(
+            "Warning: " +
+            new PHPStrictError(message, context, location).message
+        )
+    }
+
+    /**
      * Builds the object
      * @param {string} message
      * @param {Context} context
