@@ -86,7 +86,7 @@ class ClassContext {
                 types: types,
             }
         } else {
-            this.instanceIdentifiers[name] = {
+            this.instanceIdentifiers[name.replace(/^[$]/, "")] = {
                 scope: scope,
                 types: types,
             }
