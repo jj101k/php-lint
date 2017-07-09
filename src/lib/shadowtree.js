@@ -665,7 +665,95 @@ class PropertyLookup extends Lookup {
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
     check(context) {
-        return super.check(context)
+        super.check(context)
+        if(
+            (
+                this.what instanceof Variable ||
+                this.what instanceof PropertyLookup ||
+                this.what instanceof OffsetLookup ||
+                this.what instanceof Parenthesis
+             ) &&
+            this.offset instanceof ConstRef
+        ) {
+            let type_union = this.what.check(context)
+            let types_out = PHPTypeUnion.empty
+            try {
+                type_union.types.map(t => {
+                    if(!t.typeName) return // FIXME
+                    let class_context = context.findClass(t.typeName)
+                    let identifier_types = class_context.findInstanceIdentifier(this.offset.name, context.classContext)
+                    if(identifier_types) {
+                        types_out.addTypesFrom(identifier_types)
+                    } else {
+                        //console.log(class_context)
+                        throw new PHPStrictError(
+                            `No accessible identifier ${t}->${this.offset.name}`,
+                            context,
+                            this.loc
+                        )
+                    }
+                })
+            } catch(e) {
+                if(e instanceof PHPContextlessError) {
+                    throw new PHPStrictError(
+                        e.message,
+                        context,
+                        this.node.loc
+                    )
+                } else {
+                    throw e
+                }
+            }
+            return types_out
+        } else if(
+            this.what instanceof Call &&
+            this.offset instanceof ConstRef
+        ) {
+            let type_union = this.what.check(context)
+            let types_in = PHPTypeUnion.empty
+            type_union.types.forEach(t => {
+                if(t instanceof PHPFunctionType) {
+                    types_in.addType(t.returnType)
+                } else {
+                    types_in.addTypesFrom(PHPTypeUnion.mixed)
+                }
+            })
+            let types_out = PHPTypeUnion.empty
+            try {
+                types_in.types.map(t => {
+                    if(!t.typeName) return // FIXME
+                    let class_context = context.findClass(t.typeName)
+                    let identifier_types = class_context.findInstanceIdentifier(this.offset.name, context.classContext)
+                    if(identifier_types) {
+                        types_out.addTypesFrom(identifier_types)
+                    } else {
+                        //console.log(class_context)
+                        throw new PHPStrictError(
+                            `No accessible identifier ${t}->${this.offset.name}`,
+                            context,
+                            this.loc
+                        )
+                    }
+                })
+            } catch(e) {
+                if(e instanceof PHPContextlessError) {
+                    throw new PHPStrictError(
+                        e.message,
+                        context,
+                        this.node.loc
+                    )
+                } else {
+                    throw e
+                }
+            }
+            return types_out
+        } else if(this.offset instanceof Variable) {
+            return PHPTypeUnion.mixed
+        } else {
+            console.log(this.node)
+            console.log("TODO don't know how to check this kind of lookup")
+        }
+        return PHPTypeUnion.mixed
     }
 }
 class StaticLookup extends Lookup {
@@ -1501,9 +1589,12 @@ class Property extends Declaration {
      */
     check(context) {
         super.check(context)
-        if(this.value) {
-            this.value.check(context)
-        }
+        context.classContext.addIdentifier(
+            this.name,
+            this.visibility,
+            this.isStatic,
+            this.value ? this.value.check(context) : PHPTypeUnion.mixed
+        )
         return PHPTypeUnion.empty
     }
 }
