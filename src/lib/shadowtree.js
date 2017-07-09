@@ -687,6 +687,7 @@ class PropertyLookup extends Lookup {
             (
                 this.what instanceof Variable ||
                 this.what instanceof PropertyLookup ||
+                this.what instanceof StaticLookup ||
                 this.what instanceof OffsetLookup ||
                 this.what instanceof Parenthesis
              ) &&
