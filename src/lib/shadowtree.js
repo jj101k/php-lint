@@ -691,7 +691,9 @@ class PropertyLookup extends Lookup {
              ) &&
             this.offset instanceof ConstRef
         ) {
-            let type_union = this.what.check(context)
+            let inner_context = context.childContext(true)
+            inner_context.isAssigning = false
+            let type_union = this.what.check(inner_context)
             let types_out = PHPTypeUnion.empty
             try {
                 type_union.types.map(t => {
