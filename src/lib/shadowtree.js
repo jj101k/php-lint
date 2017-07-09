@@ -172,17 +172,13 @@ class Return extends Node {
 class Statement extends Node {
 }
 class TraitUse extends Node {
-    /** @type {Identifier[]} */
+    /** @type {?Node[]} */
     get adaptations() {
-        return this.cacheNodeArray("adaptations");
+        return this.cacheNodeArray("adaptations")
     }
-    /** @type {?Identifier[]} */
+    /** @type {Identifier[]} */
     get traits() {
-        if(this.node.traits) {
-            return this.cacheNodeArray("traits");
-        } else {
-            return null;
-        }
+        return this.cacheNodeArray("traits")
     }
     /**
      * Checks that syntax seems ok
@@ -334,9 +330,13 @@ class Closure extends Statement {
     get nullable() {
         return this.node.nullable
     }
-    /** @type {Array[]} */
+    /** @type {Identifier} */
     get type() {
-        return this.node.type
+        return this.cacheNode("type")
+    }
+    /** @type {Variable[]} */
+    get uses() {
+        return this.cacheNodeArray("uses")
     }
     /**
      * Checks that syntax seems ok
@@ -349,16 +349,16 @@ class Closure extends Statement {
         let arg_types = []
         this.arguments.forEach(
             node => arg_types.push(inner_context.addName(
-                node.name,
+                "$" + node.name,
                 (node.type ? [node.type.name] : []).concat(
                     node.nullable ? [new PHPSimpleType("null")] : []
                 )
             ))
         )
-        this.type.forEach(
+        this.uses.forEach(
             t => inner_context.addName(
-                t[1],
-                this.assertHasName(context, t[1])
+                '$' + t.name,
+                this.assertHasName(context, '$' + t.name)
             )
         )
         if(context.findName("$this")) {
@@ -554,7 +554,7 @@ class _Function extends Declaration {
         let arg_types = []
         this.arguments.forEach(
             node => arg_types.push(inner_context.addName(
-                node.name,
+                "$" + node.name,
                 (node.type ? [node.type.name] : []).concat(
                     node.nullable ? [new PHPSimpleType("null")] : []
                 )
@@ -932,8 +932,12 @@ class Bin extends Operation {
         let right_types = this.right.check(context)
         let types = PHPTypeUnion.empty
         switch(this.type) {
+            case "||":
             case "|":
             case "&":
+            case "&&":
+            case "and":
+            case "or":
                 types.addType(new PHPSimpleType("boolean"))
                 break
             case "*":
@@ -962,6 +966,10 @@ class Bin extends Operation {
             case "<=":
             case ">":
             case "=>":
+            case ">=":
+            case "==":
+            case "!==":
+            case "===":
                 types.addType(new PHPSimpleType("boolean"))
                 break
             default:
@@ -1449,9 +1457,9 @@ class List extends Sys {
 class Magic extends Literal {
 }
 class Namespace extends Block {
-    /** @type {Identifier} */
+    /** @type {string} */
     get name() {
-        return this.cacheNode("name")
+        return this.node.name
     }
     /** @type {Boolean} */
     get withBrackets() {
@@ -1463,7 +1471,7 @@ class Namespace extends Block {
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
     check(context) {
-        context.fileContext.namespace = this.name.name
+        context.fileContext.namespace = this.name
         super.check(context)
         return PHPTypeUnion.empty
     }
@@ -1883,9 +1891,9 @@ class UseGroup extends Statement {
     }
 }
 class UseItem extends Statement {
-    /** @type {Identifier} */
+    /** @type {string} */
     get name() {
-        return this.cacheNode("name")
+        return this.node.name
     }
     /** @type {?string} */
     get type() {
@@ -1902,8 +1910,8 @@ class UseItem extends Statement {
      */
     check(context) {
         super.check(context)
-        var local_alias = this.alias || this.name.name.replace(/.*\\/, "")
-        context.fileContext.alias(this.name.name, local_alias)
+        var local_alias = this.alias || this.name.replace(/.*\\/, "")
+        context.fileContext.alias(this.name, local_alias)
         return PHPTypeUnion.empty
     }
 }
