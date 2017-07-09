@@ -1483,11 +1483,16 @@ class New extends Statement {
      */
     check(context) {
         super.check(context)
-        this.what.check(context)
         this.arguments.forEach(
             arg => arg.check(context)
         )
-        return new PHPTypeUnion(new PHPSimpleType(this.what.name))
+        if(this.what instanceof Variable) {
+            return PHPTypeUnion.mixed
+        } else {
+            return new PHPTypeUnion(new PHPSimpleType(
+                context.resolveNodeName(this.what)
+            ))
+        }
     }
 }
 class Nowdoc extends Literal {
