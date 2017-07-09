@@ -44,7 +44,8 @@ const PHPSuperglobals = {
     "_FILES": "array",
     "argv": "array",
     "argc": "integer",
-    "_SERVER": "array"
+    "_SERVER": "array",
+    "_SESSION": "array"
 }
 
 export class FileContext {
