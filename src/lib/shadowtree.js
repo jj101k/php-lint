@@ -288,7 +288,13 @@ class Call extends Statement {
         })
         let callable_types = this.what.check(context, true)
         let types = PHPTypeUnion.empty
-        callable_types.types.forEach(t => types.addType(t))
+        callable_types.types.forEach(t => {
+            if(t instanceof PHPFunctionType) {
+                types.addTypesFrom(t.returnType)
+            } else {
+                types.addTypesFrom(PHPTypeUnion.mixed)
+            }
+        })
         return types
     }
 }
@@ -352,6 +358,8 @@ class Closure extends Statement {
         let return_type
         if(this.body) {
             return_type = this.body.check(inner_context)
+        } else {
+            return_type = PHPTypeUnion.mixed
         }
         let types = new PHPTypeUnion(new PHPFunctionType(arg_types, return_type))
         return types
@@ -554,12 +562,25 @@ class _Function extends Declaration {
 
         let arg_types = []
         this.arguments.forEach(
-            node => arg_types.push(inner_context.addName(
-                "$" + node.name,
-                (node.type ? [node.type.name] : []).concat(
-                    node.nullable ? [new PHPSimpleType("null")] : []
-                )
-            ))
+            node => {
+                let type_union
+                if(node.type) {
+                    type_union = new PHPTypeUnion(
+                        new PHPSimpleType(
+                            context.resolveNodeName(node.type)
+                        )
+                    )
+                } else {
+                    type_union = PHPTypeUnion.mixed
+                }
+                if(node.nullable) {
+                    type_union.addType(new PHPSimpleType("null"))
+                }
+                arg_types.push(inner_context.addName(
+                    "$" + node.name,
+                    type_union
+                ))
+            }
         )
         if(this.type) {
             this.type.forEach(
@@ -576,6 +597,8 @@ class _Function extends Declaration {
         let return_type
         if(this.body) {
             return_type = this.body.check(inner_context)
+        } else {
+            return_type = PHPTypeUnion.mixed
         }
         let types = new PHPTypeUnion(new PHPFunctionType(arg_types, return_type))
         return types
