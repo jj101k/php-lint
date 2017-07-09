@@ -995,6 +995,7 @@ class Bin extends Operation {
             case "==":
             case "!==":
             case "===":
+            case "instanceof":
                 types.addType(new PHPSimpleType("boolean"))
                 break
             default:
