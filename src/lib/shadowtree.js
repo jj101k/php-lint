@@ -696,16 +696,16 @@ class PropertyLookup extends Lookup {
             let type_union = this.what.check(inner_context)
             let types_out = PHPTypeUnion.empty
             try {
-                type_union.types.map(t => {
+                type_union.types.forEach(t => {
                     if(!t.typeName) return // FIXME
                     let class_context = context.findClass(t.typeName)
                     let identifier_types = class_context.findInstanceIdentifier(this.offset.name, context.classContext, in_call)
                     if(identifier_types) {
                         types_out.addTypesFrom(identifier_types)
                     } else {
-                        //console.log(class_context)
                         throw new PHPStrictError(
-                            `No accessible identifier ${t}->${this.offset.name}`,
+                            `No accessible identifier ${t.typeName}->${this.offset.name}\n` +
+                            `Accessible properties are: ${Object.keys(class_context.instanceIdentifiers)}`,
                             context,
                             this.loc
                         )
@@ -738,16 +738,16 @@ class PropertyLookup extends Lookup {
             })
             let types_out = PHPTypeUnion.empty
             try {
-                types_in.types.map(t => {
+                types_in.types.forEach(t => {
                     if(!t.typeName) return // FIXME
                     let class_context = context.findClass(t.typeName)
                     let identifier_types = class_context.findInstanceIdentifier(this.offset.name, context.classContext, in_call)
                     if(identifier_types) {
                         types_out.addTypesFrom(identifier_types)
                     } else {
-                        //console.log(class_context)
                         throw new PHPStrictError(
-                            `No accessible identifier ${t}->${this.offset.name}`,
+                            `No accessible identifier ${t.typeName}->${this.offset.name}\n` +
+                            `Accessible properties are: ${Object.keys(class_context.instanceIdentifiers)}`,
                             context,
                             this.loc
                         )
