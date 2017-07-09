@@ -53,14 +53,15 @@ class Lint {
                     } else {
                         console.log(lines.slice(0, e.loc.start.line).join("\n"))
                     }
+                    let prefix_space = lines[e.loc.start.line - 1].substr(0, e.loc.start.column).replace(/\S/g, " ")
                     if(e.loc.start.line == e.loc.end.line) {
                         console.log(
-                            " ".repeat(e.loc.start.column) + "^" +
+                            prefix_space + "^" +
                             "~".repeat(e.loc.end.column - e.loc.start.column - 1)
                         )
                     } else {
                         console.log(
-                            " ".repeat(e.loc.start.column) + "^"
+                            prefix_space + "^"
                         )
                     }
                 }
