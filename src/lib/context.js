@@ -481,6 +481,9 @@ export default class Context {
                     return node.name
                 case "uqn":
                     return this.resolveName(node.name)
+                case "qn":
+                    let [prefix, tail] = node.name.split(/\\/, 2)
+                    return `${this.resolveName(prefix)}\\${tail}`
                 default:
                     console.log(node.node)
                     throw new Error(`TODO don't know how to resolve ${node.resolution}`)
