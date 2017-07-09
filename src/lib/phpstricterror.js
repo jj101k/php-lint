@@ -27,3 +27,6 @@ class PHPStrictError extends Error {
     }
 }
 export default PHPStrictError
+
+export class PHPContextlessError extends Error {
+}

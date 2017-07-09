@@ -1,4 +1,4 @@
-import PHPStrictError from "./phpstricterror"
+import PHPStrictError, {PHPContextlessError} from "./phpstricterror"
 import Context from "./context"
 import {PHPFunctionType, PHPSimpleType, PHPTypeUnion} from "./phptype"
 
@@ -692,7 +692,20 @@ class StaticLookup extends Lookup {
             ) &&
             this.offset instanceof ConstRef
         ) {
-            let resolved_name = context.resolveNodeName(this.what)
+            let resolved_name
+            try {
+                resolved_name = context.resolveNodeName(this.what)
+            } catch(e) {
+                if(e instanceof PHPContextlessError) {
+                    throw new PHPStrictError(
+                        e.message,
+                        context,
+                        this.node.loc
+                    )
+                } else {
+                    throw e
+                }
+            }
             let class_context = context.findClass(resolved_name)
             if(class_context) {
                 let types

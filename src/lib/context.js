@@ -1,5 +1,6 @@
 import {PHPFunctionType, PHPSimpleType, PHPTypeUnion} from "./phptype"
 import {Identifier} from "./shadowtree"
+import {PHPContextlessError} from "./phpstricterror"
 
 const fs = require("fs")
 const path = require("path")
@@ -167,8 +168,7 @@ class ClassContext {
             if(this.superclass) {
                 return this.superclass.name
             } else {
-                console.log(`Attempt to use parent:: with no superclass`)
-                return `${this.name}::parent`
+                throw new PHPContextlessError(`Attempt to use parent:: with no superclass`)
             }
         } else if(name == "self") {
             return this.name
