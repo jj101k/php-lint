@@ -1,5 +1,5 @@
 import {PHPFunctionType, PHPSimpleType, PHPTypeUnion} from "./phptype"
-import {Identifier} from "./shadowtree"
+import {Identifier, Class, ConstRef} from "./shadowtree"
 import {PHPContextlessError} from "./phpstricterror"
 
 const fs = require("fs")
@@ -509,12 +509,12 @@ export default class Context {
 
     /**
      * Builds the object
-     * @param {?GlobalContext} global_context
-     * @param {?ClassContext} class_context
      * @param {FileContext} file_context
-     * @param {?Object.<string,PHPTypeUnion} ns
+     * @param {?GlobalContext} global_context
+     * @param {?ClassContext} [class_context]
+     * @param {?Object.<string,PHPTypeUnion>} [ns]
      */
-    constructor(file_context, global_context, class_context, ns = null) {
+    constructor(file_context, global_context, class_context = null, ns = null) {
         this.classContext = class_context
         this.globalContext = global_context || new GlobalContext()
         this.fileContext = file_context
@@ -530,7 +530,7 @@ export default class Context {
      */
     addName(name, types) {
         if(!this.ns[name]) {
-            this.ns[name] = new PHPTypeUnion()
+            this.ns[name] = PHPTypeUnion.empty
         }
         this.ns[name].addTypesFrom(types)
         if(DEBUG_TYPES) {
@@ -598,7 +598,7 @@ export default class Context {
     /**
      * Given that the node has a name, returns its fully resolved form.
      *
-     * @param {Identifier|Node} node
+     * @param {Identifier|Class|ConstRef} node
      * @returns {string}
      */
     resolveNodeName(node) {
@@ -612,7 +612,7 @@ export default class Context {
                     let [prefix, tail] = node.name.split(/\\/, 2)
                     return `${this.resolveName(prefix)}\\${tail}`
                 default:
-                    console.log(node.node)
+                    console.log(node.name)
                     throw new Error(`TODO don't know how to resolve ${node.resolution}`)
             }
         } else {

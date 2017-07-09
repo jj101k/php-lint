@@ -6,6 +6,7 @@ import {PHPFunctionType, PHPSimpleType, PHPTypeUnion} from "./phptype"
  * @typedef ParserNode
  * @property {function} constructor
  * @property {string} kind
+ * @property {?ParserLocation} loc
  */
 
 /**
@@ -22,15 +23,20 @@ import {PHPFunctionType, PHPSimpleType, PHPTypeUnion} from "./phptype"
  * @property {ParserPosition} end
  */
 
+/**
+ * @callback cachePropertyCallback
+ * @param {Object} node_property
+ * @returns {Object}
+ */
+
 class Node {
+    /**
+     * Builds the shadow node
+     * @param {ParserNode} node
+     */
     constructor(node) {
-        Object.assign(
-            this,
-            {
-                _cache: {},
-                node: node
-            }
-        );
+        this._cache = {}
+        this.node = node
     }
     /** @type {string} */
     get kind() {
@@ -106,7 +112,8 @@ class Node {
      * Returns a cached copy of the named property, calling f(node_property)
      * if needed.
      * @param {string} name
-     * @param {function} f
+     * @param {cachePropertyCallback} f
+     * @returns {Object}
      */
     cacheProperty(name, f) {
         if(!this._cache.hasOwnProperty(name)) {
@@ -119,7 +126,7 @@ class Node {
      * @param {Context} context
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
-    check(context) {
+    check(context, in_call = false) {
         return PHPTypeUnion.empty
     }
     /**
@@ -160,7 +167,7 @@ class Return extends Node {
      * @param {Context} context
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
-    check(context) {
+    check(context, in_call = false) {
         super.check(context)
         if(this.expr) {
             return this.expr.check(context)
@@ -185,7 +192,7 @@ class TraitUse extends Node {
      * @param {Context} context
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
-    check(context) {
+    check(context, in_call = false) {
         super.check(context)
         // TODO adaptations not yet supported
         if(this.traits) {
@@ -224,7 +231,7 @@ class Assign extends Statement {
      * @param {Context} context
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
-    check(context) {
+    check(context, in_call = false) {
         super.check(context)
         let left_context = context.childContext(true)
         left_context.isAssigning = this.right.check(context)
@@ -249,7 +256,7 @@ class Block extends Statement {
      * @param {Context} context
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
-    check(context) {
+    check(context, in_call = false) {
         super.check(context)
         let types = PHPTypeUnion.empty
         this.children.forEach(node => {
@@ -276,7 +283,7 @@ class Call extends Statement {
      * @param {Context} context
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
-    check(context) {
+    check(context, in_call = false) {
         super.check(context)
         let pbr_positions
         if(this.what instanceof Identifier) {
@@ -287,7 +294,7 @@ class Call extends Statement {
         this.arguments.forEach((arg, i) => {
             if(pbr_positions[i]) {
                 let inner_context = context.childContext(true)
-                inner_context.isAssigning = true
+                inner_context.isAssigning = PHPTypeUnion.mixed
                 arg.check(inner_context)
             } else {
                 arg.check(context)
@@ -305,8 +312,8 @@ class Call extends Statement {
         return types
     }
 }
-class ConstRef extends Expression {
-    /** @type {Node|string} */
+export class ConstRef extends Expression {
+    /** @type {string} */
     get name() {
         return this.cacheOptionalNode("name")
     }
@@ -341,17 +348,30 @@ class Closure extends Statement {
      * @param {Context} context
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
-    check(context) {
+    check(context, in_call = false) {
         super.check(context)
         var inner_context = context.childContext()
         let arg_types = []
         this.arguments.forEach(
-            node => arg_types.push(inner_context.addName(
-                "$" + node.name,
-                (node.type ? [node.type.name] : []).concat(
-                    node.nullable ? [new PHPSimpleType("null")] : []
-                )
-            ))
+            node => {
+                let type_union
+                if(node.type) {
+                    type_union = new PHPTypeUnion(
+                        new PHPSimpleType(
+                            context.resolveNodeName(node.type)
+                        )
+                    )
+                } else {
+                    type_union = PHPTypeUnion.mixed
+                }
+                if(node.nullable) {
+                    type_union.addType(new PHPSimpleType("null"))
+                }
+                arg_types.push(inner_context.addName(
+                    "$" + node.name,
+                    type_union
+                ))
+            }
         )
         this.uses.forEach(
             t => inner_context.addName(
@@ -408,7 +428,7 @@ class Sys extends Statement {
     }
 }
 class Variable extends Expression {
-    /** @type {bool} */
+    /** @type {boolean} */
     get byref() {
         return this.node.byref;
     }
@@ -421,7 +441,7 @@ class Variable extends Expression {
      * @param {Context} context
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
-    check(context) {
+    check(context, in_call = false) {
         super.check(context)
         if(context.isAssigning) {
             return context.addName(
@@ -433,7 +453,7 @@ class Variable extends Expression {
         }
     }
 }
-class Class extends Declaration {
+export class Class extends Declaration {
     /**
      * @type {Declaration[]}
      */
@@ -476,7 +496,7 @@ class Class extends Declaration {
      * @param {Context} context
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
-    check(context) {
+    check(context, in_call = false) {
         super.check(context)
         let inner_context = context.childContext()
         inner_context.classContext = inner_context.globalContext.addClass(
@@ -529,7 +549,7 @@ class Echo extends Sys {
      * @param {Context} context
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
-    check(context) {
+    check(context, in_call = false) {
         super.check(context)
         this.arguments.forEach(child => {
             let types = child.check(context)
@@ -546,11 +566,11 @@ class _Function extends Declaration {
     get body() {
         return this.cacheNode("body")
     }
-    /** @type {bool} */
+    /** @type {boolean} */
     get byref() {
         return this.node.byref
     }
-    /** @type {bool} */
+    /** @type {boolean} */
     get nullable() {
         return this.node.nullable
     }
@@ -563,7 +583,7 @@ class _Function extends Declaration {
      * @param {Context} context
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
-    check(context) {
+    check(context, in_call = false) {
         super.check(context)
         var inner_context = context.childContext()
 
@@ -633,7 +653,7 @@ class Method extends _Function {
      * @param {Context} context
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
-    check(context) {
+    check(context, in_call = false) {
         context.classContext.addIdentifier(
             this.name,
             this.visibility,
@@ -649,22 +669,22 @@ class _Number extends Literal {
      * @param {Context} context
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
-    check(context) {
+    check(context, in_call = false) {
         super.check(context)
         let types = new PHPTypeUnion(new PHPSimpleType("number"))
         return types
     }
 }
 class Parameter extends Declaration {
-    /** @type {bool} */
+    /** @type {boolean} */
     get byref() {
         return this.node.byref
     }
-    /** @type {bool} */
+    /** @type {boolean} */
     get nullable() {
         return this.node.nullable
     }
-    /** @type {Node} */
+    /** @type {Identifier} */
     get type() {
         return this.cacheNode("type")
     }
@@ -683,7 +703,7 @@ class Program extends Block {
      * @param {Context} context
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
-    check(context) {
+    check(context, in_call = false) {
         var inner_context = context.childContext();
         this.children.forEach(child => child.check(inner_context));
         return super.check(context);
@@ -709,19 +729,18 @@ class PropertyLookup extends Lookup {
             this.offset instanceof ConstRef
         ) {
             let inner_context = context.childContext(true)
-            inner_context.isAssigning = false
+            inner_context.isAssigning = null
             let type_union = this.what.check(inner_context)
             let types_out = PHPTypeUnion.empty
             try {
                 type_union.types.forEach(t => {
-                    if(!t.typeName) return // FIXME
-                    let class_context = context.findClass(t.typeName)
+                    let class_context = context.findClass("" + t)
                     let identifier_types = class_context.findInstanceIdentifier(this.offset.name, context.classContext, in_call)
                     if(identifier_types) {
                         types_out.addTypesFrom(identifier_types)
                     } else {
                         throw new PHPStrictError(
-                            `No accessible identifier ${t.typeName}->${this.offset.name}\n` +
+                            `No accessible identifier ${t}->${this.offset.name}\n` +
                             `Accessible properties are: ${Object.keys(class_context.instanceIdentifiers)}`,
                             context,
                             this.loc
@@ -756,14 +775,13 @@ class PropertyLookup extends Lookup {
             let types_out = PHPTypeUnion.empty
             try {
                 types_in.types.forEach(t => {
-                    if(!t.typeName) return // FIXME
-                    let class_context = context.findClass(t.typeName)
+                    let class_context = context.findClass("" + t)
                     let identifier_types = class_context.findInstanceIdentifier(this.offset.name, context.classContext, in_call)
                     if(identifier_types) {
                         types_out.addTypesFrom(identifier_types)
                     } else {
                         throw new PHPStrictError(
-                            `No accessible identifier ${t.typeName}->${this.offset.name}\n` +
+                            `No accessible identifier ${t}->${this.offset.name}\n` +
                             `Accessible properties are: ${Object.keys(class_context.instanceIdentifiers)}`,
                             context,
                             this.loc
@@ -797,7 +815,7 @@ class StaticLookup extends Lookup {
      * @param {Context} context
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
-    check(context) {
+    check(context, in_call = false) {
         super.check(context)
         if(this.what instanceof Variable) {
             this.what.check(context)
@@ -893,7 +911,7 @@ class _String extends Literal {
      * @param {Context} context
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
-    check(context) {
+    check(context, in_call = false) {
         super.check(context)
         let types = new PHPTypeUnion(new PHPSimpleType("string"))
         return types
@@ -910,7 +928,7 @@ class Constant extends Declaration {
      * @param {Context} context
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
-    check(context) {
+    check(context, in_call = false) {
         super.check(context)
         let types
         if(this.value) {
@@ -938,7 +956,7 @@ class _Array extends Expression {
      * @param {Context} context
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
-    check(context) {
+    check(context, in_call = false) {
         super.check(context)
         if(this.items) {
             this.items.forEach(
@@ -966,7 +984,7 @@ class Bin extends Operation {
      * @param {Context} context
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
-    check(context) {
+    check(context, in_call = false) {
         super.check(context)
         let left_types = this.left.check(context)
         let right_types = this.right.check(context)
@@ -1027,7 +1045,7 @@ class _Boolean extends Literal {
      * @param {Context} context
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
-    check(context) {
+    check(context, in_call = false) {
         super.check(context)
         return new PHPTypeUnion(new PHPSimpleType("boolean"))
     }
@@ -1052,7 +1070,7 @@ class Case extends Node {
      * @param {Context} context
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
-    check(context) {
+    check(context, in_call = false) {
         super.check(context)
         if(this.test) {
             this.test.check(context)
@@ -1077,7 +1095,7 @@ class Cast extends Operation {
      * @param {Context} context
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
-    check(context) {
+    check(context, in_call = false) {
         super.check(context)
         this.what.check(context)
         return new PHPTypeUnion(new PHPSimpleType(this.type))
@@ -1101,14 +1119,14 @@ class Catch extends Statement {
      * @param {Context} context
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
-    check(context) {
+    check(context, in_call = false) {
         super.check(context)
         let types = PHPTypeUnion.empty
         this.what.forEach(
             w => types.addType(new PHPTypeUnion(w.name))
         )
         let inner_context = context.childContext(true)
-        inner_context.isAssigning = true
+        inner_context.isAssigning = PHPTypeUnion.mixed
         this.variable.check(inner_context)
         this.body.check(context)
         return PHPTypeUnion.empty
@@ -1134,7 +1152,7 @@ class Clone extends Statement {
      * @param {Context} context
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
-    check(context) {
+    check(context, in_call = false) {
         super.check(context)
         return this.what.check(context)
     }
@@ -1179,7 +1197,7 @@ class Do extends Statement {
      * @param {Context} context
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
-    check(context) {
+    check(context, in_call = false) {
         super.check(context)
         this.body.check(context)
         this.test.check(context)
@@ -1202,7 +1220,7 @@ class Empty extends Sys {
      * @param {Context} context
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
-    check(context) {
+    check(context, in_call = false) {
         super.check(context)
         this.arguments.forEach(
             a => a.check(context)
@@ -1234,7 +1252,7 @@ class Entry extends Node {
      * @param {Context} context
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
-    check(context) {
+    check(context, in_call = false) {
         super.check(context)
         if(this.key) {
             this.key.check(context)
@@ -1253,7 +1271,7 @@ class Eval extends Statement {
      * @param {Context} context
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
-    check(context) {
+    check(context, in_call = false) {
         super.check(context)
         this.source.check(context)
         return PHPTypeUnion.mixed
@@ -1269,7 +1287,7 @@ class Exit extends Statement {
      * @param {Context} context
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
-    check(context) {
+    check(context, in_call = false) {
         super.check(context)
         if(this.status) {
             this.status.check(context)
@@ -1303,7 +1321,7 @@ class For extends Statement {
      * @param {Context} context
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
-    check(context) {
+    check(context, in_call = false) {
         super.check(context)
         this.init.forEach(
             n => n.check(context)
@@ -1344,11 +1362,11 @@ class Foreach extends Statement {
      * @param {Context} context
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
-    check(context) {
+    check(context, in_call = false) {
         super.check(context)
         this.source.check(context)
         let assign_context = context.childContext(true)
-        assign_context.isAssigning = true
+        assign_context.isAssigning = PHPTypeUnion.mixed
         if(this.key) {
             this.key.check(assign_context)
         }
@@ -1367,10 +1385,10 @@ class Global extends Statement {
      * @param {Context} context
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
-    check(context) {
+    check(context, in_call = false) {
         super.check(context)
         let inner_context = context.childContext(true)
-        inner_context.isAssigning = true
+        inner_context.isAssigning = PHPTypeUnion.mixed
         this.items.forEach(item => item.check(inner_context))
         return PHPTypeUnion.empty
     }
@@ -1409,7 +1427,7 @@ class If extends Statement {
      * @param {Context} context
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
-    check(context) {
+    check(context, in_call = false) {
         super.check(context)
         this.test.check(context)
         this.body.check(context)
@@ -1437,7 +1455,7 @@ class Include extends Statement {
      * @param {Context} context
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
-    check(context) {
+    check(context, in_call = false) {
         super.check(context)
         this.target.check(context)
         return PHPTypeUnion.empty
@@ -1461,7 +1479,7 @@ class Isset extends Sys {
      * @param {Context} context
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
-    check(context) {
+    check(context, in_call = false) {
         super.check(context)
         // no-op
         return new PHPTypeUnion(new PHPSimpleType("boolean"))
@@ -1479,7 +1497,7 @@ class List extends Sys {
      * @param {Context} context
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
-    check(context) {
+    check(context, in_call = false) {
         super.check(context)
         if(context.isAssigning) {
             this.arguments.forEach(
@@ -1511,7 +1529,7 @@ class Namespace extends Block {
      * @param {Context} context
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
-    check(context) {
+    check(context, in_call = false) {
         context.fileContext.namespace = this.name
         super.check(context)
         return PHPTypeUnion.empty
@@ -1531,7 +1549,7 @@ class New extends Statement {
      * @param {Context} context
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
-    check(context) {
+    check(context, in_call = false) {
         super.check(context)
         this.arguments.forEach(
             arg => arg.check(context)
@@ -1569,7 +1587,7 @@ class OffsetLookup extends Lookup {
             this.what instanceof Parenthesis
         ) {
             let inner_context = context.childContext(true)
-            inner_context.isAssigning = false
+            inner_context.isAssigning = null
             types_in = this.what.check(inner_context)
         } else if(
             this.what instanceof Call
@@ -1605,7 +1623,7 @@ class Parenthesis extends Operation {
      * @param {Context} context
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
-    check(context) {
+    check(context, in_call = false) {
         super.check(context)
         return this.inner.check(context)
     }
@@ -1624,7 +1642,7 @@ class Post extends Operation {
      * @param {Context} context
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
-    check(context) {
+    check(context, in_call = false) {
         super.check(context)
         return this.what.check(context)
     }
@@ -1643,7 +1661,7 @@ class Pre extends Operation {
      * @param {Context} context
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
-    check(context) {
+    check(context, in_call = false) {
         super.check(context)
         return this.what.check(context)
     }
@@ -1654,7 +1672,7 @@ class Print extends Sys {
      * @param {Context} context
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
-    check(context) {
+    check(context, in_call = false) {
         super.check(context)
         this.arguments.forEach(
             a => a.check(context)
@@ -1684,7 +1702,7 @@ class Property extends Declaration {
      * @param {Context} context
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
-    check(context) {
+    check(context, in_call = false) {
         super.check(context)
         context.classContext.addIdentifier(
             this.name,
@@ -1713,7 +1731,7 @@ class RetIf extends Statement {
      * @param {Context} context
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
-    check(context) {
+    check(context, in_call = false) {
         super.check(context)
         let test_type = this.test.check(context)
         let types = PHPTypeUnion.empty
@@ -1738,13 +1756,13 @@ class Silent extends Statement {
      * @param {Context} context
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
-    check(context) {
+    check(context, in_call = false) {
         super.check(context)
         return this.expr.check(context)
     }
 }
 class Static extends Statement {
-    /** @type {Variable[]|Assign[]} */
+    /** @type {(Variable|Assign)[]} */
     get items() {
         return this.cacheNodeArray("items")
     }
@@ -1753,7 +1771,7 @@ class Static extends Statement {
      * @param {Context} context
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
-    check(context) {
+    check(context, in_call = false) {
         super.check(context)
         let inner_context = context.childContext(true)
         this.items.forEach(
@@ -1780,7 +1798,7 @@ class Switch extends Statement {
      * @param {Context} context
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
-    check(context) {
+    check(context, in_call = false) {
         super.check(context)
         this.test.check(context)
         this.body.check(context)
@@ -1797,7 +1815,7 @@ class Throw extends Statement {
      * @param {Context} context
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
-    check(context) {
+    check(context, in_call = false) {
         super.check(context)
         this.what.check(context)
         return PHPTypeUnion.empty
@@ -1822,7 +1840,7 @@ class Trait extends Declaration {
      * @param {Context} context
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
-    check(context) {
+    check(context, in_call = false) {
         super.check(context)
         let inner_context = context.childContext()
         inner_context.classContext = inner_context.globalContext.addTrait(
@@ -1903,7 +1921,7 @@ class Try extends Statement {
      * @param {Context} context
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
-    check(context) {
+    check(context, in_call = false) {
         super.check(context)
         this.body.check(context)
         this.catches.forEach(
@@ -1929,7 +1947,7 @@ class Unary extends Operation {
      * @param {Context} context
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
-    check(context) {
+    check(context, in_call = false) {
         super.check(context)
         return this.what.check(context)
     }
@@ -1940,7 +1958,7 @@ class Unset extends Sys {
      * @param {Context} context
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
-    check(context) {
+    check(context, in_call = false) {
         super.check(context)
         // More or less no-op
         return PHPTypeUnion.empty
@@ -1964,7 +1982,7 @@ class UseGroup extends Statement {
      * @param {Context} context
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
-    check(context) {
+    check(context, in_call = false) {
         super.check(context)
         this.items.forEach(
             item => item.check(context)
@@ -1991,7 +2009,7 @@ class UseItem extends Statement {
      * @param {Context} context
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
-    check(context) {
+    check(context, in_call = false) {
         super.check(context)
         var local_alias = this.alias || this.name.replace(/.*\\/, "")
         context.fileContext.alias(this.name, local_alias)
@@ -2008,7 +2026,7 @@ class Variadic extends Expression {
      * @param {Context} context
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
-    check(context) {
+    check(context, in_call = false) {
         super.check(context)
         this.what.check(context)
         return PHPTypeUnion.empty
@@ -2032,7 +2050,7 @@ class While extends Statement {
      * @param {Context} context
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
-    check(context) {
+    check(context, in_call = false) {
         super.check(context)
         this.test.check(context)
         this.body.check(context)

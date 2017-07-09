@@ -64,9 +64,9 @@ class PHPTypeUnion {
     }
 
     /**
-     * @param {?PHPType} initial_type
+     * @param {?PHPType} [initial_type]
      */
-    constructor(initial_type) {
+    constructor(initial_type = null) {
         this.uniqueTypes = {}
         if(initial_type) {
             this.addType(initial_type)

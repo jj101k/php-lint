@@ -22,14 +22,9 @@ class Lint {
         return ShadowTree
     }
     constructor(tree, filename = null, namespace = []) {
-        Object.assign(
-            this,
-            {
-                filename: filename,
-                namespace: namespace,
-                tree: tree,
-            }
-        );
+        this.filename = filename
+        this.namespace = namespace
+        this.tree = tree
     }
     check() {
         return ShadowTree.Node.typed(this.tree).check(
