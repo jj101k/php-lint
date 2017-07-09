@@ -12,6 +12,22 @@ const DEBUG_TYPES = false
 /** @type {boolean} If true, invalid parent:: references will be ignored */
 const IgnoreInvalidParent = true
 
+/**
+ * @type {string[]} From `print json_encode(get_declared_classes(), JSON_PRETTY_PRINT);`
+ */
+const PHPClasses = JSON.parse(fs.readFileSync(__dirname + "/../../data/php-classes.json", "utf8"))
+
+/** @type {Object.<string,string>} From `print json_encode(array_map("gettype", get_defined_vars()), JSON_PRETTY_PRINT);` */
+const PHPSuperglobals = {
+    "_GET": "array",
+    "_POST": "array",
+    "_COOKIE": "array",
+    "_FILES": "array",
+    "argv": "array",
+    "argc": "integer",
+    "_SERVER": "array"
+}
+
 export class FileContext {
     /**
      *
@@ -330,6 +346,9 @@ export class GlobalContext {
      */
     constructor() {
         this.classes = {}
+        PHPClasses.forEach(
+            name => this.addUnknownClass("\\" + name)
+        )
     }
 
     /**
@@ -348,10 +367,13 @@ export class GlobalContext {
     /**
      * Adds an unknown class. For when the real name isn't known and you have to
      * use a placeholder. You can get the name from the return value.
+     * @param {?string} [name]
      * @returns {UnknownClassContext}
      */
-    addUnknownClass() {
-        let name = "Unknown" + Math.random()
+    addUnknownClass(name = null) {
+        if(!name) {
+            name = "Unknown" + Math.random()
+        }
         return this.classes[name] = new UnknownClassContext(name)
     }
 
@@ -448,12 +470,11 @@ export default class Context {
      * "always global" core PHP variables.
      */
     static get superGlobals() {
-        return {
-            '$argv': new PHPTypeUnion(new PHPSimpleType("array")),
-            '$_FILES': new PHPTypeUnion(new PHPSimpleType("array")),
-            '$_POST': new PHPTypeUnion(new PHPSimpleType("array")),
-            '$_SERVER': new PHPTypeUnion(new PHPSimpleType("array")),
-        }
+        var out = {}
+        Object.keys(PHPSuperglobals).forEach(
+            name => out["$" + name] = new PHPTypeUnion(new PHPSimpleType(PHPSuperglobals[name]))
+        )
+        return out
     }
 
     /**
