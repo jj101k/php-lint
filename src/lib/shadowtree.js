@@ -497,6 +497,22 @@ class Class extends Declaration {
                         b.isStatic,
                         PHPTypeUnion.mixedFunction
                     )
+                } else if(b instanceof Property) {
+                    inner_context.classContext.addIdentifier(
+                        b.name,
+                        b.visibility,
+                        b.isStatic,
+                        PHPTypeUnion.mixed
+                    )
+                } else if(b instanceof ClassConstant) {
+                    inner_context.classContext.addIdentifier(
+                        b.name,
+                        "public",
+                        true,
+                        PHPTypeUnion.mixed
+                    )
+                } else if(b instanceof TraitUse) {
+                    // Do nothing - loaded shortly
                 }
             }
         )
