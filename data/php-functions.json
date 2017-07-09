@@ -1,0 +1,5752 @@
+{
+    "zend_version": [],
+    "func_num_args": [],
+    "func_get_arg": [
+        false
+    ],
+    "func_get_args": [],
+    "strlen": [
+        false
+    ],
+    "strcmp": [
+        false,
+        false
+    ],
+    "strncmp": [
+        false,
+        false,
+        false
+    ],
+    "strcasecmp": [
+        false,
+        false
+    ],
+    "strncasecmp": [
+        false,
+        false,
+        false
+    ],
+    "each": [
+        true
+    ],
+    "error_reporting": [
+        false
+    ],
+    "define": [
+        false,
+        false,
+        false
+    ],
+    "defined": [
+        false
+    ],
+    "get_class": [
+        false
+    ],
+    "get_called_class": [],
+    "get_parent_class": [
+        false
+    ],
+    "method_exists": [
+        false,
+        false
+    ],
+    "property_exists": [
+        false,
+        false
+    ],
+    "class_exists": [
+        false,
+        false
+    ],
+    "interface_exists": [
+        false,
+        false
+    ],
+    "trait_exists": [
+        false,
+        false
+    ],
+    "function_exists": [
+        false
+    ],
+    "class_alias": [
+        false,
+        false,
+        false
+    ],
+    "get_included_files": [],
+    "get_required_files": [],
+    "is_subclass_of": [
+        false,
+        false,
+        false
+    ],
+    "is_a": [
+        false,
+        false,
+        false
+    ],
+    "get_class_vars": [
+        false
+    ],
+    "get_object_vars": [
+        false
+    ],
+    "get_class_methods": [
+        false
+    ],
+    "trigger_error": [
+        false,
+        false
+    ],
+    "user_error": [
+        false,
+        false
+    ],
+    "set_error_handler": [
+        false,
+        false
+    ],
+    "restore_error_handler": [],
+    "set_exception_handler": [
+        false
+    ],
+    "restore_exception_handler": [],
+    "get_declared_classes": [],
+    "get_declared_traits": [],
+    "get_declared_interfaces": [],
+    "get_defined_functions": [],
+    "get_defined_vars": [],
+    "create_function": [
+        false,
+        false
+    ],
+    "get_resource_type": [
+        false
+    ],
+    "get_resources": [
+        false
+    ],
+    "get_loaded_extensions": [
+        false
+    ],
+    "extension_loaded": [
+        false
+    ],
+    "get_extension_funcs": [
+        false
+    ],
+    "get_defined_constants": [
+        false
+    ],
+    "debug_backtrace": [
+        false,
+        false
+    ],
+    "debug_print_backtrace": [
+        false,
+        false
+    ],
+    "gc_mem_caches": [],
+    "gc_collect_cycles": [],
+    "gc_enabled": [],
+    "gc_enable": [],
+    "gc_disable": [],
+    "strtotime": [
+        false,
+        false
+    ],
+    "date": [
+        false,
+        false
+    ],
+    "idate": [
+        false,
+        false
+    ],
+    "gmdate": [
+        false,
+        false
+    ],
+    "mktime": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+    ],
+    "gmmktime": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+    ],
+    "checkdate": [
+        false,
+        false,
+        false
+    ],
+    "strftime": [
+        false,
+        false
+    ],
+    "gmstrftime": [
+        false,
+        false
+    ],
+    "time": [],
+    "localtime": [
+        false,
+        false
+    ],
+    "getdate": [
+        false
+    ],
+    "date_create": [
+        false,
+        false
+    ],
+    "date_create_immutable": [
+        false,
+        false
+    ],
+    "date_create_from_format": [
+        false,
+        false,
+        false
+    ],
+    "date_create_immutable_from_format": [
+        false,
+        false,
+        false
+    ],
+    "date_parse": [
+        false
+    ],
+    "date_parse_from_format": [
+        false,
+        false
+    ],
+    "date_get_last_errors": [],
+    "date_format": [
+        false,
+        false
+    ],
+    "date_modify": [
+        false,
+        false
+    ],
+    "date_add": [
+        false,
+        false
+    ],
+    "date_sub": [
+        false,
+        false
+    ],
+    "date_timezone_get": [
+        false
+    ],
+    "date_timezone_set": [
+        false,
+        false
+    ],
+    "date_offset_get": [
+        false
+    ],
+    "date_diff": [
+        false,
+        false,
+        false
+    ],
+    "date_time_set": [
+        false,
+        false,
+        false,
+        false,
+        false
+    ],
+    "date_date_set": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "date_isodate_set": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "date_timestamp_set": [
+        false,
+        false
+    ],
+    "date_timestamp_get": [
+        false
+    ],
+    "timezone_open": [
+        false
+    ],
+    "timezone_name_get": [
+        false
+    ],
+    "timezone_name_from_abbr": [
+        false,
+        false,
+        false
+    ],
+    "timezone_offset_get": [
+        false,
+        false
+    ],
+    "timezone_transitions_get": [
+        false,
+        false,
+        false
+    ],
+    "timezone_location_get": [
+        false
+    ],
+    "timezone_identifiers_list": [
+        false,
+        false
+    ],
+    "timezone_abbreviations_list": [],
+    "timezone_version_get": [],
+    "date_interval_create_from_date_string": [
+        false
+    ],
+    "date_interval_format": [
+        false,
+        false
+    ],
+    "date_default_timezone_set": [
+        false
+    ],
+    "date_default_timezone_get": [],
+    "date_sunrise": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+    ],
+    "date_sunset": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+    ],
+    "date_sun_info": [
+        false,
+        false,
+        false
+    ],
+    "libxml_set_streams_context": [
+        false
+    ],
+    "libxml_use_internal_errors": [
+        false
+    ],
+    "libxml_get_last_error": [],
+    "libxml_clear_errors": [],
+    "libxml_get_errors": [],
+    "libxml_disable_entity_loader": [
+        false
+    ],
+    "libxml_set_external_entity_loader": [
+        false
+    ],
+    "preg_match": [
+        false,
+        false,
+        true,
+        false,
+        false
+    ],
+    "preg_match_all": [
+        false,
+        false,
+        true,
+        false,
+        false
+    ],
+    "preg_replace": [
+        false,
+        false,
+        false,
+        false,
+        true
+    ],
+    "preg_replace_callback": [
+        false,
+        false,
+        false,
+        false,
+        true
+    ],
+    "preg_replace_callback_array": [
+        false,
+        false,
+        false,
+        true
+    ],
+    "preg_filter": [
+        false,
+        false,
+        false,
+        false,
+        true
+    ],
+    "preg_split": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "preg_quote": [
+        false,
+        false
+    ],
+    "preg_grep": [
+        false,
+        false,
+        false
+    ],
+    "preg_last_error": [],
+    "readgzfile": [
+        false,
+        false
+    ],
+    "gzrewind": [
+        false
+    ],
+    "gzclose": [
+        false
+    ],
+    "gzeof": [
+        false
+    ],
+    "gzgetc": [
+        false
+    ],
+    "gzgets": [
+        false,
+        false
+    ],
+    "gzgetss": [
+        false,
+        false,
+        false
+    ],
+    "gzread": [
+        false,
+        false
+    ],
+    "gzopen": [
+        false,
+        false,
+        false
+    ],
+    "gzpassthru": [
+        false
+    ],
+    "gzseek": [
+        false,
+        false,
+        false
+    ],
+    "gztell": [
+        false
+    ],
+    "gzwrite": [
+        false,
+        false,
+        false
+    ],
+    "gzputs": [
+        false,
+        false,
+        false
+    ],
+    "gzfile": [
+        false,
+        false
+    ],
+    "gzcompress": [
+        false,
+        false,
+        false
+    ],
+    "gzuncompress": [
+        false,
+        false
+    ],
+    "gzdeflate": [
+        false,
+        false,
+        false
+    ],
+    "gzinflate": [
+        false,
+        false
+    ],
+    "gzencode": [
+        false,
+        false,
+        false
+    ],
+    "gzdecode": [
+        false,
+        false
+    ],
+    "zlib_encode": [
+        false,
+        false,
+        false
+    ],
+    "zlib_decode": [
+        false,
+        false
+    ],
+    "zlib_get_coding_type": [],
+    "deflate_init": [
+        false,
+        false
+    ],
+    "deflate_add": [
+        false,
+        false,
+        false
+    ],
+    "inflate_init": [
+        false
+    ],
+    "inflate_add": [
+        false,
+        false
+    ],
+    "ob_gzhandler": [
+        false,
+        false
+    ],
+    "bcadd": [
+        false,
+        false,
+        false
+    ],
+    "bcsub": [
+        false,
+        false,
+        false
+    ],
+    "bcmul": [
+        false,
+        false,
+        false
+    ],
+    "bcdiv": [
+        false,
+        false,
+        false
+    ],
+    "bcmod": [
+        false,
+        false
+    ],
+    "bcpow": [
+        false,
+        false,
+        false
+    ],
+    "bcsqrt": [
+        false,
+        false
+    ],
+    "bcscale": [
+        false
+    ],
+    "bccomp": [
+        false,
+        false,
+        false
+    ],
+    "bcpowmod": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "bzopen": [
+        false,
+        false
+    ],
+    "bzread": [
+        false,
+        false
+    ],
+    "bzwrite": [
+        false,
+        false,
+        false
+    ],
+    "bzflush": [
+        false
+    ],
+    "bzclose": [
+        false
+    ],
+    "bzerrno": [
+        false
+    ],
+    "bzerrstr": [
+        false
+    ],
+    "bzerror": [
+        false
+    ],
+    "bzcompress": [
+        false,
+        false,
+        false
+    ],
+    "bzdecompress": [
+        false,
+        false
+    ],
+    "ctype_alnum": [
+        false
+    ],
+    "ctype_alpha": [
+        false
+    ],
+    "ctype_cntrl": [
+        false
+    ],
+    "ctype_digit": [
+        false
+    ],
+    "ctype_lower": [
+        false
+    ],
+    "ctype_graph": [
+        false
+    ],
+    "ctype_print": [
+        false
+    ],
+    "ctype_punct": [
+        false
+    ],
+    "ctype_space": [
+        false
+    ],
+    "ctype_upper": [
+        false
+    ],
+    "ctype_xdigit": [
+        false
+    ],
+    "dom_import_simplexml": [
+        false
+    ],
+    "finfo_open": [
+        false,
+        false
+    ],
+    "finfo_close": [
+        false
+    ],
+    "finfo_set_flags": [
+        false,
+        false
+    ],
+    "finfo_file": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "finfo_buffer": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "mime_content_type": [
+        false
+    ],
+    "filter_input": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "filter_var": [
+        false,
+        false,
+        false
+    ],
+    "filter_input_array": [
+        false,
+        false,
+        false
+    ],
+    "filter_var_array": [
+        false,
+        false,
+        false
+    ],
+    "filter_list": [],
+    "filter_has_var": [
+        false,
+        false
+    ],
+    "filter_id": [
+        false
+    ],
+    "hash": [
+        false,
+        false,
+        false
+    ],
+    "hash_file": [
+        false,
+        false,
+        false
+    ],
+    "hash_hmac": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "hash_hmac_file": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "hash_init": [
+        false,
+        false,
+        false
+    ],
+    "hash_update": [
+        false,
+        false
+    ],
+    "hash_update_stream": [
+        false,
+        false,
+        false
+    ],
+    "hash_update_file": [
+        false,
+        false,
+        false
+    ],
+    "hash_final": [
+        false,
+        false
+    ],
+    "hash_copy": [
+        false
+    ],
+    "hash_algos": [],
+    "hash_pbkdf2": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+    ],
+    "hash_equals": [
+        false,
+        false
+    ],
+    "hash_hkdf": [
+        false,
+        false,
+        false,
+        false,
+        false
+    ],
+    "mhash_keygen_s2k": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "mhash_get_block_size": [
+        false
+    ],
+    "mhash_get_hash_name": [
+        false
+    ],
+    "mhash_count": [],
+    "mhash": [
+        false,
+        false,
+        false
+    ],
+    "json_encode": [
+        false,
+        false,
+        false
+    ],
+    "json_decode": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "json_last_error": [],
+    "json_last_error_msg": [],
+    "spl_classes": [],
+    "spl_autoload": [
+        false,
+        false
+    ],
+    "spl_autoload_extensions": [
+        false
+    ],
+    "spl_autoload_register": [
+        false,
+        false,
+        false
+    ],
+    "spl_autoload_unregister": [
+        false
+    ],
+    "spl_autoload_functions": [],
+    "spl_autoload_call": [
+        false
+    ],
+    "class_parents": [
+        false,
+        false
+    ],
+    "class_implements": [
+        false,
+        false
+    ],
+    "class_uses": [
+        false,
+        false
+    ],
+    "spl_object_hash": [
+        false
+    ],
+    "iterator_to_array": [
+        false,
+        false
+    ],
+    "iterator_count": [
+        false
+    ],
+    "iterator_apply": [
+        false,
+        false,
+        false
+    ],
+    "pdo_drivers": [],
+    "readline": [
+        false
+    ],
+    "readline_info": [
+        false,
+        false
+    ],
+    "readline_add_history": [
+        false
+    ],
+    "readline_clear_history": [],
+    "readline_read_history": [
+        false
+    ],
+    "readline_write_history": [
+        false
+    ],
+    "readline_completion_function": [
+        false
+    ],
+    "readline_callback_handler_install": [
+        false,
+        false
+    ],
+    "readline_callback_read_char": [],
+    "readline_callback_handler_remove": [],
+    "readline_redisplay": [],
+    "readline_on_new_line": [],
+    "session_name": [
+        false
+    ],
+    "session_module_name": [
+        false
+    ],
+    "session_save_path": [
+        false
+    ],
+    "session_id": [
+        false
+    ],
+    "session_create_id": [
+        false
+    ],
+    "session_regenerate_id": [
+        false
+    ],
+    "session_decode": [
+        false
+    ],
+    "session_encode": [],
+    "session_start": [],
+    "session_destroy": [],
+    "session_unset": [],
+    "session_gc": [],
+    "session_set_save_handler": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+    ],
+    "session_cache_limiter": [
+        false
+    ],
+    "session_cache_expire": [
+        false
+    ],
+    "session_set_cookie_params": [
+        false,
+        false,
+        false,
+        false,
+        false
+    ],
+    "session_get_cookie_params": [],
+    "session_write_close": [],
+    "session_abort": [],
+    "session_reset": [],
+    "session_status": [],
+    "session_register_shutdown": [],
+    "session_commit": [],
+    "simplexml_load_file": [
+        false,
+        false,
+        false,
+        false,
+        false
+    ],
+    "simplexml_load_string": [
+        false,
+        false,
+        false,
+        false,
+        false
+    ],
+    "simplexml_import_dom": [
+        false,
+        false
+    ],
+    "constant": [
+        false
+    ],
+    "bin2hex": [
+        false
+    ],
+    "hex2bin": [
+        false
+    ],
+    "sleep": [
+        false
+    ],
+    "usleep": [
+        false
+    ],
+    "time_nanosleep": [
+        false,
+        false
+    ],
+    "time_sleep_until": [
+        false
+    ],
+    "strptime": [
+        false,
+        false
+    ],
+    "flush": [],
+    "wordwrap": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "htmlspecialchars": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "htmlentities": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "html_entity_decode": [
+        false,
+        false,
+        false
+    ],
+    "htmlspecialchars_decode": [
+        false,
+        false
+    ],
+    "get_html_translation_table": [
+        false,
+        false,
+        false
+    ],
+    "sha1": [
+        false,
+        false
+    ],
+    "sha1_file": [
+        false,
+        false
+    ],
+    "md5": [
+        false,
+        false
+    ],
+    "md5_file": [
+        false,
+        false
+    ],
+    "crc32": [
+        false
+    ],
+    "iptcparse": [
+        false
+    ],
+    "iptcembed": [
+        false,
+        false,
+        false
+    ],
+    "getimagesize": [
+        false,
+        true
+    ],
+    "getimagesizefromstring": [
+        false,
+        true
+    ],
+    "image_type_to_mime_type": [
+        false
+    ],
+    "image_type_to_extension": [
+        false,
+        false
+    ],
+    "phpinfo": [
+        false
+    ],
+    "phpversion": [
+        false
+    ],
+    "phpcredits": [
+        false
+    ],
+    "php_sapi_name": [],
+    "php_uname": [
+        false
+    ],
+    "php_ini_scanned_files": [],
+    "php_ini_loaded_file": [],
+    "strnatcmp": [
+        false,
+        false
+    ],
+    "strnatcasecmp": [
+        false,
+        false
+    ],
+    "substr_count": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "strspn": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "strcspn": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "strtok": [
+        false,
+        false
+    ],
+    "strtoupper": [
+        false
+    ],
+    "strtolower": [
+        false
+    ],
+    "strpos": [
+        false,
+        false,
+        false
+    ],
+    "stripos": [
+        false,
+        false,
+        false
+    ],
+    "strrpos": [
+        false,
+        false,
+        false
+    ],
+    "strripos": [
+        false,
+        false,
+        false
+    ],
+    "strrev": [
+        false
+    ],
+    "hebrev": [
+        false,
+        false
+    ],
+    "hebrevc": [
+        false,
+        false
+    ],
+    "nl2br": [
+        false,
+        false
+    ],
+    "basename": [
+        false,
+        false
+    ],
+    "dirname": [
+        false,
+        false
+    ],
+    "pathinfo": [
+        false,
+        false
+    ],
+    "stripslashes": [
+        false
+    ],
+    "stripcslashes": [
+        false
+    ],
+    "strstr": [
+        false,
+        false,
+        false
+    ],
+    "stristr": [
+        false,
+        false,
+        false
+    ],
+    "strrchr": [
+        false,
+        false
+    ],
+    "str_shuffle": [
+        false
+    ],
+    "str_word_count": [
+        false,
+        false,
+        false
+    ],
+    "str_split": [
+        false,
+        false
+    ],
+    "strpbrk": [
+        false,
+        false
+    ],
+    "substr_compare": [
+        false,
+        false,
+        false,
+        false,
+        false
+    ],
+    "strcoll": [
+        false,
+        false
+    ],
+    "money_format": [
+        false,
+        false
+    ],
+    "substr": [
+        false,
+        false,
+        false
+    ],
+    "substr_replace": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "quotemeta": [
+        false
+    ],
+    "ucfirst": [
+        false
+    ],
+    "lcfirst": [
+        false
+    ],
+    "ucwords": [
+        false,
+        false
+    ],
+    "strtr": [
+        false,
+        false,
+        false
+    ],
+    "addslashes": [
+        false
+    ],
+    "addcslashes": [
+        false,
+        false
+    ],
+    "rtrim": [
+        false,
+        false
+    ],
+    "str_replace": [
+        false,
+        false,
+        false,
+        true
+    ],
+    "str_ireplace": [
+        false,
+        false,
+        false,
+        true
+    ],
+    "str_repeat": [
+        false,
+        false
+    ],
+    "count_chars": [
+        false,
+        false
+    ],
+    "chunk_split": [
+        false,
+        false,
+        false
+    ],
+    "trim": [
+        false,
+        false
+    ],
+    "ltrim": [
+        false,
+        false
+    ],
+    "strip_tags": [
+        false,
+        false
+    ],
+    "similar_text": [
+        false,
+        false,
+        true
+    ],
+    "explode": [
+        false,
+        false,
+        false
+    ],
+    "implode": [
+        false,
+        false
+    ],
+    "join": [
+        false,
+        false
+    ],
+    "setlocale": [
+        false,
+        false
+    ],
+    "localeconv": [],
+    "nl_langinfo": [
+        false
+    ],
+    "soundex": [
+        false
+    ],
+    "levenshtein": [
+        false,
+        false,
+        false,
+        false,
+        false
+    ],
+    "chr": [
+        false
+    ],
+    "ord": [
+        false
+    ],
+    "parse_str": [
+        false,
+        true
+    ],
+    "str_getcsv": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "str_pad": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "chop": [
+        false,
+        false
+    ],
+    "strchr": [
+        false,
+        false,
+        false
+    ],
+    "sprintf": [
+        false,
+        false
+    ],
+    "printf": [
+        false,
+        false
+    ],
+    "vprintf": [
+        false,
+        false
+    ],
+    "vsprintf": [
+        false,
+        false
+    ],
+    "fprintf": [
+        false,
+        false,
+        false
+    ],
+    "vfprintf": [
+        false,
+        false,
+        false
+    ],
+    "sscanf": [
+        false,
+        false,
+        true
+    ],
+    "fscanf": [
+        false,
+        false,
+        true
+    ],
+    "parse_url": [
+        false,
+        false
+    ],
+    "urlencode": [
+        false
+    ],
+    "urldecode": [
+        false
+    ],
+    "rawurlencode": [
+        false
+    ],
+    "rawurldecode": [
+        false
+    ],
+    "http_build_query": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "readlink": [
+        false
+    ],
+    "linkinfo": [
+        false
+    ],
+    "symlink": [
+        false,
+        false
+    ],
+    "link": [
+        false,
+        false
+    ],
+    "unlink": [
+        false,
+        false
+    ],
+    "exec": [
+        false,
+        true,
+        true
+    ],
+    "system": [
+        false,
+        true
+    ],
+    "escapeshellcmd": [
+        false
+    ],
+    "escapeshellarg": [
+        false
+    ],
+    "passthru": [
+        false,
+        true
+    ],
+    "shell_exec": [
+        false
+    ],
+    "proc_open": [
+        false,
+        false,
+        true,
+        false,
+        false,
+        false
+    ],
+    "proc_close": [
+        false
+    ],
+    "proc_terminate": [
+        false,
+        false
+    ],
+    "proc_get_status": [
+        false
+    ],
+    "proc_nice": [
+        false
+    ],
+    "rand": [
+        false,
+        false
+    ],
+    "srand": [
+        false,
+        false
+    ],
+    "getrandmax": [],
+    "mt_rand": [
+        false,
+        false
+    ],
+    "mt_srand": [
+        false,
+        false
+    ],
+    "mt_getrandmax": [],
+    "random_bytes": [
+        false
+    ],
+    "random_int": [
+        false,
+        false
+    ],
+    "getservbyname": [
+        false,
+        false
+    ],
+    "getservbyport": [
+        false,
+        false
+    ],
+    "getprotobyname": [
+        false
+    ],
+    "getprotobynumber": [
+        false
+    ],
+    "getmyuid": [],
+    "getmygid": [],
+    "getmypid": [],
+    "getmyinode": [],
+    "getlastmod": [],
+    "base64_decode": [
+        false,
+        false
+    ],
+    "base64_encode": [
+        false
+    ],
+    "password_hash": [
+        false,
+        false,
+        false
+    ],
+    "password_get_info": [
+        false
+    ],
+    "password_needs_rehash": [
+        false,
+        false,
+        false
+    ],
+    "password_verify": [
+        false,
+        false
+    ],
+    "convert_uuencode": [
+        false
+    ],
+    "convert_uudecode": [
+        false
+    ],
+    "abs": [
+        false
+    ],
+    "ceil": [
+        false
+    ],
+    "floor": [
+        false
+    ],
+    "round": [
+        false,
+        false,
+        false
+    ],
+    "sin": [
+        false
+    ],
+    "cos": [
+        false
+    ],
+    "tan": [
+        false
+    ],
+    "asin": [
+        false
+    ],
+    "acos": [
+        false
+    ],
+    "atan": [
+        false
+    ],
+    "atanh": [
+        false
+    ],
+    "atan2": [
+        false,
+        false
+    ],
+    "sinh": [
+        false
+    ],
+    "cosh": [
+        false
+    ],
+    "tanh": [
+        false
+    ],
+    "asinh": [
+        false
+    ],
+    "acosh": [
+        false
+    ],
+    "expm1": [
+        false
+    ],
+    "log1p": [
+        false
+    ],
+    "pi": [],
+    "is_finite": [
+        false
+    ],
+    "is_nan": [
+        false
+    ],
+    "is_infinite": [
+        false
+    ],
+    "pow": [
+        false,
+        false
+    ],
+    "exp": [
+        false
+    ],
+    "log": [
+        false,
+        false
+    ],
+    "log10": [
+        false
+    ],
+    "sqrt": [
+        false
+    ],
+    "hypot": [
+        false,
+        false
+    ],
+    "deg2rad": [
+        false
+    ],
+    "rad2deg": [
+        false
+    ],
+    "bindec": [
+        false
+    ],
+    "hexdec": [
+        false
+    ],
+    "octdec": [
+        false
+    ],
+    "decbin": [
+        false
+    ],
+    "decoct": [
+        false
+    ],
+    "dechex": [
+        false
+    ],
+    "base_convert": [
+        false,
+        false,
+        false
+    ],
+    "number_format": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "fmod": [
+        false,
+        false
+    ],
+    "intdiv": [
+        false,
+        false
+    ],
+    "inet_ntop": [
+        false
+    ],
+    "inet_pton": [
+        false
+    ],
+    "ip2long": [
+        false
+    ],
+    "long2ip": [
+        false
+    ],
+    "getenv": [
+        false,
+        false
+    ],
+    "putenv": [
+        false
+    ],
+    "getopt": [
+        false,
+        false,
+        true
+    ],
+    "sys_getloadavg": [],
+    "microtime": [
+        false
+    ],
+    "gettimeofday": [
+        false
+    ],
+    "getrusage": [
+        false
+    ],
+    "uniqid": [
+        false,
+        false
+    ],
+    "quoted_printable_decode": [
+        false
+    ],
+    "quoted_printable_encode": [
+        false
+    ],
+    "convert_cyr_string": [
+        false,
+        false,
+        false
+    ],
+    "get_current_user": [],
+    "set_time_limit": [
+        false
+    ],
+    "header_register_callback": [
+        false
+    ],
+    "get_cfg_var": [
+        false
+    ],
+    "get_magic_quotes_gpc": [],
+    "get_magic_quotes_runtime": [],
+    "error_log": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "error_get_last": [],
+    "error_clear_last": [],
+    "call_user_func": [
+        false,
+        false
+    ],
+    "call_user_func_array": [
+        false,
+        false
+    ],
+    "forward_static_call": [
+        false,
+        false
+    ],
+    "forward_static_call_array": [
+        false,
+        false
+    ],
+    "serialize": [
+        false
+    ],
+    "unserialize": [
+        false,
+        false
+    ],
+    "var_dump": [
+        false
+    ],
+    "var_export": [
+        false,
+        false
+    ],
+    "debug_zval_dump": [
+        false
+    ],
+    "print_r": [
+        false,
+        false
+    ],
+    "memory_get_usage": [
+        false
+    ],
+    "memory_get_peak_usage": [
+        false
+    ],
+    "register_shutdown_function": [
+        false,
+        false
+    ],
+    "register_tick_function": [
+        false,
+        false
+    ],
+    "unregister_tick_function": [
+        false
+    ],
+    "highlight_file": [
+        false,
+        false
+    ],
+    "show_source": [
+        false,
+        false
+    ],
+    "highlight_string": [
+        false,
+        false
+    ],
+    "php_strip_whitespace": [
+        false
+    ],
+    "ini_get": [
+        false
+    ],
+    "ini_get_all": [
+        false,
+        false
+    ],
+    "ini_set": [
+        false,
+        false
+    ],
+    "ini_alter": [
+        false,
+        false
+    ],
+    "ini_restore": [
+        false
+    ],
+    "get_include_path": [],
+    "set_include_path": [
+        false
+    ],
+    "restore_include_path": [],
+    "setcookie": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+    ],
+    "setrawcookie": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+    ],
+    "header": [
+        false,
+        false,
+        false
+    ],
+    "header_remove": [
+        false
+    ],
+    "headers_sent": [
+        true,
+        true
+    ],
+    "headers_list": [],
+    "http_response_code": [
+        false
+    ],
+    "connection_aborted": [],
+    "connection_status": [],
+    "ignore_user_abort": [
+        false
+    ],
+    "parse_ini_file": [
+        false,
+        false,
+        false
+    ],
+    "parse_ini_string": [
+        false,
+        false,
+        false
+    ],
+    "is_uploaded_file": [
+        false
+    ],
+    "move_uploaded_file": [
+        false,
+        false
+    ],
+    "gethostbyaddr": [
+        false
+    ],
+    "gethostbyname": [
+        false
+    ],
+    "gethostbynamel": [
+        false
+    ],
+    "gethostname": [],
+    "dns_check_record": [
+        false,
+        false
+    ],
+    "checkdnsrr": [
+        false,
+        false
+    ],
+    "dns_get_mx": [
+        false,
+        true,
+        true
+    ],
+    "getmxrr": [
+        false,
+        true,
+        true
+    ],
+    "dns_get_record": [
+        false,
+        false,
+        true,
+        true,
+        false
+    ],
+    "intval": [
+        false,
+        false
+    ],
+    "floatval": [
+        false
+    ],
+    "doubleval": [
+        false
+    ],
+    "strval": [
+        false
+    ],
+    "boolval": [
+        false
+    ],
+    "gettype": [
+        false
+    ],
+    "settype": [
+        true,
+        false
+    ],
+    "is_null": [
+        false
+    ],
+    "is_resource": [
+        false
+    ],
+    "is_bool": [
+        false
+    ],
+    "is_int": [
+        false
+    ],
+    "is_float": [
+        false
+    ],
+    "is_integer": [
+        false
+    ],
+    "is_long": [
+        false
+    ],
+    "is_double": [
+        false
+    ],
+    "is_real": [
+        false
+    ],
+    "is_numeric": [
+        false
+    ],
+    "is_string": [
+        false
+    ],
+    "is_array": [
+        false
+    ],
+    "is_object": [
+        false
+    ],
+    "is_scalar": [
+        false
+    ],
+    "is_callable": [
+        false,
+        false,
+        true
+    ],
+    "is_iterable": [
+        false
+    ],
+    "pclose": [
+        false
+    ],
+    "popen": [
+        false,
+        false
+    ],
+    "readfile": [
+        false,
+        false,
+        false
+    ],
+    "rewind": [
+        false
+    ],
+    "rmdir": [
+        false,
+        false
+    ],
+    "umask": [
+        false
+    ],
+    "fclose": [
+        false
+    ],
+    "feof": [
+        false
+    ],
+    "fgetc": [
+        false
+    ],
+    "fgets": [
+        false,
+        false
+    ],
+    "fgetss": [
+        false,
+        false,
+        false
+    ],
+    "fread": [
+        false,
+        false
+    ],
+    "fopen": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "fpassthru": [
+        false
+    ],
+    "ftruncate": [
+        false,
+        false
+    ],
+    "fstat": [
+        false
+    ],
+    "fseek": [
+        false,
+        false,
+        false
+    ],
+    "ftell": [
+        false
+    ],
+    "fflush": [
+        false
+    ],
+    "fwrite": [
+        false,
+        false,
+        false
+    ],
+    "fputs": [
+        false,
+        false,
+        false
+    ],
+    "mkdir": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "rename": [
+        false,
+        false,
+        false
+    ],
+    "copy": [
+        false,
+        false,
+        false
+    ],
+    "tempnam": [
+        false,
+        false
+    ],
+    "tmpfile": [],
+    "file": [
+        false,
+        false,
+        false
+    ],
+    "file_get_contents": [
+        false,
+        false,
+        false,
+        false,
+        false
+    ],
+    "file_put_contents": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "stream_select": [
+        true,
+        true,
+        true,
+        false,
+        false
+    ],
+    "stream_context_create": [
+        false,
+        false
+    ],
+    "stream_context_set_params": [
+        false,
+        false
+    ],
+    "stream_context_get_params": [
+        false
+    ],
+    "stream_context_set_option": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "stream_context_get_options": [
+        false
+    ],
+    "stream_context_get_default": [
+        false
+    ],
+    "stream_context_set_default": [
+        false
+    ],
+    "stream_filter_prepend": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "stream_filter_append": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "stream_filter_remove": [
+        false
+    ],
+    "stream_socket_client": [
+        false,
+        true,
+        true,
+        false,
+        false,
+        false
+    ],
+    "stream_socket_server": [
+        false,
+        true,
+        true,
+        false,
+        false
+    ],
+    "stream_socket_accept": [
+        false,
+        false,
+        true
+    ],
+    "stream_socket_get_name": [
+        false,
+        false
+    ],
+    "stream_socket_recvfrom": [
+        false,
+        false,
+        false,
+        true
+    ],
+    "stream_socket_sendto": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "stream_socket_enable_crypto": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "stream_socket_shutdown": [
+        false,
+        false
+    ],
+    "stream_socket_pair": [
+        false,
+        false,
+        false
+    ],
+    "stream_copy_to_stream": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "stream_get_contents": [
+        false,
+        false,
+        false
+    ],
+    "stream_supports_lock": [
+        false
+    ],
+    "fgetcsv": [
+        false,
+        false,
+        false,
+        false,
+        false
+    ],
+    "fputcsv": [
+        false,
+        false,
+        false,
+        false,
+        false
+    ],
+    "flock": [
+        false,
+        false,
+        true
+    ],
+    "get_meta_tags": [
+        false,
+        false
+    ],
+    "stream_set_read_buffer": [
+        false,
+        false
+    ],
+    "stream_set_write_buffer": [
+        false,
+        false
+    ],
+    "set_file_buffer": [
+        false,
+        false
+    ],
+    "stream_set_chunk_size": [
+        false,
+        false
+    ],
+    "stream_set_blocking": [
+        false,
+        false
+    ],
+    "socket_set_blocking": [
+        false,
+        false
+    ],
+    "stream_get_meta_data": [
+        false
+    ],
+    "stream_get_line": [
+        false,
+        false,
+        false
+    ],
+    "stream_wrapper_register": [
+        false,
+        false,
+        false
+    ],
+    "stream_register_wrapper": [
+        false,
+        false,
+        false
+    ],
+    "stream_wrapper_unregister": [
+        false
+    ],
+    "stream_wrapper_restore": [
+        false
+    ],
+    "stream_get_wrappers": [],
+    "stream_get_transports": [],
+    "stream_resolve_include_path": [
+        false
+    ],
+    "stream_is_local": [
+        false
+    ],
+    "get_headers": [
+        false,
+        false,
+        false
+    ],
+    "stream_set_timeout": [
+        false,
+        false,
+        false
+    ],
+    "socket_set_timeout": [
+        false,
+        false,
+        false
+    ],
+    "socket_get_status": [
+        false
+    ],
+    "realpath": [
+        false
+    ],
+    "fnmatch": [
+        false,
+        false,
+        false
+    ],
+    "fsockopen": [
+        false,
+        false,
+        true,
+        true,
+        false
+    ],
+    "pfsockopen": [
+        false,
+        false,
+        true,
+        true,
+        false
+    ],
+    "pack": [
+        false,
+        false
+    ],
+    "unpack": [
+        false,
+        false,
+        false
+    ],
+    "get_browser": [
+        false,
+        false
+    ],
+    "crypt": [
+        false,
+        false
+    ],
+    "opendir": [
+        false,
+        false
+    ],
+    "closedir": [
+        false
+    ],
+    "chdir": [
+        false
+    ],
+    "getcwd": [],
+    "rewinddir": [
+        false
+    ],
+    "readdir": [
+        false
+    ],
+    "dir": [
+        false,
+        false
+    ],
+    "scandir": [
+        false,
+        false,
+        false
+    ],
+    "glob": [
+        false,
+        false
+    ],
+    "fileatime": [
+        false
+    ],
+    "filectime": [
+        false
+    ],
+    "filegroup": [
+        false
+    ],
+    "fileinode": [
+        false
+    ],
+    "filemtime": [
+        false
+    ],
+    "fileowner": [
+        false
+    ],
+    "fileperms": [
+        false
+    ],
+    "filesize": [
+        false
+    ],
+    "filetype": [
+        false
+    ],
+    "file_exists": [
+        false
+    ],
+    "is_writable": [
+        false
+    ],
+    "is_writeable": [
+        false
+    ],
+    "is_readable": [
+        false
+    ],
+    "is_executable": [
+        false
+    ],
+    "is_file": [
+        false
+    ],
+    "is_dir": [
+        false
+    ],
+    "is_link": [
+        false
+    ],
+    "stat": [
+        false
+    ],
+    "lstat": [
+        false
+    ],
+    "chown": [
+        false,
+        false
+    ],
+    "chgrp": [
+        false,
+        false
+    ],
+    "lchown": [
+        false,
+        false
+    ],
+    "lchgrp": [
+        false,
+        false
+    ],
+    "chmod": [
+        false,
+        false
+    ],
+    "touch": [
+        false,
+        false,
+        false
+    ],
+    "clearstatcache": [
+        false,
+        false
+    ],
+    "disk_total_space": [
+        false
+    ],
+    "disk_free_space": [
+        false
+    ],
+    "diskfreespace": [
+        false
+    ],
+    "realpath_cache_size": [],
+    "realpath_cache_get": [],
+    "mail": [
+        false,
+        false,
+        false,
+        false,
+        false
+    ],
+    "ezmlm_hash": [
+        false
+    ],
+    "openlog": [
+        false,
+        false,
+        false
+    ],
+    "syslog": [
+        false,
+        false
+    ],
+    "closelog": [],
+    "lcg_value": [],
+    "metaphone": [
+        false,
+        false
+    ],
+    "ob_start": [
+        false,
+        false,
+        false
+    ],
+    "ob_flush": [],
+    "ob_clean": [],
+    "ob_end_flush": [],
+    "ob_end_clean": [],
+    "ob_get_flush": [],
+    "ob_get_clean": [],
+    "ob_get_length": [],
+    "ob_get_level": [],
+    "ob_get_status": [
+        false
+    ],
+    "ob_get_contents": [],
+    "ob_implicit_flush": [
+        false
+    ],
+    "ob_list_handlers": [],
+    "ksort": [
+        true,
+        false
+    ],
+    "krsort": [
+        true,
+        false
+    ],
+    "natsort": [
+        true
+    ],
+    "natcasesort": [
+        true
+    ],
+    "asort": [
+        true,
+        false
+    ],
+    "arsort": [
+        true,
+        false
+    ],
+    "sort": [
+        true,
+        false
+    ],
+    "rsort": [
+        true,
+        false
+    ],
+    "usort": [
+        true,
+        false
+    ],
+    "uasort": [
+        true,
+        false
+    ],
+    "uksort": [
+        true,
+        false
+    ],
+    "shuffle": [
+        true
+    ],
+    "array_walk": [
+        true,
+        false,
+        false
+    ],
+    "array_walk_recursive": [
+        true,
+        false,
+        false
+    ],
+    "count": [
+        false,
+        false
+    ],
+    "end": [
+        true
+    ],
+    "prev": [
+        true
+    ],
+    "next": [
+        true
+    ],
+    "reset": [
+        true
+    ],
+    "current": [
+        false
+    ],
+    "key": [
+        false
+    ],
+    "min": [
+        false
+    ],
+    "max": [
+        false
+    ],
+    "in_array": [
+        false,
+        false,
+        false
+    ],
+    "array_search": [
+        false,
+        false,
+        false
+    ],
+    "extract": [
+        true,
+        false,
+        false
+    ],
+    "compact": [
+        false
+    ],
+    "array_fill": [
+        false,
+        false,
+        false
+    ],
+    "array_fill_keys": [
+        false,
+        false
+    ],
+    "range": [
+        false,
+        false,
+        false
+    ],
+    "array_multisort": [
+        true,
+        true,
+        true,
+        true
+    ],
+    "array_push": [
+        true,
+        false
+    ],
+    "array_pop": [
+        true
+    ],
+    "array_shift": [
+        true
+    ],
+    "array_unshift": [
+        true,
+        false
+    ],
+    "array_splice": [
+        true,
+        false,
+        false,
+        false
+    ],
+    "array_slice": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "array_merge": [
+        false,
+        false
+    ],
+    "array_merge_recursive": [
+        false,
+        false
+    ],
+    "array_replace": [
+        false,
+        false
+    ],
+    "array_replace_recursive": [
+        false,
+        false
+    ],
+    "array_keys": [
+        false,
+        false,
+        false
+    ],
+    "array_values": [
+        false
+    ],
+    "array_count_values": [
+        false
+    ],
+    "array_column": [
+        false,
+        false,
+        false
+    ],
+    "array_reverse": [
+        false,
+        false
+    ],
+    "array_reduce": [
+        false,
+        false,
+        false
+    ],
+    "array_pad": [
+        false,
+        false,
+        false
+    ],
+    "array_flip": [
+        false
+    ],
+    "array_change_key_case": [
+        false,
+        false
+    ],
+    "array_rand": [
+        false,
+        false
+    ],
+    "array_unique": [
+        false,
+        false
+    ],
+    "array_intersect": [
+        false,
+        false
+    ],
+    "array_intersect_key": [
+        false,
+        false
+    ],
+    "array_intersect_ukey": [
+        false,
+        false,
+        false
+    ],
+    "array_uintersect": [
+        false,
+        false,
+        false
+    ],
+    "array_intersect_assoc": [
+        false,
+        false
+    ],
+    "array_uintersect_assoc": [
+        false,
+        false,
+        false
+    ],
+    "array_intersect_uassoc": [
+        false,
+        false,
+        false
+    ],
+    "array_uintersect_uassoc": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "array_diff": [
+        false,
+        false
+    ],
+    "array_diff_key": [
+        false,
+        false
+    ],
+    "array_diff_ukey": [
+        false,
+        false,
+        false
+    ],
+    "array_udiff": [
+        false,
+        false,
+        false
+    ],
+    "array_diff_assoc": [
+        false,
+        false
+    ],
+    "array_udiff_assoc": [
+        false,
+        false,
+        false
+    ],
+    "array_diff_uassoc": [
+        false,
+        false,
+        false
+    ],
+    "array_udiff_uassoc": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "array_sum": [
+        false
+    ],
+    "array_product": [
+        false
+    ],
+    "array_filter": [
+        false,
+        false,
+        false
+    ],
+    "array_map": [
+        false,
+        false
+    ],
+    "array_chunk": [
+        false,
+        false,
+        false
+    ],
+    "array_combine": [
+        false,
+        false
+    ],
+    "array_key_exists": [
+        false,
+        false
+    ],
+    "pos": [
+        false
+    ],
+    "sizeof": [
+        false,
+        false
+    ],
+    "key_exists": [
+        false,
+        false
+    ],
+    "assert": [
+        false,
+        false
+    ],
+    "assert_options": [
+        false,
+        false
+    ],
+    "version_compare": [
+        false,
+        false,
+        false
+    ],
+    "ftok": [
+        false,
+        false
+    ],
+    "str_rot13": [
+        false
+    ],
+    "stream_get_filters": [],
+    "stream_filter_register": [
+        false,
+        false
+    ],
+    "stream_bucket_make_writeable": [
+        false
+    ],
+    "stream_bucket_prepend": [
+        false,
+        false
+    ],
+    "stream_bucket_append": [
+        false,
+        false
+    ],
+    "stream_bucket_new": [
+        false,
+        false
+    ],
+    "output_add_rewrite_var": [
+        false,
+        false
+    ],
+    "output_reset_rewrite_vars": [],
+    "sys_get_temp_dir": [],
+    "token_get_all": [
+        false,
+        false
+    ],
+    "token_name": [
+        false
+    ],
+    "xml_parser_create": [
+        false
+    ],
+    "xml_parser_create_ns": [
+        false,
+        false
+    ],
+    "xml_set_object": [
+        false,
+        false
+    ],
+    "xml_set_element_handler": [
+        false,
+        false,
+        false
+    ],
+    "xml_set_character_data_handler": [
+        false,
+        false
+    ],
+    "xml_set_processing_instruction_handler": [
+        false,
+        false
+    ],
+    "xml_set_default_handler": [
+        false,
+        false
+    ],
+    "xml_set_unparsed_entity_decl_handler": [
+        false,
+        false
+    ],
+    "xml_set_notation_decl_handler": [
+        false,
+        false
+    ],
+    "xml_set_external_entity_ref_handler": [
+        false,
+        false
+    ],
+    "xml_set_start_namespace_decl_handler": [
+        false,
+        false
+    ],
+    "xml_set_end_namespace_decl_handler": [
+        false,
+        false
+    ],
+    "xml_parse": [
+        false,
+        false,
+        false
+    ],
+    "xml_parse_into_struct": [
+        false,
+        false,
+        true,
+        true
+    ],
+    "xml_get_error_code": [
+        false
+    ],
+    "xml_error_string": [
+        false
+    ],
+    "xml_get_current_line_number": [
+        false
+    ],
+    "xml_get_current_column_number": [
+        false
+    ],
+    "xml_get_current_byte_index": [
+        false
+    ],
+    "xml_parser_free": [
+        false
+    ],
+    "xml_parser_set_option": [
+        false,
+        false,
+        false
+    ],
+    "xml_parser_get_option": [
+        false,
+        false
+    ],
+    "utf8_encode": [
+        false
+    ],
+    "utf8_decode": [
+        false
+    ],
+    "xmlwriter_open_uri": [
+        false
+    ],
+    "xmlwriter_open_memory": [],
+    "xmlwriter_set_indent": [
+        false,
+        false
+    ],
+    "xmlwriter_set_indent_string": [
+        false,
+        false
+    ],
+    "xmlwriter_start_comment": [
+        false
+    ],
+    "xmlwriter_end_comment": [
+        false
+    ],
+    "xmlwriter_start_attribute": [
+        false,
+        false
+    ],
+    "xmlwriter_end_attribute": [
+        false
+    ],
+    "xmlwriter_write_attribute": [
+        false,
+        false,
+        false
+    ],
+    "xmlwriter_start_attribute_ns": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "xmlwriter_write_attribute_ns": [
+        false,
+        false,
+        false,
+        false,
+        false
+    ],
+    "xmlwriter_start_element": [
+        false,
+        false
+    ],
+    "xmlwriter_end_element": [
+        false
+    ],
+    "xmlwriter_full_end_element": [
+        false
+    ],
+    "xmlwriter_start_element_ns": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "xmlwriter_write_element": [
+        false,
+        false,
+        false
+    ],
+    "xmlwriter_write_element_ns": [
+        false,
+        false,
+        false,
+        false,
+        false
+    ],
+    "xmlwriter_start_pi": [
+        false,
+        false
+    ],
+    "xmlwriter_end_pi": [
+        false
+    ],
+    "xmlwriter_write_pi": [
+        false,
+        false,
+        false
+    ],
+    "xmlwriter_start_cdata": [
+        false
+    ],
+    "xmlwriter_end_cdata": [
+        false
+    ],
+    "xmlwriter_write_cdata": [
+        false,
+        false
+    ],
+    "xmlwriter_text": [
+        false,
+        false
+    ],
+    "xmlwriter_write_raw": [
+        false,
+        false
+    ],
+    "xmlwriter_start_document": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "xmlwriter_end_document": [
+        false
+    ],
+    "xmlwriter_write_comment": [
+        false,
+        false
+    ],
+    "xmlwriter_start_dtd": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "xmlwriter_end_dtd": [
+        false
+    ],
+    "xmlwriter_write_dtd": [
+        false,
+        false,
+        false,
+        false,
+        false
+    ],
+    "xmlwriter_start_dtd_element": [
+        false,
+        false
+    ],
+    "xmlwriter_end_dtd_element": [
+        false
+    ],
+    "xmlwriter_write_dtd_element": [
+        false,
+        false,
+        false
+    ],
+    "xmlwriter_start_dtd_attlist": [
+        false,
+        false
+    ],
+    "xmlwriter_end_dtd_attlist": [
+        false
+    ],
+    "xmlwriter_write_dtd_attlist": [
+        false,
+        false,
+        false
+    ],
+    "xmlwriter_start_dtd_entity": [
+        false,
+        false,
+        false
+    ],
+    "xmlwriter_end_dtd_entity": [
+        false
+    ],
+    "xmlwriter_write_dtd_entity": [
+        false,
+        false,
+        false
+    ],
+    "xmlwriter_output_memory": [
+        false,
+        false
+    ],
+    "xmlwriter_flush": [
+        false,
+        false
+    ],
+    "curl_init": [
+        false
+    ],
+    "curl_copy_handle": [
+        false
+    ],
+    "curl_version": [
+        false
+    ],
+    "curl_setopt": [
+        false,
+        false,
+        false
+    ],
+    "curl_setopt_array": [
+        false,
+        false
+    ],
+    "curl_exec": [
+        false
+    ],
+    "curl_getinfo": [
+        false,
+        false
+    ],
+    "curl_error": [
+        false
+    ],
+    "curl_errno": [
+        false
+    ],
+    "curl_close": [
+        false
+    ],
+    "curl_strerror": [
+        false
+    ],
+    "curl_multi_strerror": [
+        false
+    ],
+    "curl_share_strerror": [
+        false
+    ],
+    "curl_reset": [
+        false
+    ],
+    "curl_escape": [
+        false,
+        false
+    ],
+    "curl_unescape": [
+        false,
+        false
+    ],
+    "curl_pause": [
+        false,
+        false
+    ],
+    "curl_multi_init": [],
+    "curl_multi_add_handle": [
+        false,
+        false
+    ],
+    "curl_multi_remove_handle": [
+        false,
+        false
+    ],
+    "curl_multi_select": [
+        false,
+        false
+    ],
+    "curl_multi_exec": [
+        false,
+        true
+    ],
+    "curl_multi_getcontent": [
+        false
+    ],
+    "curl_multi_info_read": [
+        false,
+        true
+    ],
+    "curl_multi_close": [
+        false
+    ],
+    "curl_multi_errno": [
+        false
+    ],
+    "curl_multi_setopt": [
+        false,
+        false,
+        false
+    ],
+    "curl_share_init": [],
+    "curl_share_close": [
+        false
+    ],
+    "curl_share_setopt": [
+        false,
+        false,
+        false
+    ],
+    "curl_share_errno": [
+        false
+    ],
+    "curl_file_create": [
+        false,
+        false,
+        false
+    ],
+    "geoip_database_info": [],
+    "geoip_country_code_by_name": [],
+    "geoip_country_code3_by_name": [],
+    "geoip_country_name_by_name": [],
+    "geoip_country_code_by_name_v6": [],
+    "geoip_country_code3_by_name_v6": [],
+    "geoip_country_name_by_name_v6": [],
+    "geoip_continent_code_by_name": [],
+    "geoip_org_by_name": [],
+    "geoip_record_by_name": [],
+    "geoip_id_by_name": [],
+    "geoip_region_by_name": [],
+    "geoip_isp_by_name": [],
+    "geoip_db_avail": [],
+    "geoip_db_get_all_info": [],
+    "geoip_db_filename": [],
+    "geoip_region_name_by_code": [],
+    "geoip_time_zone_by_country_and_region": [],
+    "geoip_setup_custom_directory": [],
+    "geoip_asnum_by_name": [],
+    "geoip_domain_by_name": [],
+    "geoip_netspeedcell_by_name": [],
+    "imap_open": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+    ],
+    "imap_reopen": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "imap_close": [
+        false,
+        false
+    ],
+    "imap_num_msg": [
+        false
+    ],
+    "imap_num_recent": [
+        false
+    ],
+    "imap_headers": [
+        false
+    ],
+    "imap_headerinfo": [
+        false,
+        false,
+        false,
+        false,
+        false
+    ],
+    "imap_rfc822_parse_headers": [
+        false,
+        false
+    ],
+    "imap_rfc822_write_address": [
+        false,
+        false,
+        false
+    ],
+    "imap_rfc822_parse_adrlist": [
+        false,
+        false
+    ],
+    "imap_body": [
+        false,
+        false,
+        false
+    ],
+    "imap_bodystruct": [
+        false,
+        false,
+        false
+    ],
+    "imap_fetchbody": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "imap_fetchmime": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "imap_savebody": [
+        false,
+        false,
+        false,
+        false,
+        false
+    ],
+    "imap_fetchheader": [
+        false,
+        false,
+        false
+    ],
+    "imap_fetchstructure": [
+        false,
+        false,
+        false
+    ],
+    "imap_gc": [
+        false,
+        false
+    ],
+    "imap_expunge": [
+        false
+    ],
+    "imap_delete": [
+        false,
+        false,
+        false
+    ],
+    "imap_undelete": [
+        false,
+        false,
+        false
+    ],
+    "imap_check": [
+        false
+    ],
+    "imap_listscan": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "imap_mail_copy": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "imap_mail_move": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "imap_mail_compose": [
+        false,
+        false
+    ],
+    "imap_createmailbox": [
+        false,
+        false
+    ],
+    "imap_renamemailbox": [
+        false,
+        false,
+        false
+    ],
+    "imap_deletemailbox": [
+        false,
+        false
+    ],
+    "imap_subscribe": [
+        false,
+        false
+    ],
+    "imap_unsubscribe": [
+        false,
+        false
+    ],
+    "imap_append": [
+        false,
+        false,
+        false,
+        false,
+        false
+    ],
+    "imap_ping": [
+        false
+    ],
+    "imap_base64": [
+        false
+    ],
+    "imap_qprint": [
+        false
+    ],
+    "imap_8bit": [
+        false
+    ],
+    "imap_binary": [
+        false
+    ],
+    "imap_utf8": [
+        false
+    ],
+    "imap_status": [
+        false,
+        false,
+        false
+    ],
+    "imap_mailboxmsginfo": [
+        false
+    ],
+    "imap_setflag_full": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "imap_clearflag_full": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "imap_sort": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+    ],
+    "imap_uid": [
+        false,
+        false
+    ],
+    "imap_msgno": [
+        false,
+        false
+    ],
+    "imap_list": [
+        false,
+        false,
+        false
+    ],
+    "imap_lsub": [
+        false,
+        false,
+        false
+    ],
+    "imap_fetch_overview": [
+        false,
+        false,
+        false
+    ],
+    "imap_alerts": [],
+    "imap_errors": [],
+    "imap_last_error": [],
+    "imap_search": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "imap_utf7_decode": [
+        false
+    ],
+    "imap_utf7_encode": [
+        false
+    ],
+    "imap_utf8_to_mutf7": [
+        false
+    ],
+    "imap_mutf7_to_utf8": [
+        false
+    ],
+    "imap_mime_header_decode": [
+        false
+    ],
+    "imap_thread": [
+        false,
+        false
+    ],
+    "imap_timeout": [
+        false,
+        false
+    ],
+    "imap_get_quota": [
+        false,
+        false
+    ],
+    "imap_get_quotaroot": [
+        false,
+        false
+    ],
+    "imap_set_quota": [
+        false,
+        false,
+        false
+    ],
+    "imap_setacl": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "imap_getacl": [
+        false,
+        false
+    ],
+    "imap_mail": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+    ],
+    "imap_header": [
+        false,
+        false,
+        false,
+        false,
+        false
+    ],
+    "imap_listmailbox": [
+        false,
+        false,
+        false
+    ],
+    "imap_getmailboxes": [
+        false,
+        false,
+        false
+    ],
+    "imap_scanmailbox": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "imap_listsubscribed": [
+        false,
+        false,
+        false
+    ],
+    "imap_getsubscribed": [
+        false,
+        false,
+        false
+    ],
+    "imap_fetchtext": [
+        false,
+        false,
+        false
+    ],
+    "imap_scan": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "imap_create": [
+        false,
+        false
+    ],
+    "imap_rename": [
+        false,
+        false,
+        false
+    ],
+    "collator_create": [
+        false
+    ],
+    "collator_compare": [
+        false,
+        false,
+        false
+    ],
+    "collator_get_attribute": [
+        false,
+        false
+    ],
+    "collator_set_attribute": [
+        false,
+        false,
+        false
+    ],
+    "collator_get_strength": [
+        false
+    ],
+    "collator_set_strength": [
+        false,
+        false
+    ],
+    "collator_sort": [
+        false,
+        true,
+        false
+    ],
+    "collator_sort_with_sort_keys": [
+        false,
+        true,
+        false
+    ],
+    "collator_asort": [
+        false,
+        true,
+        false
+    ],
+    "collator_get_locale": [
+        false,
+        false
+    ],
+    "collator_get_error_code": [
+        false
+    ],
+    "collator_get_error_message": [
+        false
+    ],
+    "collator_get_sort_key": [
+        false,
+        false,
+        false
+    ],
+    "numfmt_create": [
+        false,
+        false,
+        false
+    ],
+    "numfmt_format": [
+        false,
+        false,
+        false
+    ],
+    "numfmt_parse": [
+        false,
+        false,
+        false,
+        true
+    ],
+    "numfmt_format_currency": [
+        false,
+        false,
+        false
+    ],
+    "numfmt_parse_currency": [
+        false,
+        false,
+        true,
+        true
+    ],
+    "numfmt_set_attribute": [
+        false,
+        false,
+        false
+    ],
+    "numfmt_get_attribute": [
+        false,
+        false
+    ],
+    "numfmt_set_text_attribute": [
+        false,
+        false,
+        false
+    ],
+    "numfmt_get_text_attribute": [
+        false,
+        false
+    ],
+    "numfmt_set_symbol": [
+        false,
+        false,
+        false
+    ],
+    "numfmt_get_symbol": [
+        false,
+        false
+    ],
+    "numfmt_set_pattern": [
+        false,
+        false
+    ],
+    "numfmt_get_pattern": [
+        false
+    ],
+    "numfmt_get_locale": [
+        false,
+        false
+    ],
+    "numfmt_get_error_code": [
+        false
+    ],
+    "numfmt_get_error_message": [
+        false
+    ],
+    "normalizer_normalize": [
+        false,
+        false
+    ],
+    "normalizer_is_normalized": [
+        false,
+        false
+    ],
+    "locale_get_default": [],
+    "locale_set_default": [
+        false
+    ],
+    "locale_get_primary_language": [
+        false
+    ],
+    "locale_get_script": [
+        false
+    ],
+    "locale_get_region": [
+        false
+    ],
+    "locale_get_keywords": [
+        false
+    ],
+    "locale_get_display_script": [
+        false,
+        false
+    ],
+    "locale_get_display_region": [
+        false,
+        false
+    ],
+    "locale_get_display_name": [
+        false,
+        false
+    ],
+    "locale_get_display_language": [
+        false,
+        false
+    ],
+    "locale_get_display_variant": [
+        false,
+        false
+    ],
+    "locale_compose": [
+        false
+    ],
+    "locale_parse": [
+        false
+    ],
+    "locale_get_all_variants": [
+        false
+    ],
+    "locale_filter_matches": [
+        false,
+        false,
+        false
+    ],
+    "locale_canonicalize": [
+        false
+    ],
+    "locale_lookup": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "locale_accept_from_http": [
+        false
+    ],
+    "msgfmt_create": [
+        false,
+        false
+    ],
+    "msgfmt_format": [
+        false,
+        false
+    ],
+    "msgfmt_format_message": [
+        false,
+        false,
+        false
+    ],
+    "msgfmt_parse": [
+        false,
+        false
+    ],
+    "msgfmt_parse_message": [
+        false,
+        false,
+        false
+    ],
+    "msgfmt_set_pattern": [
+        false,
+        false
+    ],
+    "msgfmt_get_pattern": [
+        false
+    ],
+    "msgfmt_get_locale": [
+        false
+    ],
+    "msgfmt_get_error_code": [
+        false
+    ],
+    "msgfmt_get_error_message": [
+        false
+    ],
+    "datefmt_create": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+    ],
+    "datefmt_get_datetype": [
+        false
+    ],
+    "datefmt_get_timetype": [
+        false
+    ],
+    "datefmt_get_calendar": [
+        false
+    ],
+    "datefmt_get_calendar_object": [
+        false
+    ],
+    "datefmt_set_calendar": [
+        false,
+        false
+    ],
+    "datefmt_get_locale": [
+        false
+    ],
+    "datefmt_get_timezone_id": [
+        false
+    ],
+    "datefmt_get_timezone": [
+        false
+    ],
+    "datefmt_set_timezone": [
+        false,
+        false
+    ],
+    "datefmt_get_pattern": [
+        false
+    ],
+    "datefmt_set_pattern": [
+        false,
+        false
+    ],
+    "datefmt_is_lenient": [
+        false
+    ],
+    "datefmt_set_lenient": [
+        false
+    ],
+    "datefmt_format": [
+        false,
+        false
+    ],
+    "datefmt_format_object": [
+        false,
+        false,
+        false
+    ],
+    "datefmt_parse": [
+        false,
+        false,
+        true
+    ],
+    "datefmt_localtime": [
+        false,
+        false,
+        true
+    ],
+    "datefmt_get_error_code": [
+        false
+    ],
+    "datefmt_get_error_message": [
+        false
+    ],
+    "grapheme_strlen": [
+        false
+    ],
+    "grapheme_strpos": [
+        false,
+        false,
+        false
+    ],
+    "grapheme_stripos": [
+        false,
+        false,
+        false
+    ],
+    "grapheme_strrpos": [
+        false,
+        false,
+        false
+    ],
+    "grapheme_strripos": [
+        false,
+        false,
+        false
+    ],
+    "grapheme_substr": [
+        false,
+        false,
+        false
+    ],
+    "grapheme_strstr": [
+        false,
+        false,
+        false
+    ],
+    "grapheme_stristr": [
+        false,
+        false,
+        false
+    ],
+    "grapheme_extract": [
+        false,
+        false,
+        false,
+        false,
+        true
+    ],
+    "idn_to_ascii": [
+        false,
+        false,
+        false,
+        true
+    ],
+    "idn_to_utf8": [
+        false,
+        false,
+        false,
+        true
+    ],
+    "resourcebundle_create": [
+        false,
+        false,
+        false
+    ],
+    "resourcebundle_get": [
+        false,
+        false,
+        false
+    ],
+    "resourcebundle_count": [
+        false
+    ],
+    "resourcebundle_locales": [
+        false
+    ],
+    "resourcebundle_get_error_code": [
+        false
+    ],
+    "resourcebundle_get_error_message": [
+        false
+    ],
+    "transliterator_create": [
+        false,
+        false
+    ],
+    "transliterator_create_from_rules": [
+        false,
+        false
+    ],
+    "transliterator_list_ids": [],
+    "transliterator_create_inverse": [
+        false
+    ],
+    "transliterator_transliterate": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "transliterator_get_error_code": [
+        false
+    ],
+    "transliterator_get_error_message": [
+        false
+    ],
+    "intltz_create_time_zone": [
+        false
+    ],
+    "intltz_from_date_time_zone": [
+        false
+    ],
+    "intltz_create_default": [],
+    "intltz_get_id": [
+        false
+    ],
+    "intltz_get_gmt": [],
+    "intltz_get_unknown": [],
+    "intltz_create_enumeration": [
+        false
+    ],
+    "intltz_count_equivalent_ids": [
+        false
+    ],
+    "intltz_create_time_zone_id_enumeration": [
+        false,
+        false,
+        false
+    ],
+    "intltz_get_canonical_id": [
+        false,
+        true
+    ],
+    "intltz_get_region": [
+        false
+    ],
+    "intltz_get_tz_data_version": [],
+    "intltz_get_equivalent_id": [
+        false,
+        false
+    ],
+    "intltz_use_daylight_time": [
+        false
+    ],
+    "intltz_get_offset": [
+        false,
+        false,
+        false,
+        true,
+        true
+    ],
+    "intltz_get_raw_offset": [
+        false
+    ],
+    "intltz_has_same_rules": [
+        false,
+        false
+    ],
+    "intltz_get_display_name": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "intltz_get_dst_savings": [
+        false
+    ],
+    "intltz_to_date_time_zone": [
+        false
+    ],
+    "intltz_get_error_code": [
+        false
+    ],
+    "intltz_get_error_message": [
+        false
+    ],
+    "intlcal_create_instance": [
+        false,
+        false
+    ],
+    "intlcal_get_keyword_values_for_locale": [
+        false,
+        false,
+        false
+    ],
+    "intlcal_get_now": [],
+    "intlcal_get_available_locales": [],
+    "intlcal_get": [
+        false,
+        false
+    ],
+    "intlcal_get_time": [
+        false
+    ],
+    "intlcal_set_time": [
+        false,
+        false
+    ],
+    "intlcal_add": [
+        false,
+        false,
+        false
+    ],
+    "intlcal_set_time_zone": [
+        false,
+        false
+    ],
+    "intlcal_after": [
+        false,
+        false
+    ],
+    "intlcal_before": [
+        false,
+        false
+    ],
+    "intlcal_set": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+    ],
+    "intlcal_roll": [
+        false,
+        false,
+        false
+    ],
+    "intlcal_clear": [
+        false,
+        false
+    ],
+    "intlcal_field_difference": [
+        false,
+        false,
+        false
+    ],
+    "intlcal_get_actual_maximum": [
+        false,
+        false
+    ],
+    "intlcal_get_actual_minimum": [
+        false,
+        false
+    ],
+    "intlcal_get_day_of_week_type": [
+        false,
+        false
+    ],
+    "intlcal_get_first_day_of_week": [
+        false
+    ],
+    "intlcal_get_greatest_minimum": [
+        false,
+        false
+    ],
+    "intlcal_get_least_maximum": [
+        false,
+        false
+    ],
+    "intlcal_get_locale": [
+        false,
+        false
+    ],
+    "intlcal_get_maximum": [
+        false,
+        false
+    ],
+    "intlcal_get_minimal_days_in_first_week": [
+        false
+    ],
+    "intlcal_get_minimum": [
+        false,
+        false
+    ],
+    "intlcal_get_time_zone": [
+        false
+    ],
+    "intlcal_get_type": [
+        false
+    ],
+    "intlcal_get_weekend_transition": [
+        false,
+        false
+    ],
+    "intlcal_in_daylight_time": [
+        false
+    ],
+    "intlcal_is_equivalent_to": [
+        false,
+        false
+    ],
+    "intlcal_is_lenient": [
+        false
+    ],
+    "intlcal_is_set": [
+        false,
+        false
+    ],
+    "intlcal_is_weekend": [
+        false,
+        false
+    ],
+    "intlcal_set_first_day_of_week": [
+        false,
+        false
+    ],
+    "intlcal_set_lenient": [
+        false,
+        false
+    ],
+    "intlcal_set_minimal_days_in_first_week": [
+        false,
+        false
+    ],
+    "intlcal_equals": [
+        false,
+        false
+    ],
+    "intlcal_from_date_time": [
+        false
+    ],
+    "intlcal_to_date_time": [
+        false
+    ],
+    "intlcal_get_repeated_wall_time_option": [
+        false
+    ],
+    "intlcal_get_skipped_wall_time_option": [
+        false
+    ],
+    "intlcal_set_repeated_wall_time_option": [
+        false,
+        false
+    ],
+    "intlcal_set_skipped_wall_time_option": [
+        false,
+        false
+    ],
+    "intlcal_get_error_code": [
+        false
+    ],
+    "intlcal_get_error_message": [
+        false
+    ],
+    "intlgregcal_create_instance": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+    ],
+    "intlgregcal_set_gregorian_change": [
+        false,
+        false
+    ],
+    "intlgregcal_get_gregorian_change": [
+        false
+    ],
+    "intlgregcal_is_leap_year": [
+        false,
+        false
+    ],
+    "intl_get_error_code": [],
+    "intl_get_error_message": [],
+    "intl_is_failure": [
+        false
+    ],
+    "intl_error_name": [
+        false
+    ],
+    "mb_convert_case": [
+        false,
+        false,
+        false
+    ],
+    "mb_strtoupper": [
+        false,
+        false
+    ],
+    "mb_strtolower": [
+        false,
+        false
+    ],
+    "mb_language": [
+        false
+    ],
+    "mb_internal_encoding": [
+        false
+    ],
+    "mb_http_input": [
+        false
+    ],
+    "mb_http_output": [
+        false
+    ],
+    "mb_detect_order": [
+        false
+    ],
+    "mb_substitute_character": [
+        false
+    ],
+    "mb_parse_str": [
+        false,
+        true
+    ],
+    "mb_output_handler": [
+        false,
+        false
+    ],
+    "mb_preferred_mime_name": [
+        false
+    ],
+    "mb_strlen": [
+        false,
+        false
+    ],
+    "mb_strpos": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "mb_strrpos": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "mb_stripos": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "mb_strripos": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "mb_strstr": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "mb_strrchr": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "mb_stristr": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "mb_strrichr": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "mb_substr_count": [
+        false,
+        false,
+        false
+    ],
+    "mb_substr": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "mb_strcut": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "mb_strwidth": [
+        false,
+        false
+    ],
+    "mb_strimwidth": [
+        false,
+        false,
+        false,
+        false,
+        false
+    ],
+    "mb_convert_encoding": [
+        false,
+        false,
+        false
+    ],
+    "mb_detect_encoding": [
+        false,
+        false,
+        false
+    ],
+    "mb_list_encodings": [],
+    "mb_encoding_aliases": [
+        false
+    ],
+    "mb_convert_kana": [
+        false,
+        false,
+        false
+    ],
+    "mb_encode_mimeheader": [
+        false,
+        false,
+        false,
+        false,
+        false
+    ],
+    "mb_decode_mimeheader": [
+        false
+    ],
+    "mb_convert_variables": [
+        false,
+        false,
+        true
+    ],
+    "mb_encode_numericentity": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "mb_decode_numericentity": [
+        false,
+        false,
+        false
+    ],
+    "mb_send_mail": [
+        false,
+        false,
+        false,
+        false,
+        false
+    ],
+    "mb_get_info": [
+        false
+    ],
+    "mb_check_encoding": [
+        false,
+        false
+    ],
+    "mb_regex_encoding": [
+        false
+    ],
+    "mb_regex_set_options": [
+        false
+    ],
+    "mb_ereg": [
+        false,
+        false,
+        true
+    ],
+    "mb_eregi": [
+        false,
+        false,
+        true
+    ],
+    "mb_ereg_replace": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "mb_eregi_replace": [
+        false,
+        false,
+        false
+    ],
+    "mb_ereg_replace_callback": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "mb_split": [
+        false,
+        false,
+        false
+    ],
+    "mb_ereg_match": [
+        false,
+        false,
+        false
+    ],
+    "mb_ereg_search": [
+        false,
+        false
+    ],
+    "mb_ereg_search_pos": [
+        false,
+        false
+    ],
+    "mb_ereg_search_regs": [
+        false,
+        false
+    ],
+    "mb_ereg_search_init": [
+        false,
+        false,
+        false
+    ],
+    "mb_ereg_search_getregs": [],
+    "mb_ereg_search_getpos": [],
+    "mb_ereg_search_setpos": [
+        false
+    ],
+    "mbregex_encoding": [
+        false
+    ],
+    "mbereg": [
+        false,
+        false,
+        true
+    ],
+    "mberegi": [
+        false,
+        false,
+        true
+    ],
+    "mbereg_replace": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "mberegi_replace": [
+        false,
+        false,
+        false
+    ],
+    "mbsplit": [
+        false,
+        false,
+        false
+    ],
+    "mbereg_match": [
+        false,
+        false,
+        false
+    ],
+    "mbereg_search": [
+        false,
+        false
+    ],
+    "mbereg_search_pos": [
+        false,
+        false
+    ],
+    "mbereg_search_regs": [
+        false,
+        false
+    ],
+    "mbereg_search_init": [
+        false,
+        false,
+        false
+    ],
+    "mbereg_search_getregs": [],
+    "mbereg_search_getpos": [],
+    "mbereg_search_setpos": [
+        false
+    ],
+    "mcrypt_get_key_size": [
+        false,
+        false
+    ],
+    "mcrypt_get_block_size": [
+        false,
+        false
+    ],
+    "mcrypt_get_cipher_name": [
+        false
+    ],
+    "mcrypt_create_iv": [
+        false,
+        false
+    ],
+    "mcrypt_list_algorithms": [
+        false
+    ],
+    "mcrypt_list_modes": [
+        false
+    ],
+    "mcrypt_get_iv_size": [
+        false,
+        false
+    ],
+    "mcrypt_encrypt": [
+        false,
+        false,
+        false,
+        false,
+        false
+    ],
+    "mcrypt_decrypt": [
+        false,
+        false,
+        false,
+        false,
+        false
+    ],
+    "mcrypt_module_open": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "mcrypt_generic_init": [
+        false,
+        false,
+        false
+    ],
+    "mcrypt_generic": [
+        false,
+        false
+    ],
+    "mdecrypt_generic": [
+        false,
+        false
+    ],
+    "mcrypt_generic_deinit": [
+        false
+    ],
+    "mcrypt_enc_self_test": [
+        false
+    ],
+    "mcrypt_enc_is_block_algorithm_mode": [
+        false
+    ],
+    "mcrypt_enc_is_block_algorithm": [
+        false
+    ],
+    "mcrypt_enc_is_block_mode": [
+        false
+    ],
+    "mcrypt_enc_get_block_size": [
+        false
+    ],
+    "mcrypt_enc_get_key_size": [
+        false
+    ],
+    "mcrypt_enc_get_supported_key_sizes": [
+        false
+    ],
+    "mcrypt_enc_get_iv_size": [
+        false
+    ],
+    "mcrypt_enc_get_algorithms_name": [
+        false
+    ],
+    "mcrypt_enc_get_modes_name": [
+        false
+    ],
+    "mcrypt_module_self_test": [
+        false,
+        false
+    ],
+    "mcrypt_module_is_block_algorithm_mode": [
+        false,
+        false
+    ],
+    "mcrypt_module_is_block_algorithm": [
+        false,
+        false
+    ],
+    "mcrypt_module_is_block_mode": [
+        false,
+        false
+    ],
+    "mcrypt_module_get_algo_block_size": [
+        false,
+        false
+    ],
+    "mcrypt_module_get_algo_key_size": [
+        false,
+        false
+    ],
+    "mcrypt_module_get_supported_key_sizes": [
+        false,
+        false
+    ],
+    "mcrypt_module_close": [
+        false
+    ],
+    "mysqli_affected_rows": [
+        false
+    ],
+    "mysqli_autocommit": [
+        false,
+        false
+    ],
+    "mysqli_begin_transaction": [
+        false,
+        false,
+        false
+    ],
+    "mysqli_change_user": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "mysqli_character_set_name": [
+        false
+    ],
+    "mysqli_close": [
+        false
+    ],
+    "mysqli_commit": [
+        false,
+        false,
+        false
+    ],
+    "mysqli_connect": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+    ],
+    "mysqli_connect_errno": [],
+    "mysqli_connect_error": [],
+    "mysqli_data_seek": [
+        false,
+        false
+    ],
+    "mysqli_dump_debug_info": [
+        false
+    ],
+    "mysqli_debug": [
+        false
+    ],
+    "mysqli_errno": [
+        false
+    ],
+    "mysqli_error": [
+        false
+    ],
+    "mysqli_error_list": [
+        false
+    ],
+    "mysqli_stmt_execute": [
+        false
+    ],
+    "mysqli_execute": [
+        false
+    ],
+    "mysqli_fetch_field": [
+        false
+    ],
+    "mysqli_fetch_fields": [
+        false
+    ],
+    "mysqli_fetch_field_direct": [
+        false,
+        false
+    ],
+    "mysqli_fetch_lengths": [
+        false
+    ],
+    "mysqli_fetch_all": [
+        false
+    ],
+    "mysqli_fetch_array": [
+        false,
+        false
+    ],
+    "mysqli_fetch_assoc": [
+        false
+    ],
+    "mysqli_fetch_object": [
+        false,
+        false,
+        false
+    ],
+    "mysqli_fetch_row": [
+        false
+    ],
+    "mysqli_field_count": [
+        false
+    ],
+    "mysqli_field_seek": [
+        false,
+        false
+    ],
+    "mysqli_field_tell": [
+        false
+    ],
+    "mysqli_free_result": [
+        false
+    ],
+    "mysqli_get_connection_stats": [
+        false
+    ],
+    "mysqli_get_client_stats": [],
+    "mysqli_get_charset": [
+        false
+    ],
+    "mysqli_get_client_info": [
+        false
+    ],
+    "mysqli_get_client_version": [
+        false
+    ],
+    "mysqli_get_links_stats": [],
+    "mysqli_get_host_info": [
+        false
+    ],
+    "mysqli_get_proto_info": [
+        false
+    ],
+    "mysqli_get_server_info": [
+        false
+    ],
+    "mysqli_get_server_version": [
+        false
+    ],
+    "mysqli_get_warnings": [
+        false
+    ],
+    "mysqli_init": [],
+    "mysqli_info": [
+        false
+    ],
+    "mysqli_insert_id": [
+        false
+    ],
+    "mysqli_kill": [
+        false,
+        false
+    ],
+    "mysqli_more_results": [
+        false
+    ],
+    "mysqli_multi_query": [
+        false,
+        false
+    ],
+    "mysqli_next_result": [
+        false
+    ],
+    "mysqli_num_fields": [
+        false
+    ],
+    "mysqli_num_rows": [
+        false
+    ],
+    "mysqli_options": [
+        false,
+        false,
+        false
+    ],
+    "mysqli_ping": [
+        false
+    ],
+    "mysqli_poll": [
+        true,
+        true,
+        true,
+        false,
+        false
+    ],
+    "mysqli_prepare": [
+        false,
+        false
+    ],
+    "mysqli_report": [
+        false
+    ],
+    "mysqli_query": [
+        false,
+        false
+    ],
+    "mysqli_real_connect": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+    ],
+    "mysqli_real_escape_string": [
+        false,
+        false
+    ],
+    "mysqli_real_query": [
+        false,
+        false
+    ],
+    "mysqli_reap_async_query": [
+        false
+    ],
+    "mysqli_release_savepoint": [
+        false,
+        false
+    ],
+    "mysqli_rollback": [
+        false,
+        false,
+        false
+    ],
+    "mysqli_savepoint": [
+        false,
+        false
+    ],
+    "mysqli_select_db": [
+        false,
+        false
+    ],
+    "mysqli_set_charset": [
+        false,
+        false
+    ],
+    "mysqli_stmt_affected_rows": [
+        false
+    ],
+    "mysqli_stmt_attr_get": [
+        false,
+        false
+    ],
+    "mysqli_stmt_attr_set": [
+        false,
+        false,
+        false
+    ],
+    "mysqli_stmt_bind_param": [
+        false,
+        false,
+        true
+    ],
+    "mysqli_stmt_bind_result": [
+        false,
+        true
+    ],
+    "mysqli_stmt_close": [
+        false
+    ],
+    "mysqli_stmt_data_seek": [
+        false,
+        false
+    ],
+    "mysqli_stmt_errno": [
+        false
+    ],
+    "mysqli_stmt_error": [
+        false
+    ],
+    "mysqli_stmt_error_list": [
+        false
+    ],
+    "mysqli_stmt_fetch": [
+        false
+    ],
+    "mysqli_stmt_field_count": [
+        false
+    ],
+    "mysqli_stmt_free_result": [
+        false
+    ],
+    "mysqli_stmt_get_result": [
+        false
+    ],
+    "mysqli_stmt_get_warnings": [
+        false
+    ],
+    "mysqli_stmt_init": [
+        false
+    ],
+    "mysqli_stmt_insert_id": [
+        false
+    ],
+    "mysqli_stmt_more_results": [
+        false
+    ],
+    "mysqli_stmt_next_result": [
+        false
+    ],
+    "mysqli_stmt_num_rows": [
+        false
+    ],
+    "mysqli_stmt_param_count": [
+        false
+    ],
+    "mysqli_stmt_prepare": [
+        false,
+        false
+    ],
+    "mysqli_stmt_reset": [
+        false
+    ],
+    "mysqli_stmt_result_metadata": [
+        false
+    ],
+    "mysqli_stmt_send_long_data": [
+        false,
+        false,
+        false
+    ],
+    "mysqli_stmt_store_result": [
+        false
+    ],
+    "mysqli_stmt_sqlstate": [
+        false
+    ],
+    "mysqli_sqlstate": [
+        false
+    ],
+    "mysqli_ssl_set": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+    ],
+    "mysqli_stat": [
+        false
+    ],
+    "mysqli_store_result": [
+        false,
+        false
+    ],
+    "mysqli_thread_id": [
+        false
+    ],
+    "mysqli_thread_safe": [],
+    "mysqli_use_result": [
+        false
+    ],
+    "mysqli_warning_count": [
+        false
+    ],
+    "mysqli_refresh": [
+        false,
+        false
+    ],
+    "mysqli_escape_string": [
+        false,
+        false
+    ],
+    "mysqli_set_opt": [],
+    "openssl_get_cert_locations": [],
+    "openssl_spki_new": [
+        false,
+        false,
+        false
+    ],
+    "openssl_spki_verify": [
+        false
+    ],
+    "openssl_spki_export": [
+        false
+    ],
+    "openssl_spki_export_challenge": [
+        false
+    ],
+    "openssl_pkey_free": [
+        false
+    ],
+    "openssl_pkey_new": [
+        false
+    ],
+    "openssl_pkey_export": [
+        false,
+        true,
+        false,
+        false
+    ],
+    "openssl_pkey_export_to_file": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "openssl_pkey_get_private": [
+        false,
+        false
+    ],
+    "openssl_pkey_get_public": [
+        false
+    ],
+    "openssl_pkey_get_details": [
+        false
+    ],
+    "openssl_free_key": [
+        false
+    ],
+    "openssl_get_privatekey": [
+        false,
+        false
+    ],
+    "openssl_get_publickey": [
+        false
+    ],
+    "openssl_x509_read": [
+        false
+    ],
+    "openssl_x509_free": [
+        false
+    ],
+    "openssl_x509_parse": [
+        false,
+        false
+    ],
+    "openssl_x509_checkpurpose": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "openssl_x509_check_private_key": [
+        false,
+        false
+    ],
+    "openssl_x509_export": [
+        false,
+        true,
+        false
+    ],
+    "openssl_x509_fingerprint": [
+        false,
+        false,
+        false
+    ],
+    "openssl_x509_export_to_file": [
+        false,
+        false,
+        false
+    ],
+    "openssl_pkcs12_export": [
+        false,
+        true,
+        false,
+        false,
+        false
+    ],
+    "openssl_pkcs12_export_to_file": [
+        false,
+        false,
+        false,
+        false,
+        false
+    ],
+    "openssl_pkcs12_read": [
+        false,
+        true,
+        false
+    ],
+    "openssl_csr_new": [
+        false,
+        true,
+        false,
+        false
+    ],
+    "openssl_csr_export": [
+        false,
+        true,
+        false
+    ],
+    "openssl_csr_export_to_file": [
+        false,
+        false,
+        false
+    ],
+    "openssl_csr_sign": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+    ],
+    "openssl_csr_get_subject": [
+        false
+    ],
+    "openssl_csr_get_public_key": [
+        false
+    ],
+    "openssl_digest": [
+        false,
+        false,
+        false
+    ],
+    "openssl_encrypt": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        true,
+        false,
+        false
+    ],
+    "openssl_decrypt": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+    ],
+    "openssl_cipher_iv_length": [
+        false
+    ],
+    "openssl_sign": [
+        false,
+        true,
+        false,
+        false
+    ],
+    "openssl_verify": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "openssl_seal": [
+        false,
+        true,
+        true,
+        false,
+        false,
+        true
+    ],
+    "openssl_open": [
+        false,
+        true,
+        false,
+        false,
+        false
+    ],
+    "openssl_pbkdf2": [
+        false,
+        false,
+        false,
+        false,
+        false
+    ],
+    "openssl_pkcs7_verify": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+    ],
+    "openssl_pkcs7_decrypt": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "openssl_pkcs7_sign": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+    ],
+    "openssl_pkcs7_encrypt": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+    ],
+    "openssl_private_encrypt": [
+        false,
+        true,
+        false,
+        false
+    ],
+    "openssl_private_decrypt": [
+        false,
+        true,
+        false,
+        false
+    ],
+    "openssl_public_encrypt": [
+        false,
+        true,
+        false,
+        false
+    ],
+    "openssl_public_decrypt": [
+        false,
+        true,
+        false,
+        false
+    ],
+    "openssl_get_md_methods": [
+        false
+    ],
+    "openssl_get_cipher_methods": [
+        false
+    ],
+    "openssl_get_curve_names": [],
+    "openssl_dh_compute_key": [
+        false,
+        false
+    ],
+    "openssl_random_pseudo_bytes": [
+        false,
+        true
+    ],
+    "openssl_error_string": [],
+    "pcntl_fork": [],
+    "pcntl_waitpid": [
+        false,
+        true,
+        false,
+        true
+    ],
+    "pcntl_wait": [
+        true,
+        false,
+        true
+    ],
+    "pcntl_signal": [
+        false,
+        false,
+        false
+    ],
+    "pcntl_signal_get_handler": [
+        false
+    ],
+    "pcntl_signal_dispatch": [],
+    "pcntl_wifexited": [
+        false
+    ],
+    "pcntl_wifstopped": [
+        false
+    ],
+    "pcntl_wifsignaled": [
+        false
+    ],
+    "pcntl_wexitstatus": [
+        false
+    ],
+    "pcntl_wtermsig": [
+        false
+    ],
+    "pcntl_wstopsig": [
+        false
+    ],
+    "pcntl_exec": [
+        false,
+        false,
+        false
+    ],
+    "pcntl_alarm": [
+        false
+    ],
+    "pcntl_get_last_error": [],
+    "pcntl_errno": [],
+    "pcntl_strerror": [
+        false
+    ],
+    "pcntl_getpriority": [
+        false,
+        false
+    ],
+    "pcntl_setpriority": [
+        false,
+        false,
+        false
+    ],
+    "pcntl_sigprocmask": [
+        false,
+        false,
+        true
+    ],
+    "pcntl_wifcontinued": [
+        false
+    ],
+    "pcntl_async_signals": [
+        false
+    ],
+    "posix_kill": [
+        false,
+        false
+    ],
+    "posix_getpid": [],
+    "posix_getppid": [],
+    "posix_getuid": [],
+    "posix_setuid": [
+        false
+    ],
+    "posix_geteuid": [],
+    "posix_seteuid": [
+        false
+    ],
+    "posix_getgid": [],
+    "posix_setgid": [
+        false
+    ],
+    "posix_getegid": [],
+    "posix_setegid": [
+        false
+    ],
+    "posix_getgroups": [],
+    "posix_getlogin": [],
+    "posix_getpgrp": [],
+    "posix_setsid": [],
+    "posix_setpgid": [
+        false,
+        false
+    ],
+    "posix_getpgid": [
+        false
+    ],
+    "posix_getsid": [
+        false
+    ],
+    "posix_uname": [],
+    "posix_times": [],
+    "posix_ctermid": [],
+    "posix_ttyname": [
+        false
+    ],
+    "posix_isatty": [
+        false
+    ],
+    "posix_getcwd": [],
+    "posix_mkfifo": [
+        false,
+        false
+    ],
+    "posix_mknod": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "posix_access": [
+        false,
+        false
+    ],
+    "posix_getgrnam": [
+        false
+    ],
+    "posix_getgrgid": [
+        false
+    ],
+    "posix_getpwnam": [
+        false
+    ],
+    "posix_getpwuid": [
+        false
+    ],
+    "posix_getrlimit": [],
+    "posix_setrlimit": [
+        false,
+        false,
+        false
+    ],
+    "posix_get_last_error": [],
+    "posix_errno": [],
+    "posix_strerror": [
+        false
+    ],
+    "posix_initgroups": [
+        false,
+        false
+    ],
+    "socket_select": [
+        true,
+        true,
+        true,
+        false,
+        false
+    ],
+    "socket_create": [
+        false,
+        false,
+        false
+    ],
+    "socket_create_listen": [
+        false,
+        false
+    ],
+    "socket_create_pair": [
+        false,
+        false,
+        false,
+        true
+    ],
+    "socket_accept": [
+        false
+    ],
+    "socket_set_nonblock": [
+        false
+    ],
+    "socket_set_block": [
+        false
+    ],
+    "socket_listen": [
+        false,
+        false
+    ],
+    "socket_close": [
+        false
+    ],
+    "socket_write": [
+        false,
+        false,
+        false
+    ],
+    "socket_read": [
+        false,
+        false,
+        false
+    ],
+    "socket_getsockname": [
+        false,
+        true,
+        true
+    ],
+    "socket_getpeername": [
+        false,
+        true,
+        true
+    ],
+    "socket_connect": [
+        false,
+        false,
+        false
+    ],
+    "socket_strerror": [
+        false
+    ],
+    "socket_bind": [
+        false,
+        false,
+        false
+    ],
+    "socket_recv": [
+        false,
+        true,
+        false,
+        false
+    ],
+    "socket_send": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "socket_recvfrom": [
+        false,
+        true,
+        false,
+        false,
+        true,
+        true
+    ],
+    "socket_sendto": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+    ],
+    "socket_get_option": [
+        false,
+        false,
+        false
+    ],
+    "socket_set_option": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "socket_shutdown": [
+        false,
+        false
+    ],
+    "socket_last_error": [
+        false
+    ],
+    "socket_clear_error": [
+        false
+    ],
+    "socket_import_stream": [
+        false
+    ],
+    "socket_export_stream": [
+        false
+    ],
+    "socket_sendmsg": [
+        false,
+        false,
+        false
+    ],
+    "socket_recvmsg": [
+        false,
+        true,
+        false
+    ],
+    "socket_cmsg_space": [
+        false,
+        false
+    ],
+    "socket_getopt": [
+        false,
+        false,
+        false
+    ],
+    "socket_setopt": [
+        false,
+        false,
+        false,
+        false
+    ],
+    "zip_open": [
+        false
+    ],
+    "zip_close": [
+        false
+    ],
+    "zip_read": [
+        false
+    ],
+    "zip_entry_open": [
+        false,
+        false,
+        false
+    ],
+    "zip_entry_close": [
+        false
+    ],
+    "zip_entry_read": [
+        false,
+        false
+    ],
+    "zip_entry_filesize": [
+        false
+    ],
+    "zip_entry_name": [
+        false
+    ],
+    "zip_entry_compressedsize": [
+        false
+    ],
+    "zip_entry_compressionmethod": [
+        false
+    ],
+    "dl": [
+        false
+    ],
+    "cli_set_process_title": [
+        false
+    ],
+    "cli_get_process_title": []
+}

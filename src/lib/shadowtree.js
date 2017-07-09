@@ -273,28 +273,7 @@ class Call extends Statement {
         super.check(context)
         let pbr_positions
         if(this.what instanceof Identifier) {
-            switch(this.what.name) {
-                case "pcntl_wait":
-                    pbr_positions = {0: true}
-                    break
-                case "curl_multi_exec":
-                case "parse_str":
-                case "pcntl_waitpid":
-                    pbr_positions = {1: true}
-                    break
-                case "preg_match":
-                case "preg_match_all":
-                    pbr_positions = {2: true}
-                    break
-                case "exec":
-                    pbr_positions = {
-                        1: true,
-                        2: true,
-                    }
-                    break
-                default:
-                    pbr_positions = {}
-            }
+            pbr_positions = context.globalContext.passByReferencePositionsFor(this.what.name)
         } else {
             pbr_positions = {}
         }

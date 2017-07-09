@@ -17,6 +17,25 @@ const IgnoreInvalidParent = true
  */
 const PHPClasses = JSON.parse(fs.readFileSync(__dirname + "/../../data/php-classes.json", "utf8"))
 
+/**
+ * @type {Object.<string,boolean[]>}
+ *
+ * From:
+ *
+ * ```
+ * print json_encode(array_combine(
+ *     get_defined_functions()["internal"],
+ *     array_map(function($n) {
+ *         return array_map(
+ *             function($p) {return $p->isPassedByReference();},
+ *             (new ReflectionFunction($n))->getParameters()
+ *         );
+ *     }, get_defined_functions()["internal"])
+ * ), JSON_PRETTY_PRINT);
+ * ```
+ */
+const PHPFunctions = JSON.parse(fs.readFileSync(__dirname + "/../../data/php-functions.json", "utf8"))
+
 /** @type {Object.<string,string>} From `print json_encode(array_map("gettype", get_defined_vars()), JSON_PRETTY_PRINT);` */
 const PHPSuperglobals = {
     "_GET": "array",
@@ -458,6 +477,16 @@ export class GlobalContext {
             this.classes[name] = new UnknownClassContext(name)
         }
         return this.classes[name]
+    }
+
+    /**
+     * Returns an array of indications as to whether an argument is pass-by-reference.
+     *
+     * @param {string} name
+     * @return {boolean[]}
+     */
+    passByReferencePositionsFor(name) {
+        return PHPFunctions[name] || []
     }
 }
 
