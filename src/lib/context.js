@@ -466,7 +466,7 @@ export class GlobalContext {
                             console.log(
                                 `Class ${name} not found at ${full_path}`
                             )
-                            this.classes[name] = this.addUnknownClass()
+                            this.addUnknownClass(name)
                         }
                         return this.classes[name]
                     }
@@ -474,7 +474,7 @@ export class GlobalContext {
                 }
             }
             console.log(`Could not load ${name}`)
-            this.classes[name] = new UnknownClassContext(name)
+            this.addUnknownClass(name)
         }
         return this.classes[name]
     }
