@@ -423,9 +423,9 @@ export class GlobalContext {
                         phpLint.checkFileSync(full_path)
                         if(!this.classes[name]) {
                             console.log(
-                                `Class ${name} not found at ${full_path}\n` +
-                                `Known classes are: ${Object.keys(this.classes)}`
+                                `Class ${name} not found at ${full_path}`
                             )
+                            this.classes[name] = this.addUnknownClass()
                         }
                         return this.classes[name]
                     }
