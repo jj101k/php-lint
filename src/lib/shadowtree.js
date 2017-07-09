@@ -496,12 +496,7 @@ class Class extends Declaration {
                         b.name,
                         b.visibility,
                         b.isStatic,
-                        new PHPTypeUnion(
-                            new PHPFunctionType(
-                                [new PHPTypeUnion(new PHPSimpleType("mixed"))],
-                                new PHPTypeUnion(new PHPSimpleType("mixed"))
-                            )
-                        )
+                        PHPTypeUnion.mixedFunction
                     )
                 }
             }
@@ -684,7 +679,7 @@ class StaticLookup extends Lookup {
         if(this.what instanceof Variable) {
             this.what.check(context)
             this.offset.check(context)
-            return new PHPTypeUnion(new PHPSimpleType("mixed"))
+            return PHPTypeUnion.mixed
         } else if(
             (
                 this.what instanceof Identifier ||
@@ -730,7 +725,7 @@ class StaticLookup extends Lookup {
                         context,
                         this.node.loc
                     )
-                    return new PHPTypeUnion(new PHPSimpleType("mixed"))
+                    return PHPTypeUnion.mixed
                 } else {
                     throw new PHPStrictError(
                         `No accessible identifier ${resolved_name}::${this.offset.name}`,
@@ -792,7 +787,7 @@ class Constant extends Declaration {
         if(this.value) {
             types = this.value.check(context)
         } else {
-            types = new PHPTypeUnion(new PHPSimpleType("mixed"))
+            types = PHPTypeUnion.mixed
         }
         context.classContext.addIdentifier(this.name, "public", true, types)
         return PHPTypeUnion.empty
@@ -1123,7 +1118,7 @@ class Eval extends Statement {
     check(context) {
         super.check(context)
         this.source.check(context)
-        return new PHPTypeUnion(new PHPSimpleType("mixed"))
+        return PHPTypeUnion.mixed
     }
 }
 class Exit extends Statement {
@@ -1352,9 +1347,7 @@ class List extends Sys {
             this.arguments.forEach(
                 arg => {
                     let inner_context = context.childContext(true)
-                    inner_context.isAssigning = new PHPTypeUnion(
-                        new PHPSimpleType("mixed")
-                    )
+                    inner_context.isAssigning = PHPTypeUnion.mixed
                     arg.check(inner_context)
                 }
             )
@@ -1406,7 +1399,7 @@ class New extends Statement {
         this.arguments.forEach(
             arg => arg.check(context)
         )
-        return new PHPTypeUnion(new PHPSimpleType(this.what.name || "mixed"))
+        return new PHPTypeUnion(new PHPSimpleType(this.what.name))
     }
 }
 class Nowdoc extends Literal {
@@ -1661,12 +1654,7 @@ class Trait extends Declaration {
                         b.name,
                         b.visibility,
                         b.isStatic,
-                        new PHPTypeUnion(
-                            new PHPFunctionType(
-                                [new PHPTypeUnion(new PHPSimpleType("mixed"))],
-                                new PHPTypeUnion(new PHPSimpleType("mixed"))
-                            )
-                        )
+                        PHPTypeUnion.mixedFunction
                     )
                 }
             }

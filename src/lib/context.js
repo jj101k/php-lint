@@ -199,7 +199,7 @@ class UnknownClassContext extends ClassContext {
      * @returns {?PHPTypeUnion}
      */
     findInstanceIdentifier(name, from_class_context) {
-        return new PHPTypeUnion(new PHPSimpleType("mixed"))
+        return PHPTypeUnion.mixed
     }
 
     /**
@@ -209,7 +209,7 @@ class UnknownClassContext extends ClassContext {
      * @returns {?PHPTypeUnion}
      */
     findStaticIdentifier(name, from_class_context) {
-        return new PHPTypeUnion(new PHPSimpleType("mixed"))
+        return PHPTypeUnion.mixed
     }
 }
 

@@ -35,12 +35,34 @@ class PHPFunctionType extends PHPType {
 }
 class PHPTypeUnion {
     /**
-     * Returns an empty type union
-     * @returns {PHPTypeUnion}
+     * An empty type union
+     * @type {PHPTypeUnion}
      */
     static get empty() {
         return new PHPTypeUnion()
     }
+
+    /**
+     * A type union with an undefined entry.
+     * @type {PHPTypeUnion}
+     */
+    static get mixed() {
+        return new PHPTypeUnion(new PHPSimpleType())
+    }
+
+    /**
+     * A type union with a (...)->mixed function entry
+     * @type {PHPTypeUnion}
+     */
+    static get mixedFunction() {
+        return new PHPTypeUnion(
+            new PHPFunctionType(
+                [PHPTypeUnion.mixed],
+                PHPTypeUnion.mixed
+            )
+        )
+    }
+
     /**
      * @param {?PHPType} initial_type
      */
