@@ -9,6 +9,9 @@ const phpLint = require("../index") // TODO improve
 /** @type {boolean} If true, this will dump out type info */
 const DEBUG_TYPES = false
 
+/** @type {boolean} If true, invalid parent:: references will be ignored */
+const IgnoreInvalidParent = true
+
 export class FileContext {
     /**
      *
@@ -308,6 +311,16 @@ export class GlobalContext {
     }
 
     /**
+     * Adds an unknown class. For when the real name isn't known and you have to
+     * use a placeholder. You can get the name from the return value.
+     * @returns {UnknownClassContext}
+     */
+    addUnknownClass() {
+        let name = "Unknown" + Math.random()
+        return this.classes[name] = new UnknownClassContext(name)
+    }
+
+    /**
      * Given a path for the current file, walks up the tree looking for composer.json.
      *
      * @param {string} actual_path eg. /foo/bar/lib/Baz/
@@ -460,7 +473,16 @@ export default class Context {
      */
     resolveName(name) {
         if(this.classContext) {
-            let class_name = this.classContext.resolveName(name)
+            let class_name
+            try {
+                class_name = this.classContext.resolveName(name)
+            } catch(e) {
+                if(e instanceof PHPContextlessError && IgnoreInvalidParent) {
+                    class_name = this.globalContext.addUnknownClass().name
+                } else {
+                    throw e
+                }
+            }
             if(class_name) {
                 return class_name
             }
