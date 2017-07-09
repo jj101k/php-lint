@@ -278,6 +278,7 @@ class Call extends Statement {
                     pbr_positions = {0: true}
                     break
                 case "curl_multi_exec":
+                case "parse_str":
                 case "pcntl_waitpid":
                     pbr_positions = {1: true}
                     break
