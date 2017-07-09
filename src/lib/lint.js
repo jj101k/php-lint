@@ -61,7 +61,19 @@ class Lint {
                         )
                     } else {
                         console.log(
-                            prefix_space + "^"
+                            prefix_space + "^" +
+                            lines[e.loc.start.line - 1].substr(e.loc.start.column + 1).replace(/\S/g, "~") +
+                            "\n" +
+                            lines.slice(
+                                e.loc.start.line,
+                                e.loc.end.line
+                            ).map((l, i) => {
+                                if(i == e.loc.end.line - e.loc.start.line - 1) {
+                                    return l + "\n" + l.substr(0, e.loc.end.column).replace(/\S/g, "~")
+                                } else {
+                                    return l + "\n" + l.replace(/\S/g, "~")
+                                }
+                            }).join("\n")
                         )
                     }
                 }
