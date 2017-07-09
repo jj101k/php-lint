@@ -518,7 +518,8 @@ export default class Context {
         this.classContext = class_context
         this.globalContext = global_context || new GlobalContext()
         this.fileContext = file_context
-        this.isAssigning = false
+        /** @type {?PHPTypeUnion} */
+        this.isAssigning = null
         this.ns = ns || Context.superGlobals
     }
     /**
