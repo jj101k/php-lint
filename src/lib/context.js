@@ -164,7 +164,12 @@ class ClassContext {
      */
     resolveName(name) {
         if(name == "parent") {
-            return this.superclass.name
+            if(this.superclass) {
+                return this.superclass.name
+            } else {
+                console.log(`Attempt to use parent:: with no superclass`)
+                return `${this.name}::parent`
+            }
         } else if(name == "self") {
             return this.name
         } else if(name == "static") {
@@ -172,6 +177,39 @@ class ClassContext {
         } else {
             return null
         }
+    }
+}
+
+/**
+ * This handles unknown classes
+ */
+class UnknownClassContext extends ClassContext {
+    /**
+     * Builds the object
+     * @param {string} name Fully qualified only
+     */
+    constructor(name, superclass = null) {
+        super(name)
+    }
+
+    /**
+     * Finds the named identifier
+     * @param {string} name
+     * @param {?ClassContext} from_class_context
+     * @returns {?PHPTypeUnion}
+     */
+    findInstanceIdentifier(name, from_class_context) {
+        return new PHPTypeUnion(new PHPSimpleType("mixed"))
+    }
+
+    /**
+     * Finds the named identifier
+     * @param {string} name
+     * @param {?ClassContext} from_class_context
+     * @returns {?PHPTypeUnion}
+     */
+    findStaticIdentifier(name, from_class_context) {
+        return new PHPTypeUnion(new PHPSimpleType("mixed"))
     }
 }
 
@@ -320,7 +358,7 @@ export class GlobalContext {
                 }
             }
             console.log(`Could not load ${name}`)
-            this.classes[name] = null
+            this.classes[name] = new UnknownClassContext(name)
         }
         return this.classes[name]
     }
