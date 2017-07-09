@@ -1759,7 +1759,7 @@ class Trait extends Declaration {
     check(context) {
         super.check(context)
         let inner_context = context.childContext()
-        inner_context.classContext = inner_context.globalContext.addClass(
+        inner_context.classContext = inner_context.globalContext.addTrait(
             context.resolveNodeName(this),
             this.extends ?
                 context.findClass(context.resolveNodeName(this.extends)) :

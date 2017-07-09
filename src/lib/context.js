@@ -205,6 +205,31 @@ class ClassContext {
 }
 
 /**
+ * This handles traits
+ */
+class TraitContext extends ClassContext {
+    /**
+     * Finds the named identifier
+     * @param {string} name
+     * @param {?ClassContext} from_class_context
+     * @returns {?PHPTypeUnion}
+     */
+    findInstanceIdentifier(name, from_class_context) {
+        return super.findInstanceIdentifier(name, from_class_context) || PHPTypeUnion.mixed
+    }
+
+    /**
+     * Finds the named identifier
+     * @param {string} name
+     * @param {?ClassContext} from_class_context
+     * @returns {?PHPTypeUnion}
+     */
+    findStaticIdentifier(name, from_class_context) {
+        return super.findStaticIdentifier(name, from_class_context) || PHPTypeUnion.mixed
+    }
+}
+
+/**
  * This handles unknown classes
  */
 class UnknownClassContext extends ClassContext {
@@ -328,6 +353,19 @@ export class GlobalContext {
     addUnknownClass() {
         let name = "Unknown" + Math.random()
         return this.classes[name] = new UnknownClassContext(name)
+    }
+
+    /**
+     * Adds a known trait
+     * @param {string} name Fully qualified only
+     * @param {?ClassContext} superclass
+     * @returns {ClassContext}
+     */
+    addTrait(name, superclass = null) {
+        return this.classes[name] = this.classes[name] || new TraitContext(
+            name,
+            superclass
+        )
     }
 
     /**
