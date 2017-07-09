@@ -123,6 +123,7 @@ class ClassContext {
             // TODO inheritance
         } else if(wrong_case = Object.keys(this.instanceIdentifiers).find(n => n.toLowerCase() == name.toLowerCase())) {
             console.log(`Wrong case for identifier, ${name} != ${wrong_case}`)
+            this.instanceIdentifiers[name] = this.instanceIdentifiers[wrong_case]
             return this.findInstanceIdentifier(wrong_case, from_class_context)
         } else if(this.superclass) {
             let superclass_types = this.superclass.findInstanceIdentifier(name, from_class_context)
@@ -154,6 +155,7 @@ class ClassContext {
             }
         } else if(wrong_case = Object.keys(this.staticIdentifiers).find(n => n.toLowerCase() == name.toLowerCase())) {
             console.log(`Wrong case for identifier, ${name} != ${wrong_case}`)
+            this.staticIdentifiers[name] = this.staticIdentifiers[wrong_case]
             return this.findStaticIdentifier(wrong_case, from_class_context)
         } else if(this.superclass) {
             let superclass_types = this.superclass.findStaticIdentifier(name, from_class_context)
