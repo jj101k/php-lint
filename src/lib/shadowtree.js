@@ -286,6 +286,12 @@ class Call extends Statement {
                 case "preg_match_all":
                     pbr_positions = {2: true}
                     break
+                case "exec":
+                    pbr_positions = {
+                        1: true,
+                        2: true,
+                    }
+                    break
                 default:
                     pbr_positions = {}
             }
