@@ -102,8 +102,19 @@ class ClassContext {
         let m = this.instanceIdentifiers[name]
         let wrong_case
         if(m) {
-            if(from_class_context === this || m.scope == "public") {
+            if(
+                m.scope == "public" ||
+                (
+                    m.scope == "protected" &&
+                    from_class_context.isSubclassOf(this)
+                ) ||
+                from_class_context === this
+            ) {
                 return m.types
+            } else {
+                throw new PHPContextlessError(
+                    `Scope miss for name ${name} with scope ${m.scope}`
+                )
             }
             // TODO inheritance
         } else if(wrong_case = Object.keys(this.instanceIdentifiers).find(n => n.toLowerCase() == name.toLowerCase())) {
