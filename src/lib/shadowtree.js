@@ -322,9 +322,18 @@ class Call extends Statement {
     }
 }
 class ConstRef extends Expression {
-    /** @type {string} */
+    /** @type {string|Identifier} */
     get name() {
         return this.cacheOptionalNode("name")
+    }
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?PHPTypeUnion} The set of types applicable to this value
+     */
+    check(context, in_call = false) {
+        super.check(context)
+        return context.findName(context.resolveNodeName(this))
     }
 }
 class Closure extends Statement {
