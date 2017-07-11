@@ -156,6 +156,15 @@ class Identifier extends Node {
     get resolution() {
         return this.node.resolution;
     }
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?PHPTypeUnion} The set of types applicable to this value
+     */
+    check(context, in_call = false) {
+        super.check(context)
+        return PHPTypeUnion.mixed
+    }
 }
 class Return extends Node {
     /** @type {?Expression} */
