@@ -602,7 +602,9 @@ export default class Context {
      * @returns {string}
      */
     resolveNodeName(node) {
-        if(node instanceof Identifier) {
+        if(node.name instanceof Identifier) {
+            return this.resolveNodeName(node.name)
+        } else if(node instanceof Identifier) {
             switch(node.resolution) {
                 case "fqn":
                     return node.name
@@ -615,7 +617,7 @@ export default class Context {
                     console.log(node.name)
                     throw new Error(`TODO don't know how to resolve ${node.resolution}`)
             }
-        } else {
+        } else if(node.name instanceof String) {
             return this.resolveName(node.name)
         }
     }
