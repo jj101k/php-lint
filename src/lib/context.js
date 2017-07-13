@@ -433,9 +433,6 @@ export class GlobalContext {
      * @returns {?ClassContext}
      */
     findClass(name, file_context) {
-        if(name.match(/^\\\\/)) {
-            throw new Error(`Invalid class name ${name}`)
-        }
         let filename = file_context.filename
         if(this.classes.hasOwnProperty(name)) {
             return this.classes[name]
