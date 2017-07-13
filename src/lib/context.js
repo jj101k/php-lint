@@ -440,6 +440,7 @@ export class GlobalContext {
         if(this.classes.hasOwnProperty(name)) {
             return this.classes[name]
         } else {
+            this.addUnknownClass(name)
             // Autoload go!
             if(!this.autoloadPaths) {
                 let dir = path.dirname(path.resolve(filename))
@@ -475,7 +476,6 @@ export class GlobalContext {
                 }
             }
             console.log(`Could not load ${name}`)
-            this.addUnknownClass(name)
         }
         return this.classes[name]
     }
