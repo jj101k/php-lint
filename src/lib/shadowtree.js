@@ -333,7 +333,7 @@ class ConstRef extends Expression {
      */
     check(context, in_call = false) {
         super.check(context)
-        return context.findName(context.resolveNodeName(this))
+        return context.findName(context.resolveNodeName(this)) || PHPTypeUnion.mixed
     }
 }
 class Closure extends Statement {
