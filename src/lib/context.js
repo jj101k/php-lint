@@ -370,6 +370,7 @@ export class GlobalContext {
             name => this.addUnknownClass("\\" + name)
         )
         this.addUnknownClass("mixed")
+        this.addUnknownClass("object")
     }
 
     /**
