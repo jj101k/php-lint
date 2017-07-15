@@ -275,6 +275,45 @@ class TraitContext extends ClassContext {
 }
 
 /**
+ * This handles functions when accessed as objects.
+ */
+class AnonymousFunctionContext extends ClassContext {
+    static get inst() {
+        if(!this._inst) {
+            this._inst = new AnonymousFunctionContext()
+        }
+        return this._inst
+    }
+    /**
+     * Builds the object
+     */
+    constructor() {
+        super("() -> ()") // Just something that looks functiony.
+    }
+
+    /**
+     * Finds the named identifier
+     * @param {string} name
+     * @param {?ClassContext} from_class_context
+     * @returns {?PHPTypeUnion}
+     */
+    findInstanceIdentifier(name, from_class_context) {
+        // TODO: Limit to the actual methods.
+        return PHPTypeUnion.mixed
+    }
+
+    /**
+     * Finds the named identifier
+     * @param {string} name
+     * @param {?ClassContext} from_class_context
+     * @returns {?PHPTypeUnion}
+     */
+    findStaticIdentifier(name, from_class_context) {
+        return null
+    }
+}
+
+/**
  * This handles unknown classes
  */
 class UnknownClassContext extends ClassContext {
@@ -454,6 +493,9 @@ export class GlobalContext {
      * @returns {?ClassContext}
      */
     findClass(name, file_context) {
+        if(name.match(/ -> /)) {
+            return AnonymousFunctionContext.inst
+        }
         let filename = file_context.filename
         if(this.classes.hasOwnProperty(name)) {
             return this.classes[name]
