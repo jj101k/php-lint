@@ -46,6 +46,7 @@ const PHPInterfaces = JSON.parse(fs.readFileSync(__dirname + "/../../data/php-in
 
 /** @type {Object.<string,string>} From `print json_encode(array_map("gettype", get_defined_vars()), JSON_PRETTY_PRINT);` */
 const PHPSuperglobals = {
+    "_ENV": "array",
     "_GET": "array",
     "_POST": "array",
     "_COOKIE": "array",
