@@ -237,16 +237,16 @@ class Assign extends Statement {
     check(context, in_call = false) {
         super.check(context)
         let left_context = context.childContext(true)
-        left_context.isAssigning = this.right.check(context)
+        left_context.assigningType = this.right.check(context)
         this.left.check(left_context)
-        if(!left_context.isAssigning.types.length) {
+        if(!left_context.assigningType.types.length) {
             throw new PHPStrictError(
                 `No value to assign`,
                 context,
                 this.node.loc
             )
         }
-        return left_context.isAssigning
+        return left_context.assigningType
     }
 }
 class Block extends Statement {
@@ -298,7 +298,7 @@ class Call extends Statement {
         this.arguments.forEach((arg, i) => {
             if(pbr_positions[i]) {
                 let inner_context = context.childContext(true)
-                inner_context.isAssigning = PHPTypeUnion.mixed
+                inner_context.assigningType = PHPTypeUnion.mixed
                 arg.check(inner_context)
             } else {
                 arg.check(context)
@@ -457,10 +457,10 @@ class Variable extends Expression {
      */
     check(context, in_call = false) {
         super.check(context)
-        if(context.isAssigning) {
+        if(context.assigningType) {
             return context.addName(
                 '$' + this.name,
-                context.isAssigning
+                context.assigningType
             )
         } else {
             return this.assertHasName(context, '$' + this.name)
@@ -745,7 +745,7 @@ class PropertyLookup extends Lookup {
             this.offset instanceof ConstRef
         ) {
             let inner_context = context.childContext(true)
-            inner_context.isAssigning = null
+            inner_context.assigningType = null
             let type_union = this.what.check(inner_context)
             let types_out = PHPTypeUnion.empty
             try {
@@ -1189,7 +1189,7 @@ class Catch extends Statement {
             w => types.addType(new PHPTypeUnion(w.name))
         )
         let inner_context = context.childContext(true)
-        inner_context.isAssigning = PHPTypeUnion.mixed
+        inner_context.assigningType = PHPTypeUnion.mixed
         this.variable.check(inner_context)
         this.body.check(context)
         return PHPTypeUnion.empty
@@ -1438,7 +1438,7 @@ class Foreach extends Statement {
         super.check(context)
         this.source.check(context)
         let assign_context = context.childContext(true)
-        assign_context.isAssigning = PHPTypeUnion.mixed
+        assign_context.assigningType = PHPTypeUnion.mixed
         if(this.key) {
             this.key.check(assign_context)
         }
@@ -1460,7 +1460,7 @@ class Global extends Statement {
     check(context, in_call = false) {
         super.check(context)
         let inner_context = context.childContext(true)
-        inner_context.isAssigning = PHPTypeUnion.mixed
+        inner_context.assigningType = PHPTypeUnion.mixed
         this.items.forEach(item => item.check(inner_context))
         return PHPTypeUnion.empty
     }
@@ -1572,11 +1572,11 @@ class List extends Sys {
      */
     check(context, in_call = false) {
         super.check(context)
-        if(context.isAssigning) {
+        if(context.assigningType) {
             this.arguments.forEach(
                 arg => {
                     let inner_context = context.childContext(true)
-                    inner_context.isAssigning = PHPTypeUnion.mixed
+                    inner_context.assigningType = PHPTypeUnion.mixed
                     arg.check(inner_context)
                 }
             )
@@ -1660,7 +1660,7 @@ class OffsetLookup extends Lookup {
             this.what instanceof Parenthesis
         ) {
             let inner_context = context.childContext(true)
-            inner_context.isAssigning = null
+            inner_context.assigningType = null
             types_in = this.what.check(inner_context)
         } else if(
             this.what instanceof Call
@@ -1847,7 +1847,7 @@ class Static extends Statement {
     check(context, in_call = false) {
         super.check(context)
         let inner_context = context.childContext(true)
-        inner_context.isAssigning = PHPTypeUnion.mixed
+        inner_context.assigningType = PHPTypeUnion.mixed
         this.items.forEach(
             i => i.check(inner_context)
         )
