@@ -1,0 +1,20 @@
+[
+    "Traversable",
+    "IteratorAggregate",
+    "Iterator",
+    "ArrayAccess",
+    "Serializable",
+    "Throwable",
+    "DateTimeInterface",
+    "JsonSerializable",
+    "RecursiveIterator",
+    "OuterIterator",
+    "Countable",
+    "SeekableIterator",
+    "SplObserver",
+    "SplSubject",
+    "Reflector",
+    "SessionHandlerInterface",
+    "SessionIdInterface",
+    "SessionUpdateTimestampHandlerInterface"
+]

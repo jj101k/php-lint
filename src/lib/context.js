@@ -39,6 +39,11 @@ const PHPClasses = JSON.parse(fs.readFileSync(__dirname + "/../../data/php-class
  */
 const PHPFunctions = JSON.parse(fs.readFileSync(__dirname + "/../../data/php-functions.json", "utf8"))
 
+/**
+ * @type {string[]} From `print json_encode(get_declared_interfaces(), JSON_PRETTY_PRINT);`
+ */
+const PHPInterfaces = JSON.parse(fs.readFileSync(__dirname + "/../../data/php-interfaces.json", "utf8"))
+
 /** @type {Object.<string,string>} From `print json_encode(array_map("gettype", get_defined_vars()), JSON_PRETTY_PRINT);` */
 const PHPSuperglobals = {
     "_GET": "array",
@@ -377,6 +382,9 @@ export class GlobalContext {
     constructor() {
         this.classes = {}
         PHPClasses.forEach(
+            name => this.addUnknownClass("\\" + name)
+        )
+        PHPInterfaces.forEach(
             name => this.addUnknownClass("\\" + name)
         )
         this.addUnknownClass("mixed")
