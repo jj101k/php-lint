@@ -73,6 +73,12 @@ class PHPTypeUnion {
         }
     }
     /**
+     * @type {boolean}
+     */
+    get isEmpty() {
+        return !this.types.length
+    }
+    /**
      * @type {PHPType[]}
      */
     get types() {
@@ -95,10 +101,10 @@ class PHPTypeUnion {
         }
     }
     toString() {
-        if(this.types.length) {
-            return this.types.join(" | ")
-        } else {
+        if(this.isEmpty) {
             return "null"
+        } else {
+            return this.types.join(" | ")
         }
     }
 }

@@ -239,14 +239,15 @@ class Assign extends Statement {
         let left_context = context.childContext(true)
         left_context.assigningType = this.right.check(context)
         this.left.check(left_context)
-        if(!left_context.assigningType.types.length) {
+        if(left_context.assigningType.isEmpty) {
             throw new PHPStrictError(
                 `No value to assign`,
                 context,
                 this.node.loc
             )
+        } else {
+            return left_context.assigningType
         }
-        return left_context.assigningType
     }
 }
 class Block extends Statement {
