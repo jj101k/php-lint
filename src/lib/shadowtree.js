@@ -206,15 +206,9 @@ class TraitUse extends Node {
         // TODO adaptations not yet supported
         if(this.traits) {
             this.traits.forEach(
-                t => {
-                    let info = context.findClass(context.resolveNodeName(t))
-                    for(var k in info.staticIdentifiers) {
-                        context.classContext.staticIdentifiers[k] = info.staticIdentifiers[k]
-                    }
-                    for(var k in info.instanceIdentifiers) {
-                        context.classContext.instanceIdentifiers[k] = info.instanceIdentifiers[k]
-                    }
-                }
+                t => context.classContext.importTrait(
+                    context.findClass(context.resolveNodeName(t))
+                )
             )
         }
     }

@@ -212,6 +212,20 @@ class ClassContext {
     }
 
     /**
+     * Imports a trait into the current context
+     *
+     * @param {ClassContext} trait
+     */
+    importTrait(trait) {
+        for(var k in trait.staticIdentifiers) {
+            this.staticIdentifiers[k] = trait.staticIdentifiers[k]
+        }
+        for(var k in trait.instanceIdentifiers) {
+            this.instanceIdentifiers[k] = trait.instanceIdentifiers[k]
+        }
+    }
+
+    /**
      * Returns true if this is a subclass of that class.
      * @param {ClassContext} other_class
      * @returns {boolean}
