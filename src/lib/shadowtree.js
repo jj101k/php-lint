@@ -1054,6 +1054,7 @@ class Bin extends Operation {
                 types.addType(new PHPSimpleType("boolean"))
                 break
             default:
+                console.log(this.node)
                 console.log(`Don't know how to parse operator type ${this.type}`)
                 types.addTypesFrom(left_types)
                 types.addTypesFrom(right_types)
