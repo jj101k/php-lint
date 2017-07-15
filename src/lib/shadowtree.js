@@ -822,6 +822,47 @@ class PropertyLookup extends Lookup {
                 }
             }
             return types_out
+        } else if(
+            this.what instanceof Call &&
+            this.offset instanceof _String
+        ) {
+            let type_union = this.what.check(context)
+            let types_in = PHPTypeUnion.empty
+            type_union.types.forEach(t => {
+                if(t instanceof PHPFunctionType) {
+                    types_in.addType(t.returnType)
+                } else {
+                    types_in.addTypesFrom(PHPTypeUnion.mixed)
+                }
+            })
+            let types_out = PHPTypeUnion.empty
+            try {
+                types_in.types.forEach(t => {
+                    let class_context = context.findClass("" + t)
+                    let identifier_types = class_context.findInstanceIdentifier(this.offset.value, context.classContext, in_call)
+                    if(identifier_types) {
+                        types_out.addTypesFrom(identifier_types)
+                    } else {
+                        throw new PHPStrictError(
+                            `No accessible identifier ${t}->${this.offset.value}\n` +
+                            `Accessible properties are: ${Object.keys(class_context.instanceIdentifiers)}`,
+                            context,
+                            this.loc
+                        )
+                    }
+                })
+            } catch(e) {
+                if(e instanceof PHPContextlessError) {
+                    throw new PHPStrictError(
+                        e.message,
+                        context,
+                        this.node.loc
+                    )
+                } else {
+                    throw e
+                }
+            }
+            return types_out
         } else if(this.offset instanceof Variable) {
             return PHPTypeUnion.mixed
         } else {
