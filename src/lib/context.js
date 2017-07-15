@@ -322,7 +322,7 @@ export class GlobalContext {
                 Object.keys(psr0).forEach(
                     prefix => {
                         autoload_paths[prefix] = [psr0[prefix]].map(
-                            path => `${current_module_path}/${path}/${prefix.replace(/[_\\]/g, "")}/`
+                            path => `${current_module_path}/${path}${prefix.replace(/[_\\]/g, "/")}/`
                         )
                     }
                 )
