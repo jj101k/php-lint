@@ -6,6 +6,9 @@ const fs = require("fs")
 const path = require("path")
 const phpLint = require("../index") // TODO improve
 
+/** @type {boolean} If true, autoload failure may throw. */
+const DEBUG_AUTOLOAD = false
+
 /** @type {boolean} If true, this will dump out type info */
 const DEBUG_TYPES = false
 
@@ -474,9 +477,14 @@ export class GlobalContext {
 
                 }
             }
-            console.log(`Could not load ${name}`)
+            if(DEBUG_AUTOLOAD) {
+                console.log(this.autoloadPaths)
+                throw new PHPContextlessError(`Could not load ${name}`)
+            } else {
+                console.log(`Could not load ${name}`)
+                return this.classes[name]
+            }
         }
-        return this.classes[name]
     }
 
     /**
