@@ -1259,6 +1259,15 @@ class Encapsed extends Literal {
     get label() {
         return this.node.label
     }
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?PHPTypeUnion} The set of types applicable to this value
+     */
+    check(context, in_call = false) {
+        super.check(context)
+        return new PHPTypeUnion(new PHPSimpleType("string"))
+    }
 }
 class Entry extends Node {
     /** @type {?Node} */
