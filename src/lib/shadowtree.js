@@ -1144,9 +1144,10 @@ class Case extends Node {
             this.test.check(context)
         }
         if(this.body) {
-            this.body.check(context)
+            return this.body.check(context)
+        } else {
+            return PHPTypeUnion.empty
         }
-        return PHPTypeUnion.empty
     }
 }
 class Cast extends Operation {
@@ -1507,11 +1508,12 @@ class If extends Statement {
     check(context, in_call = false) {
         super.check(context)
         this.test.check(context)
-        this.body.check(context)
+        let type = PHPTypeUnion.empty
+        type.addTypesFrom(this.body.check(context))
         if(this.alternate) {
-            this.alternate.check(context)
+            type.addTypesFrom(this.alternate.check(context))
         }
-        return PHPTypeUnion.empty
+        return type
     }
 }
 class Include extends Statement {
@@ -1878,8 +1880,7 @@ class Switch extends Statement {
     check(context, in_call = false) {
         super.check(context)
         this.test.check(context)
-        this.body.check(context)
-        return PHPTypeUnion.empty
+        return this.body.check(context)
     }
 }
 class Throw extends Statement {
