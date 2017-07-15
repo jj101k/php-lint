@@ -1022,6 +1022,9 @@ class Bin extends Operation {
             case "-":
             case "%":
             case "**":
+            case "<<":
+            case ">>":
+            case "^":
                 types.addType(new PHPSimpleType("number"))
                 break
             case "+":
