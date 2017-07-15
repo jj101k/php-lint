@@ -394,7 +394,9 @@ class Closure extends Statement {
         this.uses.forEach(
             t => inner_context.addName(
                 '$' + t.name,
-                this.assertHasName(context, '$' + t.name)
+                t.byref ?
+                    (context.findName('$' + t.name) || PHPTypeUnion.mixed) :
+                    this.assertHasName(context, '$' + t.name)
             )
         )
         if(context.findName("$this")) {
