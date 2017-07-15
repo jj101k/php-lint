@@ -369,6 +369,7 @@ export class GlobalContext {
         PHPClasses.forEach(
             name => this.addUnknownClass("\\" + name)
         )
+        this.addUnknownClass("mixed")
     }
 
     /**
