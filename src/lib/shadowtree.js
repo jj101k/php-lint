@@ -674,12 +674,14 @@ class Method extends _Function {
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
     check(context, in_call = false) {
+        let method_type = super.check(context)
         context.classContext.addIdentifier(
             this.name,
             this.visibility,
             this.isStatic,
-            super.check(context)
+            method_type
         )
+
         return PHPTypeUnion.empty
     }
 }
