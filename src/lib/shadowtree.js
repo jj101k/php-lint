@@ -300,6 +300,7 @@ class Call extends Statement {
         } else {
             pbr_positions = {}
         }
+        let callable_types = this.what.check(context, true)
         this.arguments.forEach((arg, i) => {
             if(pbr_positions[i]) {
                 let inner_context = context.childContext(true)
@@ -309,7 +310,6 @@ class Call extends Statement {
                 arg.check(context)
             }
         })
-        let callable_types = this.what.check(context, true)
         let types = PHPTypeUnion.empty
         callable_types.types.forEach(t => {
             if(t instanceof PHPFunctionType) {
