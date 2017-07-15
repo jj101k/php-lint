@@ -362,58 +362,67 @@ export class GlobalContext {
         if(!filename) return null
         /** @type {string} The current module (or whole project) root */
         let current_module_path = path.dirname(filename)
-        let composer_config = JSON.parse(fs.readFileSync(filename, "utf8"))
-        let autoload_paths = {}
-        if(composer_config.autoload) {
-            let psr0 = composer_config.autoload["psr-0"]
-            if(psr0) {
-                Object.keys(psr0).forEach(
-                    prefix => {
-                        autoload_paths[prefix] = [psr0[prefix]].map(
-                            path => `${current_module_path}/${path}${prefix.replace(/[_\\]/g, "/")}/`
-                        )
-                    }
-                )
-            }
-            let psr4 = composer_config.autoload["psr-4"]
-            if(psr4) {
-                Object.keys(psr4).forEach(
-                    prefix => {
-                        autoload_paths[prefix] = (psr4[prefix] instanceof Array ?
-                            psr4[prefix] :
-                            [psr4[prefix]]
-                        ).map(
-                            path => {
-                                if(path.match(/\/$/) || path == "") {
-                                    return `${current_module_path}/${path}`
-                                } else {
-                                    //console.log(`Path ${path} for ${prefix} is missing a trailing slash`)
-                                    return `${current_module_path}/${path}/`
+        try {
+            let composer_config = JSON.parse(fs.readFileSync(filename, "utf8"))
+            let autoload_paths = {}
+            if(composer_config.autoload) {
+                let psr0 = composer_config.autoload["psr-0"]
+                if(psr0) {
+                    Object.keys(psr0).forEach(
+                        prefix => {
+                            autoload_paths[prefix] = [psr0[prefix]].map(
+                                path => `${current_module_path}/${path}${prefix.replace(/[_\\]/g, "/")}/`
+                            )
+                        }
+                    )
+                }
+                let psr4 = composer_config.autoload["psr-4"]
+                if(psr4) {
+                    Object.keys(psr4).forEach(
+                        prefix => {
+                            autoload_paths[prefix] = (psr4[prefix] instanceof Array ?
+                                psr4[prefix] :
+                                [psr4[prefix]]
+                            ).map(
+                                path => {
+                                    if(path.match(/\/$/) || path == "") {
+                                        return `${current_module_path}/${path}`
+                                    } else {
+                                        //console.log(`Path ${path} for ${prefix} is missing a trailing slash`)
+                                        return `${current_module_path}/${path}/`
+                                    }
                                 }
-                            }
-                        )
-                    }
+                            )
+                        }
+                    )
+                }
+            }
+            if(!vendor_path) {
+                vendor_path = path.dirname(filename) + "/vendor"
+            }
+            if(composer_config.require) {
+                Object.keys(composer_config.require).filter(
+                    uid => uid.match(/\//)
+                ).forEach(
+                    uid => autoload_paths = Object.assign(
+                        {},
+                        this.autoloadFromComposer(
+                            `${vendor_path}/${uid}/composer.json`,
+                            vendor_path
+                        ),
+                        autoload_paths
+                    )
                 )
             }
+            return autoload_paths
+        } catch(e) {
+            if(e.errno == -2) {
+                console.log(`${filename} missing, not installed?`)
+                return {}
+            } else {
+                throw e
+            }
         }
-        if(!vendor_path) {
-            vendor_path = path.dirname(filename) + "/vendor"
-        }
-        if(composer_config.require) {
-            Object.keys(composer_config.require).filter(
-                uid => uid.match(/\//)
-            ).forEach(
-                uid => autoload_paths = Object.assign(
-                    {},
-                    this.autoloadFromComposer(
-                        `${vendor_path}/${uid}/composer.json`,
-                        vendor_path
-                    ),
-                    autoload_paths
-                )
-            )
-        }
-        return autoload_paths
     }
 
     /**
