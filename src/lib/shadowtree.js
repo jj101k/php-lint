@@ -1853,6 +1853,7 @@ class Static extends Statement {
     check(context, in_call = false) {
         super.check(context)
         let inner_context = context.childContext(true)
+        inner_context.isAssigning = PHPTypeUnion.mixed
         this.items.forEach(
             i => i.check(inner_context)
         )
