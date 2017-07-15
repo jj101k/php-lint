@@ -181,7 +181,7 @@ class Return extends Node {
         if(this.expr) {
             return this.expr.check(context)
         } else {
-            return new PHPTypeUnion(new PHPSimpleType("null"))
+            return PHPTypeUnion.empty
         }
     }
 }
