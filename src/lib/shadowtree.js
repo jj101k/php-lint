@@ -912,6 +912,7 @@ class StaticLookup extends Lookup {
             // Bar::$FOO
             // TODO
             //this.offset.check(context)
+            return PHPTypeUnion.mixed
         } else {
             console.log(this.node)
             console.log("TODO don't know how to check this kind of lookup")
