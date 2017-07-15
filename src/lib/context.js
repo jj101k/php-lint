@@ -338,7 +338,14 @@ export class GlobalContext {
                             psr4[prefix] :
                             [psr4[prefix]]
                         ).map(
-                            path => `${current_module_path}/${path}`
+                            path => {
+                                if(path.match(/\/$/) || path == "") {
+                                    return `${current_module_path}/${path}`
+                                } else {
+                                    //console.log(`Path ${path} for ${prefix} is missing a trailing slash`)
+                                    return `${current_module_path}/${path}/`
+                                }
+                            }
                         )
                     }
                 )
