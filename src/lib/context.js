@@ -615,7 +615,7 @@ export default class Context {
                     console.log(node.name)
                     throw new Error(`TODO don't know how to resolve ${node.resolution}`)
             }
-        } else if(node.name instanceof String) {
+        } else if(typeof node.name == "string") {
             return this.resolveName(node.name)
         }
     }
