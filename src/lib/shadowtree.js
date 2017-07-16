@@ -629,14 +629,6 @@ class _Function extends Declaration {
                 }
             }
         )
-        if(this.type) {
-            this.type.forEach(
-                t => inner_context.addName(
-                    t[1],
-                    this.assertHasName(context, t[1])
-                )
-            )
-        }
         if(context.findName("$this")) {
             inner_context.addName("$this", context.findName("$this"))
         }
