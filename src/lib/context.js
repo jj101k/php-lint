@@ -1,10 +1,10 @@
 import {PHPFunctionType, PHPSimpleType, PHPTypeUnion} from "./phptype"
 import {Identifier, Class, ConstRef} from "./shadowtree"
 import {PHPContextlessError} from "./phpstricterror"
+import PHPLint from "./php-lint"
 
 const fs = require("fs")
 const path = require("path")
-const phpLint = require("../index") // TODO improve
 
 /** @type {boolean} If true, autoload failure may throw. */
 const DEBUG_AUTOLOAD = false
@@ -546,7 +546,7 @@ export class GlobalContext {
                         path => fs.existsSync(path)
                     )
                     if(full_path) {
-                        phpLint.checkFileSync(full_path, false)
+                        PHPLint.checkFileSync(full_path, false)
                         if(!this.classes[name]) {
                             console.log(
                                 `Class ${name} not found at ${full_path}`

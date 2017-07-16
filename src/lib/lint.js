@@ -80,4 +80,4 @@ class Lint {
     }
 };
 
-module.exports = Lint;
+export default Lint
