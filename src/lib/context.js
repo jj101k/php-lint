@@ -567,16 +567,6 @@ export class GlobalContext {
             }
         }
     }
-
-    /**
-     * Returns an array of indications as to whether an argument is pass-by-reference.
-     *
-     * @param {string} name
-     * @return {boolean[]}
-     */
-    passByReferencePositionsFor(name) {
-        return PHPFunctions[name] || []
-    }
 }
 
 /**
@@ -585,14 +575,23 @@ export class GlobalContext {
 export default class Context {
     /**
      * @type {Object.<string,PHPTypeUnion>} A map of names to types for the
-     * "always global" core PHP variables.
+     * "always global" core PHP variables and functions.
      */
     static get superGlobals() {
-        var out = {}
-        Object.keys(PHPSuperglobals).forEach(
-            name => out["$" + name] = new PHPTypeUnion(new PHPSimpleType(PHPSuperglobals[name]))
-        )
-        return out
+        if(!this._superGlobals) {
+            this._superGlobals = {}
+            Object.keys(PHPSuperglobals).forEach(
+                name => this._superGlobals["$" + name] = new PHPTypeUnion(new PHPSimpleType(PHPSuperglobals[name]))
+            )
+            Object.keys(PHPFunctions).forEach(
+                name => this._superGlobals[name] = new PHPTypeUnion(new PHPFunctionType(
+                    PHPFunctions[name].map(arg => PHPTypeUnion.mixed),
+                    PHPTypeUnion.mixed,
+                    PHPFunctions[name]
+                ))
+            )
+        }
+        return Object.assign({}, this._superGlobals)
     }
 
     /**
@@ -610,6 +609,14 @@ export default class Context {
         this.assigningType = null
         this.ns = ns || Context.superGlobals
     }
+
+    /** @type string[] All the variable names in the namespace */
+    get definedVariables() {
+        return Object.keys(this.ns).filter(
+            name => name.match(/^[$]/)
+        )
+    }
+
     /**
      * Adds a name to the namespace list.
      * @param {string} name eg. "$foo"

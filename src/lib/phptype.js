@@ -23,14 +23,23 @@ class PHPFunctionType extends PHPType {
      * 
      * @param {PHPTypeUnion[]} arg_types 
      * @param {PHPTypeUnion} return_type 
+     * @param {Object.<number,boolean>} [pass_by_reference_positions]
      */
-    constructor(arg_types, return_type) {
+    constructor(arg_types, return_type, pass_by_reference_positions = {}) {
         super()
         this.argTypes = arg_types
+        this.passByReferencePositions = pass_by_reference_positions
         this.returnType = return_type
     }
     toString() {
-        return `(${this.argTypes.join(", ")}) -> ${this.returnType}`
+        let args_composed = this.argTypes.map((arg, index) => {
+            if(this.passByReferencePositions[index]) {
+                return `&${arg}`
+            } else {
+                return arg
+            }
+        })
+        return `(${args_composed.join(", ")}) -> ${this.returnType}`
     }
 }
 class PHPTypeUnion {

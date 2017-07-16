@@ -62,7 +62,7 @@ class Node {
                 ).find(l => l)
             }
             throw new PHPStrictError(
-                `Name ${name} is not defined in this namespace, contents are: ${Object.keys(context.ns).join(", ")}`,
+                `Name ${name} is not defined in this namespace, contents are: ${context.definedVariables.join(", ")}`,
                 context,
                 loc
             );
@@ -163,7 +163,7 @@ class Identifier extends Node {
      */
     check(context, in_call = false) {
         super.check(context)
-        return PHPTypeUnion.mixed
+        return context.findName(this.name) || PHPTypeUnion.mixed
     }
 }
 class Return extends Node {
@@ -290,12 +290,13 @@ class Call extends Statement {
     check(context, in_call = false) {
         super.check(context)
         let pbr_positions
-        if(this.what instanceof Identifier) {
-            pbr_positions = context.globalContext.passByReferencePositionsFor(this.what.name)
+        let callable_types = this.what.check(context, true)
+        let callable_type = callable_types.types[0]
+        if(callable_type instanceof PHPFunctionType) {
+            pbr_positions = callable_type.passByReferencePositions
         } else {
             pbr_positions = {}
         }
-        let callable_types = this.what.check(context, true)
         this.arguments.forEach((arg, i) => {
             if(pbr_positions[i]) {
                 let inner_context = context.childContext(true)
@@ -603,8 +604,9 @@ class _Function extends Declaration {
         var inner_context = context.childContext()
 
         let arg_types = []
+        let pass_by_reference_positions = {}
         this.arguments.forEach(
-            node => {
+            (node, index) => {
                 let type_union
                 if(node.type) {
                     type_union = new PHPTypeUnion(
@@ -622,6 +624,9 @@ class _Function extends Declaration {
                     "$" + node.name,
                     type_union
                 ))
+                if(node.byref) {
+                    pass_by_reference_positions[index] = true
+                }
             }
         )
         if(this.type) {
@@ -642,7 +647,14 @@ class _Function extends Declaration {
         } else {
             return_type = PHPTypeUnion.mixed
         }
-        let types = new PHPTypeUnion(new PHPFunctionType(arg_types, return_type))
+        let types = new PHPTypeUnion(new PHPFunctionType(
+            arg_types,
+            return_type,
+            pass_by_reference_positions
+        ))
+        if(this.constructor === _Function) {
+            context.addName(this.name, types)
+        }
         return types
     }
 }
