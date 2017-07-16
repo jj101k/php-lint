@@ -6,6 +6,9 @@ var good_files = glob.sync('test/good/*.php');
 var bad_code = "<?php echo $foo;";
 var bad_files = glob.sync('test/bad/*.php');
 
+var skip_files = glob.sync('test/skip/*.php')
+
+
 exports["test async"] = (assert, done) => {
     return Promise.all(
         [
@@ -18,6 +21,10 @@ exports["test async"] = (assert, done) => {
         ].concat(
             bad_files.map(bad_file => phpLint.checkFile(bad_file).catch(
                 error => assert.ok(error, `Invalid file ${bad_file} looks bad`)
+            ))
+        ).concat(
+            skip_files.map(skip_file => phpLint.checkFile(skip_file).catch(
+                error => assert.ok(error, `Skip ${skip_file}`)
             ))
         ).concat(
             good_files.map(good_file => phpLint.checkFile(good_file).then(
@@ -41,6 +48,9 @@ exports["test sync"] = (assert) => {
     bad_files.forEach(bad_file => assert.throws(() => {
         var result = phpLint.checkFileSync(bad_file);
     }, `Invalid file ${bad_file} looks bad`));
+    skip_files.forEach(skip_file => assert.throws(() => {
+        var result = phpLint.checkFileSync(skip_file);
+    }, `Skip ${skip_file}`));
 };
 
 if (module == require.main) require('test').run(exports)
