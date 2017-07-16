@@ -36,6 +36,7 @@ class Node {
      */
     constructor(node) {
         this._cache = {}
+        /** @type {Object} */
         this.node = node
     }
     /** @type {string} */
