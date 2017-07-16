@@ -13,24 +13,24 @@ var parser = new phpParser({
     },
 });
 
-exports.checkSourceCode = function(code) {
+exports.checkSourceCode = function(code, throw_on_error = true) {
     //
     return new Promise((resolve, reject) => {
         try {
             var tree = parser.parseCode(code);
-            resolve(lint.check(tree));
+            resolve(lint.check(tree, null, throw_on_error));
         } catch(e) {
             reject(e);
         }
     });
 };
 
-exports.checkSourceCodeSync = function(code) {
+exports.checkSourceCodeSync = function(code, throw_on_error = true) {
     var tree = parser.parseCode(code);
-    return lint.check(tree);
+    return lint.check(tree, null, throw_on_error);
 };
 
-exports.checkFile = function(filename) {
+exports.checkFile = function(filename, throw_on_error = true) {
     //
     return new Promise((resolve, reject) => {
         fs.readFile(filename, "utf8", (err, data) => {
@@ -39,7 +39,7 @@ exports.checkFile = function(filename) {
             } else {
                 try {
                     var tree = parser.parseCode(data, filename);
-                    resolve(lint.check(tree, filename));
+                    resolve(lint.check(tree, filename, throw_on_error));
                 } catch(e) {
                     reject(e);
                 }
@@ -47,9 +47,9 @@ exports.checkFile = function(filename) {
         });
     });
 };
-exports.checkFileSync = function(filename) {
+exports.checkFileSync = function(filename, throw_on_error = true) {
     //
     var data = fs.readFileSync(filename, "utf8");
     var tree = parser.parseCode(data, filename);
-    return lint.check(tree, filename);
+    return lint.check(tree, filename, throw_on_error);
 };

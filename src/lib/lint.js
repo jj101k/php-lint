@@ -34,12 +34,12 @@ class Lint {
             )
         )
     }
-    static check(tree, filename = null) {
+    static check(tree, filename = null, throw_on_error = true) {
         var l = new Lint(tree, filename)
         try {
             return l.check()
         } catch(e) {
-            if(e instanceof PHPStrictError) {
+            if(e instanceof PHPStrictError && !throw_on_error) {
                 console.log(e.message)
                 if(filename) {
                     var lines = fs.readFileSync(filename, "utf8").split(/\n/)
