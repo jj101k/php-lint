@@ -242,8 +242,11 @@ class ClassContext {
     }
 
     /**
-     * The fully resolved name
+     * The fully resolved name. This just handles "parent", "self" and "static";
+     * everything else returns null.
+     *
      * @param {string} context
+     * @throws {PHPContextlessError} when using "parent" with no superclass
      * @returns {?string}
      */
     resolveName(name) {
@@ -657,7 +660,9 @@ export default class Context {
     }
 
     /**
-     * If the name is in the namespace, returns its possible types
+     * If the name is in the namespace, returns its possible types. This only
+     * finds variables and functions.
+     *
      * @param {string} name eg "$bar"
      * @returns {PHPTypeUnion}
      */
@@ -667,7 +672,11 @@ export default class Context {
     }
 
     /**
-     * The fully resolved name
+     * Resolves a given name, eg, for "Foo::$bar" this would resolve "Foo". This
+     * does not handle multi-node lookups.
+     *
+     * Variable names are not handled here as they do not require resolution.
+     *
      * @param {string} name
      * @returns {string}
      */
