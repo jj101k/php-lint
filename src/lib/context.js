@@ -546,7 +546,7 @@ export class GlobalContext {
                         path => fs.existsSync(path)
                     )
                     if(full_path) {
-                        phpLint.checkFileSync(full_path)
+                        phpLint.checkFileSync(full_path, false)
                         if(!this.classes[name]) {
                             console.log(
                                 `Class ${name} not found at ${full_path}`
