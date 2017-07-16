@@ -302,7 +302,7 @@ class Call extends Statement {
         this.arguments.forEach((arg, i) => {
             if(pbr_positions[i]) {
                 let inner_context = context.childContext(true)
-                inner_context.assigningType = PHPTypeUnion.mixed
+                inner_context.assigningType = context.findName(arg.name) || PHPTypeUnion.mixed
                 arg.check(inner_context)
             } else {
                 arg.check(context)
