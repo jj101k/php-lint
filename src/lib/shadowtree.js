@@ -212,6 +212,7 @@ class TraitUse extends Node {
                 )
             )
         }
+        return PHPTypeUnion.empty
     }
 }
 
