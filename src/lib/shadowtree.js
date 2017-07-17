@@ -331,7 +331,27 @@ class ConstRef extends Expression {
      */
     check(context, in_call = false) {
         super.check(context)
-        return context.findName(context.resolveNodeName(this)) || PHPTypeUnion.mixed
+        if(this.name instanceof Identifier) {
+            switch(this.name.name) {
+                case "array":
+                    return new PHPTypeUnion(new PHPSimpleType(this.name.name))
+                default:
+            }
+            let constant_type = context.findName(this.name.name)
+            if(constant_type) {
+                return constant_type
+            }
+            let constant_type_munged = context.findName(this.name.name.toUpperCase())
+            if(constant_type_munged) {
+                return constant_type_munged
+            }
+        }
+        let classContext = context.findClass(context.resolveNodeName(this))
+        if(classContext) {
+            return new PHPTypeUnion(new PHPSimpleType(classContext.name))
+        } else {
+            return PHPTypeUnion.mixed
+        }
     }
 }
 class Closure extends Statement {
@@ -883,7 +903,7 @@ class StaticLookup extends Lookup {
         super.check(context)
         if(this.what instanceof Variable) {
             this.what.check(context)
-            this.offset.check(context)
+            //this.offset.check(context)
             return PHPTypeUnion.mixed
         } else if(
             (
