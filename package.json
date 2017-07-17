@@ -5,7 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "glob": "^7.1.1",
-    "php-parser": "^2.0.3"
+    "php-parser": "^2.0.6"
   },
   "bin": {
     "php-lint": "src/index.js"
