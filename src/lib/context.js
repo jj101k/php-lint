@@ -21,6 +21,11 @@ const IgnoreInvalidParent = true
 const PHPClasses = JSON.parse(fs.readFileSync(__dirname + "/../../data/php-classes.json", "utf8"))
 
 /**
+ * @type {string[]} From `print json_encode(array_keys(get_defined_constants()), JSON_PRETTY_PRINT);`
+ */
+const PHPConstants = JSON.parse(fs.readFileSync(__dirname + "/../../data/php-constants.json", "utf8"))
+
+/**
  * @type {Object.<string,boolean[]>}
  *
  * From:
@@ -592,6 +597,9 @@ export default class Context {
                     PHPTypeUnion.mixed,
                     PHPFunctions[name]
                 ))
+            )
+            PHPConstants.forEach(
+                name => this._superGlobals[name] = PHPTypeUnion.mixed
             )
         }
         return Object.assign({}, this._superGlobals)
