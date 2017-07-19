@@ -644,9 +644,10 @@ export default class Context {
         }
         return types
     }
+
     /**
      * Returns a new context which inherits from this one.
-     * @param {boolean} keep_ns
+     * @param {boolean} keep_ns If this is true, the same namespace will be linked.
      * @returns {Context}
      */
     childContext(keep_ns = false) {
@@ -732,5 +733,17 @@ export default class Context {
         } else if(typeof node.name == "string") {
             return this.resolveName(node.name)
         }
+    }
+
+    /**
+     * Sets the type(s) for a name. This overwrites any types already assigned
+     * to the name.
+     * @param {string} name
+     * @param {PHPTypeUnion} types
+     * @returns {PHPTypeUnion}
+     */
+    setName(name, types) {
+        delete this.ns[name]
+        return this.addName(name, types)
     }
 }

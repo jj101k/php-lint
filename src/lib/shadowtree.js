@@ -482,7 +482,7 @@ class Variable extends Expression {
     check(context, in_call = false) {
         super.check(context)
         if(context.assigningType) {
-            return context.addName(
+            return context.setName(
                 '$' + this.name,
                 context.assigningType
             )
@@ -1529,11 +1529,23 @@ class If extends Statement {
     check(context, in_call = false) {
         super.check(context)
         this.test.check(context)
+
+        let body_context = context.childContext(false)
+        body_context.ns = Object.assign({}, context.ns)
         let type = PHPTypeUnion.empty
-        type.addTypesFrom(this.body.check(context))
+        type.addTypesFrom(this.body.check(body_context))
         if(this.alternate) {
-            type.addTypesFrom(this.alternate.check(context))
+            let alt_context = context.childContext(false)
+            alt_context.ns = Object.assign({}, context.ns)
+            type.addTypesFrom(this.alternate.check(alt_context))
+
+            Object.keys(alt_context.ns).forEach(
+                k => context.addName(k, alt_context.ns[k])
+            )
         }
+        Object.keys(body_context.ns).forEach(
+            k => context.addName(k, body_context.ns[k])
+        )
         return type
     }
 }
