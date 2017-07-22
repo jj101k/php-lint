@@ -1517,6 +1517,19 @@ class Goto extends Statement {
     get label() {
         return this.node.label
     }
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?PHPTypeUnion} The set of types applicable to this value
+     */
+    check(context, in_call = false) {
+        super.check(context)
+        throw new PHPStrictError(
+            "Use of goto",
+            context,
+            this.loc
+        )
+    }
 }
 class Halt extends Statement {
     /** @type {string} */
