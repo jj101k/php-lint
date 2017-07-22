@@ -1,6 +1,8 @@
 "use strict"
 
-import Context, {FileContext, GlobalContext} from "./context"
+import Context from "./context"
+import {FileContext} from "./file-context"
+import {GlobalContext} from "./global-context"
 import ShadowTree from "./shadowtree"
 import PHPStrictError from "./phpstricterror"
 
