@@ -1007,6 +1007,10 @@ class _String extends Literal {
     get label() {
         return this.node.label
     }
+    /** @type {string} */
+    get value() {
+        return this.node.value
+    }
     /**
      * Checks that syntax seems ok
      * @param {Context} context
