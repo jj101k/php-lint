@@ -73,6 +73,11 @@ export class FileContext {
         this.aliases = {}
     }
 
+    /** @type {string} The directory the file's in (resolved) */
+    get directory() {
+        return path.resolve(path.dirname(this.filename))
+    }
+
     /** @type {?string} eg "\\Foo" for the class \Foo\Bar */
     get namespace() {
         return this._namespace
@@ -534,9 +539,8 @@ export class GlobalContext {
             this.addUnknownClass(name)
             // Autoload go!
             if(!this.autoloadPaths) {
-                let dir = path.dirname(path.resolve(filename))
                 this.autoloadPaths = GlobalContext.autoloadFromComposer(
-                    this.findComposerConfig(dir)
+                    this.findComposerConfig(file_context.directory)
                 )
             }
             if(this.autoloadPaths) {
