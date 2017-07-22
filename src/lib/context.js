@@ -507,6 +507,15 @@ export class GlobalContext {
     }
 
     /**
+     * Checks a PHP file. This will typically affect what's defined in the
+     * global namespace, including classes.
+     * @param {string} filename
+     */
+    checkFile(filename) {
+        PHPLint.checkFileSync(filename, false)
+    }
+
+    /**
      * Given a path for the current file, walks up the tree looking for composer.json.
      *
      * @param {string} actual_path eg. /foo/bar/lib/Baz/
@@ -559,7 +568,7 @@ export class GlobalContext {
                             path => fs.existsSync(path)
                         )
                         if(full_path) {
-                            PHPLint.checkFileSync(full_path, false)
+                            this.checkFile(full_path)
                             if(!this.classes[name]) {
                                 console.log(
                                     `Class ${name} not found at ${full_path}`
@@ -635,6 +644,27 @@ export default class Context {
     }
 
     /**
+     * @type {string} The directory we're working from. Typically either the
+     * Composer root or the current file's directory.
+     */
+    get directory() {
+        if(!this._directory) {
+            let file_directory = this.fileContext.directory
+            let composer_path = this.globalContext.findComposerConfig(file_directory)
+            if(composer_path) {
+                this._directory = path.dirname(composer_path)
+            } else {
+                this._directory = file_directory
+            }
+        }
+        return this._directory
+    }
+
+    set directory(v) {
+        this._directory = v
+    }
+
+    /**
      * Adds a name to the namespace list.
      * @param {string} name eg. "$foo"
      * @param {PHPTypeUnion} types
@@ -649,6 +679,33 @@ export default class Context {
             console.log(`Types for ${name} are: ${this.ns[name]}`)
         }
         return types
+    }
+
+    /**
+     * Updates which directory the context will work from. Generally only makes
+     * sense at the very start of a file.
+     *
+     * @param {string} directory
+     */
+    chdir(directory) {
+        this.directory = path.resolve(this.directory, directory)
+    }
+
+    /**
+     * Checks a PHP script
+     * @param {string} filename
+     */
+    checkFile(filename) {
+        let full_filename = path.resolve(this.directory, filename)
+        try {
+            this.globalContext.checkFile(full_filename)
+        } catch(e) {
+            if(e.errno == -2) {
+                console.log(`${full_filename} missing, not installed?`)
+            } else {
+                throw e
+            }
+        }
     }
 
     /**

@@ -308,6 +308,22 @@ class Call extends Statement {
                 arg.check(context)
             }
         })
+        if(
+            this.what instanceof Identifier &&
+            this.what.name == "chdir"
+        ) {
+            if(this.arguments[0] instanceof _String) {
+                context.chdir(this.arguments[0].value)
+            } else if(
+                this.arguments[0] instanceof Bin &&
+                this.arguments[0].type == "." &&
+                this.arguments[0].left instanceof Magic &&
+                this.arguments[0].left.value == "__DIR__" &&
+                this.arguments[0].right instanceof _String
+            ) {
+                context.chdir(context.fileContext.directory + this.arguments[0].right.value)
+            }
+        }
         let types = PHPTypeUnion.empty
         callable_types.types.forEach(t => {
             if(t instanceof PHPFunctionType) {
@@ -1550,7 +1566,7 @@ class If extends Statement {
     }
 }
 class Include extends Statement {
-    /** @type {Node} */
+    /** @type {Expression} */
     get target() {
         return this.cacheNode("target")
     }
@@ -1570,6 +1586,9 @@ class Include extends Statement {
     check(context, in_call = false) {
         super.check(context)
         this.target.check(context)
+        if(this.target instanceof _String) {
+            context.checkFile(this.target.value)
+        }
         return PHPTypeUnion.empty
     }
 }
