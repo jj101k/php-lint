@@ -6,7 +6,10 @@ import {FileContext} from "./file-context"
 import {PHPContextlessError} from "./phpstricterror"
 import PHPLint from "./php-lint"
 
-/** @type {boolean} If true, autoload failure may throw. */
+/**
+ * @type {boolean} If true, autoload failure may throw. This can help with
+ * debugging unexpected loads.
+ */
 const DEBUG_AUTOLOAD = false
 
 /** @type {number} The maximum depth we're willing to scan files at */

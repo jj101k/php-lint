@@ -32,6 +32,9 @@ const DEBUG = false
  * @returns {Object}
  */
 
+ /**
+  * The superclass for all AST nodes
+  */
 class Node {
     /**
      * Builds the shadow node
