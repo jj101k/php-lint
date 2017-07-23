@@ -20,7 +20,7 @@ class PHPLint {
      * @returns {Promise} Rejects on failure
      */
     static checkFile(filename) {
-        //
+        this.processed++
         return new Promise((resolve, reject) => {
             fs.readFile(filename, "utf8", (err, data) => {
                 if(err) {
@@ -44,6 +44,7 @@ class PHPLint {
      * @throws
      */
     static checkFileSync(filename, throw_on_error = true) {
+        this.processed++
         //
         var data = fs.readFileSync(filename, "utf8")
         var tree = parser.parseCode(data, filename)
@@ -56,6 +57,7 @@ class PHPLint {
      * @returns {Promise} Rejects on failure
      */
     static checkSourceCode(code) {
+        this.processed++
         //
         return new Promise((resolve, reject) => {
             try {
@@ -74,9 +76,12 @@ class PHPLint {
      * @throws
      */
     static checkSourceCodeSync(code, throw_on_error = true) {
+        this.processed++
         var tree = parser.parseCode(code);
         return Lint.check(tree, null, throw_on_error);
     }
 }
+/** @type {number} */
+PHPLint.processed = 0
 
 export default PHPLint
