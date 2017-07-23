@@ -7,6 +7,7 @@ var bad_code = "<?php echo $foo;";
 var bad_files = glob.sync('test/bad/*.php');
 
 var skip_files = glob.sync('test/skip/*.php')
+var bug_files = glob.sync('test/bug/*.php')
 
 
 exports["test async"] = (assert, done) => {
@@ -27,6 +28,10 @@ exports["test async"] = (assert, done) => {
                 error => assert.ok(error, `Skip ${skip_file}`)
             ))
         ).concat(
+            bug_files.map(file => phpLint.checkFile(file).then(
+                result => assert.ok(result, `Valid file ${file} looks ok`)
+            ))
+        ).concat(
             good_files.map(good_file => phpLint.checkFile(good_file).then(
                 result => assert.ok(result, `Valid file ${good_file} looks ok`)
             ))
@@ -41,6 +46,10 @@ exports["test sync"] = (assert) => {
     good_files.forEach(good_file => assert.ok(
         phpLint.checkFileSync(good_file),
         `Valid file ${good_file} looks ok`
+    ));
+    bug_files.forEach(file => assert.ok(
+        phpLint.checkFileSync(file),
+        `Valid file ${file} looks ok`
     ));
     assert.throws(() => {
         var result = phpLint.checkSourceCodeSync(bad_code);
