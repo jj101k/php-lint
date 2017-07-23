@@ -153,14 +153,17 @@ export default class Context {
     /**
      * Checks a PHP script
      * @param {string} filename
+     * @param {boolean} [with_warnings]
      */
-    checkFile(filename) {
+    checkFile(filename, with_warnings = true) {
         let full_filename = path.resolve(this.directory, filename)
         try {
             this.globalContext.checkFile(full_filename)
         } catch(e) {
             if(e.errno == -2) {
-                console.log(`${full_filename} missing, not installed?`)
+                if(with_warnings) {
+                    console.log(`${full_filename} missing, not installed?`)
+                }
             } else {
                 throw e
             }

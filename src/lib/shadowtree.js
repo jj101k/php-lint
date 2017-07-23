@@ -1604,7 +1604,7 @@ class Include extends Statement {
         super.check(context)
         this.target.check(context)
         if(this.target instanceof _String) {
-            context.checkFile(this.target.value)
+            context.checkFile(this.target.value, this.require)
         }
         return PHPTypeUnion.empty
     }
