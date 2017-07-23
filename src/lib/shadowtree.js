@@ -2,6 +2,9 @@ import PHPStrictError, {PHPContextlessError} from "./phpstricterror"
 import Context from "./context"
 import {PHPFunctionType, PHPSimpleType, PHPTypeUnion} from "./phptype"
 
+/** @type {boolean} True if you want lots of debugging messages */
+const DEBUG = false
+
 /**
  * @typedef ParserNode
  * @property {function} constructor
@@ -128,6 +131,13 @@ class Node {
      * @returns {?PHPTypeUnion} The set of types applicable to this value
      */
     check(context, in_call = false) {
+        if(DEBUG) {
+            if(this.loc) {
+                console.info(`Checking ${context.fileContext.filename}:${this.loc.start.line}:${this.loc.start.column}:${this.kind}`)
+            } else {
+                console.info(`Checking ${context.fileContext.filename}:?:?:${this.kind}`)
+            }
+        }
         return PHPTypeUnion.empty
     }
     /**

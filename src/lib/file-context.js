@@ -1,5 +1,8 @@
 const path = require("path")
 
+/** @type {boolean} If true, all file loads will be mentioned */
+const DEBUG_FILE_LOAD = false
+
 export class FileContext {
     /**
      *
@@ -7,6 +10,9 @@ export class FileContext {
      */
     constructor(filename) {
         this.filename = filename
+        if(DEBUG_FILE_LOAD) {
+            console.info(`Loading ${filename}`)
+        }
         this._namespace = null
         this.aliases = {}
     }
