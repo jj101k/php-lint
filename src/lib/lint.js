@@ -23,23 +23,43 @@ class Lint {
     static get ShadowTree() {
         return ShadowTree
     }
-    constructor(tree, filename = null, namespace = []) {
+
+    /**
+     * Builds the object
+     * @param {Object} tree AST from php-parser
+     * @param {?string} [filename]
+     */
+    constructor(tree, filename = null) {
         this.filename = filename
-        this.namespace = namespace
         this.tree = tree
     }
-    check() {
+
+    /**
+     * Checks the current data
+     * @param {number} [depth] The current load depth
+     */
+    check(depth = 0) {
         return ShadowTree.Node.typed(this.tree).check(
             new Context(
-                new FileContext(this.filename),
-                Lint.globalContext
+                new FileContext(this.filename, depth),
+                Lint.globalContext,
+                null,
+                null,
+                depth
             )
         )
     }
-    static check(tree, filename = null, throw_on_error = true) {
+    /**
+     * Checks the provided AST
+     * @param {Object} tree AST from php-parser
+     * @param {?string} [filename]
+     * @param {boolean} [throw_on_error]
+     * @param {number} [depth]
+     */
+    static check(tree, filename = null, throw_on_error = true, depth = 0) {
         var l = new Lint(tree, filename)
         try {
-            return l.check()
+            return l.check(depth)
         } catch(e) {
             if(e instanceof PHPStrictError && !throw_on_error) {
                 console.log(e.message)

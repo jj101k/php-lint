@@ -5,13 +5,15 @@ const DEBUG_FILE_LOAD = false
 
 export class FileContext {
     /**
+     * Builds the object
      *
      * @param {string} filename
+     * @param {number} [depth] The load depth
      */
-    constructor(filename) {
+    constructor(filename, depth = 0) {
         this.filename = filename
         if(DEBUG_FILE_LOAD) {
-            console.info(`Loading ${filename}`)
+            console.info(`Loading ${filename} at depth ${depth}`)
         }
         this._namespace = null
         this.aliases = {}

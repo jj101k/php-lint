@@ -103,6 +103,10 @@ export class GlobalContext {
      */
     constructor() {
         this.classes = {}
+        /** @type {Object.<string,number>} The minimum depth for each class */
+        this.depths = {
+            "": 1
+        }
         PHPClasses.forEach(
             name => this.addUnknownClass("\\" + name)
         )
@@ -111,6 +115,18 @@ export class GlobalContext {
         )
         this.addUnknownClass("mixed")
         this.addUnknownClass("object")
+    }
+
+    /**
+     * @type {Object.<number,number>} The number of classes at each depth
+     */
+    get depthCounts() {
+        let counts = {}
+        Object.values(this.depths).forEach(n => {
+            if(!counts[n]) counts[n] = 0
+            counts[n]++
+        })
+        return counts
     }
 
     /**
@@ -156,9 +172,10 @@ export class GlobalContext {
      * Checks a PHP file. This will typically affect what's defined in the
      * global namespace, including classes.
      * @param {string} filename
+     * @param {number} [depth]
      */
-    checkFile(filename) {
-        PHPLint.checkFileSync(filename, false)
+    checkFile(filename, depth = 0) {
+        PHPLint.checkFileSync(filename, false, depth)
     }
 
     /**
@@ -181,17 +198,23 @@ export class GlobalContext {
      * Finds the class context with the given name
      * @param {string} name Fully qualified only
      * @param {FileContext} file_context
+     * @param {number} [depth] The current load depth
      * @returns {?ClassContext}
      */
-    findClass(name, file_context) {
+    findClass(name, file_context, depth = 0) {
         if(name.match(/ -> /)) {
             return AnonymousFunctionContext.inst
         }
+        let load_depth = depth + 1
         let filename = file_context.filename
         if(this.classes.hasOwnProperty(name)) {
+            if(load_depth < this.depths[name]) {
+                this.depths[name] = load_depth
+            }
             return this.classes[name]
         } else {
             this.addUnknownClass(name)
+            this.depths[name] = load_depth
             // Autoload go!
             if(!this.autoloadPaths) {
                 this.autoloadPaths = GlobalContext.autoloadFromComposer(
@@ -214,7 +237,7 @@ export class GlobalContext {
                             path => fs.existsSync(path)
                         )
                         if(full_path) {
-                            this.checkFile(full_path)
+                            this.checkFile(full_path, load_depth)
                             if(!this.classes[name]) {
                                 console.log(
                                     `Class ${name} not found at ${full_path}`

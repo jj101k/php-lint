@@ -85,9 +85,11 @@ export default class Context {
      * @param {?GlobalContext} global_context
      * @param {?ClassContext} [class_context]
      * @param {?Object.<string,PHPTypeUnion>} [ns]
+     * @param {number} [depth]
      */
-    constructor(file_context, global_context, class_context = null, ns = null) {
+    constructor(file_context, global_context, class_context = null, ns = null, depth = 0) {
         this.classContext = class_context
+        this.depth = depth
         this.globalContext = global_context || new GlobalContext()
         this.fileContext = file_context
         /** @type {?PHPTypeUnion} */
@@ -158,7 +160,7 @@ export default class Context {
     checkFile(filename, with_warnings = true) {
         let full_filename = path.resolve(this.directory, filename)
         try {
-            this.globalContext.checkFile(full_filename)
+            this.globalContext.checkFile(full_filename, this.depth + 1)
         } catch(e) {
             if(e.errno == -2) {
                 if(with_warnings) {
@@ -180,7 +182,8 @@ export default class Context {
             this.fileContext,
             this.globalContext,
             this.classContext,
-            keep_ns ? this.ns : null
+            keep_ns ? this.ns : null,
+            this.depth
         )
     }
 
@@ -190,7 +193,7 @@ export default class Context {
      * @returns {?ClassContext}
      */
     findClass(name) {
-        return this.globalContext.findClass(name, this.fileContext)
+        return this.globalContext.findClass(name, this.fileContext, this.depth)
     }
 
     /**
