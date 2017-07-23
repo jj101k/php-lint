@@ -9,6 +9,9 @@ import PHPLint from "./php-lint"
 /** @type {boolean} If true, autoload failure may throw. */
 const DEBUG_AUTOLOAD = false
 
+/** @type {number} The maximum depth we're willing to scan files at */
+const MAX_DEPTH = 2
+
 /**
  * @type {string[]} From `print json_encode(get_declared_classes(), JSON_PRETTY_PRINT);`
  */
@@ -212,6 +215,8 @@ export class GlobalContext {
                 this.depths[name] = load_depth
             }
             return this.classes[name]
+        } else if(load_depth > MAX_DEPTH) {
+            return new UnknownClassContext(name)
         } else {
             this.addUnknownClass(name)
             this.depths[name] = load_depth
