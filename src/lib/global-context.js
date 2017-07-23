@@ -108,7 +108,7 @@ export class GlobalContext {
         this.classes = {}
         /** @type {Object.<string,number>} The minimum depth for each class */
         this.depths = {
-            "": 1
+            "": 0
         }
         PHPClasses.forEach(
             name => this.addUnknownClass("\\" + name)
