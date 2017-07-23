@@ -141,6 +141,24 @@ class Node {
         return PHPTypeUnion.empty
     }
     /**
+     * Converts PHPContextlessError into PHPStrictError, otherwise just rethrows.
+     * @param {Error} e
+     * @param {Context} context
+     * @throws
+     */
+    handleException(e, context) {
+        if(e instanceof PHPContextlessError) {
+            // console.log(this.node)
+            throw new PHPStrictError(
+                e.message,
+                context,
+                this.loc
+            )
+        } else {
+            throw e
+        }
+    }
+    /**
      * Returns the shadow tree counterpart of the given node.
      * @param {ParserNode} node
      * @returns {Node}
@@ -817,15 +835,7 @@ class PropertyLookup extends Lookup {
                     }
                 })
             } catch(e) {
-                if(e instanceof PHPContextlessError) {
-                    throw new PHPStrictError(
-                        e.message,
-                        context,
-                        this.node.loc
-                    )
-                } else {
-                    throw e
-                }
+                this.handleException(e, context)
             }
             return types_out
         } else if(
@@ -858,15 +868,7 @@ class PropertyLookup extends Lookup {
                     }
                 })
             } catch(e) {
-                if(e instanceof PHPContextlessError) {
-                    throw new PHPStrictError(
-                        e.message,
-                        context,
-                        this.node.loc
-                    )
-                } else {
-                    throw e
-                }
+                this.handleException(e, context)
             }
             return types_out
         } else if(
@@ -942,15 +944,7 @@ class StaticLookup extends Lookup {
             try {
                 resolved_name = context.resolveNodeName(this.what)
             } catch(e) {
-                if(e instanceof PHPContextlessError) {
-                    throw new PHPStrictError(
-                        e.message,
-                        context,
-                        this.node.loc
-                    )
-                } else {
-                    throw e
-                }
+                this.handleException(e, context)
             }
             let class_context = context.findClass(resolved_name)
             if(class_context) {
