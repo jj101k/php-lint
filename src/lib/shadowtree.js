@@ -412,7 +412,7 @@ class ConstRef extends Expression {
         if(this.name instanceof Identifier) {
             switch(this.name.name) {
                 case "array":
-                    return new ContextTypes(new PHPTypeUnion(PHPSimpleType.named(this.name.name)))
+                    return new ContextTypes(PHPSimpleType.named(this.name.name).union)
                 default:
             }
             let constant_type = context.findName(this.name.name)
@@ -426,7 +426,7 @@ class ConstRef extends Expression {
         }
         let classContext = context.findClass(context.resolveNodeName(this))
         if(classContext) {
-            return new ContextTypes(new PHPTypeUnion(PHPSimpleType.named(classContext.name)))
+            return new ContextTypes(PHPSimpleType.named(classContext.name).union)
         } else {
             return new ContextTypes(PHPTypeUnion.mixed)
         }
@@ -470,11 +470,9 @@ class Closure extends Statement {
             node => {
                 let type_union
                 if(node.type) {
-                    type_union = new PHPTypeUnion(
-                        PHPSimpleType.named(
-                            context.resolveNodeName(node.type)
-                        )
-                    )
+                    type_union = PHPSimpleType.named(
+                        context.resolveNodeName(node.type)
+                    ).union
                 } else {
                     type_union = PHPTypeUnion.mixed
                 }
@@ -504,7 +502,7 @@ class Closure extends Statement {
         } else {
             return_type = PHPTypeUnion.mixed
         }
-        let types = new PHPTypeUnion(new PHPFunctionType(arg_types, return_type))
+        let types = new PHPFunctionType(arg_types, return_type).union
         return new ContextTypes(types)
     }
 }
@@ -623,7 +621,7 @@ class Class extends Declaration {
         )
         inner_context.addName(
             "$this",
-            new PHPTypeUnion(PHPSimpleType.named(context.resolveNodeName(this)))
+            PHPSimpleType.named(context.resolveNodeName(this)).union
         )
         this.body.forEach(
             b => {
@@ -709,11 +707,9 @@ class _Function extends Declaration {
             (node, index) => {
                 let type_union
                 if(node.type) {
-                    type_union = new PHPTypeUnion(
-                        PHPSimpleType.named(
-                            context.resolveNodeName(node.type)
-                        )
-                    )
+                    type_union = PHPSimpleType.named(
+                        context.resolveNodeName(node.type)
+                    ).union
                 } else {
                     type_union = PHPTypeUnion.mixed
                 }
@@ -739,11 +735,11 @@ class _Function extends Declaration {
         } else {
             return_type = PHPTypeUnion.mixed
         }
-        let types = new PHPTypeUnion(new PHPFunctionType(
+        let types = new PHPFunctionType(
             arg_types,
             return_type,
             pass_by_reference_positions
-        ))
+        ).union
         if(this.constructor === _Function) {
             context.addName(this.name, types)
         }
@@ -792,7 +788,7 @@ class _Number extends Literal {
      */
     check(context, in_call = false) {
         super.check(context)
-        let types = new PHPTypeUnion(PHPSimpleType.types.number)
+        let types = PHPSimpleType.types.number.union
         return new ContextTypes(types)
     }
 }
@@ -1053,7 +1049,7 @@ class _String extends Literal {
      */
     check(context, in_call = false) {
         super.check(context)
-        let types = new PHPTypeUnion(PHPSimpleType.types.string)
+        let types = PHPSimpleType.types.string.union
         return new ContextTypes(types)
     }
 }
@@ -1103,7 +1099,7 @@ class _Array extends Expression {
                 item => item.check(context)
             )
         }
-        return new ContextTypes(new PHPTypeUnion(PHPSimpleType.types.array))
+        return new ContextTypes(PHPSimpleType.types.array.union)
     }
 }
 class Bin extends Operation {
@@ -1191,7 +1187,7 @@ class _Boolean extends Literal {
      */
     check(context, in_call = false) {
         super.check(context)
-        return new ContextTypes(new PHPTypeUnion(PHPSimpleType.types.boolean))
+        return new ContextTypes(PHPSimpleType.types.boolean.union)
     }
 }
 class Break extends Node {
@@ -1243,7 +1239,7 @@ class Cast extends Operation {
     check(context, in_call = false) {
         super.check(context)
         this.what.check(context)
-        return new ContextTypes(new PHPTypeUnion(PHPSimpleType.named(this.type)))
+        return new ContextTypes(PHPSimpleType.named(this.type).union)
     }
 }
 class Catch extends Statement {
@@ -1268,7 +1264,7 @@ class Catch extends Statement {
         super.check(context)
         let types = PHPTypeUnion.empty
         this.what.forEach(
-            w => types.addType(new PHPTypeUnion(w.name))
+            w => types.addType(PHPSimpleType.named(w.name))
         )
         let inner_context = context.childContext(true)
         inner_context.assigningType = PHPTypeUnion.mixed
@@ -1389,7 +1385,7 @@ class Encapsed extends Literal {
      */
     check(context, in_call = false) {
         super.check(context)
-        return new ContextTypes(new PHPTypeUnion(PHPSimpleType.types.string))
+        return new ContextTypes(PHPSimpleType.types.string.union)
     }
 }
 class Entry extends Node {
@@ -1694,7 +1690,7 @@ class Isset extends Sys {
     check(context, in_call = false) {
         super.check(context)
         // no-op
-        return new ContextTypes(new PHPTypeUnion(PHPSimpleType.types.boolean))
+        return new ContextTypes(PHPSimpleType.types.boolean.union)
     }
 }
 class Label extends Node {
@@ -1769,9 +1765,9 @@ class New extends Statement {
         if(this.what instanceof Variable) {
             return new ContextTypes(PHPTypeUnion.mixed)
         } else {
-            return new ContextTypes(new PHPTypeUnion(PHPSimpleType.named(
+            return new ContextTypes(PHPSimpleType.named(
                 context.resolveNodeName(this.what)
-            )))
+            ).union)
         }
     }
 }
@@ -2063,7 +2059,7 @@ class Trait extends Declaration {
         )
         inner_context.addName(
             "$this",
-            new PHPTypeUnion(PHPSimpleType.named(context.resolveNodeName(this)))
+            PHPSimpleType.named(context.resolveNodeName(this)).union
         )
         this.body.forEach(
             b => {

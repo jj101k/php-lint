@@ -1,4 +1,11 @@
 class PHPType {
+    /**
+     * A new PHPTypeUnion containing this.
+     * @returns {PHPTypeUnion}
+     */
+    get union() {
+        return new PHPTypeUnion(this)
+    }
     toString() {
         return "mixed"
     }
