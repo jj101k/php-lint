@@ -12,15 +12,15 @@ class PHPType {
 }
 
 class PHPSimpleType extends PHPType {
-    /** @type {{[string: x]: PHPSimpleType}} */
+    /** @type {{[string: x]: PHPTypeUnion}} */
     static get types() {
         if(!this._types) {
             this._types = {
-                array: new PHPSimpleType("array"),
-                boolean: new PHPSimpleType("boolean"),
-                null: new PHPSimpleType("null"),
-                number: new PHPSimpleType("number"),
-                string: new PHPSimpleType("string"),
+                array: new PHPSimpleType("array").union,
+                boolean: new PHPSimpleType("boolean").union,
+                null: new PHPSimpleType("null").union,
+                number: new PHPSimpleType("number").union,
+                string: new PHPSimpleType("string").union,
             }
         }
         return this._types
@@ -28,11 +28,11 @@ class PHPSimpleType extends PHPType {
     /**
      * Returns a cached type by name
      * @param {string} type_name
-     * @returns {PHPSimpleType}
+     * @returns {PHPTypeUnion}
      */
     static named(type_name) {
         if(!this.types[type_name]) {
-            this.types[type_name] = new PHPSimpleType(type_name)
+            this.types[type_name] = new PHPSimpleType(type_name).union
         }
         return this.types[type_name]
     }
@@ -87,7 +87,7 @@ class PHPTypeUnion {
      * @type {PHPTypeUnion}
      */
     static get mixed() {
-        return new PHPTypeUnion(PHPSimpleType.named("mixed"))
+        return PHPSimpleType.named("mixed")
     }
 
     /**
@@ -109,7 +109,7 @@ class PHPTypeUnion {
     constructor(initial_type = null) {
         this.uniqueTypes = {}
         if(initial_type) {
-            this.addType(initial_type)
+            this.uniqueTypes["" + initial_type] = initial_type
         }
     }
     /**
@@ -125,19 +125,38 @@ class PHPTypeUnion {
         return Object.values(this.uniqueTypes)
     }
     /**
-     *
+     * Adds a type. Returns a derived type union which may not be the original.
      * @param {PHPType} type
+     * @returns {PHPTypeUnion}
      */
     addType(type) {
-        this.uniqueTypes["" + type] = type
+        if(this.types.length == 1) {
+            let n = new PHPTypeUnion()
+            n.uniqueTypes = Object.assign(
+                {
+                    ["" + type]: type,
+                },
+                this.uniqueTypes
+            )
+            return n
+        } else {
+            this.uniqueTypes["" + type] = type
+            return this
+        }
     }
     /**
-     *
+     * Adds types. Returns a derived type union which may not be the original.
      * @param {PHPTypeUnion} union
+     * @returns {PHPTypeUnion}
      */
     addTypesFrom(union) {
-        for(var k in union.uniqueTypes) {
-            this.uniqueTypes[k] = union.uniqueTypes[k]
+        if(this.types.length == 1) {
+            let n = new PHPTypeUnion()
+            n.uniqueTypes = Object.assign({}, this.uniqueTypes, union.uniqueTypes)
+            return n
+        } else {
+            Object.assign(this.uniqueTypes, union.uniqueTypes)
+            return this
         }
     }
     toString() {

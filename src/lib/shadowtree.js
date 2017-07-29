@@ -328,7 +328,7 @@ class Block extends Statement {
         super.check(context)
         let types = PHPTypeUnion.empty
         this.children.forEach(node => {
-            types.addTypesFrom(node.check(context).returnType)
+            types = types.addTypesFrom(node.check(context).returnType)
         })
         return new ContextTypes(PHPTypeUnion.empty, types)
     }
@@ -389,9 +389,9 @@ class Call extends Statement {
         let types = PHPTypeUnion.empty
         callable_types.types.forEach(t => {
             if(t instanceof PHPFunctionType) {
-                types.addTypesFrom(t.returnType)
+                types = types.addTypesFrom(t.returnType)
             } else {
-                types.addTypesFrom(PHPTypeUnion.mixed)
+                types = types.addTypesFrom(PHPTypeUnion.mixed)
             }
         })
         return new ContextTypes(types)
@@ -412,7 +412,7 @@ class ConstRef extends Expression {
         if(this.name instanceof Identifier) {
             switch(this.name.name) {
                 case "array":
-                    return new ContextTypes(PHPSimpleType.named(this.name.name).union)
+                    return new ContextTypes(PHPSimpleType.named(this.name.name))
                 default:
             }
             let constant_type = context.findName(this.name.name)
@@ -426,7 +426,7 @@ class ConstRef extends Expression {
         }
         let classContext = context.findClass(context.resolveNodeName(this))
         if(classContext) {
-            return new ContextTypes(PHPSimpleType.named(classContext.name).union)
+            return new ContextTypes(PHPSimpleType.named(classContext.name))
         } else {
             return new ContextTypes(PHPTypeUnion.mixed)
         }
@@ -472,12 +472,12 @@ class Closure extends Statement {
                 if(node.type) {
                     type_union = PHPSimpleType.named(
                         context.resolveNodeName(node.type)
-                    ).union
+                    )
                 } else {
                     type_union = PHPTypeUnion.mixed
                 }
                 if(node.nullable) {
-                    type_union.addType(PHPSimpleType.types.null)
+                    type_union = type_union.addType(PHPSimpleType.types.null)
                 }
                 arg_types.push(inner_context.addName(
                     "$" + node.name,
@@ -502,7 +502,7 @@ class Closure extends Statement {
         } else {
             return_type = PHPTypeUnion.mixed
         }
-        let types = new PHPFunctionType(arg_types, return_type).union
+        let types = new PHPFunctionType(arg_types, return_type)
         return new ContextTypes(types)
     }
 }
@@ -621,7 +621,7 @@ class Class extends Declaration {
         )
         inner_context.addName(
             "$this",
-            PHPSimpleType.named(context.resolveNodeName(this)).union
+            PHPSimpleType.named(context.resolveNodeName(this))
         )
         this.body.forEach(
             b => {
@@ -709,7 +709,7 @@ class _Function extends Declaration {
                 if(node.type) {
                     type_union = PHPSimpleType.named(
                         context.resolveNodeName(node.type)
-                    ).union
+                    )
                 } else {
                     type_union = PHPTypeUnion.mixed
                 }
@@ -788,7 +788,7 @@ class _Number extends Literal {
      */
     check(context, in_call = false) {
         super.check(context)
-        let types = PHPSimpleType.types.number.union
+        let types = PHPSimpleType.types.number
         return new ContextTypes(types)
     }
 }
@@ -854,7 +854,7 @@ class PropertyLookup extends Lookup {
                     let class_context = context.findClass("" + t)
                     let identifier_types = class_context.findInstanceIdentifier(this.offset.name, context.classContext, in_call)
                     if(identifier_types) {
-                        types_out.addTypesFrom(identifier_types)
+                        types_out = types_out.addTypesFrom(identifier_types)
                     } else {
                         throw new PHPStrictError(
                             `No accessible identifier ${t}->${this.offset.name}\n` +
@@ -876,9 +876,9 @@ class PropertyLookup extends Lookup {
             let types_in = PHPTypeUnion.empty
             type_union.types.forEach(t => {
                 if(t instanceof PHPFunctionType) {
-                    types_in.addType(t.returnType)
+                    types_in = types_in.addType(t.returnType)
                 } else {
-                    types_in.addTypesFrom(PHPTypeUnion.mixed)
+                    types_in = types_in.addTypesFrom(PHPTypeUnion.mixed)
                 }
             })
             let types_out = PHPTypeUnion.empty
@@ -887,7 +887,7 @@ class PropertyLookup extends Lookup {
                     let class_context = context.findClass("" + t)
                     let identifier_types = class_context.findInstanceIdentifier(this.offset.name, context.classContext, in_call)
                     if(identifier_types) {
-                        types_out.addTypesFrom(identifier_types)
+                        types_out = types_out.addTypesFrom(identifier_types)
                     } else {
                         throw new PHPStrictError(
                             `No accessible identifier ${t}->${this.offset.name}\n` +
@@ -909,9 +909,9 @@ class PropertyLookup extends Lookup {
             let types_in = PHPTypeUnion.empty
             type_union.types.forEach(t => {
                 if(t instanceof PHPFunctionType) {
-                    types_in.addType(t.returnType)
+                    types_in = types_in.addType(t.returnType)
                 } else {
-                    types_in.addTypesFrom(PHPTypeUnion.mixed)
+                    types_in = types_in.addTypesFrom(PHPTypeUnion.mixed)
                 }
             })
             let types_out = PHPTypeUnion.empty
@@ -920,7 +920,7 @@ class PropertyLookup extends Lookup {
                     let class_context = context.findClass("" + t)
                     let identifier_types = class_context.findInstanceIdentifier(this.offset.value, context.classContext, in_call)
                     if(identifier_types) {
-                        types_out.addTypesFrom(identifier_types)
+                        types_out = types_out.addTypesFrom(identifier_types)
                     } else {
                         throw new PHPStrictError(
                             `No accessible identifier ${t}->${this.offset.value}\n` +
@@ -1049,7 +1049,7 @@ class _String extends Literal {
      */
     check(context, in_call = false) {
         super.check(context)
-        let types = PHPSimpleType.types.string.union
+        let types = PHPSimpleType.types.string
         return new ContextTypes(types)
     }
 }
@@ -1099,7 +1099,7 @@ class _Array extends Expression {
                 item => item.check(context)
             )
         }
-        return new ContextTypes(PHPSimpleType.types.array.union)
+        return new ContextTypes(PHPSimpleType.types.array)
     }
 }
 class Bin extends Operation {
@@ -1132,7 +1132,7 @@ class Bin extends Operation {
             case "&&":
             case "and":
             case "or":
-                types.addType(PHPSimpleType.types.boolean)
+                types = types.addType(PHPSimpleType.types.boolean)
                 break
             case "*":
             case "/":
@@ -1142,17 +1142,17 @@ class Bin extends Operation {
             case "<<":
             case ">>":
             case "^":
-                types.addType(PHPSimpleType.types.number)
+                types = types.addType(PHPSimpleType.types.number)
                 break
             case "+":
                 if(left_types.types.length == 1 && "" + left_types[0] == "array") {
-                    types.addTypesFrom(left_types)
+                    types = types.addTypesFrom(left_types)
                 } else {
-                    types.addType(PHPSimpleType.types.number)
+                    types = types.addType(PHPSimpleType.types.number)
                 }
                 break
             case ".":
-                types.addType(PHPSimpleType.types.string)
+                types = types.addType(PHPSimpleType.types.string)
                 break
             case "~":
             case "!~":
@@ -1168,13 +1168,13 @@ class Bin extends Operation {
             case "!==":
             case "===":
             case "instanceof":
-                types.addType(PHPSimpleType.types.boolean)
+                types = types.addType(PHPSimpleType.types.boolean)
                 break
             default:
                 console.log(this.node)
                 console.log(`Don't know how to parse operator type ${this.type}`)
-                types.addTypesFrom(left_types)
-                types.addTypesFrom(right_types)
+                types = types.addTypesFrom(left_types)
+                types = types.addTypesFrom(right_types)
         }
         return new ContextTypes(types)
     }
@@ -1187,7 +1187,7 @@ class _Boolean extends Literal {
      */
     check(context, in_call = false) {
         super.check(context)
-        return new ContextTypes(PHPSimpleType.types.boolean.union)
+        return new ContextTypes(PHPSimpleType.types.boolean)
     }
 }
 class Break extends Node {
@@ -1239,7 +1239,7 @@ class Cast extends Operation {
     check(context, in_call = false) {
         super.check(context)
         this.what.check(context)
-        return new ContextTypes(PHPSimpleType.named(this.type).union)
+        return new ContextTypes(PHPSimpleType.named(this.type))
     }
 }
 class Catch extends Statement {
@@ -1264,7 +1264,7 @@ class Catch extends Statement {
         super.check(context)
         let types = PHPTypeUnion.empty
         this.what.forEach(
-            w => types.addType(PHPSimpleType.named(w.name))
+            w => types = types.addType(PHPSimpleType.named(w.name))
         )
         let inner_context = context.childContext(true)
         inner_context.assigningType = PHPTypeUnion.mixed
@@ -1385,7 +1385,7 @@ class Encapsed extends Literal {
      */
     check(context, in_call = false) {
         super.check(context)
-        return new ContextTypes(PHPSimpleType.types.string.union)
+        return new ContextTypes(PHPSimpleType.types.string)
     }
 }
 class Entry extends Node {
@@ -1598,11 +1598,11 @@ class If extends Statement {
         let body_context = context.childContext(false)
         body_context.importNamespaceFrom(context)
         let type = PHPTypeUnion.empty
-        type.addTypesFrom(this.body.check(body_context).returnType)
+        type = type.addTypesFrom(this.body.check(body_context).returnType)
         if(this.alternate) {
             let alt_context = context.childContext(false)
             alt_context.importNamespaceFrom(context)
-            type.addTypesFrom(this.alternate.check(alt_context).returnType)
+            type = type.addTypesFrom(this.alternate.check(alt_context).returnType)
             context.importNamespaceFrom(alt_context)
         }
         context.importNamespaceFrom(body_context)
@@ -1690,7 +1690,7 @@ class Isset extends Sys {
     check(context, in_call = false) {
         super.check(context)
         // no-op
-        return new ContextTypes(PHPSimpleType.types.boolean.union)
+        return new ContextTypes(PHPSimpleType.types.boolean)
     }
 }
 class Label extends Node {
@@ -1767,7 +1767,7 @@ class New extends Statement {
         } else {
             return new ContextTypes(PHPSimpleType.named(
                 context.resolveNodeName(this.what)
-            ).union)
+            ))
         }
     }
 }
@@ -1804,9 +1804,9 @@ class OffsetLookup extends Lookup {
             types_in = PHPTypeUnion.empty
             type_union.types.forEach(t => {
                 if(t instanceof PHPFunctionType) {
-                    types_in.addType(t.returnType)
+                    types_in = types_in.addType(t.returnType)
                 } else {
-                    types_in.addTypesFrom(PHPTypeUnion.mixed)
+                    types_in = types_in.addTypesFrom(PHPTypeUnion.mixed)
                 }
             })
         } else {
@@ -1944,11 +1944,11 @@ class RetIf extends Statement {
         let test_type = this.test.check(context).expressionType
         let types = PHPTypeUnion.empty
         if(this.trueExpr) {
-            types.addTypesFrom(this.trueExpr.check(context).expressionType)
+            types = types.addTypesFrom(this.trueExpr.check(context).expressionType)
         } else {
-            types.addTypesFrom(test_type)
+            types = types.addTypesFrom(test_type)
         }
-        types.addTypesFrom(this.falseExpr.check(context).expressionType)
+        types = types.addTypesFrom(this.falseExpr.check(context).expressionType)
         return new ContextTypes(types)
     }
 }
@@ -2059,7 +2059,7 @@ class Trait extends Declaration {
         )
         inner_context.addName(
             "$this",
-            PHPSimpleType.named(context.resolveNodeName(this)).union
+            PHPSimpleType.named(context.resolveNodeName(this))
         )
         this.body.forEach(
             b => {

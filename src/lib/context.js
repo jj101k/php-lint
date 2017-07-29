@@ -135,7 +135,7 @@ export default class Context {
         if(!this.ns[name]) {
             this.ns[name] = PHPTypeUnion.empty
         }
-        this.ns[name].addTypesFrom(types)
+        this.ns[name] = this.ns[name].addTypesFrom(types)
         if(DEBUG_TYPES) {
             console.log(`Types for ${name} are: ${this.ns[name]}`)
         }
