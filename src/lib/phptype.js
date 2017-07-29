@@ -5,19 +5,29 @@ class PHPType {
 }
 
 class PHPSimpleType extends PHPType {
+    /** @type {{[string: x]: PHPSimpleType}} */
+    static get types() {
+        if(!this._types) {
+            this._types = {
+                array: new PHPSimpleType("array"),
+                boolean: new PHPSimpleType("boolean"),
+                null: new PHPSimpleType("null"),
+                number: new PHPSimpleType("number"),
+                string: new PHPSimpleType("string"),
+            }
+        }
+        return this._types
+    }
     /**
      * Returns a cached type by name
      * @param {string} type_name
      * @returns {PHPSimpleType}
      */
     static named(type_name) {
-        if(!this.names) {
-            this.names = {}
+        if(!this.types[type_name]) {
+            this.types[type_name] = new PHPSimpleType(type_name)
         }
-        if(!this.names[type_name]) {
-            this.names[type_name] = new PHPSimpleType(type_name)
-        }
-        return this.names[type_name]
+        return this.types[type_name]
     }
     /**
      * Builds the object

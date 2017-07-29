@@ -479,7 +479,7 @@ class Closure extends Statement {
                     type_union = PHPTypeUnion.mixed
                 }
                 if(node.nullable) {
-                    type_union.addType(PHPSimpleType.named("null"))
+                    type_union.addType(PHPSimpleType.types.null)
                 }
                 arg_types.push(inner_context.addName(
                     "$" + node.name,
@@ -718,7 +718,7 @@ class _Function extends Declaration {
                     type_union = PHPTypeUnion.mixed
                 }
                 if(node.nullable) {
-                    type_union.addType(PHPSimpleType.named("null"))
+                    type_union.addType(PHPSimpleType.types.null)
                 }
                 arg_types.push(inner_context.addName(
                     "$" + node.name,
@@ -792,7 +792,7 @@ class _Number extends Literal {
      */
     check(context, in_call = false) {
         super.check(context)
-        let types = new PHPTypeUnion(PHPSimpleType.named("number"))
+        let types = new PHPTypeUnion(PHPSimpleType.types.number)
         return new ContextTypes(types)
     }
 }
@@ -1053,7 +1053,7 @@ class _String extends Literal {
      */
     check(context, in_call = false) {
         super.check(context)
-        let types = new PHPTypeUnion(PHPSimpleType.named("string"))
+        let types = new PHPTypeUnion(PHPSimpleType.types.string)
         return new ContextTypes(types)
     }
 }
@@ -1103,7 +1103,7 @@ class _Array extends Expression {
                 item => item.check(context)
             )
         }
-        return new ContextTypes(new PHPTypeUnion(PHPSimpleType.named("array")))
+        return new ContextTypes(new PHPTypeUnion(PHPSimpleType.types.array))
     }
 }
 class Bin extends Operation {
@@ -1136,7 +1136,7 @@ class Bin extends Operation {
             case "&&":
             case "and":
             case "or":
-                types.addType(PHPSimpleType.named("boolean"))
+                types.addType(PHPSimpleType.types.boolean)
                 break
             case "*":
             case "/":
@@ -1146,17 +1146,17 @@ class Bin extends Operation {
             case "<<":
             case ">>":
             case "^":
-                types.addType(PHPSimpleType.named("number"))
+                types.addType(PHPSimpleType.types.number)
                 break
             case "+":
                 if(left_types.types.length == 1 && "" + left_types[0] == "array") {
                     types.addTypesFrom(left_types)
                 } else {
-                    types.addType(PHPSimpleType.named("number"))
+                    types.addType(PHPSimpleType.types.number)
                 }
                 break
             case ".":
-                types.addType(PHPSimpleType.named("string"))
+                types.addType(PHPSimpleType.types.string)
                 break
             case "~":
             case "!~":
@@ -1172,7 +1172,7 @@ class Bin extends Operation {
             case "!==":
             case "===":
             case "instanceof":
-                types.addType(PHPSimpleType.named("boolean"))
+                types.addType(PHPSimpleType.types.boolean)
                 break
             default:
                 console.log(this.node)
@@ -1191,7 +1191,7 @@ class _Boolean extends Literal {
      */
     check(context, in_call = false) {
         super.check(context)
-        return new ContextTypes(new PHPTypeUnion(PHPSimpleType.named("boolean")))
+        return new ContextTypes(new PHPTypeUnion(PHPSimpleType.types.boolean))
     }
 }
 class Break extends Node {
@@ -1389,7 +1389,7 @@ class Encapsed extends Literal {
      */
     check(context, in_call = false) {
         super.check(context)
-        return new ContextTypes(new PHPTypeUnion(PHPSimpleType.named("string")))
+        return new ContextTypes(new PHPTypeUnion(PHPSimpleType.types.string))
     }
 }
 class Entry extends Node {
@@ -1694,7 +1694,7 @@ class Isset extends Sys {
     check(context, in_call = false) {
         super.check(context)
         // no-op
-        return new ContextTypes(new PHPTypeUnion(PHPSimpleType.named("boolean")))
+        return new ContextTypes(new PHPTypeUnion(PHPSimpleType.types.boolean))
     }
 }
 class Label extends Node {
