@@ -63,7 +63,7 @@ export default class Context {
         if(!this._superGlobals) {
             this._superGlobals = {}
             Object.keys(PHPSuperglobals).forEach(
-                name => this._superGlobals["$" + name] = new PHPTypeUnion(PHPSimpleType.named(PHPSuperglobals[name]))
+                name => this._superGlobals["$" + name] = PHPSimpleType.named(PHPSuperglobals[name])
             )
             Object.keys(PHPFunctions).forEach(
                 name => this._superGlobals[name] = new PHPTypeUnion(new PHPFunctionType(

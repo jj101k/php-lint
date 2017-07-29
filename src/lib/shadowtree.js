@@ -477,7 +477,7 @@ class Closure extends Statement {
                     type_union = PHPTypeUnion.mixed
                 }
                 if(node.nullable) {
-                    type_union = type_union.addType(PHPSimpleType.types.null)
+                    type_union = type_union.addTypesFrom(PHPSimpleType.types.null)
                 }
                 arg_types.push(inner_context.addName(
                     "$" + node.name,
@@ -498,11 +498,11 @@ class Closure extends Statement {
         }
         let return_type
         if(this.body) {
-            return_type = this.body.check(inner_context)
+            return_type = this.body.check(inner_context).returnType
         } else {
             return_type = PHPTypeUnion.mixed
         }
-        let types = new PHPFunctionType(arg_types, return_type)
+        let types = new PHPFunctionType(arg_types, return_type).union
         return new ContextTypes(types)
     }
 }
@@ -714,7 +714,7 @@ class _Function extends Declaration {
                     type_union = PHPTypeUnion.mixed
                 }
                 if(node.nullable) {
-                    type_union.addType(PHPSimpleType.types.null)
+                    type_union.addTypesFrom(PHPSimpleType.types.null)
                 }
                 arg_types.push(inner_context.addName(
                     "$" + node.name,
@@ -876,7 +876,7 @@ class PropertyLookup extends Lookup {
             let types_in = PHPTypeUnion.empty
             type_union.types.forEach(t => {
                 if(t instanceof PHPFunctionType) {
-                    types_in = types_in.addType(t.returnType)
+                    types_in = types_in.addTypesFrom(t.returnType)
                 } else {
                     types_in = types_in.addTypesFrom(PHPTypeUnion.mixed)
                 }
@@ -909,7 +909,7 @@ class PropertyLookup extends Lookup {
             let types_in = PHPTypeUnion.empty
             type_union.types.forEach(t => {
                 if(t instanceof PHPFunctionType) {
-                    types_in = types_in.addType(t.returnType)
+                    types_in = types_in.addTypesFrom(t.returnType)
                 } else {
                     types_in = types_in.addTypesFrom(PHPTypeUnion.mixed)
                 }
@@ -1068,7 +1068,7 @@ class Constant extends Declaration {
         super.check(context)
         let types
         if(this.value) {
-            types = this.value.check(context)
+            types = this.value.check(context).expressionType
         } else {
             types = PHPTypeUnion.mixed
         }
@@ -1132,7 +1132,7 @@ class Bin extends Operation {
             case "&&":
             case "and":
             case "or":
-                types = types.addType(PHPSimpleType.types.boolean)
+                types = types.addTypesFrom(PHPSimpleType.types.boolean)
                 break
             case "*":
             case "/":
@@ -1142,17 +1142,17 @@ class Bin extends Operation {
             case "<<":
             case ">>":
             case "^":
-                types = types.addType(PHPSimpleType.types.number)
+                types = types.addTypesFrom(PHPSimpleType.types.number)
                 break
             case "+":
                 if(left_types.types.length == 1 && "" + left_types[0] == "array") {
                     types = types.addTypesFrom(left_types)
                 } else {
-                    types = types.addType(PHPSimpleType.types.number)
+                    types = types.addTypesFrom(PHPSimpleType.types.number)
                 }
                 break
             case ".":
-                types = types.addType(PHPSimpleType.types.string)
+                types = types.addTypesFrom(PHPSimpleType.types.string)
                 break
             case "~":
             case "!~":
@@ -1168,7 +1168,7 @@ class Bin extends Operation {
             case "!==":
             case "===":
             case "instanceof":
-                types = types.addType(PHPSimpleType.types.boolean)
+                types = types.addTypesFrom(PHPSimpleType.types.boolean)
                 break
             default:
                 console.log(this.node)
@@ -1264,7 +1264,7 @@ class Catch extends Statement {
         super.check(context)
         let types = PHPTypeUnion.empty
         this.what.forEach(
-            w => types = types.addType(PHPSimpleType.named(w.name))
+            w => types = types.addTypesFrom(PHPSimpleType.named(w.name))
         )
         let inner_context = context.childContext(true)
         inner_context.assigningType = PHPTypeUnion.mixed

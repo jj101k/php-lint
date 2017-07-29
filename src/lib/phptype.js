@@ -12,7 +12,7 @@ class PHPType {
 }
 
 class PHPSimpleType extends PHPType {
-    /** @type {{[string: x]: PHPTypeUnion}} */
+    /** @type {{[x: string]: PHPTypeUnion}} */
     static get types() {
         if(!this._types) {
             this._types = {
