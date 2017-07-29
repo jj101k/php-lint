@@ -972,7 +972,12 @@ class StaticLookup extends Lookup {
             } catch(e) {
                 this.handleException(e, context)
             }
-            let class_context = context.findClass(resolved_name)
+            let class_context
+            try {
+                class_context = context.findClass(resolved_name)
+            } catch(e) {
+                this.handleException(e, context)
+            }
             if(class_context) {
                 let types
                 if(
