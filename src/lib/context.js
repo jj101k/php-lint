@@ -209,6 +209,15 @@ export default class Context {
     }
 
     /**
+     * Copies the namespace from one context to another. The existing namespace
+     * will still be retained.
+     * @param {Context} context
+     */
+    importNamespaceFrom(context) {
+        Object.assign(this.ns, context.ns)
+    }
+
+    /**
      * Resolves a given name, eg, for "Foo::$bar" this would resolve "Foo". This
      * does not handle multi-node lookups.
      *

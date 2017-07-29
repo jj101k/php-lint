@@ -1571,6 +1571,7 @@ class Halt extends Statement {
     get after() {
         return this.node.after
     }
+    // No check required - AST parser should have already halted here.
 }
 class If extends Statement {
     /** @type {Expression} */
@@ -1599,21 +1600,16 @@ class If extends Statement {
         this.test.check(context)
 
         let body_context = context.childContext(false)
-        body_context.ns = Object.assign({}, context.ns)
+        body_context.importNamespaceFrom(context)
         let type = PHPTypeUnion.empty
         type.addTypesFrom(this.body.check(body_context).returnType)
         if(this.alternate) {
             let alt_context = context.childContext(false)
-            alt_context.ns = Object.assign({}, context.ns)
+            alt_context.importNamespaceFrom(context)
             type.addTypesFrom(this.alternate.check(alt_context).returnType)
-
-            Object.keys(alt_context.ns).forEach(
-                k => context.addName(k, alt_context.ns[k])
-            )
+            context.importNamespaceFrom(alt_context)
         }
-        Object.keys(body_context.ns).forEach(
-            k => context.addName(k, body_context.ns[k])
-        )
+        context.importNamespaceFrom(body_context)
         return new ContextTypes(PHPTypeUnion.empty, type)
     }
 }
@@ -1645,6 +1641,7 @@ class Include extends Statement {
     }
 }
 class Inline extends Literal {
+    // No check needed - this is the gap between '?>' and the next '<?php'
 }
 class Interface extends Declaration {
     /** @type {Identifier[]} */
