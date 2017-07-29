@@ -1,7 +1,7 @@
 const fs = require("fs")
 const path = require("path")
 
-import {AnonymousFunctionContext, ClassContext, TraitContext, UnknownClassContext} from "./class-context"
+import {AnonymousFunctionContext, ClassContext, InterfaceContext, TraitContext, UnknownClassContext} from "./class-context"
 import {FileContext} from "./file-context"
 import {PHPContextlessError} from "./phpstricterror"
 import PHPLint from "./php-lint"
@@ -169,6 +169,19 @@ export class GlobalContext {
      */
     addTrait(name, superclass = null) {
         return this.classes[name] = this.classes[name] || new TraitContext(
+            name,
+            superclass
+        )
+    }
+
+    /**
+     * Adds a known interface
+     * @param {string} name Fully qualified only
+     * @param {?ClassContext} superclass
+     * @returns {ClassContext}
+     */
+    addInterface(name, superclass = null) {
+        return this.classes[name] = this.classes[name] || new InterfaceContext(
             name,
             superclass
         )

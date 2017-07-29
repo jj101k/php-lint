@@ -1644,13 +1644,45 @@ class Inline extends Literal {
     // No check needed - this is the gap between '?>' and the next '<?php'
 }
 class Interface extends Declaration {
-    /** @type {Identifier[]} */
+    /** @type {?Identifier} */
     get extends() {
-        return this.cacheNodeArray("extends")
+        let e = this.cacheNodeArray("extends")
+        return e && e[0]
     }
     /** @type {Declaration[]} */
     get body() {
         return this.cacheNodeArray("body")
+    }
+    /**
+     * Checks that syntax seems ok
+     * @param {Context} context
+     * @returns {?ContextTypes} The set of types applicable to this value
+     */
+    check(context, in_call = false) {
+        super.check(context)
+        let inner_context = context.childContext()
+        inner_context.classContext = inner_context.globalContext.addInterface(
+            context.resolveNodeName(this),
+            this.extends ?
+                context.findClass(context.resolveNodeName(this.extends)) :
+                null
+        )
+        this.body.forEach(
+            b => {
+                if(b instanceof Method) {
+                    inner_context.classContext.addIdentifier(
+                        b.name,
+                        b.visibility,
+                        b.isStatic,
+                        PHPTypeUnion.mixedFunction
+                    )
+                }
+            }
+        )
+        this.body.forEach(
+            b => b.check(inner_context)
+        )
+        return ContextTypes.empty
     }
 }
 class Isset extends Sys {

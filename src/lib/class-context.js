@@ -164,6 +164,31 @@ class ClassContext {
 }
 
 /**
+ * This handles interfaces
+ */
+class InterfaceContext extends ClassContext {
+    /**
+     * Finds the named identifier
+     * @param {string} name
+     * @param {?ClassContext} from_class_context
+     * @returns {?PHPTypeUnion}
+     */
+    findInstanceIdentifier(name, from_class_context) {
+        return super.findInstanceIdentifier(name, from_class_context) || PHPTypeUnion.mixed
+    }
+
+    /**
+     * Finds the named identifier
+     * @param {string} name
+     * @param {?ClassContext} from_class_context
+     * @returns {?PHPTypeUnion}
+     */
+    findStaticIdentifier(name, from_class_context) {
+        return super.findStaticIdentifier(name, from_class_context) || PHPTypeUnion.mixed
+    }
+}
+
+/**
  * This handles traits
  */
 class TraitContext extends ClassContext {
@@ -260,4 +285,4 @@ class UnknownClassContext extends ClassContext {
     }
 }
 
-export {AnonymousFunctionContext, ClassContext, TraitContext, UnknownClassContext}
+export {AnonymousFunctionContext, ClassContext, InterfaceContext, TraitContext, UnknownClassContext}
