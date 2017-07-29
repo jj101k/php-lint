@@ -6,6 +6,20 @@ class PHPType {
 
 class PHPSimpleType extends PHPType {
     /**
+     * Returns a cached type by name
+     * @param {string} type_name
+     * @returns {PHPSimpleType}
+     */
+    static named(type_name) {
+        if(!this.names) {
+            this.names = {}
+        }
+        if(!this.names[type_name]) {
+            this.names[type_name] = new PHPSimpleType(type_name)
+        }
+        return this.names[type_name]
+    }
+    /**
      * Builds the object
      * @param {string} type_name 
      */
@@ -56,7 +70,7 @@ class PHPTypeUnion {
      * @type {PHPTypeUnion}
      */
     static get mixed() {
-        return new PHPTypeUnion(new PHPSimpleType("mixed"))
+        return new PHPTypeUnion(PHPSimpleType.named("mixed"))
     }
 
     /**

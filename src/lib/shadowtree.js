@@ -412,7 +412,7 @@ class ConstRef extends Expression {
         if(this.name instanceof Identifier) {
             switch(this.name.name) {
                 case "array":
-                    return new ContextTypes(new PHPTypeUnion(new PHPSimpleType(this.name.name)))
+                    return new ContextTypes(new PHPTypeUnion(PHPSimpleType.named(this.name.name)))
                 default:
             }
             let constant_type = context.findName(this.name.name)
@@ -426,7 +426,7 @@ class ConstRef extends Expression {
         }
         let classContext = context.findClass(context.resolveNodeName(this))
         if(classContext) {
-            return new ContextTypes(new PHPTypeUnion(new PHPSimpleType(classContext.name)))
+            return new ContextTypes(new PHPTypeUnion(PHPSimpleType.named(classContext.name)))
         } else {
             return new ContextTypes(PHPTypeUnion.mixed)
         }
@@ -471,7 +471,7 @@ class Closure extends Statement {
                 let type_union
                 if(node.type) {
                     type_union = new PHPTypeUnion(
-                        new PHPSimpleType(
+                        PHPSimpleType.named(
                             context.resolveNodeName(node.type)
                         )
                     )
@@ -479,7 +479,7 @@ class Closure extends Statement {
                     type_union = PHPTypeUnion.mixed
                 }
                 if(node.nullable) {
-                    type_union.addType(new PHPSimpleType("null"))
+                    type_union.addType(PHPSimpleType.named("null"))
                 }
                 arg_types.push(inner_context.addName(
                     "$" + node.name,
@@ -623,7 +623,7 @@ class Class extends Declaration {
         )
         inner_context.addName(
             "$this",
-            new PHPTypeUnion(new PHPSimpleType(context.resolveNodeName(this)))
+            new PHPTypeUnion(PHPSimpleType.named(context.resolveNodeName(this)))
         )
         this.body.forEach(
             b => {
@@ -710,7 +710,7 @@ class _Function extends Declaration {
                 let type_union
                 if(node.type) {
                     type_union = new PHPTypeUnion(
-                        new PHPSimpleType(
+                        PHPSimpleType.named(
                             context.resolveNodeName(node.type)
                         )
                     )
@@ -718,7 +718,7 @@ class _Function extends Declaration {
                     type_union = PHPTypeUnion.mixed
                 }
                 if(node.nullable) {
-                    type_union.addType(new PHPSimpleType("null"))
+                    type_union.addType(PHPSimpleType.named("null"))
                 }
                 arg_types.push(inner_context.addName(
                     "$" + node.name,
@@ -792,7 +792,7 @@ class _Number extends Literal {
      */
     check(context, in_call = false) {
         super.check(context)
-        let types = new PHPTypeUnion(new PHPSimpleType("number"))
+        let types = new PHPTypeUnion(PHPSimpleType.named("number"))
         return new ContextTypes(types)
     }
 }
@@ -1053,7 +1053,7 @@ class _String extends Literal {
      */
     check(context, in_call = false) {
         super.check(context)
-        let types = new PHPTypeUnion(new PHPSimpleType("string"))
+        let types = new PHPTypeUnion(PHPSimpleType.named("string"))
         return new ContextTypes(types)
     }
 }
@@ -1103,7 +1103,7 @@ class _Array extends Expression {
                 item => item.check(context)
             )
         }
-        return new ContextTypes(new PHPTypeUnion(new PHPSimpleType("array")))
+        return new ContextTypes(new PHPTypeUnion(PHPSimpleType.named("array")))
     }
 }
 class Bin extends Operation {
@@ -1136,7 +1136,7 @@ class Bin extends Operation {
             case "&&":
             case "and":
             case "or":
-                types.addType(new PHPSimpleType("boolean"))
+                types.addType(PHPSimpleType.named("boolean"))
                 break
             case "*":
             case "/":
@@ -1146,17 +1146,17 @@ class Bin extends Operation {
             case "<<":
             case ">>":
             case "^":
-                types.addType(new PHPSimpleType("number"))
+                types.addType(PHPSimpleType.named("number"))
                 break
             case "+":
                 if(left_types.types.length == 1 && "" + left_types[0] == "array") {
                     types.addTypesFrom(left_types)
                 } else {
-                    types.addType(new PHPSimpleType("number"))
+                    types.addType(PHPSimpleType.named("number"))
                 }
                 break
             case ".":
-                types.addType(new PHPSimpleType("string"))
+                types.addType(PHPSimpleType.named("string"))
                 break
             case "~":
             case "!~":
@@ -1172,7 +1172,7 @@ class Bin extends Operation {
             case "!==":
             case "===":
             case "instanceof":
-                types.addType(new PHPSimpleType("boolean"))
+                types.addType(PHPSimpleType.named("boolean"))
                 break
             default:
                 console.log(this.node)
@@ -1191,7 +1191,7 @@ class _Boolean extends Literal {
      */
     check(context, in_call = false) {
         super.check(context)
-        return new ContextTypes(new PHPTypeUnion(new PHPSimpleType("boolean")))
+        return new ContextTypes(new PHPTypeUnion(PHPSimpleType.named("boolean")))
     }
 }
 class Break extends Node {
@@ -1243,7 +1243,7 @@ class Cast extends Operation {
     check(context, in_call = false) {
         super.check(context)
         this.what.check(context)
-        return new ContextTypes(new PHPTypeUnion(new PHPSimpleType(this.type)))
+        return new ContextTypes(new PHPTypeUnion(PHPSimpleType.named(this.type)))
     }
 }
 class Catch extends Statement {
@@ -1389,7 +1389,7 @@ class Encapsed extends Literal {
      */
     check(context, in_call = false) {
         super.check(context)
-        return new ContextTypes(new PHPTypeUnion(new PHPSimpleType("string")))
+        return new ContextTypes(new PHPTypeUnion(PHPSimpleType.named("string")))
     }
 }
 class Entry extends Node {
@@ -1694,7 +1694,7 @@ class Isset extends Sys {
     check(context, in_call = false) {
         super.check(context)
         // no-op
-        return new ContextTypes(new PHPTypeUnion(new PHPSimpleType("boolean")))
+        return new ContextTypes(new PHPTypeUnion(PHPSimpleType.named("boolean")))
     }
 }
 class Label extends Node {
@@ -1769,7 +1769,7 @@ class New extends Statement {
         if(this.what instanceof Variable) {
             return new ContextTypes(PHPTypeUnion.mixed)
         } else {
-            return new ContextTypes(new PHPTypeUnion(new PHPSimpleType(
+            return new ContextTypes(new PHPTypeUnion(PHPSimpleType.named(
                 context.resolveNodeName(this.what)
             )))
         }
@@ -2063,7 +2063,7 @@ class Trait extends Declaration {
         )
         inner_context.addName(
             "$this",
-            new PHPTypeUnion(new PHPSimpleType(context.resolveNodeName(this)))
+            new PHPTypeUnion(PHPSimpleType.named(context.resolveNodeName(this)))
         )
         this.body.forEach(
             b => {
