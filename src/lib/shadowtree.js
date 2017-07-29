@@ -1698,6 +1698,7 @@ class Label extends Node {
     get name() {
         return this.node.name
     }
+    // No check required
 }
 class List extends Sys {
     /**
@@ -1717,7 +1718,7 @@ class List extends Sys {
             )
             return ContextTypes.empty
         } else {
-            return super.check(context)
+            throw new Error("List found outside assignment - internal error?")
         }
     }
 }
@@ -1776,6 +1777,7 @@ class Nowdoc extends Literal {
     get label() {
         return this.node.label
     }
+    // No check needed - just a string
 }
 class OffsetLookup extends Lookup {
     /**
