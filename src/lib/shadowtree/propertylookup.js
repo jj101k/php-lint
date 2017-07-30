@@ -9,7 +9,7 @@ import Parenthesis from "./parenthesis"
 import ConstRef from "./constref"
 import PHPStrictError from "../phpstricterror"
 import Call from "./call"
-import _String from "./_string"
+import _String from "./string"
 export default class PropertyLookup extends Lookup {
     /**
      * Checks that syntax seems ok

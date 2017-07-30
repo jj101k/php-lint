@@ -4,7 +4,7 @@ import Statement from "./statement"
 import {PHPFunctionType, PHPTypeUnion} from "../phptype"
 import Identifier from "./identifier"
 import Variable from "./variable"
-import _String from "./_string"
+import _String from "./string"
 import Bin from "./bin"
 import Magic from "./magic"
 export default class Call extends Statement {

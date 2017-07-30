@@ -2,12 +2,12 @@ import PHPStrictError, {PHPContextlessError} from "./phpstricterror"
 import Context from "./context"
 import {PHPFunctionType, PHPSimpleType, PHPTypeUnion} from "./phptype"
 
-export {default as Array} from "./shadowtree/_array";
+export {default as Array} from "./shadowtree/array";
 export {default as Assign} from "./shadowtree/assign";
 export {default as Bin} from "./shadowtree/bin";
 export {default as Block} from "./shadowtree/block";
 export {default as Bool} from "./shadowtree/bin";
-export {default as Boolean} from "./shadowtree/_boolean";
+export {default as Boolean} from "./shadowtree/boolean";
 export {default as Break} from "./shadowtree/break";
 export {default as Call} from "./shadowtree/call";
 export {default as Case} from "./shadowtree/case";
@@ -52,7 +52,7 @@ export {default as Namespace} from "./shadowtree/namespace";
 export {default as New} from "./shadowtree/new";
 export {default as Node} from "./shadowtree/node";
 export {default as Nowdoc} from "./shadowtree/nowdoc";
-export {default as Number} from "./shadowtree/_number";
+export {default as Number} from "./shadowtree/number";
 export {default as OffsetLookup} from "./shadowtree/offsetlookup";
 export {default as Operation} from "./shadowtree/operation";
 export {default as Parameter} from "./shadowtree/parameter";
@@ -70,7 +70,7 @@ export {default as Silent} from "./shadowtree/silent";
 export {default as Statement} from "./shadowtree/statement";
 export {default as Static} from "./shadowtree/static";
 export {default as StaticLookup} from "./shadowtree/staticlookup";
-export {default as String} from "./shadowtree/_string";
+export {default as String} from "./shadowtree/string";
 export {default as Switch} from "./shadowtree/switch";
 export {default as Sys} from "./shadowtree/sys";
 export {default as Throw} from "./shadowtree/throw";
@@ -88,4 +88,4 @@ export {default as Variadic} from "./shadowtree/variadic";
 export {default as While} from "./shadowtree/while";
 export {default as Yield} from "./shadowtree/yield";
 export {default as YieldFrom} from "./shadowtree/yieldfrom";
-export {default as _Function} from "./shadowtree/_function";
+export {default as _Function} from "./shadowtree/function";

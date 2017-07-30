@@ -2,7 +2,7 @@ import Context from "../context"
 import ContextTypes from "../context-types"
 import Statement from "./statement"
 import Expression from "./expression"
-import _String from "./_string"
+import _String from "./string"
 export default class Include extends Statement {
     /** @type {Expression} */
     get target() {

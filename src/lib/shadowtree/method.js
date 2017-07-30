@@ -1,6 +1,6 @@
 import Context from "../context"
 import ContextTypes from "../context-types"
-import _Function from "./_function"
+import _Function from "./function"
 export default class Method extends _Function {
     /** @type {boolean} */
     get isAbstract() {
