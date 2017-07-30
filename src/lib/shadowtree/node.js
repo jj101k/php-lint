@@ -163,7 +163,8 @@ const DEBUG = false
      * @returns {_Node}
      */
     static typed(node) {
-        var c = ShadowTree[node.constructor.name];
+        var c = ShadowTree[node.constructor.name] ||
+            ShadowTree[node.constructor.name.replace(/^_/, "")]
         if(!c) {
             throw new Error(`No handler for ${node.constructor.name}`);
         }

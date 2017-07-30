@@ -88,4 +88,4 @@ export {default as Variadic} from "./shadowtree/variadic";
 export {default as While} from "./shadowtree/while";
 export {default as Yield} from "./shadowtree/yield";
 export {default as YieldFrom} from "./shadowtree/yieldfrom";
-export {default as _Function} from "./shadowtree/function";
+export {default as Function} from "./shadowtree/function";
