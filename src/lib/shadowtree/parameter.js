@@ -15,7 +15,7 @@ export default class Parameter extends Declaration {
     get type() {
         return this.cacheNode("type")
     }
-    /** @type {?Node} */
+    /** @type {?_Node} */
     get value() {
         return this.cacheNode("value")
     }

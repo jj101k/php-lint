@@ -1,9 +1,9 @@
 import Context from "../context"
 import ContextTypes from "../context-types"
-import Node from "./node"
+import _Node from "./node"
 import Identifier from "./identifier"
-export default class TraitUse extends Node {
-    /** @type {?Node[]} */
+export default class TraitUse extends _Node {
+    /** @type {?_Node[]} */
     get adaptations() {
         return this.cacheNodeArray("adaptations")
     }

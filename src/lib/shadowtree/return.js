@@ -1,9 +1,9 @@
 import Context from "../context"
 import ContextTypes from "../context-types"
-import Node from "./node"
+import _Node from "./node"
 import {PHPTypeUnion} from "../phptype"
 import Expression from "./expression"
-export default class Return extends Node {
+export default class Return extends _Node {
     /** @type {?Expression} */
     get expr() {
         return this.cacheNode("expr")

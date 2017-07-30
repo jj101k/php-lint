@@ -2,7 +2,7 @@ import Context from "../context"
 import ContextTypes from "../context-types"
 import Statement from "./statement"
 import {PHPSimpleType, PHPTypeUnion} from "../phptype"
-import Node from "./node"
+import _Node from "./node"
 import Identifier from "./identifier"
 import Variable from "./variable"
 import Class from "./class"
@@ -11,7 +11,7 @@ export default class New extends Statement {
     get what() {
         return this.cacheNode("what")
     }
-    /** @type {Node[]} */
+    /** @type {_Node[]} */
     get arguments() {
         return this.cacheNodeArray("arguments")
     }

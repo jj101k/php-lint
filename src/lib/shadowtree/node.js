@@ -31,7 +31,7 @@ const DEBUG = false
  * @property {ParserPosition} start
  * @property {ParserPosition} end
  */
- export default class Node {
+ export default class _Node {
     /**
      * Builds the shadow node
      * @param {ParserNode} node
@@ -75,13 +75,13 @@ const DEBUG = false
     /**
      * Returns a shadow tree node wrapping the given node (caches)
      * @param {string} name
-     * @returns {?Node}
+     * @returns {?_Node}
      */
     cacheNode(name) {
         return this.cacheProperty(
             name,
             subnode => subnode ?
-                Node.typed(subnode) :
+                _Node.typed(subnode) :
                 subnode
         );
     }
@@ -89,20 +89,20 @@ const DEBUG = false
      * Returns a nominal array of shadow tree nodes wrapping the given nodes
      * (caches)
      * @param {string} name
-     * @returns {?Node[]}
+     * @returns {?_Node[]}
      */
     cacheNodeArray(name) {
         return this.cacheProperty(
             name,
             subnodes => subnodes ? subnodes.map(
-                subnode => Node.typed(subnode)
+                subnode => _Node.typed(subnode)
             ) : subnodes
         );
     }
     /**
      * Like cacheNode, but includes cases where random other objects are present.
      * @param {string} name
-     * @returns {Node|*}
+     * @returns {_Node|*}
      */
     cacheOptionalNode(name) {
         if(this.node[name] && this.node[name].kind) {
@@ -160,7 +160,7 @@ const DEBUG = false
     /**
      * Returns the shadow tree counterpart of the given node.
      * @param {ParserNode} node
-     * @returns {Node}
+     * @returns {_Node}
      */
     static typed(node) {
         var c = ShadowTree[node.constructor.name];

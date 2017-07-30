@@ -1,8 +1,8 @@
 import Context from "../context"
 import ContextTypes from "../context-types"
-import Node from "./node"
+import _Node from "./node"
 import {PHPTypeUnion} from "../phptype"
-export default class Identifier extends Node {
+export default class Identifier extends _Node {
     /** @type {string} */
     get name() {
         return this.node.name;

@@ -1,9 +1,9 @@
 import Context from "../context"
 import ContextTypes from "../context-types"
 import Statement from "./statement"
-import Node from "./node"
+import _Node from "./node"
 export default class Exit extends Statement {
-    /** @type {?Node} */
+    /** @type {?_Node} */
     get status() {
         return this.cacheNode("status")
     }

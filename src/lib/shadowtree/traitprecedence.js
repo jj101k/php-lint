@@ -1,8 +1,8 @@
 import Context from "../context"
 import ContextTypes from "../context-types"
-import Node from "./node"
+import _Node from "./node"
 import Identifier from "./identifier"
-export default class TraitPrecedence extends Node {
+export default class TraitPrecedence extends _Node {
     /** @type {?Identifier} */
     get trait() {
         return this.cacheNode("trait")

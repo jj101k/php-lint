@@ -1,7 +1,7 @@
 import Context from "../context"
 import ContextTypes from "../context-types"
-import Node from "./node"
-export default class Break extends Node {
+import _Node from "./node"
+export default class Break extends _Node {
     /** @type {?Number} */
     get level() {
         return this.cacheNode("level")

@@ -2,9 +2,9 @@ import Context from "../context"
 import ContextTypes from "../context-types"
 import Declaration from "./declaration"
 import {PHPTypeUnion} from "../phptype"
-import Node from "./node"
+import _Node from "./node"
 export default class Constant extends Declaration {
-    /** @type {?Node} */
+    /** @type {?_Node} */
     get value() {
         return this.cacheNode("value")
     }

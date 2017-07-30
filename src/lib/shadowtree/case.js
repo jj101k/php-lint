@@ -1,9 +1,9 @@
 import Context from "../context"
 import ContextTypes from "../context-types"
-import Node from "./node"
+import _Node from "./node"
 import Expression from "./expression"
 import Block from "./block"
-export default class Case extends Node {
+export default class Case extends _Node {
     /** @type {?Expression} */
     get test() {
         return this.cacheNode("test")

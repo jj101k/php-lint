@@ -1,12 +1,12 @@
 import Context from "../context"
 import ContextTypes from "../context-types"
-import Node from "./node"
-export default class Entry extends Node {
-    /** @type {?Node} */
+import _Node from "./node"
+export default class Entry extends _Node {
+    /** @type {?_Node} */
     get key() {
         return this.cacheNode("key")
     }
-    /** @type {Node} */
+    /** @type {_Node} */
     get value() {
         return this.cacheNode("value")
     }

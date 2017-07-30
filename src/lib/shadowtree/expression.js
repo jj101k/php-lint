@@ -1,3 +1,3 @@
-import Node from "./node"
-export default class Expression extends Node {
+import _Node from "./node"
+export default class Expression extends _Node {
 }
