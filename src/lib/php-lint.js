@@ -1,4 +1,4 @@
-var phpParser = require("php-parser");
+var phpParser = require("php-parser")
 
 var parser = new phpParser({
     parser: {
