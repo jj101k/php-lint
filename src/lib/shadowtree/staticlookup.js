@@ -15,29 +15,29 @@ export default class StaticLookup extends Lookup {
      */
     check(context, in_call = false) {
         super.check(context)
+        let class_context
+        let resolved_name
         if(this.what instanceof Variable) {
             this.what.check(context)
+            // $x::$y
             //this.offset.check(context)
             return new ContextTypes(PHPTypeUnion.mixed)
         } else if(
-            (
-                this.what instanceof Identifier ||
-                this.what instanceof ConstRef
-            ) &&
-            this.offset instanceof ConstRef
+            this.what instanceof Identifier ||
+            this.what instanceof ConstRef
         ) {
-            let resolved_name
             try {
                 resolved_name = context.resolveNodeName(this.what)
             } catch(e) {
                 this.handleException(e, context)
             }
-            let class_context
             try {
                 class_context = context.findClass(resolved_name)
             } catch(e) {
                 this.handleException(e, context)
             }
+        }
+        if(this.offset instanceof ConstRef) {
             if(class_context) {
                 let types
                 if(
@@ -47,15 +47,15 @@ export default class StaticLookup extends Lookup {
                 ) {
                     // TODO this doesn't distinguish between methods and constants
                     types = class_context.findInstanceIdentifier(this.offset.name, context.classContext)
-                    if(!types) {
+                    if(!(types && types !== PHPTypeUnion.mixed)) {
                         types = class_context.findStaticIdentifier(this.offset.name, context.classContext)
                     }
                 } else {
                     types = class_context.findStaticIdentifier(this.offset.name, context.classContext)
                 }
-                if(types) {
+                if(types && types !== PHPTypeUnion.mixed) {
                     return new ContextTypes(types)
-                } else if(this.what.name == "static") {
+                } else if(this.what instanceof ConstRef && this.what.name == "static") {
                     PHPStrictError.warn(
                         `Undeclared static property static::${this.offset.name}`,
                         context,
@@ -77,14 +77,8 @@ export default class StaticLookup extends Lookup {
                 }
             }
         } else if(
-            (
-                this.what instanceof Identifier ||
-                this.what instanceof ConstRef
-            ) &&
-            (
-                this.offset instanceof OffsetLookup ||
-                this.offset instanceof Variable
-            )
+            this.offset instanceof OffsetLookup ||
+            this.offset instanceof Variable
         ) {
             // Bar::$FOO
             // TODO

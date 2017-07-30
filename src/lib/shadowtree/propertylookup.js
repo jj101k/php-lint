@@ -19,111 +19,55 @@ export default class PropertyLookup extends Lookup {
      */
     check(context, in_call = false) {
         super.check(context)
-        if(
-            (
-                this.what instanceof Variable ||
-                this.what instanceof PropertyLookup ||
-                this.what instanceof StaticLookup ||
-                this.what instanceof OffsetLookup ||
-                this.what instanceof Parenthesis
-             ) &&
-            this.offset instanceof ConstRef
-        ) {
+        let type_union
+        if(this.what instanceof Call) {
             let inner_context = context.childContext(true)
             inner_context.assigningType = null
-            let type_union = this.what.check(inner_context).expressionType
-            let types_out = PHPTypeUnion.empty
-            try {
-                type_union.types.forEach(t => {
-                    let class_context = context.findClass("" + t)
-                    let identifier_types = class_context.findInstanceIdentifier(this.offset.name, context.classContext, in_call)
-                    if(identifier_types) {
-                        types_out = types_out.addTypesFrom(identifier_types)
-                    } else {
-                        throw new PHPStrictError(
-                            `No accessible identifier ${t}->${this.offset.name}\n` +
-                            `Accessible properties are: ${Object.keys(class_context.instanceIdentifiers)}`,
-                            context,
-                            this.loc
-                        )
-                    }
-                })
-            } catch(e) {
-                this.handleException(e, context)
-            }
-            return new ContextTypes(types_out)
-        } else if(
-            this.what instanceof Call &&
-            this.offset instanceof ConstRef
-        ) {
-            let type_union = this.what.check(context).expressionType
-            let types_in = PHPTypeUnion.empty
-            type_union.types.forEach(t => {
+            let types_in = this.what.check(inner_context).expressionType
+            type_union = PHPTypeUnion.empty
+            types_in.types.forEach(t => {
                 if(t instanceof PHPFunctionType) {
-                    types_in = types_in.addTypesFrom(t.returnType)
+                    type_union = type_union.addTypesFrom(t.returnType)
                 } else {
-                    types_in = types_in.addTypesFrom(PHPTypeUnion.mixed)
+                    type_union = type_union.addTypesFrom(PHPTypeUnion.mixed)
                 }
             })
-            let types_out = PHPTypeUnion.empty
-            try {
-                types_in.types.forEach(t => {
-                    let class_context = context.findClass("" + t)
-                    let identifier_types = class_context.findInstanceIdentifier(this.offset.name, context.classContext, in_call)
-                    if(identifier_types) {
-                        types_out = types_out.addTypesFrom(identifier_types)
-                    } else {
-                        throw new PHPStrictError(
-                            `No accessible identifier ${t}->${this.offset.name}\n` +
-                            `Accessible properties are: ${Object.keys(class_context.instanceIdentifiers)}`,
-                            context,
-                            this.loc
-                        )
-                    }
-                })
-            } catch(e) {
-                this.handleException(e, context)
-            }
-            return new ContextTypes(types_out)
-        } else if(
-            this.what instanceof Call &&
-            this.offset instanceof _String
-        ) {
-            let type_union = this.what.check(context).expressionType
-            let types_in = PHPTypeUnion.empty
-            type_union.types.forEach(t => {
-                if(t instanceof PHPFunctionType) {
-                    types_in = types_in.addTypesFrom(t.returnType)
-                } else {
-                    types_in = types_in.addTypesFrom(PHPTypeUnion.mixed)
-                }
-            })
-            let types_out = PHPTypeUnion.empty
-            try {
-                types_in.types.forEach(t => {
-                    let class_context = context.findClass("" + t)
-                    let identifier_types = class_context.findInstanceIdentifier(this.offset.value, context.classContext, in_call)
-                    if(identifier_types) {
-                        types_out = types_out.addTypesFrom(identifier_types)
-                    } else {
-                        throw new PHPStrictError(
-                            `No accessible identifier ${t}->${this.offset.value}\n` +
-                            `Accessible properties are: ${Object.keys(class_context.instanceIdentifiers)}`,
-                            context,
-                            this.loc
-                        )
-                    }
-                })
-            } catch(e) {
-                this.handleException(e, context)
-            }
-            return new ContextTypes(types_out)
+        } else {
+            let inner_context = context.childContext(true)
+            inner_context.assigningType = null
+            type_union = this.what.check(inner_context).expressionType
+        }
+        let offset
+        if(this.offset instanceof ConstRef) {
+            offset = this.offset.name
+        } else if(this.offset instanceof _String) {
+            offset = this.offset.value
         } else if(this.offset instanceof Variable) {
             return new ContextTypes(PHPTypeUnion.mixed)
         } else {
             console.log(this.node)
             console.log("TODO don't know how to check this kind of lookup")
+            return new ContextTypes(PHPTypeUnion.mixed)
         }
-        return new ContextTypes(PHPTypeUnion.mixed)
+        let types_out = PHPTypeUnion.empty
+        try {
+            type_union.types.forEach(t => {
+                let class_context = context.findClass("" + t)
+                let identifier_types = class_context.findInstanceIdentifier(offset, context.classContext, in_call)
+                if(identifier_types) {
+                    types_out = types_out.addTypesFrom(identifier_types)
+                } else {
+                    throw new PHPStrictError(
+                        `No accessible identifier ${t}->${offset}\n` +
+                        `Accessible properties are: ${Object.keys(class_context.instanceIdentifiers)}`,
+                        context,
+                        this.loc
+                    )
+                }
+            })
+        } catch(e) {
+            this.handleException(e, context)
+        }
+        return new ContextTypes(types_out)
     }
 }
