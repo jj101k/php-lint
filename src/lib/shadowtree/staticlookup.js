@@ -53,7 +53,7 @@ export default class StaticLookup extends Lookup {
                 } else {
                     types = class_context.findStaticIdentifier(this.offset.name, context.classContext)
                 }
-                if(types && types !== PHPTypeUnion.mixed) {
+                if(types) {
                     return new ContextTypes(types)
                 } else if(this.what instanceof ConstRef && this.what.name == "static") {
                     PHPStrictError.warn(
