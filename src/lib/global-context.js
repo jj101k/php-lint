@@ -113,6 +113,8 @@ export class GlobalContext {
         this.depths = {
             "": 0
         }
+        /** @type {{[x: string]: boolean}} */
+        this.filesSeen = {}
         PHPClasses.forEach(
             name => this.addUnknownClass("\\" + name)
         )
@@ -194,7 +196,10 @@ export class GlobalContext {
      * @param {number} [depth]
      */
     checkFile(filename, depth = 0) {
-        PHPLint.checkFileSync(filename, false, depth)
+        if(!this.filesSeen[filename]) {
+            this.filesSeen[filename] = true
+            PHPLint.checkFileSync(filename, false, depth)
+        }
     }
 
     /**
