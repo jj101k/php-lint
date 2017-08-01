@@ -3,6 +3,9 @@ import ContextTypes from "../context-types"
 import Statement from "./statement"
 import Expression from "./expression"
 import _String from "./string"
+import Bin from "./bin"
+import Magic from "./magic"
+import {PHPSimpleType} from "../phptype"
 export default class Include extends Statement {
     /** @type {Expression} */
     get target() {
@@ -26,7 +29,14 @@ export default class Include extends Statement {
         this.target.check(context)
         if(this.target instanceof _String) {
             context.checkFile(this.target.value, this.require)
+        } else if(
+            this.target instanceof Bin &&
+            this.target.left instanceof Magic &&
+            this.target.left.value == "__DIR__" &&
+            this.target.right instanceof _String
+        ) {
+            context.checkFile(context.fileContext.directory + this.target.right.value, this.require)
         }
-        return ContextTypes.empty
+        return new ContextTypes(PHPSimpleType.types.string)
     }
 }
