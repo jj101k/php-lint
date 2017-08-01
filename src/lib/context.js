@@ -48,7 +48,8 @@ const PHPSuperglobals = {
     "argv": "array",
     "argc": "integer",
     "_SERVER": "array",
-    "_SESSION": "array"
+    "_SESSION": "array",
+    "GLOBALS": "array",
 }
 
 /**

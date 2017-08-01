@@ -5748,5 +5748,9 @@
     "cli_set_process_title": [
         false
     ],
-    "cli_get_process_title": []
+    "cli_get_process_title": [],
+    "apcu_fetch": [
+        false,
+        true
+    ]
 }
