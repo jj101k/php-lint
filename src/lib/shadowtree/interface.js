@@ -26,7 +26,8 @@ export default class Interface extends Declaration {
             context.resolveNodeName(this),
             this.extends ?
                 context.findClass(context.resolveNodeName(this.extends)) :
-                null
+                null,
+            context.fileContext
         )
         this.body.forEach(
             b => {

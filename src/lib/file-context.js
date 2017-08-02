@@ -11,7 +11,7 @@ export class FileContext {
      * @param {number} [depth] The load depth
      */
     constructor(filename, depth = 0) {
-        this.filename = filename
+        this.filename = path.resolve(filename)
         if(DEBUG_FILE_LOAD) {
             console.info(`Loading ${filename} at depth ${depth}`)
         }

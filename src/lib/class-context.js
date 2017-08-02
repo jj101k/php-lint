@@ -1,5 +1,6 @@
 import {PHPTypeUnion} from "./phptype"
 import {PHPContextlessError} from "./phpstricterror"
+import {FileContext} from "./file-context"
 
 /**
  * Defines content in a specific class
@@ -8,10 +9,12 @@ class ClassContext {
     /**
      * Builds the object
      * @param {string} name Fully qualified only
-     * @param {?ClassContext} superclass
+     * @param {?ClassContext} [superclass]
+     * @param {?FileContext} [file_context]
      */
-    constructor(name, superclass = null) {
+    constructor(name, superclass = null, file_context = null) {
         this.name = name
+        this.fileContext = file_context
         this.staticIdentifiers = {}
         this.instanceIdentifiers = {}
         this.superclass = superclass

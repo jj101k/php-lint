@@ -39,9 +39,11 @@ class Lint {
      * @param {number} [depth] The current load depth
      */
     check(depth = 0) {
+        let file_context = new FileContext(this.filename, depth)
+        Lint.globalContext.depths[file_context.filename] = depth
         return ShadowTree.Node.typed(this.tree).check(
             new Context(
-                new FileContext(this.filename, depth),
+                file_context,
                 Lint.globalContext,
                 null,
                 null,

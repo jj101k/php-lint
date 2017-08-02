@@ -57,7 +57,8 @@ export default class Class extends Declaration {
             context.resolveNodeName(this),
             this.extends ?
                 context.findClass(context.resolveNodeName(this.extends)) :
-                null
+                null,
+            context.fileContext
         )
         inner_context.addName(
             "$this",

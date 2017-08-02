@@ -108,10 +108,10 @@ export class GlobalContext {
      * Builds the context
      */
     constructor() {
+        /** @type {{[x: string]: ClassContext}} */
         this.classes = {}
         /** @type {Object.<string,number>} The minimum depth for each class */
         this.depths = {
-            "": 0
         }
         /** @type {{[x: string]: boolean}} */
         this.filesSeen = {}
@@ -140,13 +140,15 @@ export class GlobalContext {
     /**
      * Adds a known class
      * @param {string} name Fully qualified only
-     * @param {?ClassContext} superclass
+     * @param {?ClassContext} [superclass]
+     * @param {?FileContext} [file_context]
      * @returns {ClassContext}
      */
-    addClass(name, superclass = null) {
+    addClass(name, superclass = null, file_context = null) {
         return this.classes[name] = this.classes[name] || new ClassContext(
             name,
-            superclass
+            superclass,
+            file_context
         )
     }
 
@@ -166,26 +168,30 @@ export class GlobalContext {
     /**
      * Adds a known trait
      * @param {string} name Fully qualified only
-     * @param {?ClassContext} superclass
+     * @param {?ClassContext} [superclass]
+     * @param {?FileContext} [file_context]
      * @returns {ClassContext}
      */
-    addTrait(name, superclass = null) {
+    addTrait(name, superclass = null, file_context = null) {
         return this.classes[name] = this.classes[name] || new TraitContext(
             name,
-            superclass
+            superclass,
+            file_context
         )
     }
 
     /**
      * Adds a known interface
      * @param {string} name Fully qualified only
-     * @param {?ClassContext} superclass
+     * @param {?ClassContext} [superclass]
+     * @param {?FileContext} [file_context]
      * @returns {ClassContext}
      */
-    addInterface(name, superclass = null) {
+    addInterface(name, superclass = null, file_context = null) {
         return this.classes[name] = this.classes[name] || new InterfaceContext(
             name,
-            superclass
+            superclass,
+            file_context
         )
     }
 
@@ -232,15 +238,15 @@ export class GlobalContext {
         let load_depth = depth + 1
         let filename = file_context.filename
         if(this.classes.hasOwnProperty(name)) {
-            if(load_depth < this.depths[name]) {
-                this.depths[name] = load_depth
+            let c = this.classes[name]
+            if(c.fileContext && load_depth < this.depths[c.fileContext.filename]) {
+                this.depths[c.fileContext.filename] = load_depth
             }
             return this.classes[name]
         } else if(load_depth > MAX_DEPTH) {
             return new UnknownClassContext(name)
         } else {
             this.addUnknownClass(name)
-            this.depths[name] = load_depth
             // Autoload go!
             if(!this.autoloadPaths) {
                 this.autoloadPaths = GlobalContext.autoloadFromComposer(
