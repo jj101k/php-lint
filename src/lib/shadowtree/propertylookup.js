@@ -19,24 +19,9 @@ export default class PropertyLookup extends Lookup {
      */
     check(context, in_call = false) {
         super.check(context)
-        let type_union
-        if(this.what instanceof Call) {
-            let inner_context = context.childContext(true)
-            inner_context.assigningType = null
-            let types_in = this.what.check(inner_context).expressionType
-            type_union = PHPTypeUnion.empty
-            types_in.types.forEach(t => {
-                if(t instanceof PHPFunctionType) {
-                    type_union = type_union.addTypesFrom(t.returnType)
-                } else {
-                    type_union = type_union.addTypesFrom(PHPTypeUnion.mixed)
-                }
-            })
-        } else {
-            let inner_context = context.childContext(true)
-            inner_context.assigningType = null
-            type_union = this.what.check(inner_context).expressionType
-        }
+        let inner_context = context.childContext(true)
+        inner_context.assigningType = null
+        let type_union = this.what.check(inner_context).expressionType
         let offset
         if(this.offset instanceof ConstRef) {
             offset = this.offset.name
