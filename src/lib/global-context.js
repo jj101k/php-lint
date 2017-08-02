@@ -202,8 +202,9 @@ export class GlobalContext {
      * @param {number} [depth]
      */
     checkFile(filename, depth = 0) {
-        if(!this.filesSeen[filename]) {
-            this.filesSeen[filename] = true
+        let resolved_filename = path.resolve(filename)
+        if(!this.filesSeen[resolved_filename]) {
+            this.filesSeen[resolved_filename] = true
             PHPLint.checkFileSync(filename, false, depth)
         }
     }

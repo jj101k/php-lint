@@ -22,13 +22,18 @@ class PHPLint {
         return Lint.globalContext.depthCounts
     }
     /**
+     * @type {number}
+     */
+    static get processed() {
+        return Object.keys(Lint.globalContext.depths).length
+    }
+    /**
      * Checks the file
      * @param {string} filename
      * @param {number} [depth]
      * @returns {Promise} Rejects on failure
      */
     static checkFile(filename, depth = 0) {
-        this.processed++
         return new Promise((resolve, reject) => {
             fs.readFile(filename, "utf8", (err, data) => {
                 if(err) {
@@ -54,7 +59,6 @@ class PHPLint {
      */
     static checkFileSync(filename, throw_on_error = true, depth = 0) {
         if(!depth) depth = 0
-        this.processed++
         //
         var data = fs.readFileSync(filename, "utf8")
         var tree = parser.parseCode(data, filename)
@@ -68,7 +72,6 @@ class PHPLint {
      * @returns {Promise} Rejects on failure
      */
     static checkSourceCode(code, depth = 0) {
-        this.processed++
         //
         return new Promise((resolve, reject) => {
             try {
@@ -88,12 +91,9 @@ class PHPLint {
      * @throws
      */
     static checkSourceCodeSync(code, throw_on_error = true, depth = 0) {
-        this.processed++
         var tree = parser.parseCode(code);
         return Lint.check(tree, null, throw_on_error, depth);
     }
 }
-/** @type {number} */
-PHPLint.processed = 0
 
 export default PHPLint

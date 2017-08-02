@@ -40,16 +40,18 @@ class Lint {
      */
     check(depth = 0) {
         let file_context = new FileContext(this.filename, depth)
-        Lint.globalContext.depths[file_context.filename] = depth
-        return ShadowTree.Node.typed(this.tree).check(
-            new Context(
-                file_context,
-                Lint.globalContext,
-                null,
-                null,
-                depth
+        if(!Lint.globalContext.depths.hasOwnProperty(file_context.filename)) {
+            Lint.globalContext.depths[file_context.filename] = depth
+            return ShadowTree.Node.typed(this.tree).check(
+                new Context(
+                    file_context,
+                    Lint.globalContext,
+                    null,
+                    null,
+                    depth
+                )
             )
-        )
+        }
     }
     /**
      * Checks the provided AST
