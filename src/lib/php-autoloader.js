@@ -19,6 +19,7 @@ export default class PHPAutoloader {
      */
     get classmapResults() {
         if(!this._classmapResults) {
+            let s = new Date()
             let classmap_results = {}
             this.classmapPaths.forEach(
                 path => {
@@ -75,6 +76,8 @@ export default class PHPAutoloader {
                     })
                 }
             )
+            let e = new Date()
+            console.log(`Trivial classmap load took ${(e-s)/1000} seconds`)
             this._classmapResults = classmap_results
         }
         return this._classmapResults
