@@ -1,11 +1,83 @@
 let fs = require("fs")
+import Lint from "./lint"
+import {GlobalContext} from "./global-context"
+import PHPLint from "./php-lint"
+import * as ShadowTree from "./shadowtree"
 export default class PHPAutoloader {
     /**
      * Build the object
      * @param {{[x: string]: string[]}} paths 
+     * @param {string[]} [classmap_paths]
      */
-    constructor(paths) {
+    constructor(paths, classmap_paths = []) {
+        this.classmapPaths = classmap_paths
         this.paths = paths
+    }
+    /**
+     * @type {{[x: string]: string}} Maps class names to filenames for the
+     * classmap autoload
+     */
+    get classmapResults() {
+        if(!this._classmapResults) {
+            let classmap_results = {}
+            this.classmapPaths.forEach(
+                path => {
+                    let directories = [path]
+                    let filenames = []
+                    while(directories.length) {
+                        let d = directories.shift()
+                        if(fs.statSync(d).isDirectory()) {
+                            directories = directories.concat(
+                                fs.readdirSync(d).filter(
+                                    p => !p.match(/^([.]|[.][.])$/)
+                                ).map(
+                                    p => d + "/" + p
+                                )
+                            )
+                        } else if(d.match(/[.](php|inc)$/)) {
+                            filenames.push(d)
+                        }
+                    }
+                    filenames.forEach(filename => {
+                        var data = fs.readFileSync(filename, "utf8")
+                        var tree = PHPLint.parser.parseCode(data, filename)
+                        let top = ShadowTree.Node.typed(tree)
+                        let nodes = [top]
+
+                        let namespace
+                        while(nodes.length) {
+                            let node = nodes.shift()
+                            if(
+                                node instanceof ShadowTree.Program
+                            ) {
+                                nodes = node.children.concat(nodes)
+                            } else if(
+                                node instanceof ShadowTree.UseGroup
+                            ) {
+                                //
+                            } else if(
+                                node instanceof ShadowTree.Namespace
+                            ) {
+                                namespace = node.name
+                                nodes = node.children.concat(nodes)
+                            } else if(
+                                node instanceof ShadowTree.Class
+                            ) {
+                                let class_name
+                                if(namespace) {
+                                    class_name = namespace + "\\" + node.name
+                                } else {
+                                    class_name = node.name
+                                }
+                                classmap_results[class_name] = filename
+                            }
+                        }
+                    })
+                }
+            )
+            this._classmapResults = classmap_results
+        }
+        return this._classmapResults
     }
     /**
      * @type {{[x: string]: string[]}} Class name prefixes mapped to arrays of
@@ -25,6 +97,7 @@ export default class PHPAutoloader {
         for(var k in autoloader.paths) {
             this.paths[k] = (this.paths[k]||[]).concat(autoloader.paths[k])
         }
+        this.classmapPaths = this.classmapPaths.concat(autoloader.classmapPaths)
     }
     /**
      * Finds the filename that holds the class, if possible.
@@ -51,6 +124,6 @@ export default class PHPAutoloader {
                 }
             }
         }
-        return null
+        return this.classmapResults[canonical_class_name]
     }
 }

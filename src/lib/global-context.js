@@ -44,6 +44,7 @@ export class GlobalContext {
         try {
             let composer_config = JSON.parse(fs.readFileSync(filename, "utf8"))
             let autoload_paths = {}
+            let classmap_paths = []
             if(composer_config.autoload) {
                 let psr0 = composer_config.autoload["psr-0"]
                 if(psr0) {
@@ -75,11 +76,25 @@ export class GlobalContext {
                         }
                     )
                 }
+                let classmap = composer_config.autoload["classmap"]
+                if(classmap) {
+                    console.log("WARNING, this project uses classmap autoload, this is extremely unwise and takes non-trivial time to parse")
+                    classmap_paths = classmap.map(
+                        path => {
+                            if(path.match(/\/$/) || path == "") {
+                                return `${current_module_path}/${path}`
+                            } else {
+                                //console.log(`Path ${path} for ${prefix} is missing a trailing slash`)
+                                return `${current_module_path}/${path}/`
+                            }
+                        }
+                    )
+                }
             }
             if(!vendor_path) {
                 vendor_path = path.dirname(filename) + "/vendor"
             }
-            let autoloader = new PHPAutoloader(autoload_paths)
+            let autoloader = new PHPAutoloader(autoload_paths, classmap_paths)
             if(composer_config.require) {
                 Object.keys(composer_config.require).filter(
                     uid => uid.match(/\//)

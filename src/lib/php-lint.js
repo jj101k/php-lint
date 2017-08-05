@@ -21,6 +21,9 @@ class PHPLint {
     static get depthCounts() {
         return Lint.globalContext.depthCounts
     }
+    static get parser() {
+        return parser
+    }
     /**
      * @type {number}
      */
