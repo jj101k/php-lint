@@ -248,42 +248,26 @@ export class GlobalContext {
         } else {
             this.addUnknownClass(name)
             // Autoload go!
-            if(!this.autoloadPaths) {
-                this.autoloadPaths = GlobalContext.autoloadFromComposer(
+            if(!this.autoloader) {
+                this.autoloader = GlobalContext.autoloadFromComposer(
                     this.findComposerConfig(file_context.directory)
-                ).paths
+                )
             }
-            if(this.autoloadPaths) {
-                let canonical_class_name = name.replace(/^\\+/, "").replace(/_/g, '\\')
-                let paths = Object.keys(this.autoloadPaths)
-                paths.sort((a, b) => b.length - a.length || a.localeCompare(b))
-                for(let k of paths) {
-                    if(
-                        k.length < canonical_class_name.length &&
-                        k == canonical_class_name.substr(0, k.length)
-                    ) {
-                        let path_tail = canonical_class_name.substr(k.length).replace(/\\/g, "/") + ".php"
-                        let full_path = this.autoloadPaths[k].map(
-                            path => path + path_tail
-                        ).find(
-                            path => fs.existsSync(path)
+            if(this.autoloader) {
+                let full_path = this.autoloader.findClassFile(name)
+                if(full_path) {
+                    this.checkFile(full_path, load_depth)
+                    if(!this.classes[name]) {
+                        console.log(
+                            `Class ${name} not found at ${full_path}`
                         )
-                        if(full_path) {
-                            this.checkFile(full_path, load_depth)
-                            if(!this.classes[name]) {
-                                console.log(
-                                    `Class ${name} not found at ${full_path}`
-                                )
-                                this.addUnknownClass(name)
-                            }
-                            return this.classes[name]
-                        }
-
+                        this.addUnknownClass(name)
                     }
+                    return this.classes[name]
                 }
             }
             if(DEBUG_AUTOLOAD) {
-                console.log(this.autoloadPaths)
+                console.log(this.autoloader)
                 throw new PHPContextlessError(`Could not load ${name}`)
             } else {
                 console.log(`Could not load ${name}`)
