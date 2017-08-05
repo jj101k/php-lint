@@ -5,6 +5,7 @@ import {AnonymousFunctionContext, ClassContext, InterfaceContext, TraitContext, 
 import {FileContext} from "./file-context"
 import {PHPContextlessError} from "./phpstricterror"
 import PHPLint from "./php-lint"
+import PHPAutoloader from "./php-autoloader"
 
 /**
  * @type {boolean} If true, autoload failure may throw. This can help with
@@ -34,8 +35,7 @@ export class GlobalContext {
      * This returns autoload config from the given composer.json
      * @param {?string} filename eg. /foo/bar/composer.json
      * @param {?string} vendor_path If unset, this will be based on the filename
-     * @returns {?Object.<string,string[]>} Class name prefixes mapped to arrays
-     * of paths. Each path should end with a /, and most prefixes will also.
+     * @returns {?PHPAutoloader}
      */
     static autoloadFromComposer(filename, vendor_path = null) {
         if(!filename) return null
@@ -79,25 +79,24 @@ export class GlobalContext {
             if(!vendor_path) {
                 vendor_path = path.dirname(filename) + "/vendor"
             }
+            let autoloader = new PHPAutoloader(autoload_paths)
             if(composer_config.require) {
                 Object.keys(composer_config.require).filter(
                     uid => uid.match(/\//)
                 ).forEach(
-                    uid => autoload_paths = Object.assign(
-                        {},
+                    uid => autoloader.add(
                         this.autoloadFromComposer(
                             `${vendor_path}/${uid}/composer.json`,
                             vendor_path
-                        ),
-                        autoload_paths
+                        )
                     )
                 )
             }
-            return autoload_paths
+            return autoloader
         } catch(e) {
             if(e.errno == -2) {
                 console.log(`${filename} missing, not installed?`)
-                return {}
+                return new PHPAutoloader({})
             } else {
                 throw e
             }
@@ -252,7 +251,7 @@ export class GlobalContext {
             if(!this.autoloadPaths) {
                 this.autoloadPaths = GlobalContext.autoloadFromComposer(
                     this.findComposerConfig(file_context.directory)
-                )
+                ).paths
             }
             if(this.autoloadPaths) {
                 let canonical_class_name = name.replace(/^\\+/, "").replace(/_/g, '\\')
