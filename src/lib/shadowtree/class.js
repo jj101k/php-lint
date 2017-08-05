@@ -53,11 +53,18 @@ export default class Class extends Declaration {
     check(context, in_call = false) {
         super.check(context)
         let inner_context = context.childContext()
+        let extended_class
+        if(this.extends) {
+            let extended_class_name = context.resolveNodeName(this.extends)
+            try {
+                extended_class = context.findClass(extended_class_name)
+            } catch(e) {
+                this.handleException(e, context)
+            }
+        }
         inner_context.classContext = inner_context.globalContext.addClass(
             context.resolveNodeName(this),
-            this.extends ?
-                context.findClass(context.resolveNodeName(this.extends)) :
-                null,
+            extended_class,
             context.fileContext
         )
         inner_context.addName(
