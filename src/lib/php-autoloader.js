@@ -77,7 +77,9 @@ export default class PHPAutoloader {
                 }
             )
             let e = new Date()
-            console.log(`Trivial classmap load took ${(e-s)/1000} seconds`)
+            if(this.classmapPaths.length) {
+                console.log(`Trivial classmap load took ${(e-s)/1000} seconds`)
+            }
             this._classmapResults = classmap_results
         }
         return this._classmapResults
