@@ -22,11 +22,9 @@ export default class PHPAutoloader {
      * @param {PHPAutoloader} autoloader 
      */
     add(autoloader) {
-        this.paths = Object.assign(
-            {},
-            this.paths,
-            autoloader.paths
-        )
+        for(var k in autoloader.paths) {
+            this.paths[k] = (this.paths[k]||[]).concat(autoloader.paths[k])
+        }
     }
     /**
      * Finds the filename that holds the class, if possible.
