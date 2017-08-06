@@ -20,6 +20,7 @@ class PHPSimpleType extends PHPType {
                 boolean: new PHPSimpleType("boolean").union,
                 null: new PHPSimpleType("null").union,
                 number: new PHPSimpleType("number").union,
+                self: new PHPSimpleType("self").union,
                 string: new PHPSimpleType("string").union,
             }
         }
@@ -54,14 +55,14 @@ class PHPFunctionType extends PHPType {
      * 
      * @param {PHPTypeUnion[]} arg_types 
      * @param {PHPTypeUnion} return_type 
-     * @param {Object.<number,boolean>} [pass_by_reference_positions]
+     * @param {{[x: number]: boolean}} [pass_by_reference_positions]
+     * @param {{[x: number]: PHPTypeUnion}} [callback_positions]
      */
-    constructor(arg_types, return_type, pass_by_reference_positions = {}) {
+    constructor(arg_types, return_type, pass_by_reference_positions = {}, callback_positions = {}) {
         super()
         this.argTypes = arg_types
         this.passByReferencePositions = pass_by_reference_positions
-        /** @type {{[x: number]: PHPTypeUnion}} */
-        this.callbackPositions = {}
+        this.callbackPositions = callback_positions
         this.returnType = return_type
     }
     toString() {

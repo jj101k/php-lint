@@ -33,10 +33,7 @@ export default class Trait extends Declaration {
                 null,
             context.fileContext
         )
-        inner_context.setName(
-            "$this",
-            PHPSimpleType.named(context.resolveNodeName(this))
-        )
+        inner_context.setThis()
         this.body.forEach(
             b => {
                 if(b instanceof Method) {

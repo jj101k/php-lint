@@ -199,7 +199,11 @@ export default class Context {
      * @returns {?ClassContext}
      */
     findClass(name) {
-        return this.globalContext.findClass(name, this.fileContext, this.depth)
+        if(name == "self") {
+            return this.classContext
+        } else {
+            return this.globalContext.findClass(name, this.fileContext, this.depth)
+        }
     }
 
     /**
@@ -288,5 +292,14 @@ export default class Context {
     setName(name, types) {
         this.ns[name] = types
         return types
+    }
+
+    /**
+     * Sets $this in the scope.
+     * @returns {PHPTypeUnion}
+     */
+    setThis() {
+        this.ns["$this"] = PHPSimpleType.types.self
+        return PHPSimpleType.types.self
     }
 }

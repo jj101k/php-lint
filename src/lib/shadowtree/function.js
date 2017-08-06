@@ -59,7 +59,7 @@ export default class _Function extends Declaration {
             }
         )
         if(context.findName("$this")) {
-            inner_context.setName("$this", context.findName("$this"))
+            inner_context.setThis()
         }
 
         let return_type

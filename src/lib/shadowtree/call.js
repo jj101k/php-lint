@@ -46,7 +46,7 @@ export default class Call extends Statement {
             } else if(callback_positions[i]) {
                 let inner_context = context.childContext(false)
                 inner_context.importNamespaceFrom(context)
-                inner_context.addName("$this", callback_positions[i])
+                inner_context.setName("$this", callback_positions[i])
                 arg.check(inner_context)
             } else {
                 arg.check(context)
