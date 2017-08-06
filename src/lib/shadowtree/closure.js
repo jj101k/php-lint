@@ -68,7 +68,7 @@ export default class Closure extends Statement {
             )
         )
         if(context.findName("$this")) {
-            inner_context.addName("$this", context.findName("$this"))
+            inner_context.setName("$this", context.findName("$this"))
         }
         let return_type
         if(this.body) {

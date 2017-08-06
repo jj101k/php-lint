@@ -67,7 +67,7 @@ export default class Class extends Declaration {
             extended_class,
             context.fileContext
         )
-        inner_context.addName(
+        inner_context.setName(
             "$this",
             PHPSimpleType.named(context.resolveNodeName(this))
         )
