@@ -57,7 +57,7 @@ const PHPSuperglobals = {
  */
 export default class Context {
     /**
-     * @type {Object.<string,PHPTypeUnion>} A map of names to types for the
+     * @type {{[x: string]: PHPTypeUnion}} A map of names to types for the
      * "always global" core PHP variables and functions.
      */
     static get superGlobals() {
@@ -76,8 +76,9 @@ export default class Context {
             PHPConstants.forEach(
                 name => this._superGlobals[name] = PHPTypeUnion.mixed
             )
+            Object.freeze(this._superGlobals)
         }
-        return Object.assign({}, this._superGlobals)
+        return this._superGlobals
     }
 
     /**
@@ -85,7 +86,7 @@ export default class Context {
      * @param {FileContext} file_context
      * @param {?GlobalContext} global_context
      * @param {?ClassContext} [class_context]
-     * @param {?Object.<string,PHPTypeUnion>} [ns]
+     * @param {?{[x: string]: PHPTypeUnion}} [ns]
      * @param {number} [depth]
      */
     constructor(file_context, global_context, class_context = null, ns = null, depth = 0) {
@@ -95,13 +96,17 @@ export default class Context {
         this.fileContext = file_context
         /** @type {?PHPTypeUnion} */
         this.assigningType = null
-        this.ns = ns || Context.superGlobals
+        this.ns = ns || {}
     }
 
     /** @type string[] All the variable names in the namespace */
     get definedVariables() {
         return Object.keys(this.ns).filter(
             name => name.match(/^[$]/)
+        ).concat(
+            Object.keys(Context.superGlobals).filter(
+                name => name.match(/^[$]/)
+            )
         )
     }
 
@@ -134,7 +139,7 @@ export default class Context {
      */
     addName(name, types) {
         if(!this.ns[name]) {
-            this.ns[name] = PHPTypeUnion.empty
+            this.ns[name] = Context.superGlobals[name] || PHPTypeUnion.empty
         }
         this.ns[name] = this.ns[name].addTypesFrom(types)
         if(DEBUG_TYPES) {
@@ -205,7 +210,7 @@ export default class Context {
      * @returns {PHPTypeUnion}
      */
     findName(name) {
-        var types = this.ns[name]
+        var types = this.ns[name] || Context.superGlobals[name]
         return types
     }
 
@@ -281,7 +286,8 @@ export default class Context {
      * @returns {PHPTypeUnion}
      */
     setName(name, types) {
-        delete this.ns[name]
-        return this.addName(name, types)
+        this.addName(name, types)
+        this.ns[name] = types
+        return types
     }
 }
