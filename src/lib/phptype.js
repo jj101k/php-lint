@@ -60,12 +60,16 @@ class PHPFunctionType extends PHPType {
         super()
         this.argTypes = arg_types
         this.passByReferencePositions = pass_by_reference_positions
+        /** @type {{[x: number]: PHPTypeUnion}} */
+        this.callbackPositions = {}
         this.returnType = return_type
     }
     toString() {
         let args_composed = this.argTypes.map((arg, index) => {
             if(this.passByReferencePositions[index]) {
                 return `&${arg}`
+            } else if(this.callbackPositions[index]) {
+                return `*${arg}`
             } else {
                 return arg
             }

@@ -68,11 +68,20 @@ export default class _Function extends Declaration {
         } else {
             return_type = PHPTypeUnion.mixed
         }
-        let types = new PHPFunctionType(
+        let function_type = new PHPFunctionType(
             arg_types,
             return_type,
             pass_by_reference_positions
-        ).union
+        )
+        if(context.classContext && context.classContext.name == "\\Slim\\App") {
+            switch(this.name) {
+                case "group":
+                    function_type.callbackPositions[1] = PHPSimpleType.named("\\Slim\\App")
+                    break
+                default:
+            }
+        }
+        let types = function_type.union
         if(this.constructor === _Function) {
             context.addName(this.name, types)
         }
