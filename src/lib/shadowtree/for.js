@@ -15,7 +15,7 @@ export default class For extends Statement {
     get increment() {
         return this.cacheNodeArray("increment")
     }
-    /** @type {Statement} */
+    /** @type {?Statement} */
     get body() {
         return this.cacheNode("body")
     }
@@ -39,7 +39,9 @@ export default class For extends Statement {
         this.increment.forEach(
             n => n.check(context)
         )
-        this.body.check(context)
+        if(this.body) {
+            this.body.check(context)
+        }
         return ContextTypes.empty
     }
 }
