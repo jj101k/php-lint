@@ -286,7 +286,6 @@ export default class Context {
      * @returns {PHPTypeUnion}
      */
     setName(name, types) {
-        this.addName(name, types)
         this.ns[name] = types
         return types
     }
