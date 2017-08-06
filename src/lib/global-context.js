@@ -162,11 +162,15 @@ export class GlobalContext {
      * @returns {ClassContext}
      */
     addClass(name, superclass = null, file_context = null) {
-        return this.classes[name] = this.classes[name] || new ClassContext(
-            name,
-            superclass,
-            file_context
-        )
+        if(this.classes[name] && !(this.classes[name] instanceof UnknownClassContext)) {
+            return this.classes[name]
+        } else {
+            return this.classes[name] = new ClassContext(
+                name,
+                superclass,
+                file_context
+            )
+        }
     }
 
     /**
