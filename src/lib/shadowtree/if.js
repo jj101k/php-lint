@@ -2,8 +2,11 @@ import Context from "../context"
 import ContextTypes from "../context-types"
 import Expression from "./expression"
 import Statement from "./statement"
-import {PHPTypeUnion} from "../phptype"
+import {PHPTypeUnion, PHPSimpleType} from "../phptype"
 import Block from "./block"
+import Bin from "./bin"
+import Variable from "./variable"
+import ConstRef from "./constref"
 export default class If extends Statement {
     /** @type {Expression} */
     get test() {
@@ -32,6 +35,17 @@ export default class If extends Statement {
 
         let body_context = context.childContext(false)
         body_context.importNamespaceFrom(context)
+        if(
+            this.test instanceof Bin &&
+            this.test.type == "instanceof" &&
+            this.test.left instanceof Variable &&
+            this.test.right instanceof ConstRef
+        ) {
+            body_context.setName(
+                '$' + this.test.left.name,
+                PHPSimpleType.named(context.resolveNodeName(this.test.right))
+            )
+        }
         let type = PHPTypeUnion.empty
         type = type.addTypesFrom(this.body.check(body_context).returnType)
         if(this.alternate) {
