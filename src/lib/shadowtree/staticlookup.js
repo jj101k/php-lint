@@ -7,6 +7,10 @@ import Identifier from "./identifier"
 import Variable from "./variable"
 import ConstRef from "./constref"
 import PHPStrictError from "../phpstricterror"
+
+/** @type {boolean} */
+const WARN_UNDECLARED_STATIC = false
+
 export default class StaticLookup extends Lookup {
     /**
      * Checks that syntax seems ok
@@ -56,11 +60,13 @@ export default class StaticLookup extends Lookup {
                 if(types && types !== PHPTypeUnion.mixed) {
                     return new ContextTypes(types)
                 } else if(this.what instanceof ConstRef && this.what.name == "static") {
-                    PHPStrictError.warn(
-                        `Undeclared static property static::${this.offset.name}`,
-                        context,
-                        this.node.loc
-                    )
+                    if(WARN_UNDECLARED_STATIC) {
+                        PHPStrictError.warn(
+                            `Undeclared static property static::${this.offset.name}`,
+                            context,
+                            this.node.loc
+                        )
+                    }
                     class_context.addIdentifier(
                         this.offset.name,
                         "public",
