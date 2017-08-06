@@ -37,20 +37,33 @@ class Lint {
     /**
      * Checks the current data
      * @param {number} [depth] The current load depth
+     * @throws
+     * @returns {boolean}
      */
     check(depth = 0) {
         let file_context = new FileContext(this.filename, depth)
         if(!Lint.globalContext.depths.hasOwnProperty(file_context.filename)) {
             Lint.globalContext.depths[file_context.filename] = depth
-            return ShadowTree.Node.typed(this.tree).check(
-                new Context(
-                    file_context,
-                    Lint.globalContext,
-                    null,
-                    null,
-                    depth
+            Lint.globalContext.results[file_context.filename] = false
+            try {
+                ShadowTree.Node.typed(this.tree).check(
+                    new Context(
+                        file_context,
+                        Lint.globalContext,
+                        null,
+                        null,
+                        depth
+                    )
                 )
-            )
+                Lint.globalContext.results[file_context.filename] = true
+            } catch(e) {
+                Lint.globalContext.results[file_context.filename] = e
+            }
+        }
+        if(Lint.globalContext.results[file_context.filename] instanceof Error) {
+            throw Lint.globalContext.results[file_context.filename]
+        } else {
+            return Lint.globalContext.results[file_context.filename]
         }
     }
     /**
@@ -59,6 +72,8 @@ class Lint {
      * @param {?string} [filename]
      * @param {boolean} [throw_on_error]
      * @param {number} [depth]
+     * @throws
+     * @returns {boolean}
      */
     static check(tree, filename = null, throw_on_error = true, depth = 0) {
         var l = new Lint(tree, filename)

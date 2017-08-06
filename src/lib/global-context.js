@@ -124,8 +124,11 @@ export class GlobalContext {
     constructor() {
         /** @type {{[x: string]: ClassContext}} */
         this.classes = {}
-        /** @type {Object.<string,number>} The minimum depth for each class */
+        /** @type {{[x: string]: number}} The minimum depth for each class */
         this.depths = {
+        }
+        /** @type {{[x: string]: boolean | Error}} */
+        this.results = {
         }
         /** @type {{[x: string]: boolean}} */
         this.filesSeen = {}

@@ -59,6 +59,7 @@ class PHPLint {
      * @param {boolean} [throw_on_error]
      * @param {number} [depth]
      * @throws
+     * @returns {?boolean}
      */
     static checkFileSync(filename, throw_on_error = true, depth = 0) {
         if(!depth) depth = 0
@@ -92,6 +93,7 @@ class PHPLint {
      * @param {boolean} [throw_on_error]
      * @param {number} [depth]
      * @throws
+     * @returns {?boolean}
      */
     static checkSourceCodeSync(code, throw_on_error = true, depth = 0) {
         var tree = parser.parseCode(code);
