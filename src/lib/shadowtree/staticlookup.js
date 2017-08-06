@@ -53,7 +53,7 @@ export default class StaticLookup extends Lookup {
                 } else {
                     types = class_context.findStaticIdentifier(this.offset.name, context.classContext)
                 }
-                if(types) {
+                if(types && types !== PHPTypeUnion.mixed) {
                     return new ContextTypes(types)
                 } else if(this.what instanceof ConstRef && this.what.name == "static") {
                     PHPStrictError.warn(
@@ -68,6 +68,8 @@ export default class StaticLookup extends Lookup {
                         PHPTypeUnion.mixed
                     )
                     return new ContextTypes(PHPTypeUnion.mixed)
+                } else if(types) {
+                    return new ContextTypes(types)
                 } else {
                     throw new PHPStrictError(
                         `No accessible identifier ${resolved_name}::${this.offset.name}`,
