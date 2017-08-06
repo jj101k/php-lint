@@ -44,7 +44,7 @@ export default class PropertyLookup extends Lookup {
                 } else {
                     throw new PHPStrictError(
                         `No accessible identifier ${t}->${offset}\n` +
-                        `Accessible properties are: ${Object.keys(class_context.instanceIdentifiers)}`,
+                        `Accessible properties are: ${Object.keys(class_context.instanceIdentifiers).sort()}`,
                         context,
                         this.loc
                     )
