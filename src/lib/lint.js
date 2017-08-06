@@ -41,31 +41,45 @@ class Lint {
      * @returns {boolean}
      */
     check(depth = 0) {
-        let file_context = new FileContext(this.filename, depth)
-        if(!Lint.globalContext.depths.hasOwnProperty(file_context.filename)) {
-            Lint.globalContext.depths[file_context.filename] = depth
-            Lint.globalContext.results[file_context.filename] = false
-            try {
-                ShadowTree.Node.typed(this.tree).check(
-                    new Context(
-                        file_context,
-                        Lint.globalContext,
-                        null,
-                        null,
-                        depth
-                    )
-                )
-                Lint.globalContext.results[file_context.filename] = true
-            } catch(e) {
-                Lint.globalContext.results[file_context.filename] = e
+        if(this.filename) {
+            if(!Lint.globalContext.depths.hasOwnProperty(this.filename)) {
+                Lint.globalContext.depths[this.filename] = depth
+                Lint.globalContext.results[this.filename] = false
+                try {
+                    Lint.globalContext.results[this.filename] = this.checkUncached(depth)
+                } catch(e) {
+                    Lint.globalContext.results[this.filename] = e
+                }
             }
-        }
-        if(Lint.globalContext.results[file_context.filename] instanceof Error) {
-            throw Lint.globalContext.results[file_context.filename]
+            if(Lint.globalContext.results[this.filename] instanceof Error) {
+                throw Lint.globalContext.results[this.filename]
+            } else {
+                return Lint.globalContext.results[this.filename]
+            }
         } else {
-            return Lint.globalContext.results[file_context.filename]
+            return this.checkUncached(depth)
         }
     }
+
+    /**
+     * Checks the current data (without caching)
+     * @param {number} [depth] The current load depth
+     * @throws
+     * @returns {boolean}
+     */
+    checkUncached(depth = 0) {
+        ShadowTree.Node.typed(this.tree).check(
+            new Context(
+                new FileContext(this.filename, depth),
+                Lint.globalContext,
+                null,
+                null,
+                depth
+            )
+        )
+        return true
+    }
+
     /**
      * Checks the provided AST
      * @param {Object} tree AST from php-parser
