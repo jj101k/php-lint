@@ -16,7 +16,7 @@ class B extends A {
 }
 class C {
     public function c() {
-        $b = new B();
-        $b->a()->_b();
+        $bee = new B();
+        $bee->a()->_b();
     }
 }

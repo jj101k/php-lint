@@ -1,5 +1,5 @@
 <?php
-$a = [];
+$ar = [];
 
-$a = new DateTime();
-echo $a->format("c")."\n";
+$ar = new DateTime();
+echo $ar->format("c")."\n";

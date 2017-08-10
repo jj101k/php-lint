@@ -2,13 +2,13 @@
 namespace Auth;
 class G {
     public function e() {
-        list($x, $y) = [[], 1];
-        return d($x, $y);
+        list($xa, $ya) = [[], 1];
+        return d($xa, $ya);
     }
 
-    public function f($a) {
-        $a = $this->e();
-        if($a->c()) {
+    public function f($ax) {
+        $ax = $this->e();
+        if($ax->c()) {
             return null;
         }
     }
