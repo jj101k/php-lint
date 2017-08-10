@@ -1,8 +1,8 @@
 <?php
 class B extends A {
-    public function _b() {
+    public function bb() {
     }
     public function b() {
-        $this->a()->_b();
+        $this->a()->bb();
     }
 }
