@@ -6,7 +6,7 @@ export default class Variable extends Expression {
     get byref() {
         return this.node.byref;
     }
-    /** @type {string|_Node} */
+    /** @type {string} */
     get name() {
         return this.cacheOptionalNode("name")
     }
