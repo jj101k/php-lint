@@ -1,15 +1,7 @@
 <?php
 
-class Foo {
-    public function justFoo() {
-        return new Bar();
-    }
-}
-class Bar {
-    public function justBar() {
-        return 1;
-    }
-}
+require_once "lib/foo.php";
+require_once "lib/bar.php";
 
 $foo = new Foo();
 

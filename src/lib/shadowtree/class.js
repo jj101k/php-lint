@@ -7,6 +7,7 @@ import Property from "./property"
 import ClassConstant from "./classconstant"
 import Identifier from "./identifier"
 import TraitUse from "./traituse"
+import PHPStrictError from "../phpstricterror"
 export default class Class extends Declaration {
     /**
      * @type {Declaration[]}
@@ -52,6 +53,14 @@ export default class Class extends Declaration {
      */
     check(context, in_call = false) {
         super.check(context)
+        if(!this.name.match(/^([0-9A-Z]+[0-9a-z]*)+$/)) {
+            // This does allow names like UPSPowerState
+            throw new PHPStrictError(
+                `PSR-1 #3 class names should be studly caps (PascalCase): ${this.name}`,
+                context,
+                this.loc
+            )
+        }
         let inner_context = context.childContext()
         let extended_class
         if(this.extends) {
