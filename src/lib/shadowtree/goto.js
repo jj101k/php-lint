@@ -1,7 +1,6 @@
 import Context from "../context"
 import ContextTypes from "../context-types"
 import Statement from "./statement"
-import PHPStrictError from "../php-strict-error"
 export default class Goto extends Statement {
     /** @type {string} */
     get label() {
@@ -14,10 +13,9 @@ export default class Goto extends Statement {
      */
     check(context, in_call = false) {
         super.check(context)
-        throw new PHPStrictError(
+        throw this.strictError(
             "Use of goto",
-            context,
-            this.loc
+            context
         )
     }
 }

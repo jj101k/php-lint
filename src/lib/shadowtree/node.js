@@ -64,7 +64,7 @@ const DEBUG = false
                     k => this.node[k] && this.node[k].loc
                 ).find(l => l)
             }
-            throw new PHPStrictError(
+            throw this.strictError(
                 `Name ${name} is not defined in this namespace, contents are: ${context.definedVariables.join(", ")}`,
                 context,
                 loc
@@ -148,14 +148,22 @@ const DEBUG = false
     handleException(e, context) {
         if(e instanceof PHPContextlessError) {
             // console.log(this.node)
-            throw new PHPStrictError(
+            throw this.strictError(
                 e.message,
-                context,
-                this.loc
+                context
             )
         } else {
             throw e
         }
+    }
+    /**
+     * Simple generation of a strict error.
+     * @param {string} message
+     * @param {Context} context
+     * @returns {PHPStrictError}
+     */
+    strictError(message, context) {
+        return new PHPStrictError(message, context, this.loc)
     }
     /**
      * Returns the shadow tree counterpart of the given node.

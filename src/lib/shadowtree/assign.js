@@ -2,7 +2,6 @@ import Context from "../context"
 import ContextTypes from "../context-types"
 import Statement from "./statement"
 import Expression from "./expression"
-import PHPStrictError from "../php-strict-error"
 import Variable from "./variable"
 import {PHPSimpleType} from "../phptype"
 export default class Assign extends Statement {
@@ -36,17 +35,15 @@ export default class Assign extends Statement {
             left_context.assigningType !== PHPSimpleType.types.number &&
             left_context.assigningType !== PHPSimpleType.types.boolean
         ) {
-            throw new PHPStrictError(
+            throw this.strictError(
                 `Use of 1-character name $${this.left.name} of non-trivial type ${left_context.assigningType}`,
-                context,
-                this.node.loc
+                context
             )
         }
         if(left_context.assigningType.isEmpty) {
-            throw new PHPStrictError(
+            throw this.strictError(
                 `No value to assign`,
-                context,
-                this.node.loc
+                context
             )
         } else {
             return new ContextTypes(left_context.assigningType)

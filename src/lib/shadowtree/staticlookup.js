@@ -77,10 +77,9 @@ export default class StaticLookup extends Lookup {
                 } else if(types) {
                     return new ContextTypes(types)
                 } else {
-                    throw new PHPStrictError(
+                    throw this.strictError(
                         `No accessible identifier ${resolved_name}::${this.offset.name}`,
-                        context,
-                        this.loc
+                        context
                     )
                 }
             }

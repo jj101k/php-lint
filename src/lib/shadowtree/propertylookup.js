@@ -7,7 +7,6 @@ import StaticLookup from "./staticlookup"
 import OffsetLookup from "./offsetlookup"
 import Parenthesis from "./parenthesis"
 import ConstRef from "./constref"
-import PHPStrictError from "../php-strict-error"
 import Call from "./call"
 import _String from "./string"
 export default class PropertyLookup extends Lookup {
@@ -60,11 +59,10 @@ export default class PropertyLookup extends Lookup {
                         }
                     )
                 } else {
-                    throw new PHPStrictError(
+                    throw this.strictError(
                         `No accessible identifier ${class_context.name}->${offset}\n` +
                         `Accessible properties are: ${Object.keys(class_context.instanceIdentifiers).sort()}`,
-                        context,
-                        this.loc
+                        context
                     )
                 }
             })
