@@ -56,7 +56,7 @@ export default class Class extends Declaration {
         if(!this.name.match(/^([0-9A-Z]+[0-9a-z]*)+$/)) {
             // This does allow names like UPSPowerState
             throw new PHPStrictError(
-                `PSR-1 #3 class names should be studly caps (PascalCase): ${this.name}`,
+                `PSR-1 #3 class names should be studly caps (PascalCase)`,
                 context,
                 this.loc
             )
