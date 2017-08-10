@@ -155,7 +155,9 @@ class PHPTypeUnion {
      * @returns {PHPTypeUnion}
      */
     addTypesFrom(union) {
-        if(this.types.length == 1) {
+        if(this.types.length == 0) {
+            return union
+        } else if(this.types.length == 1) {
             let n = new PHPTypeUnion()
             n.uniqueTypes = Object.assign({}, this.uniqueTypes, union.uniqueTypes)
             return n
