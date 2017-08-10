@@ -2,7 +2,7 @@ import Context from "../context"
 import ContextTypes from "../context-types"
 import Block from "./block"
 import Class from "./class"
-import PHPStrictError from "../phpstricterror"
+import PHPStrictError from "../php-strict-error"
 export default class Program extends Block {
     /**
      * Checks that syntax seems ok

@@ -1,5 +1,5 @@
 import {PHPTypeUnion} from "./phptype"
-import {PHPContextlessError} from "./phpstricterror"
+import {PHPContextlessError} from "./php-strict-error"
 import {FileContext} from "./file-context"
 
 /**

@@ -1,4 +1,4 @@
-import PHPStrictError, {PHPContextlessError} from "./phpstricterror"
+import PHPStrictError, {PHPContextlessError} from "./php-strict-error"
 import Context from "./context"
 import {PHPFunctionType, PHPSimpleType, PHPTypeUnion} from "./phptype"
 

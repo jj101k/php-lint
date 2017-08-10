@@ -6,7 +6,7 @@ import {PHPTypeUnion} from "../phptype"
 import Identifier from "./identifier"
 import Variable from "./variable"
 import ConstRef from "./constref"
-import PHPStrictError from "../phpstricterror"
+import PHPStrictError from "../php-strict-error"
 
 /** @type {boolean} */
 const WARN_UNDECLARED_STATIC = false

@@ -1,7 +1,7 @@
 import Context from "../context"
 import ContextTypes from "../context-types"
 import Statement from "./statement"
-import PHPStrictError from "../phpstricterror"
+import PHPStrictError from "../php-strict-error"
 export default class Goto extends Statement {
     /** @type {string} */
     get label() {

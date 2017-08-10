@@ -7,7 +7,7 @@ import StaticLookup from "./staticlookup"
 import OffsetLookup from "./offsetlookup"
 import Parenthesis from "./parenthesis"
 import ConstRef from "./constref"
-import PHPStrictError from "../phpstricterror"
+import PHPStrictError from "../php-strict-error"
 import Call from "./call"
 import _String from "./string"
 export default class PropertyLookup extends Lookup {

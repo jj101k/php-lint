@@ -1,6 +1,6 @@
 import {PHPFunctionType, PHPSimpleType, PHPTypeUnion} from "./phptype"
 import {Identifier, Class, ConstRef} from "./shadowtree"
-import {PHPContextlessError} from "./phpstricterror"
+import {PHPContextlessError} from "./php-strict-error"
 import {ClassContext} from "./class-context"
 import {FileContext} from "./file-context"
 import {GlobalContext} from "./global-context"

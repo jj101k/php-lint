@@ -3,7 +3,7 @@ const path = require("path")
 
 import {AnonymousFunctionContext, ClassContext, InterfaceContext, TraitContext, UnknownClassContext} from "./class-context"
 import {FileContext} from "./file-context"
-import {PHPContextlessError} from "./phpstricterror"
+import {PHPContextlessError} from "./php-strict-error"
 import PHPLint from "./php-lint"
 import PHPAutoloader from "./php-autoloader"
 

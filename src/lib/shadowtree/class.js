@@ -7,7 +7,7 @@ import Property from "./property"
 import ClassConstant from "./classconstant"
 import Identifier from "./identifier"
 import TraitUse from "./traituse"
-import PHPStrictError from "../phpstricterror"
+import PHPStrictError from "../php-strict-error"
 export default class Class extends Declaration {
     /**
      * @type {Declaration[]}

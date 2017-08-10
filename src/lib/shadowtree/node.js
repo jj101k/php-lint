@@ -1,7 +1,7 @@
 import Context from "../context"
 import ContextTypes from "../context-types"
 import {PHPTypeUnion} from "../phptype"
-import {default as PHPStrictError, PHPContextlessError} from "../phpstricterror"
+import {default as PHPStrictError, PHPContextlessError} from "../php-strict-error"
 import * as ShadowTree from "../shadowtree"
 
 /** @type {boolean} True if you want lots of debugging messages */

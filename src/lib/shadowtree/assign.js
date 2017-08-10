@@ -2,7 +2,7 @@ import Context from "../context"
 import ContextTypes from "../context-types"
 import Statement from "./statement"
 import Expression from "./expression"
-import PHPStrictError from "../phpstricterror"
+import PHPStrictError from "../php-strict-error"
 import Variable from "./variable"
 import {PHPSimpleType} from "../phptype"
 export default class Assign extends Statement {

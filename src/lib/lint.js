@@ -4,7 +4,7 @@ import Context from "./context"
 import {FileContext} from "./file-context"
 import {GlobalContext} from "./global-context"
 import * as ShadowTree from "./shadowtree"
-import PHPStrictError from "./phpstricterror"
+import PHPStrictError from "./php-strict-error"
 
 var fs = require("fs")
 
