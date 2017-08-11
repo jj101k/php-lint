@@ -26,10 +26,10 @@ export default class Catch extends Statement {
         super.check(context)
         let types = PHPTypeUnion.empty
         this.what.forEach(
-            w => types = types.addTypesFrom(PHPSimpleType.named(w.name))
+            w => types = types.addTypesFrom(PHPSimpleType.named(context.resolveName(w.name)))
         )
         let inner_context = context.childContext(true)
-        inner_context.assigningType = PHPTypeUnion.mixed
+        inner_context.assigningType = PHPSimpleType.coreTypes.mixed
         this.variable.check(inner_context)
         this.body.check(context)
         return ContextTypes.empty

@@ -49,7 +49,7 @@ export default class _Function extends Declaration {
             inner_context.setThis()
         }
 
-        let signature_type = this.type && PHPSimpleType.named(this.type.name)
+        let signature_type = this.type && PHPSimpleType.named(context.resolveName(this.type.name))
         let return_type
         if(this.body) {
             return_type = this.body.check(inner_context).returnType
@@ -62,7 +62,7 @@ export default class _Function extends Declaration {
         } else if(signature_type) {
             return_type = signature_type
         } else {
-            return_type = PHPTypeUnion.mixed
+            return_type = PHPSimpleType.coreTypes.mixed
         }
         let function_type = new PHPFunctionType(
             arg_types,

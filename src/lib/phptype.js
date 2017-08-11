@@ -22,6 +22,7 @@ class PHPType {
  * @property {PHPTypeUnion} null
  * @property {PHPTypeUnion} mixed
  * @property {PHPTypeUnion} self
+ * @property {PHPTypeUnion} object
  */
 
 class PHPSimpleType extends PHPType {
@@ -29,7 +30,7 @@ class PHPSimpleType extends PHPType {
     static get coreTypes() {
         if(!this._coreTypes) {
             let known_types = ["string", "int", "float", "bool", "array", "callable"]
-            let pseudo_types = ["null", "mixed", "self"]
+            let pseudo_types = ["null", "mixed", "self", "object"]
             let types = {}
             known_types.forEach(
                 type_name => types[type_name] = new PHPSimpleType(type_name).union
@@ -113,22 +114,14 @@ class PHPTypeUnion {
     }
 
     /**
-     * A type union with an undefined entry.
-     * @type {PHPTypeUnion}
-     */
-    static get mixed() {
-        return PHPSimpleType.named("mixed")
-    }
-
-    /**
      * A type union with a (...)->mixed function entry
      * @type {PHPTypeUnion}
      */
     static get mixedFunction() {
         return new PHPTypeUnion(
             new PHPFunctionType(
-                [PHPTypeUnion.mixed],
-                PHPTypeUnion.mixed
+                [PHPSimpleType.coreTypes.mixed],
+                PHPSimpleType.coreTypes.mixed
             )
         )
     }

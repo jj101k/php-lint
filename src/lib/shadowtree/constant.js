@@ -1,7 +1,7 @@
 import Context from "../context"
 import ContextTypes from "../context-types"
 import Declaration from "./declaration"
-import {PHPTypeUnion} from "../phptype"
+import {PHPTypeUnion, PHPSimpleType} from "../phptype"
 import _Node from "./node"
 export default class Constant extends Declaration {
     /** @type {?_Node} */
@@ -20,7 +20,7 @@ export default class Constant extends Declaration {
         if(this.value) {
             types = this.value.check(context).expressionType
         } else {
-            types = PHPTypeUnion.mixed
+            types = PHPSimpleType.coreTypes.mixed
         }
         context.classContext.addIdentifier(this.name, "public", true, types)
         return ContextTypes.empty

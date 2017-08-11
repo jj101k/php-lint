@@ -34,7 +34,7 @@ export default class ConstRef extends Expression {
         if(classContext) {
             return new ContextTypes(PHPSimpleType.named(classContext.name))
         } else {
-            return new ContextTypes(PHPTypeUnion.mixed)
+            return new ContextTypes(PHPSimpleType.coreTypes.mixed)
         }
     }
 }

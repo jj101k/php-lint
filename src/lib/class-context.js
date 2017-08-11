@@ -1,4 +1,4 @@
-import {PHPTypeUnion} from "./phptype"
+import {PHPTypeUnion, PHPSimpleType} from "./phptype"
 import {PHPContextlessError} from "./php-strict-error"
 import {FileContext} from "./file-context"
 
@@ -80,7 +80,7 @@ class ClassContext {
             return this.findInstanceIdentifier("__call", from_class_context, true)
         } else if(!in_call && name != "__get") {
             if(this.findInstanceIdentifier("__get", from_class_context, true)) {
-                return PHPTypeUnion.mixed
+                return PHPSimpleType.coreTypes.mixed
             }
         }
         return null
@@ -177,7 +177,7 @@ class InterfaceContext extends ClassContext {
      * @returns {?PHPTypeUnion}
      */
     findInstanceIdentifier(name, from_class_context) {
-        return super.findInstanceIdentifier(name, from_class_context) || PHPTypeUnion.mixed
+        return super.findInstanceIdentifier(name, from_class_context) || PHPSimpleType.coreTypes.mixed
     }
 
     /**
@@ -187,7 +187,7 @@ class InterfaceContext extends ClassContext {
      * @returns {?PHPTypeUnion}
      */
     findStaticIdentifier(name, from_class_context) {
-        return super.findStaticIdentifier(name, from_class_context) || PHPTypeUnion.mixed
+        return super.findStaticIdentifier(name, from_class_context) || PHPSimpleType.coreTypes.mixed
     }
 }
 
@@ -202,7 +202,7 @@ class TraitContext extends ClassContext {
      * @returns {?PHPTypeUnion}
      */
     findInstanceIdentifier(name, from_class_context) {
-        return super.findInstanceIdentifier(name, from_class_context) || PHPTypeUnion.mixed
+        return super.findInstanceIdentifier(name, from_class_context) || PHPSimpleType.coreTypes.mixed
     }
 
     /**
@@ -212,7 +212,7 @@ class TraitContext extends ClassContext {
      * @returns {?PHPTypeUnion}
      */
     findStaticIdentifier(name, from_class_context) {
-        return super.findStaticIdentifier(name, from_class_context) || PHPTypeUnion.mixed
+        return super.findStaticIdentifier(name, from_class_context) || PHPSimpleType.coreTypes.mixed
     }
 }
 
@@ -241,7 +241,7 @@ class AnonymousFunctionContext extends ClassContext {
      */
     findInstanceIdentifier(name, from_class_context) {
         // TODO: Limit to the actual methods.
-        return PHPTypeUnion.mixed
+        return PHPSimpleType.coreTypes.mixed
     }
 
     /**
@@ -274,7 +274,7 @@ class UnknownClassContext extends ClassContext {
      * @returns {?PHPTypeUnion}
      */
     findInstanceIdentifier(name, from_class_context) {
-        return PHPTypeUnion.mixed
+        return PHPSimpleType.coreTypes.mixed
     }
 
     /**
@@ -284,7 +284,7 @@ class UnknownClassContext extends ClassContext {
      * @returns {?PHPTypeUnion}
      */
     findStaticIdentifier(name, from_class_context) {
-        return PHPTypeUnion.mixed
+        return PHPSimpleType.coreTypes.mixed
     }
 }
 

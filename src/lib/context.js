@@ -68,13 +68,13 @@ export default class Context {
             )
             Object.keys(PHPFunctions).forEach(
                 name => this._superGlobals[name] = new PHPTypeUnion(new PHPFunctionType(
-                    PHPFunctions[name].map(arg => PHPTypeUnion.mixed),
-                    PHPTypeUnion.mixed,
+                    PHPFunctions[name].map(arg => PHPSimpleType.coreTypes.mixed),
+                    PHPSimpleType.coreTypes.mixed,
                     PHPFunctions[name]
                 ))
             )
             PHPConstants.forEach(
-                name => this._superGlobals[name] = PHPTypeUnion.mixed
+                name => this._superGlobals[name] = PHPSimpleType.coreTypes.mixed
             )
             Object.freeze(this._superGlobals)
         }
@@ -237,7 +237,9 @@ export default class Context {
      * @returns {string}
      */
     resolveName(name) {
-        if(this.classContext) {
+        if(PHPSimpleType.coreTypes[name]) {
+            return name
+        } else if(this.classContext) {
             let class_name
             try {
                 class_name = this.classContext.resolveName(name)

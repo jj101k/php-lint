@@ -1,7 +1,7 @@
 import Context from "../context"
 import ContextTypes from "../context-types"
 import Statement from "./statement"
-import {PHPFunctionType, PHPTypeUnion} from "../phptype"
+import {PHPFunctionType, PHPTypeUnion, PHPSimpleType} from "../phptype"
 import Identifier from "./identifier"
 import Variable from "./variable"
 import _String from "./string"
@@ -41,7 +41,7 @@ export default class Call extends Statement {
         this.arguments.forEach((arg, i) => {
             if(pbr_positions[i]) {
                 let inner_context = context.childContext(true)
-                inner_context.assigningType = context.findName(arg.name) || PHPTypeUnion.mixed
+                inner_context.assigningType = context.findName(arg.name) || PHPSimpleType.coreTypes.mixed
                 arg.check(inner_context)
             } else if(callback_positions[i]) {
                 let inner_context = context.childContext(false)
@@ -73,7 +73,7 @@ export default class Call extends Statement {
             if(t instanceof PHPFunctionType) {
                 types = types.addTypesFrom(t.returnType)
             } else {
-                types = types.addTypesFrom(PHPTypeUnion.mixed)
+                types = types.addTypesFrom(PHPSimpleType.coreTypes.mixed)
             }
         })
         return new ContextTypes(types)

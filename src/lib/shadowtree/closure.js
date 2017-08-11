@@ -53,14 +53,14 @@ export default class Closure extends Statement {
             t => inner_context.addName(
                 '$' + t.name,
                 t.byref ?
-                    (context.findName('$' + t.name) || PHPTypeUnion.mixed) :
+                    (context.findName('$' + t.name) || PHPSimpleType.coreTypes.mixed) :
                     this.assertHasName(context, '$' + t.name)
             )
         )
         if(context.findName("$this")) {
             inner_context.setName("$this", context.findName("$this"))
         }
-        let signature_type = this.type && PHPSimpleType.named(this.type.name)
+        let signature_type = this.type && PHPSimpleType.named(context.resolveName(this.type.name))
         let return_type
         if(this.body) {
             return_type = this.body.check(inner_context).returnType
@@ -73,7 +73,7 @@ export default class Closure extends Statement {
         } else if(signature_type) {
             return_type = signature_type
         } else {
-            return_type = PHPTypeUnion.mixed
+            return_type = PHPSimpleType.coreTypes.mixed
         }
         let function_type = new PHPFunctionType(
             arg_types,

@@ -26,7 +26,7 @@ export default class New extends Statement {
             arg => arg.check(context)
         )
         if(this.what instanceof Variable) {
-            return new ContextTypes(PHPTypeUnion.mixed)
+            return new ContextTypes(PHPSimpleType.coreTypes.mixed)
         } else {
             return new ContextTypes(PHPSimpleType.named(
                 context.resolveNodeName(this.what)

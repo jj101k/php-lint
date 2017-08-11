@@ -2,7 +2,7 @@ import Context from "../context"
 import ContextTypes from "../context-types"
 import Statement from "./statement"
 import Expression from "./expression"
-import {PHPTypeUnion} from "../phptype"
+import {PHPSimpleType} from "../phptype"
 export default class Foreach extends Statement {
     /** @type {Expression} */
     get source() {
@@ -33,7 +33,7 @@ export default class Foreach extends Statement {
         super.check(context)
         this.source.check(context)
         let assign_context = context.childContext(true)
-        assign_context.assigningType = PHPTypeUnion.mixed
+        assign_context.assigningType = PHPSimpleType.coreTypes.mixed
         if(this.key) {
             this.key.check(assign_context)
         }

@@ -1,7 +1,7 @@
 import Context from "../context"
 import ContextTypes from "../context-types"
 import Statement from "./statement"
-import {PHPTypeUnion} from "../phptype"
+import {PHPSimpleType} from "../phptype"
 import Variable from "./variable"
 import Assign from "./assign"
 export default class Static extends Statement {
@@ -17,7 +17,7 @@ export default class Static extends Statement {
     check(context, in_call = false) {
         super.check(context)
         let inner_context = context.childContext(true)
-        inner_context.assigningType = PHPTypeUnion.mixed
+        inner_context.assigningType = PHPSimpleType.coreTypes.mixed
         this.items.forEach(
             i => i.check(inner_context)
         )

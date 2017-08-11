@@ -89,14 +89,14 @@ export default class Class extends Declaration {
                         b.name,
                         b.visibility,
                         b.isStatic,
-                        PHPTypeUnion.mixed
+                        PHPSimpleType.coreTypes.mixed
                     )
                 } else if(b instanceof ClassConstant) {
                     inner_context.classContext.addIdentifier(
                         b.name,
                         "public",
                         true,
-                        PHPTypeUnion.mixed
+                        PHPSimpleType.coreTypes.mixed
                     )
                 } else if(b instanceof TraitUse) {
                     // Do nothing - loaded shortly

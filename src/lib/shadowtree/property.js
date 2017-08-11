@@ -1,7 +1,7 @@
 import Context from "../context"
 import ContextTypes from "../context-types"
 import Declaration from "./declaration"
-import {PHPTypeUnion} from "../phptype"
+import {PHPSimpleType} from "../phptype"
 import _Node from "./node"
 export default class Property extends Declaration {
     /** @type {boolean} */
@@ -31,7 +31,7 @@ export default class Property extends Declaration {
             this.name,
             this.visibility,
             this.isStatic,
-            this.value ? this.value.check(context).expressionType : PHPTypeUnion.mixed
+            this.value ? this.value.check(context).expressionType : PHPSimpleType.coreTypes.mixed
         )
         return ContextTypes.empty
     }

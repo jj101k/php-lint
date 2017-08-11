@@ -20,6 +20,6 @@ export default class Cast extends Operation {
     check(context, in_call = false) {
         super.check(context)
         this.what.check(context)
-        return new ContextTypes(PHPSimpleType.named(this.type))
+        return new ContextTypes(PHPSimpleType.named(context.resolveName(this.type)))
     }
 }

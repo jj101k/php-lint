@@ -1,7 +1,7 @@
 import Context from "../context"
 import ContextTypes from "../context-types"
 import Sys from "./sys"
-import {PHPTypeUnion} from "../phptype"
+import {PHPSimpleType} from "../phptype"
 export default class List extends Sys {
     /**
      * Checks that syntax seems ok
@@ -14,7 +14,7 @@ export default class List extends Sys {
             this.arguments.forEach(
                 arg => {
                     let inner_context = context.childContext(true)
-                    inner_context.assigningType = PHPTypeUnion.mixed
+                    inner_context.assigningType = PHPSimpleType.coreTypes.mixed
                     arg.check(inner_context)
                 }
             )

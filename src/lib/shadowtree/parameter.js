@@ -32,7 +32,7 @@ export default class Parameter extends Declaration {
     check(context, in_call = false) {
         let type
         if(this.type) {
-            type = PHPSimpleType.named(this.type.name)
+            type = PHPSimpleType.named(context.resolveName(this.type.name))
         } else {
             type = PHPSimpleType.coreTypes.mixed
         }

@@ -1,7 +1,7 @@
 import Context from "../context"
 import ContextTypes from "../context-types"
 import _Node from "./node"
-import {PHPTypeUnion} from "../phptype"
+import {PHPSimpleType} from "../phptype"
 export default class Identifier extends _Node {
     /** @type {string} */
     get name() {
@@ -20,6 +20,6 @@ export default class Identifier extends _Node {
      */
     check(context, in_call = false) {
         super.check(context)
-        return new ContextTypes(context.findName(this.name) || PHPTypeUnion.mixed)
+        return new ContextTypes(context.findName(this.name) || PHPSimpleType.coreTypes.mixed)
     }
 }

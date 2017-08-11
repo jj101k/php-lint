@@ -1,7 +1,7 @@
 import Context from "../context"
 import ContextTypes from "../context-types"
 import Statement from "./statement"
-import {PHPTypeUnion} from "../phptype"
+import {PHPSimpleType} from "../phptype"
 import Variable from "./variable"
 export default class Global extends Statement {
     /** @type {Variable[]} */
@@ -16,7 +16,7 @@ export default class Global extends Statement {
     check(context, in_call = false) {
         super.check(context)
         let inner_context = context.childContext(true)
-        inner_context.assigningType = PHPTypeUnion.mixed
+        inner_context.assigningType = PHPSimpleType.coreTypes.mixed
         this.items.forEach(item => item.check(inner_context))
         return ContextTypes.empty
     }

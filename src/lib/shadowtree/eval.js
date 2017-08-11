@@ -1,7 +1,7 @@
 import Context from "../context"
 import ContextTypes from "../context-types"
 import Statement from "./statement"
-import {PHPTypeUnion} from "../phptype"
+import {PHPSimpleType} from "../phptype"
 import _Node from "./node"
 export default class Eval extends Statement {
     /** @type {_Node} */
@@ -16,6 +16,6 @@ export default class Eval extends Statement {
     check(context, in_call = false) {
         super.check(context)
         this.source.check(context)
-        return new ContextTypes(PHPTypeUnion.mixed)
+        return new ContextTypes(PHPSimpleType.coreTypes.mixed)
     }
 }
