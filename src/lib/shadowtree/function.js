@@ -38,21 +38,7 @@ export default class _Function extends Declaration {
         let pass_by_reference_positions = {}
         this.arguments.forEach(
             (node, index) => {
-                let type_union
-                if(node.type) {
-                    type_union = PHPSimpleType.named(
-                        context.resolveNodeName(node.type)
-                    )
-                } else {
-                    type_union = PHPTypeUnion.mixed
-                }
-                if(node.nullable) {
-                    type_union.addTypesFrom(PHPSimpleType.types.null)
-                }
-                arg_types.push(inner_context.addName(
-                    "$" + node.name,
-                    type_union
-                ))
+                arg_types.push(node.check(inner_context, in_call).expressionType)
                 if(node.byref) {
                     pass_by_reference_positions[index] = true
                 }

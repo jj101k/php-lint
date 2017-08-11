@@ -40,23 +40,13 @@ export default class Closure extends Statement {
         super.check(context)
         var inner_context = context.childContext()
         let arg_types = []
+        let pass_by_reference_positions = {}
         this.arguments.forEach(
-            node => {
-                let type_union
-                if(node.type) {
-                    type_union = PHPSimpleType.named(
-                        context.resolveNodeName(node.type)
-                    )
-                } else {
-                    type_union = PHPTypeUnion.mixed
+            (node, index) => {
+                arg_types.push(node.check(inner_context, in_call).expressionType)
+                if(node.byref) {
+                    pass_by_reference_positions[index] = true
                 }
-                if(node.nullable) {
-                    type_union = type_union.addTypesFrom(PHPSimpleType.types.null)
-                }
-                arg_types.push(inner_context.addName(
-                    "$" + node.name,
-                    type_union
-                ))
             }
         )
         this.uses.forEach(
@@ -76,7 +66,12 @@ export default class Closure extends Statement {
         } else {
             return_type = PHPTypeUnion.mixed
         }
-        let types = new PHPFunctionType(arg_types, return_type).union
+        let function_type = new PHPFunctionType(
+            arg_types,
+            return_type,
+            pass_by_reference_positions
+        )
+        let types = function_type.union
         return new ContextTypes(types)
     }
 }
