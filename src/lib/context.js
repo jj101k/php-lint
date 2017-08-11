@@ -201,6 +201,9 @@ export default class Context {
     findClass(name) {
         if(name == "self") {
             return this.classContext
+        } else if(name != "mixed" && name != "object" && PHPSimpleType.coreTypes[name]) {
+            console.log(`Attempt to access core type ${name} as class`)
+            return null
         } else {
             return this.globalContext.findClass(name, this.fileContext, this.depth)
         }

@@ -37,33 +37,35 @@ export default class PropertyLookup extends Lookup {
         try {
             type_union.types.forEach(t => {
                 let class_context = context.findClass("" + t)
-                let identifier_types = class_context.findInstanceIdentifier(offset, context.classContext, in_call)
-                if(identifier_types) {
-                    identifier_types.types.forEach(
-                        itype => {
-                            if(
-                                itype instanceof PHPFunctionType &&
-                                "" + itype.returnType == "self" &&
-                                "" + type_union != "self"
-                            ) {
-                                let resolved_type = new PHPFunctionType(
-                                    itype.argTypes,
-                                    type_union,
-                                    itype.passByReferencePositions,
-                                    itype.callbackPositions
-                                )
-                                types_out.addType(resolved_type)
-                            } else {
-                                types_out.addType(itype)
+                if(class_context) {
+                    let identifier_types = class_context.findInstanceIdentifier(offset, context.classContext, in_call)
+                    if(identifier_types) {
+                        identifier_types.types.forEach(
+                            itype => {
+                                if(
+                                    itype instanceof PHPFunctionType &&
+                                    "" + itype.returnType == "self" &&
+                                    "" + type_union != "self"
+                                ) {
+                                    let resolved_type = new PHPFunctionType(
+                                        itype.argTypes,
+                                        type_union,
+                                        itype.passByReferencePositions,
+                                        itype.callbackPositions
+                                    )
+                                    types_out.addType(resolved_type)
+                                } else {
+                                    types_out.addType(itype)
+                                }
                             }
-                        }
-                    )
-                } else {
-                    throw this.strictError(
-                        `No accessible identifier ${class_context.name}->${offset}\n` +
-                        `Accessible properties are: ${Object.keys(class_context.instanceIdentifiers).sort()}`,
-                        context
-                    )
+                        )
+                    } else {
+                        throw this.strictError(
+                            `No accessible identifier ${class_context.name}->${offset}\n` +
+                            `Accessible properties are: ${Object.keys(class_context.instanceIdentifiers).sort()}`,
+                            context
+                        )
+                    }
                 }
             })
         } catch(e) {
