@@ -143,7 +143,7 @@ export class GlobalContext {
     }
 
     /**
-     * @type {Object.<number,number>} The number of classes at each depth
+     * @type {{[x: number]: number}} The number of classes at each depth
      */
     get depthCounts() {
         let counts = {}

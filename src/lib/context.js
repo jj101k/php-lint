@@ -20,7 +20,7 @@ const IgnoreInvalidParent = true
 const PHPConstants = JSON.parse(fs.readFileSync(__dirname + "/../../data/php-constants.json", "utf8"))
 
 /**
- * @type {Object.<string,boolean[]>}
+ * @type {{[x: string]: boolean[]}}
  *
  * From:
  *
@@ -38,7 +38,7 @@ const PHPConstants = JSON.parse(fs.readFileSync(__dirname + "/../../data/php-con
  */
 const PHPFunctions = JSON.parse(fs.readFileSync(__dirname + "/../../data/php-functions.json", "utf8"))
 
-/** @type {Object.<string,string>} From `print json_encode(array_map("gettype", get_defined_vars()), JSON_PRETTY_PRINT);` */
+/** @type {{[x: string]: string}} From `print json_encode(array_map("gettype", get_defined_vars()), JSON_PRETTY_PRINT);` */
 const PHPSuperglobals = {
     "_ENV": "array",
     "_GET": "array",

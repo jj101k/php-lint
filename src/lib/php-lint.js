@@ -15,7 +15,7 @@ import Lint from "./lint"
 
 class PHPLint {
     /**
-     * @type {Object.<number,number>}
+     * @type {{[x: number]: number}}
      * @see GlobalContext.depthCounts
      */
     static get depthCounts() {
