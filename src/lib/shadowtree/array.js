@@ -24,6 +24,6 @@ export default class _Array extends Expression {
                 item => item.check(context)
             )
         }
-        return new ContextTypes(PHPSimpleType.types.array)
+        return new ContextTypes(PHPSimpleType.coreTypes.array)
     }
 }

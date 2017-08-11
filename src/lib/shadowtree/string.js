@@ -18,7 +18,7 @@ export default class _String extends Literal {
      */
     check(context, in_call = false) {
         super.check(context)
-        let types = PHPSimpleType.types.string
+        let types = PHPSimpleType.coreTypes.string
         return new ContextTypes(types)
     }
 }

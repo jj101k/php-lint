@@ -299,7 +299,7 @@ export default class Context {
      * @returns {PHPTypeUnion}
      */
     setThis() {
-        this.ns["$this"] = PHPSimpleType.types.self
-        return PHPSimpleType.types.self
+        this.ns["$this"] = PHPSimpleType.coreTypes.self
+        return PHPSimpleType.coreTypes.self
     }
 }

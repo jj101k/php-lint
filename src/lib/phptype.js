@@ -11,18 +11,40 @@ class PHPType {
     }
 }
 
+/**
+ * @typedef coreTypes
+ * @property {PHPTypeUnion} string
+ * @property {PHPTypeUnion} int
+ * @property {PHPTypeUnion} float
+ * @property {PHPTypeUnion} bool
+ * @property {PHPTypeUnion} array
+ * @property {PHPTypeUnion} callable
+ * @property {PHPTypeUnion} null
+ * @property {PHPTypeUnion} mixed
+ * @property {PHPTypeUnion} self
+ */
+
 class PHPSimpleType extends PHPType {
+    /** @type {coreTypes} */
+    static get coreTypes() {
+        if(!this._coreTypes) {
+            let known_types = ["string", "int", "float", "bool", "array", "callable"]
+            let pseudo_types = ["null", "mixed", "self"]
+            let types = {}
+            known_types.forEach(
+                type_name => types[type_name] = new PHPSimpleType(type_name).union
+            )
+            pseudo_types.forEach(
+                type_name => types[type_name] = new PHPSimpleType(type_name).union
+            )
+            this._coreTypes = types
+        }
+        return this._coreTypes
+    }
     /** @type {{[x: string]: PHPTypeUnion}} */
     static get types() {
         if(!this._types) {
-            this._types = {
-                array: new PHPSimpleType("array").union,
-                boolean: new PHPSimpleType("boolean").union,
-                null: new PHPSimpleType("null").union,
-                number: new PHPSimpleType("number").union,
-                self: new PHPSimpleType("self").union,
-                string: new PHPSimpleType("string").union,
-            }
+            this._types = {}
         }
         return this._types
     }
@@ -32,6 +54,9 @@ class PHPSimpleType extends PHPType {
      * @returns {PHPTypeUnion}
      */
     static named(type_name) {
+        if(this.coreTypes[type_name]) {
+            return this.coreTypes[type_name]
+        }
         if(!this.types[type_name]) {
             this.types[type_name] = new PHPSimpleType(type_name).union
         }

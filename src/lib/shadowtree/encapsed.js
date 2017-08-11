@@ -18,6 +18,6 @@ export default class Encapsed extends Literal {
      */
     check(context, in_call = false) {
         super.check(context)
-        return new ContextTypes(PHPSimpleType.types.string)
+        return new ContextTypes(PHPSimpleType.coreTypes.string)
     }
 }

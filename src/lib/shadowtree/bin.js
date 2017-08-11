@@ -33,7 +33,7 @@ export default class Bin extends Operation {
             case "&&":
             case "and":
             case "or":
-                types = types.addTypesFrom(PHPSimpleType.types.boolean)
+                types = types.addTypesFrom(PHPSimpleType.coreTypes.bool)
                 break
             case "*":
             case "/":
@@ -43,17 +43,17 @@ export default class Bin extends Operation {
             case "<<":
             case ">>":
             case "^":
-                types = types.addTypesFrom(PHPSimpleType.types.number)
+                types = types.addTypesFrom(PHPSimpleType.coreTypes.float)
                 break
             case "+":
                 if(left_types.types.length == 1 && "" + left_types[0] == "array") {
                     types = types.addTypesFrom(left_types)
                 } else {
-                    types = types.addTypesFrom(PHPSimpleType.types.number)
+                    types = types.addTypesFrom(PHPSimpleType.coreTypes.float)
                 }
                 break
             case ".":
-                types = types.addTypesFrom(PHPSimpleType.types.string)
+                types = types.addTypesFrom(PHPSimpleType.coreTypes.string)
                 break
             case "~":
             case "!~":
@@ -69,7 +69,7 @@ export default class Bin extends Operation {
             case "!==":
             case "===":
             case "instanceof":
-                types = types.addTypesFrom(PHPSimpleType.types.boolean)
+                types = types.addTypesFrom(PHPSimpleType.coreTypes.bool)
                 break
             default:
                 console.log(this.node)

@@ -11,6 +11,6 @@ export default class Isset extends Sys {
     check(context, in_call = false) {
         super.check(context)
         // no-op
-        return new ContextTypes(PHPSimpleType.types.boolean)
+        return new ContextTypes(PHPSimpleType.coreTypes.bool)
     }
 }

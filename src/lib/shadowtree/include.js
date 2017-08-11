@@ -37,6 +37,6 @@ export default class Include extends Statement {
         ) {
             context.checkFile(context.fileContext.directory + this.target.right.value, this.require)
         }
-        return new ContextTypes(PHPSimpleType.types.string)
+        return new ContextTypes(PHPSimpleType.coreTypes.string)
     }
 }

@@ -34,10 +34,10 @@ export default class Parameter extends Declaration {
         if(this.type) {
             type = PHPSimpleType.named(this.type.name)
         } else {
-            type = PHPSimpleType.types.mixed
+            type = PHPSimpleType.coreTypes.mixed
         }
         if(this.nullable) {
-            type.addTypesFrom(PHPSimpleType.types.null)
+            type.addTypesFrom(PHPSimpleType.coreTypes.null)
         }
         context.setName(
             "$" + this.name,
