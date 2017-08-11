@@ -3,6 +3,7 @@ import ContextTypes from "../context-types"
 import Declaration from "./declaration"
 import Parameter from "./parameter"
 import Block from "./block"
+import Identifier from "./identifier"
 import {PHPSimpleType, PHPFunctionType, PHPTypeUnion} from "../phptype"
 export default class _Function extends Declaration {
     /** @type {Parameter[]} */
@@ -21,7 +22,7 @@ export default class _Function extends Declaration {
     get nullable() {
         return this.node.nullable
     }
-    /** @type {Array[]} */
+    /** @type {Identifier} */
     get type() {
         return this.node.type
     }
@@ -48,9 +49,18 @@ export default class _Function extends Declaration {
             inner_context.setThis()
         }
 
+        let signature_type = this.type && PHPSimpleType.named(this.type.name)
         let return_type
         if(this.body) {
             return_type = this.body.check(inner_context).returnType
+            if(signature_type && return_type !== signature_type) {
+                throw this.strictError(
+                    `Practical return type ${return_type} does not match signature ${signature_type}`,
+                    context
+                )
+            }
+        } else if(signature_type) {
+            return_type = signature_type
         } else {
             return_type = PHPTypeUnion.mixed
         }

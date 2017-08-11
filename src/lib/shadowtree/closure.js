@@ -60,9 +60,18 @@ export default class Closure extends Statement {
         if(context.findName("$this")) {
             inner_context.setName("$this", context.findName("$this"))
         }
+        let signature_type = this.type && PHPSimpleType.named(this.type.name)
         let return_type
         if(this.body) {
             return_type = this.body.check(inner_context).returnType
+            if(signature_type && return_type !== signature_type) {
+                throw this.strictError(
+                    `Practical return type ${return_type} does not match signature ${signature_type}`,
+                    context
+                )
+            }
+        } else if(signature_type) {
+            return_type = signature_type
         } else {
             return_type = PHPTypeUnion.mixed
         }
