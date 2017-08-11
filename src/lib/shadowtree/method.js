@@ -24,7 +24,7 @@ export default class Method extends _Function {
      * @returns {?ContextTypes} The set of types applicable to this value
      */
     check(context, in_call = false) {
-        if(!this.name.match(/^[0-9a-z]+([0-9A-Z]+[0-9a-z]*)*$/)) {
+        if(!this.name.match(/^_*[0-9a-z]+([0-9A-Z]+[0-9a-z]*)*$/)) {
             // This does allow names like getUPSPowerState
             throw this.strictError(
                 `PSR-1 #4.3 method names should be camelCase`,
