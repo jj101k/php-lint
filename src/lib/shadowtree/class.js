@@ -55,7 +55,7 @@ export default class Class extends Declaration {
         super.check(context)
         if(!this.name.match(/^([0-9A-Z]+[0-9a-z]*)+$/)) {
             // This does allow names like UPSPowerState
-            throw new PHPError.PSR1.S3ClassCase().withContext(context, this)
+            this.throw(new PHPError.PSR1.S3ClassCase(), context)
         }
         let inner_context = context.childContext()
         let extended_class

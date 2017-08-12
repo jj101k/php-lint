@@ -78,9 +78,9 @@ export default class StaticLookup extends Lookup {
                 } else if(types) {
                     return new ContextTypes(types)
                 } else {
-                    throw new PHPError.NoStaticProperty(
+                    this.throw(new PHPError.NoStaticProperty(
                         `No accessible identifier ${resolved_name}::${this.offset.name}`
-                    ).withContext(context, this)
+                    ), context)
                 }
             }
         } else if(

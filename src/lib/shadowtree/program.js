@@ -14,9 +14,9 @@ export default class Program extends Block {
             c => c instanceof Class
         )
         if(classes.length > 1) {
-            throw new PHPError.PSR1.S3ClassCount(
+            this.throw(new PHPError.PSR1.S3ClassCount(
                 `PSR-1 #3: One class per file (${classes.length})`
-            ).withContext(context, this)
+            ), context)
         }
         var inner_context = context.childContext()
         this.children.forEach(child => child.check(inner_context))

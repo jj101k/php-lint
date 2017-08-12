@@ -35,12 +35,12 @@ export default class Assign extends Statement {
             this.left.name.length == 1 &&
             !PHPSimpleType.coreTypes["" + left_context.assigningType]
         ) {
-            throw new PHPError.SingleCharacterVariable(
+            this.throw(new PHPError.SingleCharacterVariable(
                 `Use of 1-character name $${this.left.name} of non-trivial type ${left_context.assigningType}`
-            ).withContext(context, this)
+            ), context)
         }
         if(left_context.assigningType.isEmpty) {
-            throw new PHPError.AssignNoValue().withContext(context, this)
+            this.throw(new PHPError.AssignNoValue(), context)
         } else {
             return new ContextTypes(left_context.assigningType)
         }

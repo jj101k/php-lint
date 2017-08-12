@@ -61,10 +61,10 @@ export default class PropertyLookup extends Lookup {
                             }
                         )
                     } else {
-                        throw new PHPError.NoProperty(
+                        this.throw(new PHPError.NoProperty(
                             `No accessible identifier ${class_context.name}->${offset}\n` +
                             `Accessible properties are: ${Object.keys(class_context.instanceIdentifiers).sort()}`
-                        ).withContext(context, this)
+                        ), context)
                     }
                 }
             })

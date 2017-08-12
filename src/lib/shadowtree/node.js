@@ -7,6 +7,9 @@ import * as ShadowTree from "../shadowtree"
 /** @type {boolean} True if you want lots of debugging messages */
 const DEBUG = false
 
+/** @type {PHPError.Error[]} Error types to ignore */
+const IGNORE_ERRORS = []
+
 /**
  * @callback cachePropertyCallback
  * @param {Object} node_property
@@ -149,12 +152,20 @@ const DEBUG = false
     handleException(e, context) {
         if(e instanceof PHPError.Error) {
             // console.log(this.node)
-            throw e.withContext(
-                context,
-                this.loc
-            )
+            this.throw(e, context)
         } else {
             throw e
+        }
+    }
+    /**
+     * Wraps throwing. This may conditionally not throw.
+     * @param {PHPError.Error} e
+     * @param {Context} context
+     * @throws {PHPError.Error}
+     */
+    throw(e, context) {
+        if(IGNORE_ERRORS.every(o => !(e instanceof o))) {
+            throw e.withContext(context, this)
         }
     }
     /**

@@ -14,6 +14,6 @@ export default class Goto extends Statement {
      */
     check(context, in_call = false) {
         super.check(context)
-        throw new PHPError.Goto().withContext(context, this)
+        this.throw(new PHPError.Goto(), context)
     }
 }

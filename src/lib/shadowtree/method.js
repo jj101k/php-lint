@@ -27,7 +27,7 @@ export default class Method extends _Function {
     check(context, in_call = false) {
         if(!this.name.match(/^_*[0-9a-z]+([0-9A-Z]+[0-9a-z]*)*$/)) {
             // This does allow names like getUPSPowerState
-            throw new PHPError.PSR1.S43MethodName().withContext(context, this)
+            this.throw(new PHPError.PSR1.S43MethodName(), context)
         }
         let method_type = super.check(context).expressionType
         context.classContext.addIdentifier(
