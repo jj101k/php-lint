@@ -1,5 +1,5 @@
 import {PHPTypeUnion, PHPSimpleType} from "./phptype"
-import {PHPContextlessError} from "./php-strict-error"
+import * as PHPError from "./php-error"
 import {FileContext} from "./file-context"
 
 /**
@@ -61,7 +61,7 @@ class ClassContext {
             ) {
                 return m.types
             } else {
-                throw new PHPContextlessError(
+                throw new PHPError.ScopeMiss(
                     `Scope miss for name ${name} with scope ${m.scope}`
                 )
             }
@@ -146,7 +146,7 @@ class ClassContext {
      * everything else returns null.
      *
      * @param {string} context
-     * @throws {PHPContextlessError} when using "parent" with no superclass
+     * @throws {PHPError.Error} when using "parent" with no superclass
      * @returns {?string}
      */
     resolveName(name) {
@@ -154,7 +154,7 @@ class ClassContext {
             if(this.superclass) {
                 return this.superclass.name
             } else {
-                throw new PHPContextlessError(`Attempt to use parent:: with no superclass`)
+                throw new PHPError.NoSuperclassParent()
             }
         } else if(name == "self") {
             return this.name

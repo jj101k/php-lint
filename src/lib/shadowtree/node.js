@@ -1,7 +1,7 @@
 import Context from "../context"
 import ContextTypes from "../context-types"
 import {PHPTypeUnion} from "../phptype"
-import {default as PHPStrictError, PHPContextlessError} from "../php-strict-error"
+import * as PHPError from "../php-error"
 import * as ShadowTree from "../shadowtree"
 
 /** @type {boolean} True if you want lots of debugging messages */
@@ -64,10 +64,11 @@ const DEBUG = false
                     k => this.node[k] && this.node[k].loc
                 ).find(l => l)
             }
-            throw this.strictError(
-                `Name ${name} is not defined in this namespace, contents are: ${context.definedVariables.join(", ")}`,
+            throw new PHPError.UndefinedVariable(
+                `Name ${name} is not defined in this namespace, contents are: ${context.definedVariables.join(", ")}`
+            ).withContext(
                 context,
-                loc
+                this.loc
             );
         }
         return types
@@ -140,30 +141,21 @@ const DEBUG = false
         return new ContextTypes(PHPTypeUnion.empty)
     }
     /**
-     * Converts PHPContextlessError into PHPStrictError, otherwise just rethrows.
+     * Converts PHPError.Error into PHPStrictError, otherwise just rethrows.
      * @param {Error} e
      * @param {Context} context
      * @throws
      */
     handleException(e, context) {
-        if(e instanceof PHPContextlessError) {
+        if(e instanceof PHPError.Error) {
             // console.log(this.node)
-            throw this.strictError(
-                e.message,
-                context
+            throw e.withContext(
+                context,
+                this.loc
             )
         } else {
             throw e
         }
-    }
-    /**
-     * Simple generation of a strict error.
-     * @param {string} message
-     * @param {Context} context
-     * @returns {PHPStrictError}
-     */
-    strictError(message, context) {
-        return new PHPStrictError(message, context, this.loc)
     }
     /**
      * Returns the shadow tree counterpart of the given node.

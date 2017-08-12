@@ -1,6 +1,7 @@
 import Context from "../context"
 import ContextTypes from "../context-types"
 import Constant from "./constant"
+import * as PHPError from "../php-error"
 export default class ClassConstant extends Constant {
     /** @type {boolean} */
     get isStatic() {
@@ -18,10 +19,7 @@ export default class ClassConstant extends Constant {
      */
     check(context, in_call = false) {
         if(!this.name.match(/^[0-9A-Z_]+$/)) {
-            throw this.strictError(
-                `PSR-1 #4.1 class constant names must be CAPITALISED_WITH_UNDERSCORES`,
-                context
-            )
+            throw new PHPError.PSR1.S41ClassConstantName().withContext(context, this)
         }
         return super.check(context, in_call)
     }

@@ -1,16 +1,5 @@
 import Context from "./context"
-/**
- * @typedef ParserPosition
- * @property {number} line
- * @property {number} column
- * @property {number} offset
- */
-/**
- * @typedef ParserLocation
- * @property {?string} source
- * @property {ParserPosition} start
- * @property {ParserPosition} end
- */
+import _Node from "./shadowtree/node"
 
 class PHPStrictError extends Error {
     /**
@@ -18,12 +7,12 @@ class PHPStrictError extends Error {
      *
      * @param {string} message
      * @param {Context} context
-     * @param {ParserLocation} location
+     * @param {_Node} node
      */
-    static warn(message, context, location) {
+    static warn(message, context, node) {
         console.log(
             "Warning: " +
-            new PHPStrictError(message, context, location).message
+            new PHPStrictError(message, context, node).message
         )
     }
 
@@ -31,16 +20,13 @@ class PHPStrictError extends Error {
      * Builds the object
      * @param {string} message
      * @param {Context} context
-     * @param {ParserLocation} location
+     * @param {_Node} node
      */
-    constructor(message, context, location) {
+    constructor(message, context, node) {
         super(
-            `${message} at ${context.fileContext.filename} line ${location.start.line}`
+            `${message} at ${context.fileContext.filename} line ${node.loc.start.line}`
         )
-        this.loc = location
+        this.loc = node.loc
     }
 }
 export default PHPStrictError
-
-export class PHPContextlessError extends Error {
-}

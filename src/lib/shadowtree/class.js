@@ -7,6 +7,7 @@ import Property from "./property"
 import ClassConstant from "./classconstant"
 import Identifier from "./identifier"
 import TraitUse from "./traituse"
+import * as PHPError from "../php-error"
 export default class Class extends Declaration {
     /**
      * @type {Declaration[]}
@@ -54,10 +55,7 @@ export default class Class extends Declaration {
         super.check(context)
         if(!this.name.match(/^([0-9A-Z]+[0-9a-z]*)+$/)) {
             // This does allow names like UPSPowerState
-            throw this.strictError(
-                `PSR-1 #3 class names should be studly caps (PascalCase)`,
-                context
-            )
+            throw new PHPError.PSR1.S3ClassCase().withContext(context, this)
         }
         let inner_context = context.childContext()
         let extended_class

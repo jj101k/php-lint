@@ -3,7 +3,7 @@ const path = require("path")
 
 import {AnonymousFunctionContext, ClassContext, InterfaceContext, TraitContext, UnknownClassContext} from "./class-context"
 import {FileContext} from "./file-context"
-import {PHPContextlessError} from "./php-strict-error"
+import * as PHPError from "./php-error"
 import PHPLint from "./php-lint"
 import PHPAutoloader from "./php-autoloader"
 
@@ -290,7 +290,7 @@ export class GlobalContext {
             }
             if(DEBUG_AUTOLOAD) {
                 console.log(this.autoloader)
-                throw new PHPContextlessError(`Could not load ${name}`)
+                throw new PHPError.ClassLoadFailed(`Could not load ${name}`)
             } else {
                 console.log(`Could not load ${name}`)
                 return this.classes[name]

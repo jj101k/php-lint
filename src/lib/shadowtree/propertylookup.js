@@ -9,6 +9,7 @@ import Parenthesis from "./parenthesis"
 import ConstRef from "./constref"
 import Call from "./call"
 import _String from "./string"
+import * as PHPError from "../php-error"
 export default class PropertyLookup extends Lookup {
     /**
      * Checks that syntax seems ok
@@ -60,11 +61,10 @@ export default class PropertyLookup extends Lookup {
                             }
                         )
                     } else {
-                        throw this.strictError(
+                        throw new PHPError.NoProperty(
                             `No accessible identifier ${class_context.name}->${offset}\n` +
-                            `Accessible properties are: ${Object.keys(class_context.instanceIdentifiers).sort()}`,
-                            context
-                        )
+                            `Accessible properties are: ${Object.keys(class_context.instanceIdentifiers).sort()}`
+                        ).withContext(context, this)
                     }
                 }
             })

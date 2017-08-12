@@ -7,6 +7,7 @@ import Identifier from "./identifier"
 import Variable from "./variable"
 import ConstRef from "./constref"
 import PHPStrictError from "../php-strict-error"
+import * as PHPError from "../php-error"
 
 /** @type {boolean} */
 const WARN_UNDECLARED_STATIC = false
@@ -77,10 +78,9 @@ export default class StaticLookup extends Lookup {
                 } else if(types) {
                     return new ContextTypes(types)
                 } else {
-                    throw this.strictError(
-                        `No accessible identifier ${resolved_name}::${this.offset.name}`,
-                        context
-                    )
+                    throw new PHPError.NoStaticProperty(
+                        `No accessible identifier ${resolved_name}::${this.offset.name}`
+                    ).withContext(context, this)
                 }
             }
         } else if(

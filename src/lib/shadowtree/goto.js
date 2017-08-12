@@ -1,6 +1,7 @@
 import Context from "../context"
 import ContextTypes from "../context-types"
 import Statement from "./statement"
+import * as PHPError from "../php-error"
 export default class Goto extends Statement {
     /** @type {string} */
     get label() {
@@ -13,9 +14,6 @@ export default class Goto extends Statement {
      */
     check(context, in_call = false) {
         super.check(context)
-        throw this.strictError(
-            "Use of goto",
-            context
-        )
+        throw new PHPError.Goto().withContext(context, this)
     }
 }

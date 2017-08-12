@@ -1,6 +1,6 @@
 import {PHPFunctionType, PHPSimpleType, PHPTypeUnion} from "./phptype"
 import {Identifier, Class, ConstRef} from "./shadowtree"
-import {PHPContextlessError} from "./php-strict-error"
+import * as PHPError from "./php-error"
 import {ClassContext} from "./class-context"
 import {FileContext} from "./file-context"
 import {GlobalContext} from "./global-context"
@@ -247,7 +247,7 @@ export default class Context {
             try {
                 class_name = this.classContext.resolveName(name)
             } catch(e) {
-                if(e instanceof PHPContextlessError && IgnoreInvalidParent) {
+                if(e instanceof PHPError.Error && IgnoreInvalidParent) {
                     class_name = this.globalContext.addUnknownClass().name
                 } else {
                     throw e

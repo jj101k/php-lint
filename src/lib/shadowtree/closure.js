@@ -6,6 +6,7 @@ import Block from "./block"
 import Identifier from "./identifier"
 import Variable from "./variable"
 import Parameter from "./parameter"
+import * as PHPError from "../php-error"
 export default class Closure extends Statement {
     /** @type {Parameter[]} */
     get arguments() {
@@ -65,10 +66,9 @@ export default class Closure extends Statement {
         if(this.body) {
             return_type = this.body.check(inner_context).returnType
             if(signature_type && return_type !== signature_type) {
-                throw this.strictError(
-                    `Practical return type ${return_type} does not match signature ${signature_type}`,
-                    context
-                )
+                throw new PHPError.ReturnTypeMismatch(
+                    `Practical return type ${return_type} does not match signature ${signature_type}`
+                ).withContext(context, this)
             }
         } else if(signature_type) {
             return_type = signature_type

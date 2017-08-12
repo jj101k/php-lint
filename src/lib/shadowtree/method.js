@@ -1,6 +1,7 @@
 import Context from "../context"
 import ContextTypes from "../context-types"
 import _Function from "./function"
+import * as PHPError from "../php-error"
 export default class Method extends _Function {
     /** @type {boolean} */
     get isAbstract() {
@@ -26,10 +27,7 @@ export default class Method extends _Function {
     check(context, in_call = false) {
         if(!this.name.match(/^_*[0-9a-z]+([0-9A-Z]+[0-9a-z]*)*$/)) {
             // This does allow names like getUPSPowerState
-            throw this.strictError(
-                `PSR-1 #4.3 method names should be camelCase`,
-                context
-            )
+            throw new PHPError.PSR1.S43MethodName().withContext(context, this)
         }
         let method_type = super.check(context).expressionType
         context.classContext.addIdentifier(

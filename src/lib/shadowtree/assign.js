@@ -4,6 +4,7 @@ import Statement from "./statement"
 import Expression from "./expression"
 import Variable from "./variable"
 import {PHPSimpleType} from "../phptype"
+import * as PHPError from "../php-error"
 export default class Assign extends Statement {
     /** @type {string} */
     get operator() {
@@ -34,16 +35,12 @@ export default class Assign extends Statement {
             this.left.name.length == 1 &&
             !PHPSimpleType.coreTypes["" + left_context.assigningType]
         ) {
-            throw this.strictError(
-                `Use of 1-character name $${this.left.name} of non-trivial type ${left_context.assigningType}`,
-                context
-            )
+            throw new PHPError.SingleCharacterVariable(
+                `Use of 1-character name $${this.left.name} of non-trivial type ${left_context.assigningType}`
+            ).withContext(context, this)
         }
         if(left_context.assigningType.isEmpty) {
-            throw this.strictError(
-                `No value to assign`,
-                context
-            )
+            throw new PHPError.AssignNoValue().withContext(context, this)
         } else {
             return new ContextTypes(left_context.assigningType)
         }
