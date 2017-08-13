@@ -34,7 +34,7 @@ export default class Property extends Declaration {
             this.name,
             this.visibility,
             this.isStatic,
-            this.value ? this.value.check(context).expressionType : PHPSimpleType.coreTypes.mixed
+            this.value ? this.value.check(context, false, null).expressionType : PHPSimpleType.coreTypes.mixed
         )
         return ContextTypes.empty
     }

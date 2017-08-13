@@ -23,10 +23,10 @@ export default class Case extends _Node {
     check(context, in_call = false, doc = null) {
         super.check(context, in_call, doc)
         if(this.test) {
-            this.test.check(context)
+            this.test.check(context, false, null)
         }
         if(this.body) {
-            return this.body.check(context)
+            return this.body.check(context, false, null)
         } else {
             return ContextTypes.empty
         }

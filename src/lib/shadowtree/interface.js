@@ -45,7 +45,7 @@ export default class Interface extends Declaration {
             }
         )
         this.body.forEach(
-            b => b.check(inner_context)
+            b => b.check(inner_context, false, null)
         )
         return ContextTypes.empty
     }

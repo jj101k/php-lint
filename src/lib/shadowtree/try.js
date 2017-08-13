@@ -26,12 +26,12 @@ export default class Try extends Statement {
      */
     check(context, in_call = false, doc = null) {
         super.check(context, in_call, doc)
-        this.body.check(context)
+        this.body.check(context, false, null)
         this.catches.forEach(
-            c => c.check(context)
+            c => c.check(context, false, null)
         )
         if(this.always) {
-            this.always.check(context)
+            this.always.check(context, false, null)
         }
         return ContextTypes.empty // FIXME if union - special
     }

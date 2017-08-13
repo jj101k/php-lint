@@ -24,7 +24,7 @@ export default class _Array extends Expression {
         super.check(context, in_call, doc)
         if(this.items) {
             this.items.forEach(
-                item => item.check(context)
+                item => item.check(context, false, null)
             )
         }
         return new ContextTypes(PHPSimpleType.coreTypes.array)

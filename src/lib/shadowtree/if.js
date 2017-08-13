@@ -34,7 +34,7 @@ export default class If extends Statement {
      */
     check(context, in_call = false, doc = null) {
         super.check(context, in_call, doc)
-        this.test.check(context)
+        this.test.check(context, false, null)
 
         let body_context = context.childContext(false)
         body_context.importNamespaceFrom(context)
@@ -50,11 +50,11 @@ export default class If extends Statement {
             )
         }
         let type = PHPTypeUnion.empty
-        type = type.addTypesFrom(this.body.check(body_context).returnType)
+        type = type.addTypesFrom(this.body.check(body_context, false, null).returnType)
         if(this.alternate) {
             let alt_context = context.childContext(false)
             alt_context.importNamespaceFrom(context)
-            type = type.addTypesFrom(this.alternate.check(alt_context).returnType)
+            type = type.addTypesFrom(this.alternate.check(alt_context, false, null).returnType)
             context.importNamespaceFrom(alt_context)
         }
         context.importNamespaceFrom(body_context)

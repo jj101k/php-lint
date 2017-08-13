@@ -21,8 +21,8 @@ export default class Do extends Statement {
      */
     check(context, in_call = false, doc = null) {
         super.check(context, in_call, doc)
-        this.body.check(context)
-        this.test.check(context)
+        this.body.check(context, false, null)
+        this.test.check(context, false, null)
         return ContextTypes.empty
     }
 }

@@ -34,14 +34,14 @@ export default class Foreach extends Statement {
      */
     check(context, in_call = false, doc = null) {
         super.check(context, in_call, doc)
-        this.source.check(context)
+        this.source.check(context, false, null)
         let assign_context = context.childContext(true)
         assign_context.assigningType = PHPSimpleType.coreTypes.mixed
         if(this.key) {
-            this.key.check(assign_context)
+            this.key.check(assign_context, false, null)
         }
-        this.value.check(assign_context)
-        this.body.check(context)
+        this.value.check(assign_context, false, null)
+        this.body.check(context, false, null)
         return ContextTypes.empty
     }
 }

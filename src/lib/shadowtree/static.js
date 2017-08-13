@@ -22,7 +22,7 @@ export default class Static extends Statement {
         let inner_context = context.childContext(true)
         inner_context.assigningType = PHPSimpleType.coreTypes.mixed
         this.items.forEach(
-            i => i.check(inner_context)
+            i => i.check(inner_context, false, null)
         )
         return ContextTypes.empty
     }

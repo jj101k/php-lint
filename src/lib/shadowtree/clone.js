@@ -17,6 +17,6 @@ export default class Clone extends Statement {
      */
     check(context, in_call = false, doc = null) {
         super.check(context, in_call, doc)
-        return this.what.check(context)
+        return this.what.check(context, false, doc)
     }
 }

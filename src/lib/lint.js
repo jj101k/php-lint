@@ -81,7 +81,9 @@ class Lint {
                 null,
                 null,
                 depth
-            )
+            ),
+            false,
+            null
         )
         return true
     }

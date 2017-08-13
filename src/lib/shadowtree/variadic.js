@@ -16,7 +16,7 @@ export default class Variadic extends Expression {
      */
     check(context, in_call = false, doc = null) {
         super.check(context, in_call, doc)
-        this.what.check(context) // FIXME
+        this.what.check(context, false, null) // FIXME
         return ContextTypes.empty
     }
 }

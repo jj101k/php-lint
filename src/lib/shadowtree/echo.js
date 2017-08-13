@@ -13,7 +13,7 @@ export default class Echo extends Sys {
     check(context, in_call = false, doc = null) {
         super.check(context, in_call, doc)
         this.arguments.forEach(child => {
-            let types = child.check(context)
+            let types = child.check(context, false, null)
         })
         return ContextTypes.empty
     }

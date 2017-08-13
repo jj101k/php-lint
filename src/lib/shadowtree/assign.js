@@ -31,8 +31,8 @@ export default class Assign extends Statement {
     check(context, in_call = false, doc = null) {
         super.check(context, in_call, doc)
         let left_context = context.childContext(true)
-        left_context.assigningType = this.right.check(context).expressionType
-        this.left.check(left_context)
+        left_context.assigningType = this.right.check(context, false, doc).expressionType
+        this.left.check(left_context, false, doc)
         if(
             this.left instanceof Variable &&
             this.left.name.length == 1 &&

@@ -21,7 +21,7 @@ export default class Return extends _Node {
         if(this.expr) {
             return new ContextTypes(
                 PHPTypeUnion.empty,
-                this.expr.check(context).expressionType
+                this.expr.check(context, false, null).expressionType
             )
         } else {
             return new ContextTypes(

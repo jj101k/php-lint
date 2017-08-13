@@ -21,9 +21,9 @@ export default class Entry extends _Node {
     check(context, in_call = false, doc = null) {
         super.check(context, in_call, doc)
         if(this.key) {
-            this.key.check(context)
+            this.key.check(context, false, null)
         }
-        this.value.check(context)
+        this.value.check(context, false, null)
         return ContextTypes.empty
     }
 }

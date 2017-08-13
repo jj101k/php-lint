@@ -18,7 +18,7 @@ export default class Eval extends Statement {
      */
     check(context, in_call = false, doc = null) {
         super.check(context, in_call, doc)
-        this.source.check(context)
+        this.source.check(context, false, null)
         return new ContextTypes(PHPSimpleType.coreTypes.mixed)
     }
 }

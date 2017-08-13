@@ -17,6 +17,6 @@ export default class Parenthesis extends Operation {
      */
     check(context, in_call = false, doc = null) {
         super.check(context, in_call, doc)
-        return this.inner.check(context)
+        return this.inner.check(context, false, null)
     }
 }

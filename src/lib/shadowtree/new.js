@@ -26,7 +26,7 @@ export default class New extends Statement {
     check(context, in_call = false, doc = null) {
         super.check(context, in_call, doc)
         this.arguments.forEach(
-            arg => arg.check(context)
+            arg => arg.check(context, false, null)
         )
         if(this.what instanceof Variable) {
             return new ContextTypes(PHPSimpleType.coreTypes.mixed)

@@ -18,7 +18,7 @@ export default class List extends Sys {
                 arg => {
                     let inner_context = context.childContext(true)
                     inner_context.assigningType = PHPSimpleType.coreTypes.mixed
-                    arg.check(inner_context)
+                    arg.check(inner_context, false, null)
                 }
             )
             return ContextTypes.empty

@@ -21,7 +21,7 @@ export default class Constant extends Declaration {
         super.check(context, in_call, doc)
         let types
         if(this.value) {
-            types = this.value.check(context).expressionType
+            types = this.value.check(context, false, doc).expressionType
         } else {
             types = PHPSimpleType.coreTypes.mixed
         }

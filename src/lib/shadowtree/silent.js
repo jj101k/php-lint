@@ -17,6 +17,6 @@ export default class Silent extends Statement {
      */
     check(context, in_call = false, doc = null) {
         super.check(context, in_call, doc)
-        return this.expr.check(context)
+        return this.expr.check(context, false, null)
     }
 }

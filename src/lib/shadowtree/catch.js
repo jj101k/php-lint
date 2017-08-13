@@ -33,8 +33,8 @@ export default class Catch extends Statement {
         )
         let inner_context = context.childContext(true)
         inner_context.assigningType = PHPSimpleType.coreTypes.mixed
-        this.variable.check(inner_context)
-        this.body.check(context)
+        this.variable.check(inner_context, false, null)
+        this.body.check(context, false, null)
         return ContextTypes.empty
     }
 }

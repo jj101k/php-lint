@@ -34,16 +34,16 @@ export default class For extends Statement {
     check(context, in_call = false, doc = null) {
         super.check(context, in_call, doc)
         this.init.forEach(
-            n => n.check(context)
+            n => n.check(context, false, null)
         )
         this.test.forEach(
-            n => n.check(context)
+            n => n.check(context, false, null)
         )
         this.increment.forEach(
-            n => n.check(context)
+            n => n.check(context, false, null)
         )
         if(this.body) {
-            this.body.check(context)
+            this.body.check(context, false, null)
         }
         return ContextTypes.empty
     }

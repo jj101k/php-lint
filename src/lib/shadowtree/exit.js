@@ -18,7 +18,7 @@ export default class Exit extends Statement {
     check(context, in_call = false, doc = null) {
         super.check(context, in_call, doc)
         if(this.status) {
-            this.status.check(context)
+            this.status.check(context, false, null)
         }
         return ContextTypes.empty
     }

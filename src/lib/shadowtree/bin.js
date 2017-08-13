@@ -26,8 +26,8 @@ export default class Bin extends Operation {
      */
     check(context, in_call = false, doc = null) {
         super.check(context, in_call, doc)
-        let left_types = this.left.check(context).expressionType
-        let right_types = this.right.check(context).expressionType
+        let left_types = this.left.check(context, false, null).expressionType
+        let right_types = this.right.check(context, false, null).expressionType
         let types = PHPTypeUnion.empty
         switch(this.type) {
             case "||":

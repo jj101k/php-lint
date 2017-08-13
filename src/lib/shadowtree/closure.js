@@ -47,7 +47,7 @@ export default class Closure extends Statement {
         let pass_by_reference_positions = {}
         this.arguments.forEach(
             (node, index) => {
-                arg_types.push(node.check(inner_context, in_call).expressionType)
+                arg_types.push(node.check(inner_context, in_call, null).expressionType)
                 if(node.byref) {
                     pass_by_reference_positions[index] = true
                 }
@@ -67,7 +67,7 @@ export default class Closure extends Statement {
         let signature_type = this.type && PHPSimpleType.named(context.resolveName(this.type.name))
         let return_type
         if(this.body) {
-            return_type = this.body.check(inner_context).returnType
+            return_type = this.body.check(inner_context, false, null).returnType
             if(signature_type && return_type !== signature_type) {
                 this.throw(new PHPError.ReturnTypeMismatch(
                     `Practical return type ${return_type} does not match signature ${signature_type}`

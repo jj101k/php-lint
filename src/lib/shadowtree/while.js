@@ -26,7 +26,7 @@ export default class While extends Statement {
     check(context, in_call = false, doc = null) {
         super.check(context, in_call, doc)
         this.test.check(context)
-        this.body.check(context) // FIXME return
+        this.body.check(context, false, null) // FIXME return
         return ContextTypes.empty // FIXME single-case-if
     }
 }

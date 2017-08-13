@@ -27,7 +27,7 @@ export default class UseGroup extends Statement {
     check(context, in_call = false, doc = null) {
         super.check(context, in_call, doc)
         this.items.forEach(
-            item => item.check(context)
+            item => item.check(context, false, null)
         )
         // More or less no-op
         return ContextTypes.empty

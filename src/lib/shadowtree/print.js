@@ -13,7 +13,7 @@ export default class Print extends Sys {
     check(context, in_call = false, doc = null) {
         super.check(context, in_call, doc)
         this.arguments.forEach(
-            a => a.check(context)
+            a => a.check(context, false, null)
         )
         return ContextTypes.empty
     }

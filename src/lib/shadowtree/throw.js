@@ -17,7 +17,7 @@ export default class Throw extends Statement {
      */
     check(context, in_call = false, doc = null) {
         super.check(context, in_call, doc)
-        this.what.check(context)
+        this.what.check(context, false, null)
         return ContextTypes.empty
     }
 }

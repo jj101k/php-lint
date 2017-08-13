@@ -26,7 +26,7 @@ export default class StaticLookup extends Lookup {
         let class_context
         let resolved_name
         if(this.what instanceof Variable) {
-            this.what.check(context)
+            this.what.check(context, false, null)
             // $x::$y
             //this.offset.check(context)
             return new ContextTypes(PHPSimpleType.coreTypes.mixed)

@@ -20,7 +20,7 @@ export default class Block extends Statement {
         super.check(context, in_call, doc)
         let types = PHPTypeUnion.empty
         this.children.forEach(node => {
-            types = types.addTypesFrom(node.check(context).returnType)
+            types = types.addTypesFrom(node.check(context, false, null).returnType)
         })
         return new ContextTypes(PHPTypeUnion.empty, types)
     }

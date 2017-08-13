@@ -20,7 +20,7 @@ export default class Global extends Statement {
         super.check(context, in_call, doc)
         let inner_context = context.childContext(true)
         inner_context.assigningType = PHPSimpleType.coreTypes.mixed
-        this.items.forEach(item => item.check(inner_context))
+        this.items.forEach(item => item.check(inner_context, false, null))
         return ContextTypes.empty
     }
 }

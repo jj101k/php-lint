@@ -26,14 +26,14 @@ export default class RetIf extends Statement {
      */
     check(context, in_call = false, doc = null) {
         super.check(context, in_call, doc)
-        let test_type = this.test.check(context).expressionType
+        let test_type = this.test.check(context, false, null).expressionType
         let types = PHPTypeUnion.empty
         if(this.trueExpr) {
-            types = types.addTypesFrom(this.trueExpr.check(context).expressionType)
+            types = types.addTypesFrom(this.trueExpr.check(context, false, null).expressionType)
         } else {
             types = types.addTypesFrom(test_type)
         }
-        types = types.addTypesFrom(this.falseExpr.check(context).expressionType)
+        types = types.addTypesFrom(this.falseExpr.check(context, false, null).expressionType)
         return new ContextTypes(types)
     }
 }

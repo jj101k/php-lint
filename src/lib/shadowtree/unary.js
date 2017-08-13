@@ -21,6 +21,6 @@ export default class Unary extends Operation {
      */
     check(context, in_call = false, doc = null) {
         super.check(context, in_call, doc)
-        return this.what.check(context) // FIXME infer from type
+        return this.what.check(context, false, null) // FIXME infer from type
     }
 }

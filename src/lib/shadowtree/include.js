@@ -29,7 +29,7 @@ export default class Include extends Statement {
      */
     check(context, in_call = false, doc = null) {
         super.check(context, in_call, doc)
-        this.target.check(context)
+        this.target.check(context, false, null)
         if(this.target instanceof _String) {
             context.checkFile(this.target.value, this.require)
         } else if(

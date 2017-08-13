@@ -20,7 +20,7 @@ export default class OffsetLookup extends Lookup {
         super.check(context, in_call, doc)
         let inner_context = context.childContext(true)
         inner_context.assigningType = null
-        let type_union = this.what.check(inner_context).expressionType
+        let type_union = this.what.check(inner_context, false, null).expressionType
         if(this.offset instanceof Variable) {
             return new ContextTypes(PHPSimpleType.coreTypes.mixed)
         } else {

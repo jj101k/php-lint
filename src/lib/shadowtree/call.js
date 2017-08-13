@@ -32,7 +32,7 @@ export default class Call extends Statement {
         super.check(context, in_call, doc)
         let pbr_positions
         let callback_positions
-        let callable_types = this.what.check(context, true).expressionType
+        let callable_types = this.what.check(context, true, null).expressionType
         let callable_type = callable_types.types[0]
         if(callable_type instanceof PHPFunctionType) {
             pbr_positions = callable_type.passByReferencePositions
@@ -45,14 +45,14 @@ export default class Call extends Statement {
             if(pbr_positions[i]) {
                 let inner_context = context.childContext(true)
                 inner_context.assigningType = context.findName(arg.name) || PHPSimpleType.coreTypes.mixed
-                arg.check(inner_context)
+                arg.check(inner_context, false, null)
             } else if(callback_positions[i]) {
                 let inner_context = context.childContext(false)
                 inner_context.importNamespaceFrom(context)
                 inner_context.setName("$this", callback_positions[i])
-                arg.check(inner_context)
+                arg.check(inner_context, false, null)
             } else {
-                arg.check(context)
+                arg.check(context, false, null)
             }
         })
         if(

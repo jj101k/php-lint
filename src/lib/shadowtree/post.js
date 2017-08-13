@@ -21,6 +21,6 @@ export default class Post extends Operation {
      */
     check(context, in_call = false, doc = null) {
         super.check(context, in_call, doc)
-        return this.what.check(context) // FIXME coerce
+        return this.what.check(context, false, null) // FIXME coerce
     }
 }
