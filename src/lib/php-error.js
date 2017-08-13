@@ -8,5 +8,6 @@ export {default as NoSuperclassParent} from "./php-error/no-superclass-parent"
 export {default as ReturnTypeMismatch} from "./php-error/return-type-mismatch"
 export {default as ScopeMiss} from "./php-error/scope-miss"
 export {default as SingleCharacterVariable} from "./php-error/single-character-variable"
+export {default as UndefinedVariable} from "./php-error/undefined-variable"
 import * as PSR1 from "./php-error/psr-1"
 export {PSR1}

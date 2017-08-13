@@ -113,12 +113,9 @@ export default class _Node {
                     k => this.node[k] && this.node[k].loc
                 ).find(l => l)
             }
-            throw new PHPError.UndefinedVariable(
+            this.throw(new PHPError.UndefinedVariable(
                 `Name ${name} is not defined in this namespace, contents are: ${context.definedVariables.join(", ")}`
-            ).withContext(
-                context,
-                this.loc
-            );
+            ), context)
         }
         return types
     }
