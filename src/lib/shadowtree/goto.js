@@ -18,6 +18,6 @@ export default class Goto extends Statement {
      */
     check(context, in_call = false, doc = null) {
         this.throw(new PHPError.Goto(), context)
-        return super.check(context)
+        return super.check(context, in_call, doc)
     }
 }

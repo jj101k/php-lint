@@ -16,7 +16,7 @@ export default class Clone extends Statement {
      * @returns {?ContextTypes} The set of types applicable to this value
      */
     check(context, in_call = false, doc = null) {
-        super.check(context)
+        super.check(context, in_call, doc)
         return this.what.check(context)
     }
 }

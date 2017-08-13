@@ -18,7 +18,7 @@ export default class Constant extends Declaration {
      * @returns {?ContextTypes} The set of types applicable to this value
      */
     check(context, in_call = false, doc = null) {
-        super.check(context)
+        super.check(context, in_call, doc)
         let types
         if(this.value) {
             types = this.value.check(context).expressionType

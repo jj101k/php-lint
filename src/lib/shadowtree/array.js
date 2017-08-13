@@ -21,7 +21,7 @@ export default class _Array extends Expression {
      * @returns {?ContextTypes} The set of types applicable to this value
      */
     check(context, in_call = false, doc = null) {
-        super.check(context)
+        super.check(context, in_call, doc)
         if(this.items) {
             this.items.forEach(
                 item => item.check(context)

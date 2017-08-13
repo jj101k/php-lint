@@ -32,6 +32,6 @@ export default class Program extends Block {
                 last_doc = null
             }
         })
-        return super.check(context)
+        return super.check(context, in_call, doc)
     }
 }

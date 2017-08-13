@@ -33,7 +33,7 @@ export default class Foreach extends Statement {
      * @returns {?ContextTypes} The set of types applicable to this value
      */
     check(context, in_call = false, doc = null) {
-        super.check(context)
+        super.check(context, in_call, doc)
         this.source.check(context)
         let assign_context = context.childContext(true)
         assign_context.assigningType = PHPSimpleType.coreTypes.mixed

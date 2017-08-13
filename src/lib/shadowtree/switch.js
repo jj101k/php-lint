@@ -25,7 +25,7 @@ export default class Switch extends Statement {
      * @returns {?ContextTypes} The set of types applicable to this value
      */
     check(context, in_call = false, doc = null) {
-        super.check(context)
+        super.check(context, in_call, doc)
         this.test.check(context)
         return this.body.check(context) // FIXME if union
     }

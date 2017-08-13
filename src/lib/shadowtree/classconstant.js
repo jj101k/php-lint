@@ -24,6 +24,6 @@ export default class ClassConstant extends Constant {
         if(!this.name.match(/^[0-9A-Z_]+$/)) {
             this.throw(new PHPError.PSR1.S41ClassConstantName(), context)
         }
-        return super.check(context, in_call)
+        return super.check(context, in_call, doc)
     }
 }

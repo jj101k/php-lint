@@ -20,7 +20,7 @@ export default class Namespace extends Block {
      */
     check(context, in_call = false, doc = null) {
         context.fileContext.namespace = this.name
-        super.check(context)
+        super.check(context, in_call, doc)
         return ContextTypes.empty
     }
 }

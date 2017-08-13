@@ -27,7 +27,7 @@ export default class Trait extends Declaration {
      * @returns {?ContextTypes} The set of types applicable to this value
      */
     check(context, in_call = false, doc = null) {
-        super.check(context)
+        super.check(context, in_call, doc)
         let inner_context = context.childContext()
         inner_context.classContext = inner_context.globalContext.addTrait(
             context.resolveNodeName(this),

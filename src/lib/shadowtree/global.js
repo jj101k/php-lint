@@ -17,7 +17,7 @@ export default class Global extends Statement {
      * @returns {?ContextTypes} The set of types applicable to this value
      */
     check(context, in_call = false, doc = null) {
-        super.check(context)
+        super.check(context, in_call, doc)
         let inner_context = context.childContext(true)
         inner_context.assigningType = PHPSimpleType.coreTypes.mixed
         this.items.forEach(item => item.check(inner_context))

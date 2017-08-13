@@ -29,7 +29,7 @@ export default class Assign extends Statement {
      * @returns {?ContextTypes} The set of types applicable to this value
      */
     check(context, in_call = false, doc = null) {
-        super.check(context)
+        super.check(context, in_call, doc)
         let left_context = context.childContext(true)
         left_context.assigningType = this.right.check(context).expressionType
         this.left.check(left_context)

@@ -21,7 +21,7 @@ export default class Cast extends Operation {
      * @returns {?ContextTypes} The set of types applicable to this value
      */
     check(context, in_call = false, doc = null) {
-        super.check(context)
+        super.check(context, in_call, doc)
         this.what.check(context)
         return new ContextTypes(PHPSimpleType.named(context.resolveName(this.type)))
     }

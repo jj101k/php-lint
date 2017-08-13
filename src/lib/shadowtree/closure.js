@@ -41,7 +41,7 @@ export default class Closure extends Statement {
      * @returns {?ContextTypes} The set of types applicable to this value
      */
     check(context, in_call = false, doc = null) {
-        super.check(context)
+        super.check(context, in_call, doc)
         var inner_context = context.childContext()
         let arg_types = []
         let pass_by_reference_positions = {}

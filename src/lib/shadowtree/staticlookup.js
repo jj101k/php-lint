@@ -22,7 +22,7 @@ export default class StaticLookup extends Lookup {
      * @returns {?ContextTypes} The set of types applicable to this value
      */
     check(context, in_call = false, doc = null) {
-        super.check(context)
+        super.check(context, in_call, doc)
         let class_context
         let resolved_name
         if(this.what instanceof Variable) {

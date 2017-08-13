@@ -32,7 +32,7 @@ export default class Method extends _Function {
             // This does allow names like getUPSPowerState
             this.throw(new PHPError.PSR1.S43MethodName(), context)
         }
-        let method_type = super.check(context).expressionType
+        let method_type = super.check(context, in_call, doc).expressionType
         context.classContext.addIdentifier(
             this.name,
             this.visibility,

@@ -12,7 +12,7 @@ export default class List extends Sys {
      * @returns {?ContextTypes} The set of types applicable to this value
      */
     check(context, in_call = false, doc = null) {
-        super.check(context)
+        super.check(context, in_call, doc)
         if(context.assigningType) {
             this.arguments.forEach(
                 arg => {

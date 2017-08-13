@@ -29,7 +29,7 @@ export default class Call extends Statement {
      * @returns {?ContextTypes} The set of types applicable to this value
      */
     check(context, in_call = false, doc = null) {
-        super.check(context)
+        super.check(context, in_call, doc)
         let pbr_positions
         let callback_positions
         let callable_types = this.what.check(context, true).expressionType

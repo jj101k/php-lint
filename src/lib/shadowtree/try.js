@@ -25,7 +25,7 @@ export default class Try extends Statement {
      * @returns {?ContextTypes} The set of types applicable to this value
      */
     check(context, in_call = false, doc = null) {
-        super.check(context)
+        super.check(context, in_call, doc)
         this.body.check(context)
         this.catches.forEach(
             c => c.check(context)

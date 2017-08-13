@@ -28,7 +28,7 @@ export default class Include extends Statement {
      * @returns {?ContextTypes} The set of types applicable to this value
      */
     check(context, in_call = false, doc = null) {
-        super.check(context)
+        super.check(context, in_call, doc)
         this.target.check(context)
         if(this.target instanceof _String) {
             context.checkFile(this.target.value, this.require)

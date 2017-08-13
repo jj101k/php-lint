@@ -55,7 +55,7 @@ export default class Class extends Declaration {
      * @returns {?ContextTypes} The set of types applicable to this value
      */
     check(context, in_call = false, doc = null) {
-        super.check(context)
+        super.check(context, in_call, doc)
         if(!this.name.match(/^([0-9A-Z]+[0-9a-z]*)+$/)) {
             // This does allow names like UPSPowerState
             this.throw(new PHPError.PSR1.S3ClassCase(), context)

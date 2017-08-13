@@ -20,7 +20,7 @@ export default class _String extends Literal {
      * @returns {?ContextTypes} The set of types applicable to this value
      */
     check(context, in_call = false, doc = null) {
-        super.check(context)
+        super.check(context, in_call, doc)
         let types = PHPSimpleType.coreTypes.string
         return new ContextTypes(types)
     }

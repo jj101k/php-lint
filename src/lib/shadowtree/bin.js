@@ -25,7 +25,7 @@ export default class Bin extends Operation {
      * @returns {?ContextTypes} The set of types applicable to this value
      */
     check(context, in_call = false, doc = null) {
-        super.check(context)
+        super.check(context, in_call, doc)
         let left_types = this.left.check(context).expressionType
         let right_types = this.right.check(context).expressionType
         let types = PHPTypeUnion.empty

@@ -17,7 +17,7 @@ export default class Block extends Statement {
      * @returns {?ContextTypes} The set of types applicable to this value
      */
     check(context, in_call = false, doc = null) {
-        super.check(context)
+        super.check(context, in_call, doc)
         let types = PHPTypeUnion.empty
         this.children.forEach(node => {
             types = types.addTypesFrom(node.check(context).returnType)
