@@ -10,10 +10,12 @@ export default class Goto extends Statement {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
+     * @param {boolean} [in_call]
+     * @param {?Doc} [doc]
      * @throws
      * @returns {?ContextTypes} The set of types applicable to this value
      */
-    check(context, in_call = false) {
+    check(context, in_call = false, doc = null) {
         this.throw(new PHPError.Goto(), context)
         return super.check(context)
     }

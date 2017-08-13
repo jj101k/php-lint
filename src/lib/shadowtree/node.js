@@ -174,9 +174,11 @@ export default class _Node {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
+     * @param {boolean} [in_call]
+     * @param {?Doc} [doc]
      * @returns {?ContextTypes} The set of types applicable to this value
      */
-    check(context, in_call = false) {
+    check(context, in_call = false, doc = null) {
         if(DEBUG) {
             if(this.loc) {
                 console.info(`Checking ${context.fileContext.filename}:${this.loc.start.line}:${this.loc.start.column}:${this.kind}`)

@@ -19,9 +19,11 @@ export default class Bin extends Operation {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
+     * @param {boolean} [in_call]
+     * @param {?Doc} [doc]
      * @returns {?ContextTypes} The set of types applicable to this value
      */
-    check(context, in_call = false) {
+    check(context, in_call = false, doc = null) {
         super.check(context)
         let left_types = this.left.check(context).expressionType
         let right_types = this.right.check(context).expressionType

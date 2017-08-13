@@ -22,9 +22,11 @@ export default class Method extends _Function {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
+     * @param {boolean} [in_call]
+     * @param {?Doc} [doc]
      * @returns {?ContextTypes} The set of types applicable to this value
      */
-    check(context, in_call = false) {
+    check(context, in_call = false, doc = null) {
         if(!this.name.match(/^_*[0-9a-z]+([0-9A-Z]+[0-9a-z]*)*$/)) {
             // This does allow names like getUPSPowerState
             this.throw(new PHPError.PSR1.S43MethodName(), context)

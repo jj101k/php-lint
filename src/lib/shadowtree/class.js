@@ -7,6 +7,7 @@ import Property from "./property"
 import ClassConstant from "./classconstant"
 import Identifier from "./identifier"
 import TraitUse from "./traituse"
+import Doc from "./doc"
 import * as PHPError from "../php-error"
 export default class Class extends Declaration {
     /**
@@ -49,9 +50,11 @@ export default class Class extends Declaration {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
+     * @param {boolean} [in_call]
+     * @param {?Doc} [doc]
      * @returns {?ContextTypes} The set of types applicable to this value
      */
-    check(context, in_call = false) {
+    check(context, in_call = false, doc = null) {
         super.check(context)
         if(!this.name.match(/^([0-9A-Z]+[0-9a-z]*)+$/)) {
             // This does allow names like UPSPowerState
@@ -101,8 +104,17 @@ export default class Class extends Declaration {
                 }
             }
         )
+        /** @type {?Doc} */
+        let last_doc = null
         this.body.forEach(
-            b => b.check(inner_context)
+            b => {
+                if(b instanceof Doc) {
+                    last_doc = b
+                } else {
+                    b.check(inner_context, false, last_doc)
+                    last_doc = null
+                }
+            }
         )
         return ContextTypes.empty
     }

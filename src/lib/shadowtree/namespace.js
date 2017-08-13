@@ -13,9 +13,11 @@ export default class Namespace extends Block {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
+     * @param {boolean} [in_call]
+     * @param {?Doc} [doc]
      * @returns {?ContextTypes} The set of types applicable to this value
      */
-    check(context, in_call = false) {
+    check(context, in_call = false, doc = null) {
         context.fileContext.namespace = this.name
         super.check(context)
         return ContextTypes.empty

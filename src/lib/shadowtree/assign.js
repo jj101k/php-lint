@@ -23,9 +23,11 @@ export default class Assign extends Statement {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
+     * @param {boolean} [in_call]
+     * @param {?Doc} [doc]
      * @returns {?ContextTypes} The set of types applicable to this value
      */
-    check(context, in_call = false) {
+    check(context, in_call = false, doc = null) {
         super.check(context)
         let left_context = context.childContext(true)
         left_context.assigningType = this.right.check(context).expressionType

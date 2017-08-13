@@ -15,9 +15,11 @@ export default class ClassConstant extends Constant {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
+     * @param {boolean} [in_call]
+     * @param {?Doc} [doc]
      * @returns {?ContextTypes} The set of types applicable to this value
      */
-    check(context, in_call = false) {
+    check(context, in_call = false, doc = null) {
         if(!this.name.match(/^[0-9A-Z_]+$/)) {
             this.throw(new PHPError.PSR1.S41ClassConstantName(), context)
         }

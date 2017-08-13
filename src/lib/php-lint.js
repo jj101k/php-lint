@@ -3,7 +3,7 @@ var phpParser = require("php-parser")
 var parser = new phpParser({
     parser: {
         debug: false,
-        extractDoc: false,
+        extractDoc: true,
     },
     ast: {
         withPositions: true,
