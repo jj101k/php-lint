@@ -2,6 +2,7 @@ import Context from "../context"
 import ContextTypes from "../context-types"
 import Operation from "./operation"
 import Expression from "./expression"
+import Doc from "./doc"
 export default class Parenthesis extends Operation {
     /** @type {Expression} */
     get inner() {

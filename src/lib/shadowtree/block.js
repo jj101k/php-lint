@@ -3,6 +3,7 @@ import ContextTypes from "../context-types"
 import Statement from "./statement"
 import {PHPTypeUnion} from "../phptype"
 import _Node from "./node"
+import Doc from "./doc"
 export default class Block extends Statement {
     /** @type {_Node[]} */
     get children() {

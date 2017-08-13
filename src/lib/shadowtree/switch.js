@@ -3,6 +3,7 @@ import ContextTypes from "../context-types"
 import Statement from "./statement"
 import Expression from "./expression"
 import Block from "./block"
+import Doc from "./doc"
 export default class Switch extends Statement {
     /** @type {Expression} */
     get test() {

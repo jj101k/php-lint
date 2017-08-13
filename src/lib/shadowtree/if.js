@@ -7,6 +7,7 @@ import Block from "./block"
 import Bin from "./bin"
 import Variable from "./variable"
 import ConstRef from "./constref"
+import Doc from "./doc"
 export default class If extends Statement {
     /** @type {Expression} */
     get test() {

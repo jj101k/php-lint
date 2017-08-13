@@ -4,6 +4,7 @@ import Declaration from "./declaration"
 import {PHPTypeUnion} from "../phptype"
 import Method from "./method"
 import Identifier from "./identifier"
+import Doc from "./doc"
 export default class Interface extends Declaration {
     /** @type {?Identifier} */
     get extends() {

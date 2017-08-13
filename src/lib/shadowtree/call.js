@@ -7,6 +7,7 @@ import Variable from "./variable"
 import _String from "./string"
 import Bin from "./bin"
 import Magic from "./magic"
+import Doc from "./doc"
 export default class Call extends Statement {
     /**
      * @type {Object[]}

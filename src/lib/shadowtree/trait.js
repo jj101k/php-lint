@@ -4,6 +4,7 @@ import Declaration from "./declaration"
 import {PHPSimpleType, PHPTypeUnion} from "../phptype"
 import Identifier from "./identifier"
 import Method from "./method"
+import Doc from "./doc"
 export default class Trait extends Declaration {
     /** @type {?Identifier} */
     get extends() {

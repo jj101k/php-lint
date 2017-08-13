@@ -6,6 +6,7 @@ import _Node from "./node"
 import Identifier from "./identifier"
 import Variable from "./variable"
 import Class from "./class"
+import Doc from "./doc"
 export default class New extends Statement {
     /** @type {Identifier|Variable|Class} */
     get what() {

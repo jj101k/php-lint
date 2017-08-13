@@ -1,6 +1,7 @@
 import Context from "../context"
 import ContextTypes from "../context-types"
 import Expression from "./expression"
+import Doc from "./doc"
 export default class Variadic extends Expression {
     /** @type {Array|Expression} */
     get what() {

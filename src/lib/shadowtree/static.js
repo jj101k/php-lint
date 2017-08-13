@@ -4,6 +4,7 @@ import Statement from "./statement"
 import {PHPSimpleType} from "../phptype"
 import Variable from "./variable"
 import Assign from "./assign"
+import Doc from "./doc"
 export default class Static extends Statement {
     /** @type {(Variable|Assign)[]} */
     get items() {

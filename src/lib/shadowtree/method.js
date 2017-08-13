@@ -1,6 +1,7 @@
 import Context from "../context"
 import ContextTypes from "../context-types"
 import _Function from "./function"
+import Doc from "./doc"
 import * as PHPError from "../php-error"
 export default class Method extends _Function {
     /** @type {boolean} */

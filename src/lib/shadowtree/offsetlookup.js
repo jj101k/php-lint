@@ -7,6 +7,7 @@ import PropertyLookup from "./propertylookup"
 import StaticLookup from "./staticlookup"
 import Parenthesis from "./parenthesis"
 import Call from "./call"
+import Doc from "./doc"
 export default class OffsetLookup extends Lookup {
     /**
      * Checks that syntax seems ok

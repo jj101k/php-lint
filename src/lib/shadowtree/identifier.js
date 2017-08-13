@@ -1,6 +1,7 @@
 import Context from "../context"
 import ContextTypes from "../context-types"
 import _Node from "./node"
+import Doc from "./doc"
 import {PHPSimpleType} from "../phptype"
 export default class Identifier extends _Node {
     /** @type {string} */

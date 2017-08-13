@@ -3,6 +3,7 @@ import ContextTypes from "../context-types"
 import Statement from "./statement"
 import Identifier from "./identifier"
 import UseItem from "./useitem"
+import Doc from "./doc"
 export default class UseGroup extends Statement {
     /** @type {?Identifier} */
     get name() { // FIXME

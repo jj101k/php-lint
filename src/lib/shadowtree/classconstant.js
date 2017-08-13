@@ -1,6 +1,7 @@
 import Context from "../context"
 import ContextTypes from "../context-types"
 import Constant from "./constant"
+import Doc from "./doc"
 import * as PHPError from "../php-error"
 export default class ClassConstant extends Constant {
     /** @type {boolean} */

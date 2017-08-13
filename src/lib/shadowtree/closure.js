@@ -6,6 +6,7 @@ import Block from "./block"
 import Identifier from "./identifier"
 import Variable from "./variable"
 import Parameter from "./parameter"
+import Doc from "./doc"
 import * as PHPError from "../php-error"
 export default class Closure extends Statement {
     /** @type {Parameter[]} */

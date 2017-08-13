@@ -3,6 +3,7 @@ import ContextTypes from "../context-types"
 import Statement from "./statement"
 import Block from "./block"
 import Catch from "./catch"
+import Doc from "./doc"
 export default class Try extends Statement {
     /** @type {Block} */
     get body() {

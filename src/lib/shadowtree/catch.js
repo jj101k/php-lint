@@ -4,6 +4,7 @@ import Statement from "./statement"
 import {PHPSimpleType, PHPTypeUnion} from "../phptype"
 import Identifier from "./identifier"
 import Variable from "./variable"
+import Doc from "./doc"
 export default class Catch extends Statement {
     /** @type {Identifier[]} */
     get what() {

@@ -2,6 +2,7 @@ import Context from "../context"
 import ContextTypes from "../context-types"
 import Operation from "./operation"
 import Expression from "./expression"
+import Doc from "./doc"
 import {PHPSimpleType} from "../phptype"
 export default class Cast extends Operation {
     /** @type {string} */

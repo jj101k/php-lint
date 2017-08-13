@@ -4,6 +4,7 @@ import Declaration from "./declaration"
 import Parameter from "./parameter"
 import Block from "./block"
 import Identifier from "./identifier"
+import Doc from "./doc"
 import {PHPSimpleType, PHPFunctionType, PHPTypeUnion} from "../phptype"
 import * as PHPError from "../php-error"
 export default class _Function extends Declaration {

@@ -3,6 +3,7 @@ import ContextTypes from "../context-types"
 import _Node from "./node"
 import Expression from "./expression"
 import Block from "./block"
+import Doc from "./doc"
 export default class Case extends _Node {
     /** @type {?Expression} */
     get test() {

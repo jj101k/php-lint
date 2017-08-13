@@ -1,6 +1,7 @@
 import Context from "../context"
 import ContextTypes from "../context-types"
 import Sys from "./sys"
+import Doc from "./doc"
 export default class Empty extends Sys {
     /**
      * Checks that syntax seems ok

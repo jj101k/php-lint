@@ -2,6 +2,7 @@ import Context from "../context"
 import ContextTypes from "../context-types"
 import Operation from "./operation"
 import Variable from "./variable"
+import Doc from "./doc"
 export default class Pre extends Operation {
     /** @type {string} */
     get type() {

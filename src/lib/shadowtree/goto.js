@@ -1,6 +1,7 @@
 import Context from "../context"
 import ContextTypes from "../context-types"
 import Statement from "./statement"
+import Doc from "./doc"
 import * as PHPError from "../php-error"
 export default class Goto extends Statement {
     /** @type {string} */

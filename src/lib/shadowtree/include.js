@@ -5,6 +5,7 @@ import Expression from "./expression"
 import _String from "./string"
 import Bin from "./bin"
 import Magic from "./magic"
+import Doc from "./doc"
 import {PHPSimpleType} from "../phptype"
 export default class Include extends Statement {
     /** @type {Expression} */

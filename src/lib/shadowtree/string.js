@@ -2,6 +2,7 @@ import Context from "../context"
 import ContextTypes from "../context-types"
 import Literal from "./literal"
 import {PHPSimpleType} from "../phptype"
+import Doc from "./doc"
 export default class _String extends Literal {
     /** @type {string} */
     get label() {

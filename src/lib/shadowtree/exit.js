@@ -2,6 +2,7 @@ import Context from "../context"
 import ContextTypes from "../context-types"
 import Statement from "./statement"
 import _Node from "./node"
+import Doc from "./doc"
 export default class Exit extends Statement {
     /** @type {?_Node} */
     get status() {

@@ -3,6 +3,7 @@ import ContextTypes from "../context-types"
 import Statement from "./statement"
 import {PHPSimpleType} from "../phptype"
 import _Node from "./node"
+import Doc from "./doc"
 export default class Eval extends Statement {
     /** @type {_Node} */
     get source() {

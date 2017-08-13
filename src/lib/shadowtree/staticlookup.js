@@ -6,6 +6,7 @@ import {PHPSimpleType} from "../phptype"
 import Identifier from "./identifier"
 import Variable from "./variable"
 import ConstRef from "./constref"
+import Doc from "./doc"
 import PHPStrictError from "../php-strict-error"
 import * as PHPError from "../php-error"
 

@@ -3,6 +3,7 @@ import ContextTypes from "../context-types"
 import _Node from "./node"
 import {PHPTypeUnion} from "../phptype"
 import Expression from "./expression"
+import Doc from "./doc"
 export default class Return extends _Node {
     /** @type {?Expression} */
     get expr() {

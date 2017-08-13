@@ -3,6 +3,8 @@ import ContextTypes from "../context-types"
 import Declaration from "./declaration"
 import Identifier from "./identifier"
 import {PHPSimpleType} from "../phptype"
+import Doc from "./doc"
+import _Node from "./node"
 export default class Parameter extends Declaration {
     /** @type {boolean} */
     get byref() {
