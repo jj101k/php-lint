@@ -99,6 +99,12 @@ class PHPLint {
         var tree = parser.parseCode(code);
         return Lint.check(tree, null, throw_on_error, depth);
     }
+    /**
+     * @type {{[x: string]: (boolean|{[y: string]: boolean})}} The error classes to ignore
+     */
+    static get ignoreErrorMap() {
+        return Lint.ignoreErrorMap
+    }
 }
 
 export default PHPLint

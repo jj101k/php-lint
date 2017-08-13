@@ -7,9 +7,6 @@ import * as ShadowTree from "../shadowtree"
 /** @type {boolean} True if you want lots of debugging messages */
 const DEBUG = false
 
-/** @type {PHPError.Error[]} Error types to ignore */
-const IGNORE_ERRORS = []
-
 /**
  * @callback cachePropertyCallback
  * @param {Object} node_property
@@ -34,7 +31,56 @@ const IGNORE_ERRORS = []
  * @property {ParserPosition} start
  * @property {ParserPosition} end
  */
- export default class _Node {
+
+/**
+ * @type {Function[]} The errors to ignore
+ */
+let ignoreErrors = []
+
+export default class _Node {
+    /**
+     * @type {{[x: string]: (boolean|{[y: string]: boolean})}} The error classes to ignore
+     */
+    static get ignoreErrorMap() {
+        if(!this._ignoreErrorMap) {
+            let out = {}
+            for(let k in PHPError) {
+                if(PHPError[k] instanceof Function) {
+                    Object.defineProperty(out, k, {
+                        enumerable: true,
+                        get: () => ignoreErrors.some(e => e === PHPError[k]),
+                        set: v => {
+                            ignoreErrors = ignoreErrors.filter(e => e !== PHPError[k])
+                            if(v) {
+                                ignoreErrors.push(PHPError[k])
+                            }
+                        }
+                    })
+                } else {
+                    let out_k = {}
+                    Object.defineProperty(out, k, {
+                        enumerable: true,
+                        get: () => out_k
+                    })
+                    for(let m in PHPError[k]) {
+                        Object.defineProperty(out_k, m, {
+                            enumerable: true,
+                            get: () => ignoreErrors.some(e => e === PHPError[k][m]),
+                            set: v => {
+                                ignoreErrors = ignoreErrors.filter(e => e !== PHPError[k][m])
+                                if(v) {
+                                    ignoreErrors.push(PHPError[k][m])
+                                }
+                            }
+                        })
+                    }
+                }
+            }
+            Object.freeze(out)
+            this._ignoreErrorMap = out
+        }
+        return this._ignoreErrorMap
+    }
     /**
      * Builds the shadow node
      * @param {ParserNode} node
@@ -164,7 +210,7 @@ const IGNORE_ERRORS = []
      * @throws {PHPError.Error}
      */
     throw(e, context) {
-        if(IGNORE_ERRORS.every(o => !(e instanceof o))) {
+        if(ignoreErrors.every(o => !(e instanceof o))) {
             throw e.withContext(context, this)
         }
     }

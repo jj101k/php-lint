@@ -5,6 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "glob": "^7.1.1",
+    "node-getopt": "^0.2.3",
     "php-parser": "^2.0.6"
   },
   "bin": {

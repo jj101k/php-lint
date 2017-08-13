@@ -17,6 +17,12 @@ class Lint {
         }
         return this._globalContext
     }
+    /**
+     * @type {{[x: string]: (boolean|{[y: string]: boolean})}} The error classes to ignore
+     */
+    static get ignoreErrorMap() {
+        return ShadowTree.Node.ignoreErrorMap
+    }
     static get PHPStrictError() {
         return PHPStrictError
     }
