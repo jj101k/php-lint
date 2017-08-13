@@ -1,3 +1,4 @@
 <?php
-
-$a = ["foo"=>"bar"];
+class A {
+}
+$a = new A();
