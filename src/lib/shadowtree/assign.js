@@ -41,6 +41,7 @@ export default class Assign extends Statement {
         }
         if(left_context.assigningType.isEmpty) {
             this.throw(new PHPError.AssignNoValue(), context)
+            return new ContextTypes(PHPSimpleType.coreTypes.null)
         } else {
             return new ContextTypes(left_context.assigningType)
         }
