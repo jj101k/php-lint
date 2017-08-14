@@ -60,6 +60,9 @@ export default class Class extends Declaration {
             // This does allow names like UPSPowerState
             this.throw(new PHPError.PSR1.S3ClassCase(), context)
         }
+        if(!doc) {
+            this.throw(new PHPError.NoDoc(), context)
+        }
         let inner_context = context.childContext()
         let extended_class
         if(this.extends) {

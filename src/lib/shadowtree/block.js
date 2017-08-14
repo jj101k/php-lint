@@ -19,8 +19,15 @@ export default class Block extends Statement {
     check(context, in_call = false, doc = null) {
         super.check(context, in_call, doc)
         let types = PHPTypeUnion.empty
+        /** @type {?Doc} */
+        let last_doc = null
         this.children.forEach(node => {
-            types = types.addTypesFrom(node.check(context, false, null).returnType)
+            if(node instanceof Doc) {
+                last_doc = node
+            } else {
+                types = types.addTypesFrom(node.check(context, false, last_doc).returnType)
+                last_doc = null
+            }
         })
         return new ContextTypes(PHPTypeUnion.empty, types)
     }

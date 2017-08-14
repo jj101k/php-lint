@@ -42,6 +42,9 @@ export default class Closure extends Statement {
      */
     check(context, in_call = false, doc = null) {
         super.check(context, in_call, doc)
+        if(!doc) {
+            this.throw(new PHPError.NoDoc(), context)
+        }
         var inner_context = context.childContext()
         let arg_types = []
         let pass_by_reference_positions = {}
