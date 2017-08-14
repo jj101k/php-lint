@@ -14,7 +14,7 @@ import PHPAutoloader from "./php-autoloader"
 const DEBUG_AUTOLOAD = false
 
 /** @type {number} The maximum depth we're willing to scan files at */
-const MAX_DEPTH = 2
+const MAX_DEPTH = Infinity
 
 /**
  * @type {string[]} From `print json_encode(get_declared_classes(), JSON_PRETTY_PRINT);`
