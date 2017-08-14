@@ -91,6 +91,26 @@ class PHPFunctionType extends PHPType {
         this.callbackPositions = callback_positions
         this.returnType = return_type
     }
+    /**
+     * Returns true if this function type and another are mutually compatible.
+     * This doesn't mean that one is a valid subclass override of the other,
+     * just that the input and output could be the same.
+     *
+     * Where the supplied type includes something and this does not, that's a
+     * success. The reverse is a failure.
+     *
+     * @param {PHPFunctionType} expected_type The other function type
+     * @returns {boolean}
+     */
+    compatibleWith(expected_type) {
+        return (
+            this.argTypes.length == expected_type.argTypes.length &&
+            this.argTypes.every(
+                (v, i) => v.compatibleWith(expected_type.argTypes[i])
+            ) &&
+            this.returnType.compatibleWith(expected_type.returnType)
+        )
+    }
     toString() {
         let args_composed = this.argTypes.map((arg, index) => {
             if(this.passByReferencePositions[index]) {
@@ -183,6 +203,27 @@ class PHPTypeUnion {
             Object.assign(this.uniqueTypes, union.uniqueTypes)
             return this
         }
+    }
+    /**
+     * Returns true if this type and another are mutually compatible.
+     * This doesn't mean that one is a valid subclass override of the other,
+     * just that they could be the same.
+     *
+     * Where the supplied type includes something and this does not, that's a
+     * success. The reverse is a failure.
+     *
+     * @param {PHPTypeUnion} expected_type The other type
+     * @returns {boolean}
+     */
+    compatibleWith(expected_type) {
+        return (
+            this === expected_type ||
+            this === PHPSimpleType.coreTypes.mixed ||
+            expected_type === PHPSimpleType.coreTypes.mixed ||
+            this.types.every(
+                t => expected_type.types.some(et => et === t)
+            )
+        )
     }
     toString() {
         if(this.isEmpty) {

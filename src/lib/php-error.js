@@ -1,4 +1,5 @@
 export {default as AssignNoValue} from "./php-error/assign-no-value"
+export {default as BadDoc} from "./php-error/bad-doc"
 export {default as ClassLoadFailed} from "./php-error/class-load-failed"
 export {default as Error} from "./php-error/error"
 export {default as Goto} from "./php-error/goto"

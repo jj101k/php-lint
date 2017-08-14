@@ -5,6 +5,7 @@ import Identifier from "./identifier"
 import {PHPSimpleType} from "../phptype"
 import Doc from "./doc"
 import _Node from "./node"
+import ConstRef from "./constref"
 export default class Parameter extends Declaration {
     /** @type {boolean} */
     get byref() {
@@ -36,12 +37,29 @@ export default class Parameter extends Declaration {
     check(context, in_call = false, doc = null) {
         let type
         if(this.type) {
-            type = PHPSimpleType.named(context.resolveName(this.type.name))
+            let type_name = this.type.name
+            let md
+            if(
+                this.type.resolution == "fqn" &&
+                (md = type_name.match(/^\u005c(.+)/)) &&
+                PHPSimpleType.coreTypes[md[1]]
+            ) {
+                type_name = md[1]
+            }
+            type = PHPSimpleType.named(context.resolveName(type_name))
         } else {
             type = PHPSimpleType.coreTypes.mixed
         }
-        if(this.nullable) {
-            type.addTypesFrom(PHPSimpleType.coreTypes.null)
+        if(
+            this.nullable ||
+            (
+                this.value &&
+                this.value instanceof ConstRef &&
+                this.value.name instanceof Identifier &&
+                this.value.name.name.toLowerCase() == "null"
+            )
+        ) {
+            type = type.addTypesFrom(PHPSimpleType.coreTypes.null)
         }
         context.setName(
             "$" + this.name,
