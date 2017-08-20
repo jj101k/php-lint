@@ -21,17 +21,6 @@ export default class Program extends Block {
                 `PSR-1 #3: One class per file (${classes.length})`
             ), context)
         }
-        var inner_context = context.childContext()
-        /** @type {?Doc} */
-        let last_doc = null
-        this.children.forEach(child => {
-            if(child instanceof Doc) {
-                last_doc = child
-            } else {
-                child.check(inner_context, false, last_doc)
-                last_doc = null
-            }
-        })
         return super.check(context, in_call, doc)
     }
 }
