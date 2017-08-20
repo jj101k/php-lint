@@ -395,7 +395,7 @@ class PHPTypeUnion {
      */
     toString() {
         if(this.isEmpty) {
-            return "null"
+            return "void"
         } else {
             return this.types.join(" | ")
         }
