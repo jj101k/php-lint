@@ -93,7 +93,7 @@ export default class _Function extends Declaration {
         let return_type
         if(this.body) {
             return_type = this.body.check(inner_context, false, null).returnType
-            if(signature_type && return_type !== signature_type) {
+            if(signature_type && !return_type.compatibleWith(signature_type)) {
                 this.throw(new PHPError.ReturnTypeMismatch(
                     `Practical return type ${return_type} does not match signature ${signature_type}`
                 ), context)
