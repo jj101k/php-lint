@@ -286,6 +286,7 @@ class PHPTypeUnion {
      * @param {?PHPType} [initial_type]
      */
     constructor(initial_type = null) {
+        /** @type {{[x: string]: PHPType}} */
         this.uniqueTypes = {}
         if(initial_type) {
             this.uniqueTypes["" + initial_type] = initial_type
