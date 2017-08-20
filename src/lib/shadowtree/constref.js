@@ -21,6 +21,7 @@ export default class ConstRef extends Expression {
         if(this.name instanceof Identifier) {
             switch(this.name.name) {
                 case "array":
+                case "null":
                     return new ContextTypes(PHPSimpleType.named(this.name.name))
                 default:
             }
