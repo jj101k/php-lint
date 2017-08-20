@@ -36,6 +36,7 @@ export default class Bin extends Operation {
             case "&&":
             case "and":
             case "or":
+                // Boolean
                 types = types.addTypesFrom(PHPSimpleType.coreTypes.bool)
                 break
             case "*":
@@ -46,9 +47,11 @@ export default class Bin extends Operation {
             case "<<":
             case ">>":
             case "^":
+                // Numeric (1)
                 types = types.addTypesFrom(PHPSimpleType.coreTypes.float)
                 break
             case "+":
+                // Numeric (2)
                 if(left_types.types.length == 1 && "" + left_types[0] == "array") {
                     types = types.addTypesFrom(left_types)
                 } else {
@@ -56,6 +59,7 @@ export default class Bin extends Operation {
                 }
                 break
             case ".":
+                // String
                 types = types.addTypesFrom(PHPSimpleType.coreTypes.string)
                 break
             case "~":
@@ -72,6 +76,7 @@ export default class Bin extends Operation {
             case "!==":
             case "===":
             case "instanceof":
+                // Comparison (boolean)
                 types = types.addTypesFrom(PHPSimpleType.coreTypes.bool)
                 break
             default:
