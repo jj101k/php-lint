@@ -21,12 +21,15 @@ export default class Variable extends Expression {
     check(context, in_call = false, doc = null) {
         super.check(context, in_call, doc)
         if(context.assigningType) {
+            //console.log(`$${this.name} = ${context.assigningType} (${context.assigningType.typeSignature})`)
             return new ContextTypes(context.setName(
                 '$' + this.name,
                 context.assigningType
             ))
         } else {
-            return new ContextTypes(this.assertHasName(context, '$' + this.name))
+            let types = this.assertHasName(context, '$' + this.name)
+            //console.log(`$${this.name} == ${types} (${types.typeSignature})`)
+            return new ContextTypes(types)
         }
     }
 }
