@@ -84,6 +84,12 @@ class PHPSimpleType extends PHPType {
             pseudo_types.forEach(
                 type_name => types[type_name] = new PHPSimpleType(type_name).union
             )
+            Object.defineProperty(types, "boolean", {
+                get() {
+                    console.log("'bool' incorrectly referred to as 'boolean'")
+                    return this.bool
+                }
+            })
             this._coreTypes = types
         }
         return this._coreTypes
