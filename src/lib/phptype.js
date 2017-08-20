@@ -90,6 +90,7 @@ class PHPSimpleType extends PHPType {
                     return this.bool
                 }
             })
+            Object.freeze(types)
             this._coreTypes = types
         }
         return this._coreTypes
