@@ -1,13 +1,59 @@
 class PHPType {
     /**
+     * @type {string} A string representation of the type as meaningful for type
+     * checking, so that if the value matches between two objects you can take
+     * it that they have the same type, even if they represent different values.
+     */
+    get typeSignature() {
+        return "mixed"
+    }
+    /**
      * A new PHPTypeUnion containing this.
      * @returns {PHPTypeUnion}
      */
     get union() {
         return new PHPTypeUnion(this)
     }
+    /**
+     * Returns a type combining this one with another. Only meaningful for types
+     * which preserve values, for which the end type will have a union of
+     * values (usually).
+     *
+     * @param {PHPType} other_type
+     * @throws if the two object types are not identical
+     * @returns {PHPType}
+     */
+    combineWith(other_type) {
+        if(this.typeSignature != other_type.typeSignature) {
+            throw new Error(
+                `Cannot combine different types ${this.typeSignature} and ${other_type.typeSignature}`
+            )
+        }
+        return this
+    }
+    /**
+     * Returns true if both have the same type.
+     *
+     * @param {PHPType} other_type
+     * @returns {boolean}
+     */
+    matches(other_type) {
+        return other_type === this || other_type.typeSignature == this.typeSignature
+    }
+    /**
+     * @type {string} Represents best expression of the object, rather than
+     * simply its type signature.
+     */
     toString() {
-        return "mixed"
+        return this.typeSignature
+    }
+    /**
+     * Adds a known value
+     * @param {string | number | boolean} v
+     * @returns {PHPType}
+     */
+    withValue(v) {
+        return this
     }
 }
 
@@ -65,14 +111,77 @@ class PHPSimpleType extends PHPType {
     }
     /**
      * Builds the object
-     * @param {string} type_name 
+     * @param {string} type_name
+     * @param {Object[]} [values]
      */
-    constructor(type_name) {
+    constructor(type_name, values = []) {
         super()
         this.typeName = type_name
+        this.values = values
     }
-    toString() {
+    /**
+     * @type {string} A string representation of the type, as meaningful for type
+     * checking.
+     */
+    get typeSignature() {
         return this.typeName
+    }
+    /**
+     * Returns a type combining this with the other. The eventual values will
+     * generally be a union.
+     * @param {PHPSimpleType} other_type
+     * @throws if the two object types are not identical
+     * @returns {PHPSimpleType}
+     */
+    combineWith(other_type) {
+        super.combineWith(other_type)
+        if(this.values.length && other_type.values.length) {
+            return new PHPSimpleType(
+                this.typeName,
+                this.values.concat(other_type.values)
+            )
+        } else if(this.values.length) {
+            return other_type
+        } else {
+            return this
+        }
+    }
+    /**
+     * @type {string} Represents best expression of the object, rather than
+     * simply its type signature.
+     */
+    toString() {
+        if(this.values.length) {
+            switch(this.typeName) {
+                case "string":
+                    return this.values.map(
+                        v => `"${v}"`
+                    ).join(" | ")
+                case "int":
+                case "float":
+                    return this.values.map(
+                        v => +v
+                    ).join(" | ")
+                case "boolean":
+                    return this.values.map(
+                        v => "" + !!v
+                    ).join(" | ")
+            }
+        }
+        return this.typeName
+    }
+    /**
+     * Adds a known value
+     * @param {string | number | boolean} v
+     * @returns {PHPSimpleType}
+     */
+    withValue(v) {
+        if(this.values.length) {
+            this.values.push(v)
+            return this
+        } else {
+            return new PHPSimpleType(this.typeName, [v])
+        }
     }
 }
 
@@ -90,6 +199,22 @@ class PHPFunctionType extends PHPType {
         this.passByReferencePositions = pass_by_reference_positions
         this.callbackPositions = callback_positions
         this.returnType = return_type
+    }
+    /**
+     * @type {string} A string representation of the type, as meaningful for type
+     * checking.
+     */
+    get typeSignature() {
+        let args_composed = this.argTypes.map((arg, index) => {
+            if(this.passByReferencePositions[index]) {
+                return "&" + arg.typeSignature
+            } else if(this.callbackPositions[index]) {
+                return "*" + arg.typeSignature
+            } else {
+                return arg.typeSignature
+            }
+        })
+        return `(${args_composed.join(", ")}) -> ${this.returnType}`
     }
     /**
      * Returns true if this function type and another are mutually compatible.
@@ -111,6 +236,10 @@ class PHPFunctionType extends PHPType {
             this.returnType.compatibleWith(expected_type.returnType)
         )
     }
+    /**
+     * @type {string} Represents best expression of the object, rather than
+     * simply its type signature.
+     */
     toString() {
         let args_composed = this.argTypes.map((arg, index) => {
             if(this.passByReferencePositions[index]) {
@@ -168,22 +297,38 @@ class PHPTypeUnion {
         return Object.values(this.uniqueTypes)
     }
     /**
+     * @type {string} A string representation of the types, as meaningful for type
+     * checking.
+     */
+    get typeSignature() {
+        if(this.isEmpty) {
+            return "void"
+        } else {
+            return this.types.map(t => t.typeSignature).join(" | ")
+        }
+    }
+    /**
      * Adds a type. Returns a derived type union which may not be the original.
      * @param {PHPType} type
      * @returns {PHPTypeUnion}
      */
     addType(type) {
+        let merge_type = this.uniqueTypes[type.typeSignature]
+        let new_type = merge_type ? merge_type.combineWith(type) : type
+        if(merge_type && merge_type === new_type) {
+            return this
+        }
         if(this.types.length == 1) {
             let n = new PHPTypeUnion()
             n.uniqueTypes = Object.assign(
                 {
-                    ["" + type]: type,
+                    [type.typeSignature]: new_type,
                 },
                 this.uniqueTypes
             )
             return n
         } else {
-            this.uniqueTypes["" + type] = type
+            this.uniqueTypes[type.typeSignature] = new_type
             return this
         }
     }
@@ -200,7 +345,18 @@ class PHPTypeUnion {
             n.uniqueTypes = Object.assign({}, this.uniqueTypes, union.uniqueTypes)
             return n
         } else {
-            Object.assign(this.uniqueTypes, union.uniqueTypes)
+            Object.keys(union.uniqueTypes).forEach(
+                k => {
+                    if(this.uniqueTypes[k]) {
+                        let merge_type = this.uniqueTypes[k].combineWith(union.uniqueTypes[k])
+                        if(merge_type !== this.uniqueTypes[k]) {
+                            this.uniqueTypes[k] = merge_type
+                        }
+                    } else {
+                        this.uniqueTypes[k] = union.uniqueTypes[k]
+                    }
+                }
+            )
             return this
         }
     }
@@ -221,15 +377,36 @@ class PHPTypeUnion {
             this === PHPSimpleType.coreTypes.mixed ||
             expected_type === PHPSimpleType.coreTypes.mixed ||
             this.types.every(
-                t => expected_type.types.some(et => et === t)
+                t => expected_type.types.some(et => et.matches(t))
             )
         )
     }
+    /**
+     * @type {string} Represents best expression of the object, rather than
+     * simply its type signature.
+     */
     toString() {
         if(this.isEmpty) {
             return "null"
         } else {
             return this.types.join(" | ")
+        }
+    }
+    /**
+     * Adds a known value
+     *
+     * @param {string | number | boolean} v
+     * @returns {PHPTypeUnion}
+     */
+    withValue(v) {
+        if(this.types.length == 1) {
+            let n = new PHPTypeUnion()
+            n.uniqueTypes = {
+                [this.types[0].typeSignature]: this.types[0].withValue(v),
+            }
+            return n
+        } else {
+            return this
         }
     }
 }
