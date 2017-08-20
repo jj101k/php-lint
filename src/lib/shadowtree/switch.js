@@ -4,6 +4,7 @@ import Statement from "./statement"
 import Expression from "./expression"
 import Block from "./block"
 import Doc from "./doc"
+import {PHPTypeUnion} from "../phptype"
 export default class Switch extends Statement {
     /** @type {Expression} */
     get test() {
@@ -27,6 +28,18 @@ export default class Switch extends Statement {
     check(context, in_call = false, doc = null) {
         super.check(context, in_call, doc)
         this.test.check(context, false, null)
-        return this.body.check(context, false, null) // FIXME if union
+        let type = PHPTypeUnion.empty
+        let child_contexts = []
+        this.body.children.forEach(
+            c => { // FIXME fallthrough
+                let case_context = context.childContext(false)
+                case_context.importNamespaceFrom(context)
+                type = type.addTypesFrom(c.check(case_context, false, null).returnType)
+                child_contexts.push(case_context)
+            }
+        )
+        child_contexts.forEach(case_context => context.importNamespaceFrom(case_context))
+
+        return new ContextTypes(PHPTypeUnion.empty, type)
     }
 }
