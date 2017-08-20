@@ -227,7 +227,15 @@ export default class Context {
      * @param {Context} context
      */
     importNamespaceFrom(context) {
-        Object.assign(this.ns, context.ns)
+        Object.keys(context.ns).forEach(
+            name => {
+                if(this.ns[name]) {
+                    this.ns[name] = this.ns[name].addTypesFrom(context.ns[name])
+                } else {
+                    this.ns[name] = context.ns[name]
+                }
+            }
+        )
     }
 
     /**
