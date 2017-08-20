@@ -40,39 +40,42 @@ export default class _Function extends Declaration {
         if(!doc) {
             this.throw(new PHPError.NoDoc(), context)
         }
-        let structure_arg_types = []
-        let structure_return = null
-        doc.structure.forEach(
-            c => {
-                switch(c.kind) {
-                    case "param":
-                        let type = PHPTypeUnion.empty
-                        c.type.name.split(/\|/).forEach(
-                            t => {
-                                type = type.addTypesFrom(PHPSimpleType.named(
-                                    t.match(/^[A-Z0-9]/) ? "\\" + t : t
-                                ))
-                            }
-                        )
-                        structure_arg_types.push(type)
-                        break
-                    case "return":
-                        let rtype = PHPTypeUnion.empty
-                        c.what.name.split(/\|/).forEach(
-                            t => {
-                                rtype = rtype.addTypesFrom(PHPSimpleType.named(
-                                    t.match(/^[A-Z0-9]/) ? "\\" + t : t
-                                ))
-                            }
-                        )
-                        structure_return = rtype
-                        break
-                    default:
-                        console.log(`Skipping unknown doc type ${c.kind}`)
+        let doc_function_type
+        if(doc) {
+            let structure_arg_types = []
+            let structure_return = null
+            doc.structure.forEach(
+                c => {
+                    switch(c.kind) {
+                        case "param":
+                            let type = PHPTypeUnion.empty
+                            c.type.name.split(/\|/).forEach(
+                                t => {
+                                    type = type.addTypesFrom(PHPSimpleType.named(
+                                        t.match(/^[A-Z0-9]/) ? "\\" + t : t
+                                    ))
+                                }
+                            )
+                            structure_arg_types.push(type)
+                            break
+                        case "return":
+                            let rtype = PHPTypeUnion.empty
+                            c.what.name.split(/\|/).forEach(
+                                t => {
+                                    rtype = rtype.addTypesFrom(PHPSimpleType.named(
+                                        t.match(/^[A-Z0-9]/) ? "\\" + t : t
+                                    ))
+                                }
+                            )
+                            structure_return = rtype
+                            break
+                        default:
+                            console.log(`Skipping ${c.kind}`)
+                    }
                 }
-            }
-        )
-        let doc_function_type = new PHPFunctionType(structure_arg_types, structure_return)
+            )
+            doc_function_type = new PHPFunctionType(structure_arg_types, structure_return)
+        }
         var inner_context = context.childContext()
 
         let arg_types = []
@@ -108,8 +111,10 @@ export default class _Function extends Declaration {
             return_type,
             pass_by_reference_positions
         )
-        if(!function_type.compatibleWith(doc_function_type)) {
-            throw new PHPError.BadDoc(`Documented type ${doc_function_type} does not match actual ${function_type}`)
+        if(doc_function_type && !function_type.compatibleWith(doc_function_type)) {
+            this.throw(new PHPError.BadDoc(
+                `Documented type ${doc_function_type} does not match actual ${function_type} for ${this.name}`
+            ), context)
         }
         if(context.classContext && context.classContext.name == "\\Slim\\App") {
             switch(this.name) {
