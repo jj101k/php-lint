@@ -69,7 +69,7 @@ export default class Context {
             Object.keys(PHPFunctions).forEach(
                 name => this._superGlobals[name] = new PHPTypeUnion(new PHPFunctionType(
                     PHPFunctions[name].map(arg => PHPSimpleType.coreTypes.mixed),
-                    PHPSimpleType.coreTypes.mixed,
+                    name == "array_keys" ? PHPSimpleType.coreTypes.array : PHPSimpleType.coreTypes.mixed,
                     PHPFunctions[name]
                 ))
             )
