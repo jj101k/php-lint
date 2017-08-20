@@ -13,6 +13,6 @@ export default class _Boolean extends Literal {
      */
     check(context, in_call = false, doc = null) {
         super.check(context, in_call, doc)
-        return new ContextTypes(PHPSimpleType.coreTypes.bool)
+        return new ContextTypes(PHPSimpleType.coreTypes.bool.withValue(this.value))
     }
 }

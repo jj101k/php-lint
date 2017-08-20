@@ -169,7 +169,7 @@ class PHPSimpleType extends PHPType {
                     return this.values.map(
                         v => +v
                     ).join(" | ")
-                case "boolean":
+                case "bool":
                     return this.values.map(
                         v => "" + !!v
                     ).join(" | ")
