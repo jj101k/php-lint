@@ -32,11 +32,14 @@ export default class Bin extends Operation {
         switch(this.type) {
             case "||":
             case "|":
+            case "or":
+                // Boolean (or)
+                types = types.addTypesFrom(PHPSimpleType.coreTypes.bool)
+                break
             case "&":
             case "&&":
             case "and":
-            case "or":
-                // Boolean
+                // Boolean (and)
                 types = types.addTypesFrom(PHPSimpleType.coreTypes.bool)
                 break
             case "*":
