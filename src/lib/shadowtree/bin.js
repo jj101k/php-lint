@@ -79,6 +79,11 @@ export default class Bin extends Operation {
                 // Comparison (boolean)
                 types = types.addTypesFrom(PHPSimpleType.coreTypes.bool)
                 break
+            case "??":
+                // Left (not null) or right
+                types = types.addTypesFrom(
+                    left_types.excluding("null")
+                ).addTypesFrom(right_types)
             default:
                 console.log(this.node)
                 console.log(`Don't know how to parse operator type ${this.type}`)

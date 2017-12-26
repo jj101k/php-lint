@@ -406,6 +406,23 @@ class PHPTypeUnion {
         )
     }
     /**
+     * Returns a derived type union which may not be the original, without the
+     * named type.
+     *
+     * @param {string} type
+     * @returns {PHPTypeUnion}
+     */
+    excluding(type) {
+        if(this.uniqueTypes[type]) {
+            let n = new PHPTypeUnion()
+            n.uniqueTypes = Object.assign({}, this.uniqueTypes)
+            delete n.uniqueTypes[type]
+            return n
+        } else {
+            return this
+        }
+    }
+    /**
      * @type {string} Represents best expression of the object, rather than
      * simply its type signature.
      */
