@@ -87,6 +87,7 @@ export default class Bin extends Operation {
                 types = types.addTypesFrom(
                     left_types.excluding("null")
                 ).addTypesFrom(right_types)
+                break
             default:
                 console.log(this.node)
                 console.log(`Don't know how to parse operator type ${this.type}`)
