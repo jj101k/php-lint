@@ -69,6 +69,7 @@ class PHPType {
  * @property {PHPTypeUnion} mixed
  * @property {PHPTypeUnion} self
  * @property {PHPTypeUnion} object
+ * @property {PHPTypeUnion} void
  */
 
 class PHPSimpleType extends PHPType {
@@ -76,7 +77,7 @@ class PHPSimpleType extends PHPType {
     static get coreTypes() {
         if(!this._coreTypes) {
             let known_types = ["string", "int", "float", "bool", "array", "callable"]
-            let pseudo_types = ["null", "mixed", "self", "object"]
+            let pseudo_types = ["null", "mixed", "self", "object", "void"]
             let types = {}
             known_types.forEach(
                 type_name => types[type_name] = new PHPSimpleType(type_name).union
