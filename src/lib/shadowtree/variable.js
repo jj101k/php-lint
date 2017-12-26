@@ -2,6 +2,8 @@ import Context from "../context"
 import ContextTypes from "../context-types"
 import Expression from "./expression"
 import Doc from "./doc"
+
+const DEBUG = false
 export default class Variable extends Expression {
     /** @type {boolean} */
     get byref() {
@@ -21,14 +23,18 @@ export default class Variable extends Expression {
     check(context, in_call = false, doc = null) {
         super.check(context, in_call, doc)
         if(context.assigningType) {
-            //console.log(`$${this.name} = ${context.assigningType} (${context.assigningType.typeSignature})`)
+            if(DEBUG) {
+                console.log(`$${this.name} = ${context.assigningType} (${context.assigningType.typeSignature})`)
+            }
             return new ContextTypes(context.setName(
                 '$' + this.name,
                 context.assigningType
             ))
         } else {
             let types = this.assertHasName(context, '$' + this.name)
-            //console.log(`$${this.name} == ${types} (${types.typeSignature})`)
+            if(DEBUG) {
+                console.log(`$${this.name} == ${types} (${types.typeSignature})`)
+            }
             return new ContextTypes(types)
         }
     }
