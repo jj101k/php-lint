@@ -195,18 +195,23 @@ class PHPSimpleType extends PHPType {
 
 class PHPFunctionType extends PHPType {
     /**
-     * 
+     *
      * @param {PHPTypeUnion[]} arg_types
-     * @param {PHPTypeUnion} return_type
+     * @param {?PHPTypeUnion} return_type
      * @param {{[x: number]: boolean}} [pass_by_reference_positions]
      * @param {{[x: number]: PHPTypeUnion}} [callback_positions]
      */
-    constructor(arg_types, return_type, pass_by_reference_positions = {}, callback_positions = {}) {
+    constructor(
+        arg_types,
+        return_type,
+        pass_by_reference_positions = {},
+        callback_positions = {}
+    ) {
         super()
         this.argTypes = arg_types
         this.passByReferencePositions = pass_by_reference_positions
         this.callbackPositions = callback_positions
-        this.returnType = return_type
+        this.returnType = return_type || PHPSimpleType.coreTypes.void
     }
     /**
      * @type {string} A string representation of the type, as meaningful for type
