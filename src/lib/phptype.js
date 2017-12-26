@@ -305,6 +305,17 @@ class PHPTypeUnion {
         return !this.types.length
     }
     /**
+     * @type {boolean} True if this is a "mixed" type
+     */
+    get isMixed() {
+        return(
+            this === PHPSimpleType.coreTypes.mixed ||
+            this.types.some(
+                t => t.toString() == "mixed"
+            )
+        )
+    }
+    /**
      * @type {PHPType[]}
      */
     get types() {
@@ -388,8 +399,7 @@ class PHPTypeUnion {
     compatibleWith(expected_type) {
         return (
             this === expected_type ||
-            this === PHPSimpleType.coreTypes.mixed ||
-            expected_type === PHPSimpleType.coreTypes.mixed ||
+            this.isMixed || expected_type.isMixed ||
             this.types.every(
                 t => expected_type.types.some(et => et.matches(t))
             )
