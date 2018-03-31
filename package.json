@@ -5,8 +5,8 @@
   "main": "index.js",
   "dependencies": {
     "doc-parser": "^0.4.8",
+    "eximport": "git+https://github.com/jj101k/eximport.git",
     "glob": "^7.1.1",
-    "import-export": "git+https://github.com/jj101k/import-export.git",
     "node-getopt": "^0.2.3",
     "php-parser": "^2.2.0",
     "test": "^0.6.0"
