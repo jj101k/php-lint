@@ -67,16 +67,19 @@ export default class _Function extends Declaration {
                                 }
                             )
                             structure_arg_types.push(type)
+                            structure_arg_names.push(c.name)
                             break
                         case "return":
                             let rtype = PHPTypeUnion.empty
-                            c.what.name.split(/\|/).forEach(
-                                t => {
-                                    rtype = rtype.addTypesFrom(PHPSimpleType.named(
-                                        t.match(/^[A-Z0-9]/) ? "\\" + t : t
-                                    ))
-                                }
-                            )
+                            if(c.what.name) {
+                                c.what.name.split(/\|/).forEach(
+                                    t => {
+                                        rtype = rtype.addTypesFrom(PHPSimpleType.named(
+                                            t.match(/^[A-Z0-9]/) ? "\\" + t : t
+                                        ))
+                                    }
+                                )
+                            }
                             structure_return = rtype
                             break
                         default:
@@ -121,10 +124,16 @@ export default class _Function extends Declaration {
             return_type,
             pass_by_reference_positions
         )
-        if(doc_function_type && !function_type.compatibleWith(doc_function_type)) {
-            this.throw(new PHPError.BadDoc(
-                `Documented type ${doc_function_type} does not match actual ${function_type} for ${this.name}`
-            ), context)
+        if(
+            doc_function_type &&
+            !function_type.compatibleWith(doc_function_type)
+        ) {
+            this.throw(
+                new PHPError.BadDoc(
+                    `Documented type ${doc_function_type} does not match actual ${function_type} for ${this.name}`
+                ),
+                context
+            )
         }
         if(context.classContext && context.classContext.name == "\\Slim\\App") {
             switch(this.name) {

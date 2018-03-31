@@ -386,6 +386,27 @@ class PHPTypeUnion {
         }
     }
     /**
+     * Returns all the known values coerced into the given type. If the values
+     * are not all known, this will be null.
+     * @param {string} type eg "bool"
+     * @returns {?Object[]} All values should be distinct.
+     */
+    coercedValues(type) {
+        if(this.isEmpty) return null
+        if(this.types.some(t => !(t instanceof PHPSimpleType && t.values.length))) return null
+        let out = {}
+        switch(type) {
+            case "bool":
+                this.types.forEach(t => t.values.forEach(v => {
+                    out[+!!v] = !!v
+                }))
+                return Object.values(out)
+            default:
+                console.log(`Coercion to ${type} not yet implemented`)
+                return null
+        }
+    }
+    /**
      * Returns true if this type and another are mutually compatible.
      * This doesn't mean that one is a valid subclass override of the other,
      * just that they could be the same.
@@ -393,10 +414,13 @@ class PHPTypeUnion {
      * Where the supplied type includes something and this does not, that's a
      * success. The reverse is a failure.
      *
-     * @param {PHPTypeUnion} expected_type The other type
+     * @param {?PHPTypeUnion} expected_type The other type
      * @returns {boolean}
      */
     compatibleWith(expected_type) {
+        if(!expected_type) {
+            return false;
+        }
         return (
             this === expected_type ||
             this.isMixed || expected_type.isMixed ||
