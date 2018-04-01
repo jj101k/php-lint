@@ -63,7 +63,7 @@ class ClassContext {
                 return m.types
             } else {
                 throw new PHPError.ScopeMiss(
-                    `Scope miss for name ${name} with scope ${m.scope}`
+                    `Scope miss for name ${name} with scope ${m.scope} ($this instanceof ${this.name})`
                 )
             }
             // TODO inheritance
