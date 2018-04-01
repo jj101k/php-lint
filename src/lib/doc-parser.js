@@ -9,12 +9,12 @@ class DocNode {
     }
     get type() {
         return {
-            name: this.tail && this.tail.replace(/\s.*/, "")
+            name: this.tail && this.tail.split(/[\s\r\n]/)[0]
         }
     }
     get what() {
         return {
-            name: this.tail && this.tail.replace(/\s.*/, "")
+            name: this.tail && this.tail.split(/[\s\r\n]/)[0]
         }
     }
 }
