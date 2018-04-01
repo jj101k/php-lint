@@ -146,7 +146,7 @@ class ClassContext {
      * The fully resolved name. This just handles "parent", "self" and "static";
      * everything else returns null.
      *
-     * @param {string} context
+     * @param {string} name
      * @throws {PHPError.Error} when using "parent" with no superclass
      * @returns {?string}
      */
