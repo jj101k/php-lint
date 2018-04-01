@@ -275,7 +275,7 @@ export class GlobalContext {
             // Autoload go!
             if(!this.autoloader) {
                 this.autoloader = GlobalContext.autoloadFromComposer(
-                    this.findComposerConfig(file_context.directory)
+                    this.findComposerConfig(this.workingDirectory)
                 )
             }
             if(this.autoloader) {
