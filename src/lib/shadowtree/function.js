@@ -41,14 +41,14 @@ export default class _Function extends Declaration {
         if(!doc) {
             this.throw(new PHPError.NoDoc(), context)
         }
-        let doc_structure
-        if(USE_INTERNAL_DOC_PARSER) {
-            doc_structure = new DocParser(doc.lines).top.children
-        } else {
-            doc_structure = doc.structure
-        }
         let doc_function_type
         if(doc) {
+            let doc_structure
+            if(USE_INTERNAL_DOC_PARSER) {
+                doc_structure = new DocParser(doc.lines).top.children
+            } else {
+                doc_structure = doc.structure
+            }
             let structure_arg_types = []
             let structure_arg_names = []
             let structure_return = null
