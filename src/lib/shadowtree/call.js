@@ -29,6 +29,7 @@ export default class Call extends Statement {
     check(context, parser_state = new Set(), doc = null) {
         super.check(context, parser_state, doc)
         let pbr_positions
+        /** @type {{[x: number]: PHPTypeUnion}} */
         let callback_positions
         let callable_types = this.what.check(context, new Set([ParserStateOption.InCall]), null).expressionType
         let callable_type = callable_types.types[0]
