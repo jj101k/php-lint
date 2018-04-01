@@ -42,8 +42,17 @@ export default class Interface extends Declaration {
                 }
             }
         )
+        /** @type {?Doc} */
+        let last_doc = null
         this.body.forEach(
-            b => b.check(inner_context, new Set(), null)
+            b => {
+                if(b instanceof Doc) {
+                    last_doc = b
+                } else {
+                    b.check(inner_context, new Set(), last_doc)
+                    last_doc = null
+                }
+            }
         )
         return ContextTypes.empty
     }
