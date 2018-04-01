@@ -94,8 +94,10 @@ class ClassContext {
         }
         return null
     }
+
     /**
      * Finds the named identifier
+     *
      * @param {string} name
      * @param {?ClassContext} from_class_context
      * @returns {?PHPTypeUnion}
