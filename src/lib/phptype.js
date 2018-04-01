@@ -229,13 +229,16 @@ class PHPFunctionType extends PHPType {
         })
         return `(${args_composed.join(", ")}) -> ${this.returnType}`
     }
+
     /**
      * Returns true if this function type and another are mutually compatible.
      * This doesn't mean that one is a valid subclass override of the other,
      * just that the input and output could be the same.
      *
-     * Where the supplied type includes something and this does not, that's a
-     * success. The reverse is a failure.
+     * For arguments, this supplied types must be a subset of this. For return
+     * values, this must be a subset of the supplied type. In other words, the
+     * supplied function type must describe ALL supported outputs and SOME
+     * supported inputs.
      *
      * @param {PHPFunctionType} expected_type The other function type
      * @returns {boolean}
@@ -243,12 +246,13 @@ class PHPFunctionType extends PHPType {
     compatibleWith(expected_type) {
         return (
             this.argTypes.length == expected_type.argTypes.length &&
-            this.argTypes.every(
-                (v, i) => v.compatibleWith(expected_type.argTypes[i])
+            expected_type.argTypes.every(
+                (v, i) => v.compatibleWith(this.argTypes[i])
             ) &&
             this.returnType.compatibleWith(expected_type.returnType)
         )
     }
+
     /**
      * @type {string} Represents best expression of the object, rather than
      * simply its type signature.
