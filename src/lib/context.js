@@ -296,8 +296,8 @@ export default class Context {
                 case "uqn":
                     return this.resolveName(node.name)
                 case "qn":
-                    let [prefix, tail] = node.name.split(/\\/, 2)
-                    return `${this.resolveName(prefix)}\\${tail}`
+                    let md = node.name.match(/^(.*)\\(.*)/)
+                    return `${this.resolveName(md[1])}\\${md[2]}`
                 default:
                     console.log(node.name)
                     throw new Error(`TODO don't know how to resolve ${node.resolution}`)
