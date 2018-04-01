@@ -110,6 +110,9 @@ export default class _Function extends Declaration {
             } else {
                 signature_type = PHPSimpleType.named(context.resolveName(this.type.name))
             }
+            if(this.nullable) {
+                signature_type = signature_type.addTypesFrom(PHPSimpleType.coreTypes.null)
+            }
         }
         let return_type
         if(this.body) {
