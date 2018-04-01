@@ -361,6 +361,16 @@ class PHPTypeUnion {
         }
     }
     /**
+     * @type {string} As typeSignature but bracketed if needed.
+     */
+    get typeSignatureToken() {
+        if(this.types.length > 1) {
+            return `(${this.typeSignature})`
+        } else {
+            return this.typeSignature
+        }
+    }
+    /**
      * Adds a type. Returns a derived type union which may not be the original.
      * @param {PHPType} type
      * @returns {PHPTypeUnion}
