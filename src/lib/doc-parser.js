@@ -1,17 +1,20 @@
 class DocNode {
     constructor(tag = null) {
         this.children = []
+        /**
+         * @type {?string}
+         */
         this.tail = null
         this.kind = tag
     }
     get type() {
         return {
-            name: this.tail.replace(/\s.*/, "")
+            name: this.tail && this.tail.replace(/\s.*/, "")
         }
     }
     get what() {
         return {
-            name: this.tail.replace(/\s.*/, "")
+            name: this.tail && this.tail.replace(/\s.*/, "")
         }
     }
 }
