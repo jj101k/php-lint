@@ -121,8 +121,8 @@ export default class Context {
     }
 
     set fileContext(v) {
+        this._fileContext = v
         if(v && !this.directory) {
-            this._fileContext = v
             let file_directory = v.directory
             let composer_path = this.globalContext.findComposerConfig(file_directory)
             if(composer_path) {
