@@ -13,16 +13,16 @@ export default class Static extends Statement {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @param {boolean} [in_call]
+     * @param {parserStateOptions} [parser_state]
      * @param {?Doc} [doc]
      * @returns {?ContextTypes} The set of types applicable to this value
      */
-    check(context, in_call = false, doc = null) {
-        super.check(context, in_call, doc)
+    check(context, parser_state = {}, doc = null) {
+        super.check(context, parser_state, doc)
         let inner_context = context.childContext(true)
         inner_context.assigningType = PHPSimpleType.coreTypes.mixed
         this.items.forEach(
-            i => i.check(inner_context, false, null)
+            i => i.check(inner_context, {}, null)
         )
         return ContextTypes.empty
     }

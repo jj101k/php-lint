@@ -12,12 +12,12 @@ export default class Block extends Statement {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @param {boolean} [in_call]
+     * @param {parserStateOptions} [parser_state]
      * @param {?Doc} [doc]
      * @returns {?ContextTypes} The set of types applicable to this value
      */
-    check(context, in_call = false, doc = null) {
-        super.check(context, in_call, doc)
+    check(context, parser_state = {}, doc = null) {
+        super.check(context, parser_state, doc)
         let types = PHPTypeUnion.empty
         /** @type {?Doc} */
         let last_doc = null
@@ -25,7 +25,7 @@ export default class Block extends Statement {
             if(node instanceof Doc) {
                 last_doc = node
             } else {
-                types = types.addTypesFrom(node.check(context, false, last_doc).returnType)
+                types = types.addTypesFrom(node.check(context, {}, last_doc).returnType)
                 last_doc = null
             }
         })

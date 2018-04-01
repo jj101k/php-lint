@@ -11,12 +11,12 @@ export default class Parenthesis extends Operation {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @param {boolean} [in_call]
+     * @param {parserStateOptions} [parser_state]
      * @param {?Doc} [doc]
      * @returns {?ContextTypes} The set of types applicable to this value
      */
-    check(context, in_call = false, doc = null) {
-        super.check(context, in_call, doc)
-        return this.inner.check(context, false, null)
+    check(context, parser_state = {}, doc = null) {
+        super.check(context, parser_state, doc)
+        return this.inner.check(context, {}, null)
     }
 }

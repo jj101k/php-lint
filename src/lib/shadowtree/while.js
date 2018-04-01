@@ -19,14 +19,14 @@ export default class While extends Statement {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @param {boolean} [in_call]
+     * @param {parserStateOptions} [parser_state]
      * @param {?Doc} [doc]
      * @returns {?ContextTypes} The set of types applicable to this value
      */
-    check(context, in_call = false, doc = null) {
-        super.check(context, in_call, doc)
+    check(context, parser_state = {}, doc = null) {
+        super.check(context, parser_state, doc)
         this.test.check(context)
-        this.body.check(context, false, null) // FIXME return
+        this.body.check(context, {}, null) // FIXME return
         return ContextTypes.empty // FIXME single-case-if
     }
 }

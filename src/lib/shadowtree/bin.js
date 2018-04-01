@@ -20,14 +20,14 @@ export default class Bin extends Operation {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @param {boolean} [in_call]
+     * @param {parserStateOptions} [parser_state]
      * @param {?Doc} [doc]
      * @returns {?ContextTypes} The set of types applicable to this value
      */
-    check(context, in_call = false, doc = null) {
-        super.check(context, in_call, doc)
-        let left_types = this.left.check(context, false, null).expressionType
-        let right_types = this.right.check(context, false, null).expressionType
+    check(context, parser_state = {}, doc = null) {
+        super.check(context, parser_state, doc)
+        let left_types = this.left.check(context, {}, null).expressionType
+        let right_types = this.right.check(context, {}, null).expressionType
         let types = PHPTypeUnion.empty
         switch(this.type) {
             case "||":

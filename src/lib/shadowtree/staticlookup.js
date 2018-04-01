@@ -17,16 +17,16 @@ export default class StaticLookup extends Lookup {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @param {boolean} [in_call]
+     * @param {parserStateOptions} [parser_state]
      * @param {?Doc} [doc]
      * @returns {?ContextTypes} The set of types applicable to this value
      */
-    check(context, in_call = false, doc = null) {
-        super.check(context, in_call, doc)
+    check(context, parser_state = {}, doc = null) {
+        super.check(context, parser_state, doc)
         let class_context
         let resolved_name
         if(this.what instanceof Variable) {
-            this.what.check(context, false, null)
+            this.what.check(context, {}, null)
             // $x::$y
             //this.offset.check(context)
             return new ContextTypes(PHPSimpleType.coreTypes.mixed)

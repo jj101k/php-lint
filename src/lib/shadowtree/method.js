@@ -23,11 +23,11 @@ export default class Method extends _Function {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @param {boolean} [in_call]
+     * @param {parserStateOptions} [parser_state]
      * @param {?Doc} [doc]
      * @returns {?ContextTypes} The set of types applicable to this value
      */
-    check(context, in_call = false, doc = null) {
+    check(context, parser_state = {}, doc = null) {
         if(!this.name.match(/^_*[0-9a-z]+([0-9A-Z]+[0-9a-z]*)*$/)) {
             // This does allow names like getUPSPowerState
             this.throw(new PHPError.PSR1.S43MethodName(), context)
@@ -35,7 +35,7 @@ export default class Method extends _Function {
         if(!doc) {
             this.throw(new PHPError.NoDoc(), context)
         }
-        let method_type = super.check(context, in_call, doc).expressionType
+        let method_type = super.check(context, parser_state, doc).expressionType
         context.classContext.addIdentifier(
             this.name,
             this.visibility,

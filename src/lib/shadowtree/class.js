@@ -50,12 +50,12 @@ export default class Class extends Declaration {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @param {boolean} [in_call]
+     * @param {parserStateOptions} [parser_state]
      * @param {?Doc} [doc]
      * @returns {?ContextTypes} The set of types applicable to this value
      */
-    check(context, in_call = false, doc = null) {
-        super.check(context, in_call, doc)
+    check(context, parser_state = {}, doc = null) {
+        super.check(context, parser_state, doc)
         if(!this.name.match(/^([0-9A-Z]+[0-9a-z]*)+$/)) {
             // This does allow names like UPSPowerState
             this.throw(new PHPError.PSR1.S3ClassCase(), context)
@@ -114,7 +114,7 @@ export default class Class extends Declaration {
                 if(b instanceof Doc) {
                     last_doc = b
                 } else {
-                    b.check(inner_context, false, last_doc)
+                    b.check(inner_context, {}, last_doc)
                     last_doc = null
                 }
             }

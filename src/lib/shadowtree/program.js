@@ -8,11 +8,11 @@ export default class Program extends Block {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @param {boolean} [in_call]
+     * @param {parserStateOptions} [parser_state]
      * @param {?Doc} [doc]
      * @returns {?ContextTypes} The set of types applicable to this value
      */
-    check(context, in_call = false, doc = null) {
+    check(context, parser_state = {}, doc = null) {
         let classes = this.children.filter(
             c => c instanceof Class
         )
@@ -21,6 +21,6 @@ export default class Program extends Block {
                 `PSR-1 #3: One class per file (${classes.length})`
             ), context)
         }
-        return super.check(context, in_call, doc)
+        return super.check(context, parser_state, doc)
     }
 }

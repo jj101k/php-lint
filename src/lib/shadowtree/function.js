@@ -34,12 +34,12 @@ export default class _Function extends Declaration {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @param {boolean} [in_call]
+     * @param {parserStateOptions} [parser_state]
      * @param {?Doc} [doc]
      * @returns {?ContextTypes} The set of types applicable to this value
      */
-    check(context, in_call = false, doc = null) {
-        super.check(context, in_call, doc)
+    check(context, parser_state = {}, doc = null) {
+        super.check(context, parser_state, doc)
         if(!doc) {
             this.throw(new PHPError.NoDoc(), context)
         }
@@ -95,7 +95,7 @@ export default class _Function extends Declaration {
         let pass_by_reference_positions = {}
         this.arguments.forEach(
             (node, index) => {
-                arg_types.push(node.check(inner_context, in_call, null).expressionType)
+                arg_types.push(node.check(inner_context, parser_state, null).expressionType)
                 if(node.byref) {
                     pass_by_reference_positions[index] = true
                 }
@@ -108,7 +108,7 @@ export default class _Function extends Declaration {
         let signature_type = this.type && PHPSimpleType.named(context.resolveName(this.type.name))
         let return_type
         if(this.body) {
-            return_type = this.body.check(inner_context, false, null).returnType
+            return_type = this.body.check(inner_context, {}, null).returnType
             if(signature_type && !return_type.compatibleWith(signature_type)) {
                 this.throw(new PHPError.ReturnTypeMismatch(
                     `Practical return type ${return_type} does not match signature ${signature_type}`

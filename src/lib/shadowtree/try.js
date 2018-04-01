@@ -20,18 +20,18 @@ export default class Try extends Statement {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @param {boolean} [in_call]
+     * @param {parserStateOptions} [parser_state]
      * @param {?Doc} [doc]
      * @returns {?ContextTypes} The set of types applicable to this value
      */
-    check(context, in_call = false, doc = null) {
-        super.check(context, in_call, doc)
-        this.body.check(context, false, null)
+    check(context, parser_state = {}, doc = null) {
+        super.check(context, parser_state, doc)
+        this.body.check(context, {}, null)
         this.catches.forEach(
-            c => c.check(context, false, null)
+            c => c.check(context, {}, null)
         )
         if(this.always) {
-            this.always.check(context, false, null)
+            this.always.check(context, {}, null)
         }
         return ContextTypes.empty // FIXME if union - special
     }

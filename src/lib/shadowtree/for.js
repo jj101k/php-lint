@@ -27,23 +27,23 @@ export default class For extends Statement {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @param {boolean} [in_call]
+     * @param {parserStateOptions} [parser_state]
      * @param {?Doc} [doc]
      * @returns {?ContextTypes} The set of types applicable to this value
      */
-    check(context, in_call = false, doc = null) {
-        super.check(context, in_call, doc)
+    check(context, parser_state = {}, doc = null) {
+        super.check(context, parser_state, doc)
         this.init.forEach(
-            n => n.check(context, false, null)
+            n => n.check(context, {}, null)
         )
         this.test.forEach(
-            n => n.check(context, false, null)
+            n => n.check(context, {}, null)
         )
         this.increment.forEach(
-            n => n.check(context, false, null)
+            n => n.check(context, {}, null)
         )
         if(this.body) {
-            this.body.check(context, false, null)
+            this.body.check(context, {}, null)
         }
         return ContextTypes.empty
     }

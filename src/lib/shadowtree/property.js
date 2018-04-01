@@ -24,17 +24,17 @@ export default class Property extends Declaration {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @param {boolean} [in_call]
+     * @param {parserStateOptions} [parser_state]
      * @param {?Doc} [doc]
      * @returns {?ContextTypes} The set of types applicable to this value
      */
-    check(context, in_call = false, doc = null) {
-        super.check(context, in_call, doc)
+    check(context, parser_state = {}, doc = null) {
+        super.check(context, parser_state, doc)
         context.classContext.addIdentifier(
             this.name,
             this.visibility,
             this.isStatic,
-            this.value ? this.value.check(context, false, null).expressionType : PHPSimpleType.coreTypes.mixed
+            this.value ? this.value.check(context, {}, null).expressionType : PHPSimpleType.coreTypes.mixed
         )
         return ContextTypes.empty
     }

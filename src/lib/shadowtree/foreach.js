@@ -28,20 +28,20 @@ export default class Foreach extends Statement {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @param {boolean} [in_call]
+     * @param {parserStateOptions} [parser_state]
      * @param {?Doc} [doc]
      * @returns {?ContextTypes} The set of types applicable to this value
      */
-    check(context, in_call = false, doc = null) {
-        super.check(context, in_call, doc)
-        this.source.check(context, false, null)
+    check(context, parser_state = {}, doc = null) {
+        super.check(context, parser_state, doc)
+        this.source.check(context, {}, null)
         let assign_context = context.childContext(true)
         assign_context.assigningType = PHPSimpleType.coreTypes.mixed
         if(this.key) {
-            this.key.check(assign_context, false, null)
+            this.key.check(assign_context, {}, null)
         }
-        this.value.check(assign_context, false, null)
-        this.body.check(context, false, null)
+        this.value.check(assign_context, {}, null)
+        this.body.check(context, {}, null)
         return ContextTypes.empty
     }
 }

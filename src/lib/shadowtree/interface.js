@@ -18,12 +18,12 @@ export default class Interface extends Declaration {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @param {boolean} [in_call]
+     * @param {parserStateOptions} [parser_state]
      * @param {?Doc} [doc]
      * @returns {?ContextTypes} The set of types applicable to this value
      */
-    check(context, in_call = false, doc = null) {
-        super.check(context, in_call, doc)
+    check(context, parser_state = {}, doc = null) {
+        super.check(context, parser_state, doc)
         let inner_context = context.childContext()
         inner_context.classContext = inner_context.globalContext.addInterface(
             context.resolveNodeName(this),
@@ -45,7 +45,7 @@ export default class Interface extends Declaration {
             }
         )
         this.body.forEach(
-            b => b.check(inner_context, false, null)
+            b => b.check(inner_context, {}, null)
         )
         return ContextTypes.empty
     }

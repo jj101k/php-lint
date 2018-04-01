@@ -44,10 +44,10 @@ class ClassContext {
      * Finds the named identifier
      * @param {string} name
      * @param {?ClassContext} from_class_context
-     * @param {boolean} [in_call]
+     * @param {parserStateOptions} [parser_state]
      * @returns {?PHPTypeUnion}
      */
-    findInstanceIdentifier(name, from_class_context, in_call = false) {
+    findInstanceIdentifier(name, from_class_context, parser_state = {}) {
         let m = this.instanceIdentifiers[name]
         let wrong_case
         if(m) {
@@ -76,9 +76,9 @@ class ClassContext {
                 return superclass_types
             }
         }
-        if(in_call && name != "__call") {
+        if(parser_state.inCall && name != "__call") {
             return this.findInstanceIdentifier("__call", from_class_context, true)
-        } else if(!in_call && name != "__get") {
+        } else if(!parser_state.inCall && name != "__get") {
             if(this.findInstanceIdentifier("__get", from_class_context, true)) {
                 return PHPSimpleType.coreTypes.mixed
             }

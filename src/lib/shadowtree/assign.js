@@ -24,15 +24,15 @@ export default class Assign extends Statement {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @param {boolean} [in_call]
+     * @param {parserStateOptions} [parser_state]
      * @param {?Doc} [doc]
      * @returns {?ContextTypes} The set of types applicable to this value
      */
-    check(context, in_call = false, doc = null) {
-        super.check(context, in_call, doc)
+    check(context, parser_state = {}, doc = null) {
+        super.check(context, parser_state, doc)
         let left_context = context.childContext(true)
-        left_context.assigningType = this.right.check(context, false, doc).expressionType
-        this.left.check(left_context, false, doc)
+        left_context.assigningType = this.right.check(context, {}, doc).expressionType
+        this.left.check(left_context, {}, doc)
         if(
             this.left instanceof Variable &&
             this.left.name.length == 1 &&

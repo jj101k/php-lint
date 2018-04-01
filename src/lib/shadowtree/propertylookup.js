@@ -15,15 +15,15 @@ export default class PropertyLookup extends Lookup {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @param {boolean} [in_call]
+     * @param {parserStateOptions} [parser_state]
      * @param {?Doc} [doc]
      * @returns {?ContextTypes} The set of types applicable to this value
      */
-    check(context, in_call = false, doc = null) {
-        super.check(context, in_call, doc)
+    check(context, parser_state = {}, doc = null) {
+        super.check(context, parser_state, doc)
         let inner_context = context.childContext(true)
         inner_context.assigningType = null
-        let type_union = this.what.check(inner_context, false, null).expressionType
+        let type_union = this.what.check(inner_context, {}, null).expressionType
         let offset
         if(this.offset instanceof ConstRef) {
             offset = this.offset.name
@@ -41,7 +41,7 @@ export default class PropertyLookup extends Lookup {
             type_union.types.forEach(t => {
                 let class_context = context.findClass("" + t)
                 if(class_context) {
-                    let identifier_types = class_context.findInstanceIdentifier(offset, context.classContext, in_call)
+                    let identifier_types = class_context.findInstanceIdentifier(offset, context.classContext, parser_state)
                     if(identifier_types) {
                         identifier_types.types.forEach(
                             itype => {

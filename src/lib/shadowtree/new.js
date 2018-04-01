@@ -19,14 +19,14 @@ export default class New extends Statement {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @param {boolean} [in_call]
+     * @param {parserStateOptions} [parser_state]
      * @param {?Doc} [doc]
      * @returns {?ContextTypes} The set of types applicable to this value
      */
-    check(context, in_call = false, doc = null) {
-        super.check(context, in_call, doc)
+    check(context, parser_state = {}, doc = null) {
+        super.check(context, parser_state, doc)
         this.arguments.forEach(
-            arg => arg.check(context, false, null)
+            arg => arg.check(context, {}, null)
         )
         if(this.what instanceof Variable) {
             return new ContextTypes(PHPSimpleType.coreTypes.mixed)
