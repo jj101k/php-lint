@@ -123,16 +123,29 @@ class Lint {
                             )
                         )
                     } else {
+                        let middle = lines.slice(
+                            e.loc.start.line,
+                            e.loc.end.line - 1
+                        )
+                        let middle_highlight
+                        if(middle.length > 10) {
+                            middle_highlight = middle.slice(0, 5).map(
+                                l => this.highlight(l)
+                            ).join("\n") + "\n...\n" + middle.slice(-5).map(
+                                l => this.highlight(l)
+                            ).join("\n")
+                        } else {
+                            middle_highlight = middle.map(
+                                l => this.highlight(l)
+                            ).join("\n")
+                        }
                         console.log(
                             this.highlight(
                                 lines[e.loc.start.line - 1],
                                 e.loc.start.column
                             ) +
                             "\n" +
-                            lines.slice(
-                                e.loc.start.line,
-                                e.loc.end.line - 1
-                            ).map(l => this.highlight(l)).join("\n") +
+                            middle_highlight +
                             "\n" +
                             this.highlight(
                                 lines[e.loc.end.line - 1],
