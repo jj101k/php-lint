@@ -44,6 +44,10 @@ class PHPType {
             (
                 this.typeSignature.match(/\[\]$/) &&
                 other_type.typeSignature == "array"
+            ) ||
+            (
+                this.typeSignature.match(/\[\]$/) &&
+                other_type.typeSignature == "mixed[]"
             )
         )
     }
