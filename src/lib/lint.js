@@ -108,18 +108,22 @@ class Lint {
                 if(filename) {
                     var lines = fs.readFileSync(filename, "utf8").split(/\n/)
                     if(e.loc.start.line >= ShowContextLines) {
-                        console.log(lines.slice(e.loc.start.line - ShowContextLines, e.loc.start.line).join("\n"))
+                        console.log(lines.slice(e.loc.start.line - ShowContextLines, e.loc.start.line - 1).join("\n"))
                     } else {
-                        console.log(lines.slice(0, e.loc.start.line).join("\n"))
+                        console.log(lines.slice(0, e.loc.start.line - 1).join("\n"))
                     }
                     let prefix_space = lines[e.loc.start.line - 1].substr(0, e.loc.start.column).replace(/\S/g, " ")
                     if(e.loc.start.line == e.loc.end.line) {
                         console.log(
+                            lines[e.loc.start.line - 1] +
+                            "\n" +
                             prefix_space + "^" +
                             "~".repeat(e.loc.end.column - e.loc.start.column - 1)
                         )
                     } else {
                         console.log(
+                            lines[e.loc.start.line - 1] +
+                            "\n" +
                             prefix_space + "^" +
                             lines[e.loc.start.line - 1].substr(e.loc.start.column + 1).replace(/\S/g, "~") +
                             "\n" +
