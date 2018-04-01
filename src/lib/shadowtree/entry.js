@@ -21,7 +21,6 @@ export default class Entry extends _Node {
         if(this.key) {
             this.key.check(context, new Set(), null)
         }
-        this.value.check(context, new Set(), null)
-        return ContextTypes.empty
+        return this.value.check(context, new Set(), null)
     }
 }
