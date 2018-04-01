@@ -6,6 +6,7 @@ import _String from "./string"
 import Bin from "./bin"
 import Magic from "./magic"
 import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
+import {ConstRef, StaticLookup} from "../shadowtree"
 export default class Call extends Statement {
     /**
      * @type {Object[]}
@@ -21,6 +22,8 @@ export default class Call extends Statement {
     }
     /**
      * Checks that syntax seems ok
+     *
+     * @todo This doesn't understand Closure::bind except with arguments (..., <object>) or (..., null, <class>::class)
      * @param {Context} context
      * @param {Set<ParserStateOption.Base>} [parser_state]
      * @param {?Doc} [doc]
@@ -33,7 +36,32 @@ export default class Call extends Statement {
         let callback_positions
         let callable_types = this.what.check(context, new Set([ParserStateOption.InCall]), null).expressionType
         let callable_type = callable_types.types[0]
-        if(callable_type instanceof PHPFunctionType) {
+        if(
+            this.what instanceof StaticLookup &&
+            this.what.offset instanceof ConstRef &&
+            this.what.offset.name == "bind" &&
+            this.what.what instanceof Identifier &&
+            context.resolveNodeName(this.what.what) == "\\Closure"
+        ) {
+            pbr_positions = {}
+            let effective_this_type = this.arguments[1].check(context, new Set(), null).expressionType
+            if(effective_this_type === PHPSimpleType.coreTypes.null) {
+                let arg_2 = this.arguments[2]
+                if(
+                    arg_2 instanceof StaticLookup &&
+                    arg_2.offset instanceof ConstRef &&
+                    arg_2.offset.name == "class" &&
+                    arg_2.what instanceof Identifier
+                ) {
+                    effective_this_type = PHPSimpleType.named(context.resolveNodeName(arg_2.what))
+                } else {
+                    effective_this_type = arg_2.check(context, new Set(), null).expressionType
+                }
+            }
+            callback_positions = {
+                0: effective_this_type
+            }
+        } else if(callable_type instanceof PHPFunctionType) {
             pbr_positions = callable_type.passByReferencePositions
             callback_positions = callable_type.callbackPositions
         } else {
