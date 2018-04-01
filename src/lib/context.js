@@ -92,6 +92,7 @@ export default class Context {
     constructor(file_context, global_context, class_context = null, ns = null, depth = 0) {
         this.classContext = class_context
         this.depth = depth
+        this.directory = null
         this.globalContext = global_context || new GlobalContext()
         this.fileContext = file_context
         /** @type {?PHPTypeUnion} */
@@ -99,7 +100,9 @@ export default class Context {
         this.ns = ns || {}
     }
 
-    /** @type string[] All the variable names in the namespace */
+    /**
+     * @type {string[]} All the variable names in the namespace
+     */
     get definedVariables() {
         return Object.keys(this.ns).filter(
             name => name.match(/^[$]/)
@@ -111,24 +114,23 @@ export default class Context {
     }
 
     /**
-     * @type {string} The directory we're working from. Typically either the
-     * Composer root or the current file's directory.
+     * @type {?FileContext}
      */
-    get directory() {
-        if(!this._directory) {
-            let file_directory = this.fileContext.directory
-            let composer_path = this.globalContext.findComposerConfig(file_directory)
-            if(composer_path) {
-                this._directory = path.dirname(composer_path)
-            } else {
-                this._directory = file_directory
-            }
-        }
-        return this._directory
+    get fileContext() {
+        return this._fileContext
     }
 
-    set directory(v) {
-        this._directory = v
+    set fileContext(v) {
+        if(v && !this.directory) {
+            this._fileContext = v
+            let file_directory = v.directory
+            let composer_path = this.globalContext.findComposerConfig(file_directory)
+            if(composer_path) {
+                this.directory = path.dirname(composer_path)
+            } else {
+                this.directory = file_directory
+            }
+        }
     }
 
     /**
