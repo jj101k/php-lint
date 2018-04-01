@@ -32,8 +32,9 @@ class DocParser {
                 let tail = md[2]
                 let node = new DocNode(tag)
                 parser_state[0].children.push(node)
-                if(tail && tail.match(/(?:\S.*?)?\s*\{\s*$/)) {
-                    node.tail = md[1]
+                let mdx
+                if(tail && (mdx = tail.match(/(?:\S.*?)?\s*\{\s*$/))) {
+                    node.tail = mdx[1]
                     parser_state.unshift(node)
                 } else {
                     node.tail = tail
