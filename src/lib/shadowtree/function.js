@@ -103,7 +103,14 @@ export default class _Function extends Declaration {
             inner_context.setThis()
         }
 
-        let signature_type = this.type && PHPSimpleType.named(context.resolveName(this.type.name))
+        let signature_type
+        if(this.type) {
+            if(this.type.resolution == "fqn") {
+                signature_type = PHPSimpleType.named(this.type.name.replace(/^\u005c/, ""))
+            } else {
+                signature_type = PHPSimpleType.named(context.resolveName(this.type.name))
+            }
+        }
         let return_type
         if(this.body) {
             return_type = this.body.check(inner_context, new Set(), null).returnType
