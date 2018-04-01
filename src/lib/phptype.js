@@ -31,6 +31,23 @@ class PHPType {
         }
         return this
     }
+
+    /**
+     * Returns true if this type is a subset of the supplied type.
+     *
+     * @param {PHPType} other_type
+     * @returns {boolean}
+     */
+    compatibleWith(other_type) {
+        return(
+            this.matches(other_type) ||
+            (
+                this.typeSignature.match(/\[\]$/) &&
+                other_type.typeSignature == "array"
+            )
+        )
+    }
+
     /**
      * Returns true if both have the same type.
      *
@@ -38,7 +55,10 @@ class PHPType {
      * @returns {boolean}
      */
     matches(other_type) {
-        return other_type === this || other_type.typeSignature == this.typeSignature
+        return(
+            other_type === this ||
+            other_type.typeSignature == this.typeSignature
+        )
     }
     /**
      * @type {string} Represents best expression of the object, rather than
@@ -427,9 +447,10 @@ class PHPTypeUnion {
         }
         return (
             this === expected_type ||
-            this.isMixed || expected_type.isMixed ||
+            this.isMixed ||
+            expected_type.isMixed ||
             this.types.every(
-                t => expected_type.types.some(et => et.matches(t))
+                t => expected_type.types.some(et => t.compatibleWith(et))
             )
         )
     }
