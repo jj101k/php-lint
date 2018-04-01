@@ -1,6 +1,6 @@
 import Literal from "./literal"
 import {PHPSimpleType} from "../phptype"
-import {Context, ContextTypes, Doc} from "./node"
+import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
 export default class _String extends Literal {
     /** @type {string} */
     get label() {
@@ -13,11 +13,11 @@ export default class _String extends Literal {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @param {parserStateOptions} [parser_state]
+     * @param {Set<ParserStateOption.Base>} [parser_state]
      * @param {?Doc} [doc]
      * @returns {?ContextTypes} The set of types applicable to this value
      */
-    check(context, parser_state = {}, doc = null) {
+    check(context, parser_state = new Set(), doc = null) {
         super.check(context, parser_state, doc)
         let types = PHPSimpleType.coreTypes.string.withValue(this.value)
         return new ContextTypes(types)

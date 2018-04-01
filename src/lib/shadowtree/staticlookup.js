@@ -4,7 +4,7 @@ import {PHPSimpleType} from "../phptype"
 import Identifier from "./identifier"
 import Variable from "./variable"
 import ConstRef from "./constref"
-import {Context, ContextTypes, Doc} from "./node"
+import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
 import PHPStrictError from "../php-strict-error"
 import * as PHPError from "../php-error"
 
@@ -15,16 +15,16 @@ export default class StaticLookup extends Lookup {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @param {parserStateOptions} [parser_state]
+     * @param {Set<ParserStateOption.Base>} [parser_state]
      * @param {?Doc} [doc]
      * @returns {?ContextTypes} The set of types applicable to this value
      */
-    check(context, parser_state = {}, doc = null) {
+    check(context, parser_state = new Set(), doc = null) {
         super.check(context, parser_state, doc)
         let class_context
         let resolved_name
         if(this.what instanceof Variable) {
-            this.what.check(context, {}, null)
+            this.what.check(context, new Set(), null)
             // $x::$y
             //this.offset.check(context)
             return new ContextTypes(PHPSimpleType.coreTypes.mixed)

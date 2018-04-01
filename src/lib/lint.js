@@ -69,6 +69,7 @@ class Lint {
 
     /**
      * Checks the current data (without caching)
+     *
      * @param {number} [depth] The current load depth
      * @throws
      * @returns {boolean}
@@ -82,7 +83,7 @@ class Lint {
                 null,
                 depth
             ),
-            false,
+            new Set(),
             null
         )
         return true

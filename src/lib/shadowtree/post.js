@@ -1,6 +1,6 @@
 import Operation from "./operation"
 import Variable from "./variable"
-import {Context, ContextTypes, Doc} from "./node"
+import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
 export default class Post extends Operation {
     /** @type {string} */
     get type() {
@@ -13,12 +13,12 @@ export default class Post extends Operation {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @param {parserStateOptions} [parser_state]
+     * @param {Set<ParserStateOption.Base>} [parser_state]
      * @param {?Doc} [doc]
      * @returns {?ContextTypes} The set of types applicable to this value
      */
-    check(context, parser_state = {}, doc = null) {
+    check(context, parser_state = new Set(), doc = null) {
         super.check(context, parser_state, doc)
-        return this.what.check(context, {}, null) // FIXME coerce
+        return this.what.check(context, new Set(), null) // FIXME coerce
     }
 }

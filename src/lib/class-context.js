@@ -1,6 +1,7 @@
 import {PHPTypeUnion, PHPSimpleType} from "./phptype"
 import * as PHPError from "./php-error"
 import {FileContext} from "./file-context"
+import * as ParserStateOption from "./parser-state-option"
 
 /**
  * Defines content in a specific class
@@ -44,10 +45,10 @@ class ClassContext {
      * Finds the named identifier
      * @param {string} name
      * @param {?ClassContext} from_class_context
-     * @param {parserStateOptions} [parser_state]
+     * @param {Set<ParserStateOption.Base>} [parser_state]
      * @returns {?PHPTypeUnion}
      */
-    findInstanceIdentifier(name, from_class_context, parser_state = {}) {
+    findInstanceIdentifier(name, from_class_context, parser_state = new Set()) {
         let m = this.instanceIdentifiers[name]
         let wrong_case
         if(m) {
@@ -76,10 +77,10 @@ class ClassContext {
                 return superclass_types
             }
         }
-        if(parser_state.inCall && name != "__call") {
-            return this.findInstanceIdentifier("__call", from_class_context, true)
-        } else if(!parser_state.inCall && name != "__get") {
-            if(this.findInstanceIdentifier("__get", from_class_context, true)) {
+        if(parser_state.has(ParserStateOption.InCall) && name != "__call") {
+            return this.findInstanceIdentifier("__call", from_class_context, new Set([ParserStateOption.InCall]))
+        } else if(!parser_state.has(ParserStateOption.InCall) && name != "__get") {
+            if(this.findInstanceIdentifier("__get", from_class_context, new Set([ParserStateOption.InCall]))) {
                 return PHPSimpleType.coreTypes.mixed
             }
         }

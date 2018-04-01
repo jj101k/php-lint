@@ -2,6 +2,7 @@ import AbstractNode from "./abstract-node"
 import Context from "../context"
 import ContextTypes from "../context-types"
 import Doc from "./doc"
+import * as ParserStateOption from "../parser-state-option"
 import {PHPTypeUnion} from "../phptype"
 import * as PHPError from "../php-error"
 import * as ShadowTree from "../shadowtree"
@@ -14,12 +15,6 @@ const DEBUG = false
  * @property {function} constructor
  * @property {string} kind
  * @property {?ParserLocation} loc
- */
-
-/**
- * @typedef parserStateOptions
- * @property {boolean} [inAssignment]
- * @property {boolean} [inCall]
  */
 
 /**
@@ -154,11 +149,11 @@ export default class _Node extends AbstractNode {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @param {parserStateOptions} [parser_state]
+     * @param {Set<ParserStateOption.Base>} [parser_state]
      * @param {?Doc} [doc]
      * @returns {?ContextTypes} The set of types applicable to this value
      */
-    check(context, parser_state = {}, doc = null) {
+    check(context, parser_state = new Set(), doc = null) {
         if(DEBUG) {
             if(this.loc) {
                 console.info(`Checking ${context.fileContext.filename}:${this.loc.start.line}:${this.loc.start.column}:${this.kind}`)
@@ -195,4 +190,4 @@ export default class _Node extends AbstractNode {
     }
 }
 
-export {Doc, Context, ContextTypes}
+export {Doc, Context, ContextTypes, ParserStateOption}

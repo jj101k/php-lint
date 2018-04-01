@@ -1,5 +1,5 @@
 import _Function from "./function"
-import {Context, ContextTypes, Doc} from "./node"
+import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
 import * as PHPError from "../php-error"
 export default class Method extends _Function {
     /** @type {boolean} */
@@ -21,11 +21,11 @@ export default class Method extends _Function {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @param {parserStateOptions} [parser_state]
+     * @param {Set<ParserStateOption.Base>} [parser_state]
      * @param {?Doc} [doc]
      * @returns {?ContextTypes} The set of types applicable to this value
      */
-    check(context, parser_state = {}, doc = null) {
+    check(context, parser_state = new Set(), doc = null) {
         if(!this.name.match(/^_*[0-9a-z]+([0-9A-Z]+[0-9a-z]*)*$/)) {
             // This does allow names like getUPSPowerState
             this.throw(new PHPError.PSR1.S43MethodName(), context)

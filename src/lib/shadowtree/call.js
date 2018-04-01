@@ -5,7 +5,7 @@ import Variable from "./variable"
 import _String from "./string"
 import Bin from "./bin"
 import Magic from "./magic"
-import {Context, ContextTypes, Doc} from "./node"
+import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
 export default class Call extends Statement {
     /**
      * @type {Object[]}
@@ -22,15 +22,15 @@ export default class Call extends Statement {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @param {parserStateOptions} [parser_state]
+     * @param {Set<ParserStateOption.Base>} [parser_state]
      * @param {?Doc} [doc]
      * @returns {?ContextTypes} The set of types applicable to this value
      */
-    check(context, parser_state = {}, doc = null) {
+    check(context, parser_state = new Set(), doc = null) {
         super.check(context, parser_state, doc)
         let pbr_positions
         let callback_positions
-        let callable_types = this.what.check(context, {inCall: true}, null).expressionType
+        let callable_types = this.what.check(context, new Set([ParserStateOption.InCall]), null).expressionType
         let callable_type = callable_types.types[0]
         if(callable_type instanceof PHPFunctionType) {
             pbr_positions = callable_type.passByReferencePositions
@@ -43,14 +43,14 @@ export default class Call extends Statement {
             if(pbr_positions[i]) {
                 let inner_context = context.childContext(true)
                 inner_context.assigningType = context.findName(arg.name) || PHPSimpleType.coreTypes.mixed
-                arg.check(inner_context, {}, null)
+                arg.check(inner_context, new Set(), null)
             } else if(callback_positions[i]) {
                 let inner_context = context.childContext(false)
                 inner_context.importNamespaceFrom(context)
                 inner_context.setName("$this", callback_positions[i])
-                arg.check(inner_context, {}, null)
+                arg.check(inner_context, new Set(), null)
             } else {
-                arg.check(context, {}, null)
+                arg.check(context, new Set(), null)
             }
         })
         if(

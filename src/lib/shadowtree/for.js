@@ -1,6 +1,6 @@
 import Statement from "./statement"
 import Expression from "./expression"
-import {Context, ContextTypes, Doc} from "./node"
+import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
 export default class For extends Statement {
     /** @type {Expression[]} */
     get init() {
@@ -25,23 +25,23 @@ export default class For extends Statement {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @param {parserStateOptions} [parser_state]
+     * @param {Set<ParserStateOption.Base>} [parser_state]
      * @param {?Doc} [doc]
      * @returns {?ContextTypes} The set of types applicable to this value
      */
-    check(context, parser_state = {}, doc = null) {
+    check(context, parser_state = new Set(), doc = null) {
         super.check(context, parser_state, doc)
         this.init.forEach(
-            n => n.check(context, {}, null)
+            n => n.check(context, new Set(), null)
         )
         this.test.forEach(
-            n => n.check(context, {}, null)
+            n => n.check(context, new Set(), null)
         )
         this.increment.forEach(
-            n => n.check(context, {}, null)
+            n => n.check(context, new Set(), null)
         )
         if(this.body) {
-            this.body.check(context, {}, null)
+            this.body.check(context, new Set(), null)
         }
         return ContextTypes.empty
     }

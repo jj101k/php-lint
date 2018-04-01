@@ -1,6 +1,6 @@
 import Operation from "./operation"
 import Expression from "./expression"
-import {Context, ContextTypes, Doc} from "./node"
+import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
 import {PHPSimpleType} from "../phptype"
 export default class Unary extends Operation {
     /** @type {string} */
@@ -14,14 +14,14 @@ export default class Unary extends Operation {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @param {parserStateOptions} [parser_state]
+     * @param {Set<ParserStateOption.Base>} [parser_state]
      * @param {?Doc} [doc]
      * @returns {?ContextTypes} The set of types applicable to this value
      */
-    check(context, parser_state = {}, doc = null) {
+    check(context, parser_state = new Set(), doc = null) {
         super.check(context, parser_state, doc)
         if(this.type == "!") {
-            let etype = this.what.check(context, {}, null).expressionType
+            let etype = this.what.check(context, new Set(), null).expressionType
             let rtype = PHPSimpleType.coreTypes.bool
             let coerced_values = etype.coercedValues("bool")
             if(coerced_values) {
@@ -30,7 +30,7 @@ export default class Unary extends Operation {
             return new ContextTypes(rtype)
         } else {
             console.log(`TODO: Unary type ${this.type} not handled yet`)
-            return this.what.check(context, {}, null)
+            return this.what.check(context, new Set(), null)
         }
     }
 }

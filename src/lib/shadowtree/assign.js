@@ -1,7 +1,7 @@
 import Statement from "./statement"
 import Expression from "./expression"
 import Variable from "./variable"
-import {Context, ContextTypes, Doc} from "./node"
+import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
 import {PHPSimpleType} from "../phptype"
 import * as PHPError from "../php-error"
 export default class Assign extends Statement {
@@ -22,16 +22,16 @@ export default class Assign extends Statement {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @param {parserStateOptions} [parser_state]
+     * @param {Set<ParserStateOption.Base>} [parser_state]
      * @param {?Doc} [doc]
      * @returns {?ContextTypes} The set of types applicable to this value
      */
-    check(context, parser_state = {}, doc = null) {
+    check(context, parser_state = new Set(), doc = null) {
         super.check(context, parser_state, doc)
         let left_context = context.childContext(true)
         left_context.assigningType =
-            this.right.check(context, {inAssignment: true}, doc).expressionType
-        this.left.check(left_context, {}, doc)
+            this.right.check(context, new Set([ParserStateOption.InAssignment]), doc).expressionType
+        this.left.check(left_context, new Set(), doc)
         if(
             this.left instanceof Variable &&
             this.left.name.length == 1 &&

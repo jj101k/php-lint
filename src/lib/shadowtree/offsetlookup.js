@@ -5,20 +5,20 @@ import PropertyLookup from "./propertylookup"
 import StaticLookup from "./staticlookup"
 import Parenthesis from "./parenthesis"
 import Call from "./call"
-import {Context, ContextTypes, Doc} from "./node"
+import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
 export default class OffsetLookup extends Lookup {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @param {parserStateOptions} [parser_state]
+     * @param {Set<ParserStateOption.Base>} [parser_state]
      * @param {?Doc} [doc]
      * @returns {?ContextTypes} The set of types applicable to this value
      */
-    check(context, parser_state = {}, doc = null) {
+    check(context, parser_state = new Set(), doc = null) {
         super.check(context, parser_state, doc)
         let inner_context = context.childContext(true)
         inner_context.assigningType = null
-        let type_union = this.what.check(inner_context, {}, null).expressionType
+        let type_union = this.what.check(inner_context, new Set(), null).expressionType
         if(this.offset instanceof Variable) {
             return new ContextTypes(PHPSimpleType.coreTypes.mixed)
         } else {

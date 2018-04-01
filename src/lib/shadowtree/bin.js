@@ -1,6 +1,6 @@
 import Operation from "./operation"
 import Expression from "./expression"
-import {Context, ContextTypes, Doc} from "./node"
+import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
 import {PHPSimpleType, PHPTypeUnion} from "../phptype"
 export default class Bin extends Operation {
     /** @type {string} */
@@ -18,14 +18,14 @@ export default class Bin extends Operation {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @param {parserStateOptions} [parser_state]
+     * @param {Set<ParserStateOption.Base>} [parser_state]
      * @param {?Doc} [doc]
      * @returns {?ContextTypes} The set of types applicable to this value
      */
-    check(context, parser_state = {}, doc = null) {
+    check(context, parser_state = new Set(), doc = null) {
         super.check(context, parser_state, doc)
-        let left_types = this.left.check(context, {}, null).expressionType
-        let right_types = this.right.check(context, {}, null).expressionType
+        let left_types = this.left.check(context, new Set(), null).expressionType
+        let right_types = this.right.check(context, new Set(), null).expressionType
         let types = PHPTypeUnion.empty
         switch(this.type) {
             case "||":

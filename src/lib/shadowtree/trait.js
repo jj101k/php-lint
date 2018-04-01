@@ -2,7 +2,7 @@ import Declaration from "./declaration"
 import {PHPSimpleType, PHPTypeUnion} from "../phptype"
 import Identifier from "./identifier"
 import Method from "./method"
-import {Context, ContextTypes, Doc} from "./node"
+import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
 export default class Trait extends Declaration {
     /** @type {?Identifier} */
     get extends() {
@@ -20,11 +20,11 @@ export default class Trait extends Declaration {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @param {parserStateOptions} [parser_state]
+     * @param {Set<ParserStateOption.Base>} [parser_state]
      * @param {?Doc} [doc]
      * @returns {?ContextTypes} The set of types applicable to this value
      */
-    check(context, parser_state = {}, doc = null) {
+    check(context, parser_state = new Set(), doc = null) {
         super.check(context, parser_state, doc)
         let inner_context = context.childContext()
         inner_context.classContext = inner_context.globalContext.addTrait(
@@ -48,7 +48,7 @@ export default class Trait extends Declaration {
             }
         )
         this.body.forEach(
-            b => b.check(inner_context, {}, null)
+            b => b.check(inner_context, new Set(), null)
         )
         return ContextTypes.empty
     }

@@ -5,7 +5,7 @@ import Property from "./property"
 import ClassConstant from "./classconstant"
 import Identifier from "./identifier"
 import TraitUse from "./traituse"
-import {Context, ContextTypes, Doc} from "./node"
+import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
 import * as PHPError from "../php-error"
 export default class Class extends Declaration {
     /**
@@ -48,11 +48,11 @@ export default class Class extends Declaration {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @param {parserStateOptions} [parser_state]
+     * @param {Set<ParserStateOption.Base>} [parser_state]
      * @param {?Doc} [doc]
      * @returns {?ContextTypes} The set of types applicable to this value
      */
-    check(context, parser_state = {}, doc = null) {
+    check(context, parser_state = new Set(), doc = null) {
         super.check(context, parser_state, doc)
         if(!this.name.match(/^([0-9A-Z]+[0-9a-z]*)+$/)) {
             // This does allow names like UPSPowerState
@@ -112,7 +112,7 @@ export default class Class extends Declaration {
                 if(b instanceof Doc) {
                     last_doc = b
                 } else {
-                    b.check(inner_context, {}, last_doc)
+                    b.check(inner_context, new Set(), last_doc)
                     last_doc = null
                 }
             }

@@ -1,7 +1,7 @@
 import Statement from "./statement"
 import Expression from "./expression"
 import Block from "./block"
-import {Context, ContextTypes, Doc} from "./node"
+import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
 import {PHPTypeUnion} from "../phptype"
 export default class Switch extends Statement {
     /** @type {Expression} */
@@ -19,20 +19,20 @@ export default class Switch extends Statement {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @param {parserStateOptions} [parser_state]
+     * @param {Set<ParserStateOption.Base>} [parser_state]
      * @param {?Doc} [doc]
      * @returns {?ContextTypes} The set of types applicable to this value
      */
-    check(context, parser_state = {}, doc = null) {
+    check(context, parser_state = new Set(), doc = null) {
         super.check(context, parser_state, doc)
-        this.test.check(context, {}, null)
+        this.test.check(context, new Set(), null)
         let type = PHPTypeUnion.empty
         let child_contexts = []
         this.body.children.forEach(
             c => { // FIXME fallthrough
                 let case_context = context.childContext(false)
                 case_context.importNamespaceFrom(context)
-                type = type.addTypesFrom(c.check(case_context, {}, null).returnType)
+                type = type.addTypesFrom(c.check(case_context, new Set(), null).returnType)
                 child_contexts.push(case_context)
             }
         )

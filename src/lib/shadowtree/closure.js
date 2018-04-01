@@ -4,7 +4,7 @@ import Block from "./block"
 import Identifier from "./identifier"
 import Variable from "./variable"
 import Parameter from "./parameter"
-import {Context, ContextTypes, Doc} from "./node"
+import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
 import * as PHPError from "../php-error"
 export default class Closure extends Statement {
     /** @type {Parameter[]} */
@@ -34,13 +34,13 @@ export default class Closure extends Statement {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @param {parserStateOptions} [parser_state]
+     * @param {Set<ParserStateOption.Base>} [parser_state]
      * @param {?Doc} [doc]
      * @returns {?ContextTypes} The set of types applicable to this value
      */
-    check(context, parser_state = {}, doc = null) {
+    check(context, parser_state = new Set(), doc = null) {
         super.check(context, parser_state, doc)
-        if(parser_state.inAssignment && !doc) {
+        if(parser_state.has(ParserStateOption.InAssignment) && !doc) {
             this.throw(new PHPError.NoDocClosure(), context)
         }
         var inner_context = context.childContext()
@@ -68,7 +68,7 @@ export default class Closure extends Statement {
         let signature_type = this.type && PHPSimpleType.named(context.resolveName(this.type.name))
         let return_type
         if(this.body) {
-            return_type = this.body.check(inner_context, {}, null).returnType
+            return_type = this.body.check(inner_context, new Set(), null).returnType
             if(signature_type && !return_type.compatibleWith(signature_type)) {
                 this.throw(new PHPError.ReturnTypeMismatch(
                     `Practical return type ${return_type} does not match signature ${signature_type}`

@@ -1,5 +1,5 @@
 import Constant from "./constant"
-import {Context, ContextTypes, Doc} from "./node"
+import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
 import * as PHPError from "../php-error"
 export default class ClassConstant extends Constant {
     /** @type {boolean} */
@@ -14,11 +14,11 @@ export default class ClassConstant extends Constant {
     /**
      * Checks that syntax seems ok
      * @param {Context} context
-     * @param {parserStateOptions} [parser_state]
+     * @param {Set<ParserStateOption.Base>} [parser_state]
      * @param {?Doc} [doc]
      * @returns {?ContextTypes} The set of types applicable to this value
      */
-    check(context, parser_state = {}, doc = null) {
+    check(context, parser_state = new Set(), doc = null) {
         if(!this.name.match(/^[0-9A-Z_]+$/)) {
             this.throw(new PHPError.PSR1.S41ClassConstantName(), context)
         }
