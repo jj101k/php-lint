@@ -9,12 +9,6 @@ import * as ShadowTree from "../shadowtree"
 const DEBUG = false
 
 /**
- * @callback cachePropertyCallback
- * @param {Object} node_property
- * @returns {Object}
- */
-
-/**
  * @typedef ParserNode
  * @property {function} constructor
  * @property {string} kind
@@ -169,7 +163,7 @@ export default class _Node {
      * Returns a cached copy of the named property, calling f(node_property)
      * if needed.
      * @param {string} name
-     * @param {cachePropertyCallback} f
+     * @param {function(*): *} f
      * @returns {Object}
      */
     cacheProperty(name, f) {
