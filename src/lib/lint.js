@@ -125,14 +125,12 @@ class Lint {
                             "\n" +
                             lines.slice(
                                 e.loc.start.line,
-                                e.loc.end.line
-                            ).map((l, i) => {
-                                if(i == e.loc.end.line - e.loc.start.line - 1) {
-                                    return l + "\n" + l.substr(0, e.loc.end.column).replace(/\S/g, "~")
-                                } else {
-                                    return l + "\n" + l.replace(/\S/g, "~")
-                                }
-                            }).join("\n")
+                                e.loc.end.line - 1
+                            ).map((l, i) => l + "\n" + l.replace(/\S/g, "~")).join("\n") +
+                            "\n" +
+                            lines[e.loc.end.line - 1] +
+                            "\n" +
+                            lines[e.loc.end.line - 1].substr(0, e.loc.end.column).replace(/\S/g, "~")
                         )
                     }
                 }
