@@ -1,9 +1,7 @@
-import Context from "../context"
-import ContextTypes from "../context-types"
 import Statement from "./statement"
 import Expression from "./expression"
 import Block from "./block"
-import Doc from "./doc"
+import {Context, ContextTypes, Doc} from "./node"
 import {PHPTypeUnion} from "../phptype"
 export default class Switch extends Statement {
     /** @type {Expression} */

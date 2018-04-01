@@ -1,7 +1,5 @@
-import Context from "../context"
-import ContextTypes from "../context-types"
 import Statement from "./statement"
-import Doc from "./doc"
+import {Context, ContextTypes, Doc} from "./node"
 export default class UseItem extends Statement {
     /** @type {string} */
     get name() {

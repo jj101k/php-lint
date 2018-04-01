@@ -1,9 +1,7 @@
-import Context from "../context"
-import ContextTypes from "../context-types"
 import Statement from "./statement"
 import {PHPTypeUnion} from "../phptype"
 import Expression from "./expression"
-import Doc from "./doc"
+import {Context, ContextTypes, Doc} from "./node"
 export default class RetIf extends Statement {
     /** @type {Expression} */
     get test() {

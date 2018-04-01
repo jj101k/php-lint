@@ -1,7 +1,5 @@
-import Context from "../context"
-import ContextTypes from "../context-types"
 import Block from "./block"
-import Doc from "./doc"
+import {Context, ContextTypes, Doc} from "./node"
 export default class Namespace extends Block {
     /** @type {string} */
     get name() {

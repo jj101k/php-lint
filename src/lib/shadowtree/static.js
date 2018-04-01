@@ -1,10 +1,8 @@
-import Context from "../context"
-import ContextTypes from "../context-types"
 import Statement from "./statement"
 import {PHPSimpleType} from "../phptype"
 import Variable from "./variable"
 import Assign from "./assign"
-import Doc from "./doc"
+import {Context, ContextTypes, Doc} from "./node"
 export default class Static extends Statement {
     /** @type {(Variable|Assign)[]} */
     get items() {

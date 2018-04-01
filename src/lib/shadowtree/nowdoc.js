@@ -1,5 +1,4 @@
-import Context from "../context"
-import ContextTypes from "../context-types"
+import {Context, ContextTypes} from "./node"
 import Literal from "./literal"
 export default class Nowdoc extends Literal {
     /** @type {string} */

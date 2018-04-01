@@ -1,5 +1,4 @@
-import Context from "../context"
-import ContextTypes from "../context-types"
+import {Context, ContextTypes} from "./node"
 import Operation from "./operation"
 import Expression from "./expression"
 export default class Coalesce extends Operation {

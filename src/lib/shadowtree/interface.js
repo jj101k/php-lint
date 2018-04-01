@@ -1,10 +1,8 @@
-import Context from "../context"
-import ContextTypes from "../context-types"
 import Declaration from "./declaration"
 import {PHPTypeUnion} from "../phptype"
 import Method from "./method"
 import Identifier from "./identifier"
-import Doc from "./doc"
+import {Context, ContextTypes, Doc} from "./node"
 export default class Interface extends Declaration {
     /** @type {?Identifier} */
     get extends() {

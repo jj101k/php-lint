@@ -1,7 +1,5 @@
-import Context from "../context"
-import ContextTypes from "../context-types"
 import Sys from "./sys"
-import Doc from "./doc"
+import {Context, ContextTypes, Doc} from "./node"
 import {PHPSimpleType} from "../phptype"
 export default class List extends Sys {
     /**

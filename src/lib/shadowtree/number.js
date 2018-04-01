@@ -1,7 +1,5 @@
-import Context from "../context"
-import ContextTypes from "../context-types"
 import Literal from "./literal"
-import Doc from "./doc"
+import {Context, ContextTypes, Doc} from "./node"
 import {PHPSimpleType} from "../phptype"
 export default class _Number extends Literal {
     /** @type {number} */

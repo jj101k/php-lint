@@ -1,9 +1,7 @@
-import Context from "../context"
-import ContextTypes from "../context-types"
 import Declaration from "./declaration"
 import Identifier from "./identifier"
 import {PHPSimpleType} from "../phptype"
-import Doc from "./doc"
+import {Context, ContextTypes, Doc} from "./node"
 import _Node from "./node"
 import ConstRef from "./constref"
 export default class Parameter extends Declaration {

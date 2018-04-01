@@ -1,7 +1,5 @@
-import Context from "../context"
-import ContextTypes from "../context-types"
 import Declaration from "./declaration"
-import Doc from "./doc"
+import {Context, ContextTypes, Doc} from "./node"
 import {PHPSimpleType} from "../phptype"
 import _Node from "./node"
 export default class Property extends Declaration {

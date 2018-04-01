@@ -1,8 +1,6 @@
-import Context from "../context"
-import ContextTypes from "../context-types"
 import Statement from "./statement"
 import Expression from "./expression"
-import Doc from "./doc"
+import {Context, ContextTypes, Doc} from "./node"
 export default class Do extends Statement {
     /** @type {Expression} */
     get test() {

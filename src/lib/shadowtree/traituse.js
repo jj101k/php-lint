@@ -1,8 +1,6 @@
-import Context from "../context"
-import ContextTypes from "../context-types"
 import _Node from "./node"
 import Identifier from "./identifier"
-import Doc from "./doc"
+import {Context, ContextTypes, Doc} from "./node"
 export default class TraitUse extends _Node {
     /** @type {?_Node[]} */
     get adaptations() {

@@ -1,5 +1,3 @@
-import Context from "../context"
-import ContextTypes from "../context-types"
 import Lookup from "./lookup"
 import {PHPFunctionType, PHPSimpleType, PHPTypeUnion} from "../phptype"
 import Variable from "./variable"
@@ -9,7 +7,7 @@ import Parenthesis from "./parenthesis"
 import ConstRef from "./constref"
 import Call from "./call"
 import _String from "./string"
-import Doc from "./doc"
+import {Context, ContextTypes, Doc} from "./node"
 import * as PHPError from "../php-error"
 export default class PropertyLookup extends Lookup {
     /**

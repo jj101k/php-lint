@@ -1,5 +1,4 @@
-import Context from "../context"
-import ContextTypes from "../context-types"
+import {Context, ContextTypes} from "./node"
 import _Node from "./node"
 import Identifier from "./identifier"
 export default class TraitPrecedence extends _Node {

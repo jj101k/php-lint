@@ -1,8 +1,6 @@
-import Context from "../context"
-import ContextTypes from "../context-types"
 import Operation from "./operation"
 import Expression from "./expression"
-import Doc from "./doc"
+import {Context, ContextTypes, Doc} from "./node"
 import {PHPSimpleType, PHPTypeUnion} from "../phptype"
 export default class Bin extends Operation {
     /** @type {string} */

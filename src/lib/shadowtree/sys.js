@@ -1,5 +1,4 @@
-import Context from "../context"
-import ContextTypes from "../context-types"
+import {Context, ContextTypes} from "./node"
 import Statement from "./statement"
 import _Node from "./node"
 export default class Sys extends Statement {

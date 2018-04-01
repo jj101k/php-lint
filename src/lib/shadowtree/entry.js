@@ -1,7 +1,5 @@
-import Context from "../context"
-import ContextTypes from "../context-types"
 import _Node from "./node"
-import Doc from "./doc"
+import {Context, ContextTypes, Doc} from "./node"
 export default class Entry extends _Node {
     /** @type {?_Node} */
     get key() {

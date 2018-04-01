@@ -1,10 +1,8 @@
-import Context from "../context"
-import ContextTypes from "../context-types"
 import Declaration from "./declaration"
 import {PHPSimpleType, PHPTypeUnion} from "../phptype"
 import Identifier from "./identifier"
 import Method from "./method"
-import Doc from "./doc"
+import {Context, ContextTypes, Doc} from "./node"
 export default class Trait extends Declaration {
     /** @type {?Identifier} */
     get extends() {

@@ -1,8 +1,6 @@
-import Context from "../context"
-import ContextTypes from "../context-types"
 import Block from "./block"
 import Class from "./class"
-import Doc from "./doc"
+import {Context, ContextTypes, Doc} from "./node"
 import * as PHPError from "../php-error"
 export default class Program extends Block {
     /**

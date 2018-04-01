@@ -1,5 +1,3 @@
-import Context from "../context"
-import ContextTypes from "../context-types"
 import Statement from "./statement"
 import {PHPFunctionType, PHPTypeUnion, PHPSimpleType} from "../phptype"
 import Identifier from "./identifier"
@@ -7,7 +5,7 @@ import Variable from "./variable"
 import _String from "./string"
 import Bin from "./bin"
 import Magic from "./magic"
-import Doc from "./doc"
+import {Context, ContextTypes, Doc} from "./node"
 export default class Call extends Statement {
     /**
      * @type {Object[]}

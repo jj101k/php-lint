@@ -1,8 +1,6 @@
 import Expression from "./expression"
 import Entry from "./entry"
-import Context from "../context"
-import ContextTypes from "../context-types"
-import Doc from "./doc"
+import {Context, ContextTypes, Doc} from "./node"
 import {PHPSimpleType} from "../phptype"
 export default class _Array extends Expression {
      /** @type {Entry[]} */

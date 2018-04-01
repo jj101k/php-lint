@@ -1,9 +1,7 @@
-import Context from "../context"
-import ContextTypes from "../context-types"
 import Statement from "./statement"
 import Expression from "./expression"
 import Variable from "./variable"
-import Doc from "./doc"
+import {Context, ContextTypes, Doc} from "./node"
 import {PHPSimpleType} from "../phptype"
 import * as PHPError from "../php-error"
 export default class Assign extends Statement {

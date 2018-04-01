@@ -1,12 +1,10 @@
-import Context from "../context"
-import ContextTypes from "../context-types"
 import Statement from "./statement"
 import {PHPFunctionType, PHPSimpleType, PHPTypeUnion} from "../phptype"
 import Block from "./block"
 import Identifier from "./identifier"
 import Variable from "./variable"
 import Parameter from "./parameter"
-import Doc from "./doc"
+import {Context, ContextTypes, Doc} from "./node"
 import * as PHPError from "../php-error"
 export default class Closure extends Statement {
     /** @type {Parameter[]} */

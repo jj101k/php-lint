@@ -1,12 +1,10 @@
-import Context from "../context"
-import ContextTypes from "../context-types"
 import Lookup from "./lookup"
 import OffsetLookup from "./offsetlookup"
 import {PHPSimpleType} from "../phptype"
 import Identifier from "./identifier"
 import Variable from "./variable"
 import ConstRef from "./constref"
-import Doc from "./doc"
+import {Context, ContextTypes, Doc} from "./node"
 import PHPStrictError from "../php-strict-error"
 import * as PHPError from "../php-error"
 

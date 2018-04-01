@@ -1,12 +1,10 @@
-import Context from "../context"
-import ContextTypes from "../context-types"
 import Statement from "./statement"
 import {PHPSimpleType, PHPTypeUnion} from "../phptype"
 import _Node from "./node"
 import Identifier from "./identifier"
 import Variable from "./variable"
 import Class from "./class"
-import Doc from "./doc"
+import {Context, ContextTypes, Doc} from "./node"
 export default class New extends Statement {
     /** @type {Identifier|Variable|Class} */
     get what() {

@@ -1,5 +1,3 @@
-import Context from "../context"
-import ContextTypes from "../context-types"
 import Declaration from "./declaration"
 import {PHPSimpleType, PHPTypeUnion} from "../phptype"
 import Method from "./method"
@@ -7,7 +5,7 @@ import Property from "./property"
 import ClassConstant from "./classconstant"
 import Identifier from "./identifier"
 import TraitUse from "./traituse"
-import Doc from "./doc"
+import {Context, ContextTypes, Doc} from "./node"
 import * as PHPError from "../php-error"
 export default class Class extends Declaration {
     /**

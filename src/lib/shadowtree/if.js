@@ -1,5 +1,3 @@
-import Context from "../context"
-import ContextTypes from "../context-types"
 import Expression from "./expression"
 import Statement from "./statement"
 import {PHPTypeUnion, PHPSimpleType} from "../phptype"
@@ -7,7 +5,7 @@ import Block from "./block"
 import Bin from "./bin"
 import Variable from "./variable"
 import ConstRef from "./constref"
-import Doc from "./doc"
+import {Context, ContextTypes, Doc} from "./node"
 export default class If extends Statement {
     /** @type {Expression} */
     get test() {

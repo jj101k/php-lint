@@ -1,5 +1,4 @@
-import Context from "../context"
-import ContextTypes from "../context-types"
+import {Context, ContextTypes} from "./node"
 import Expression from "./expression"
 export default class Yield extends Expression {
     /** @type {?Expression} */

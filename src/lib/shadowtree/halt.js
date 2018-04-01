@@ -1,5 +1,4 @@
-import Context from "../context"
-import ContextTypes from "../context-types"
+import {Context, ContextTypes} from "./node"
 import Statement from "./statement"
 export default class Halt extends Statement {
     /** @type {string} */

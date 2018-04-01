@@ -1,9 +1,7 @@
-import Context from "../context"
-import ContextTypes from "../context-types"
 import Statement from "./statement"
 import {PHPSimpleType} from "../phptype"
 import Variable from "./variable"
-import Doc from "./doc"
+import {Context, ContextTypes, Doc} from "./node"
 export default class Global extends Statement {
     /** @type {Variable[]} */
     get items() {

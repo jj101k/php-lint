@@ -194,3 +194,5 @@ export default class _Node extends AbstractNode {
         }
     }
 }
+
+export {Doc, Context, ContextTypes}

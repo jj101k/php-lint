@@ -1,5 +1,3 @@
-import Context from "../context"
-import ContextTypes from "../context-types"
 import Lookup from "./lookup"
 import {PHPFunctionType, PHPSimpleType} from "../phptype"
 import Variable from "./variable"
@@ -7,7 +5,7 @@ import PropertyLookup from "./propertylookup"
 import StaticLookup from "./staticlookup"
 import Parenthesis from "./parenthesis"
 import Call from "./call"
-import Doc from "./doc"
+import {Context, ContextTypes, Doc} from "./node"
 export default class OffsetLookup extends Lookup {
     /**
      * Checks that syntax seems ok

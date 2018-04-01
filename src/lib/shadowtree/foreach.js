@@ -1,8 +1,6 @@
-import Context from "../context"
-import ContextTypes from "../context-types"
 import Statement from "./statement"
 import Expression from "./expression"
-import Doc from "./doc"
+import {Context, ContextTypes, Doc} from "./node"
 import {PHPSimpleType} from "../phptype"
 export default class Foreach extends Statement {
     /** @type {Expression} */
