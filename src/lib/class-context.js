@@ -16,7 +16,15 @@ class ClassContext {
     constructor(name, superclass = null, file_context = null) {
         this.name = name
         this.fileContext = file_context
-        this.staticIdentifiers = {}
+        /**
+         * @type {{[x: string]: {scope: string, types: PHPTypeUnion}}}
+         */
+        this.staticIdentifiers = {
+            class: {
+                scope: "public",
+                types: PHPSimpleType.coreTypes.string,
+            }
+        }
         this.instanceIdentifiers = {}
         this.superclass = superclass
     }
