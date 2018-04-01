@@ -100,8 +100,6 @@ export default class PHPAutoloader {
      */
     add(autoloader) {
         for(var k in autoloader.paths) {
-            console.log(this.paths)
-            console.log(autoloader.paths)
             this.paths[k] = (this.paths[k]||[]).concat(autoloader.paths[k])
         }
         this.classmapPaths = this.classmapPaths.concat(autoloader.classmapPaths)
