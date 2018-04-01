@@ -44,7 +44,11 @@ export default class Parameter extends Declaration {
             ) {
                 type_name = md[1]
             }
-            type = PHPSimpleType.named(context.resolveName(type_name))
+            if(this.type.resolution == "fqn") {
+                type = PHPSimpleType.named(type_name)
+            } else {
+                type = PHPSimpleType.named(context.resolveName(type_name))
+            }
         } else {
             type = PHPSimpleType.coreTypes.mixed
         }
