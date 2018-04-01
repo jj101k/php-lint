@@ -43,7 +43,7 @@ export default class Closure extends Statement {
     check(context, parser_state = {}, doc = null) {
         super.check(context, parser_state, doc)
         if(parser_state.inAssignment && !doc) {
-            this.throw(new PHPError.NoDoc(), context)
+            this.throw(new PHPError.NoDocClosure(), context)
         }
         var inner_context = context.childContext()
         let arg_types = []
