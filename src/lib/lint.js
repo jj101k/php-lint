@@ -10,6 +10,8 @@ var fs = require("fs")
 
 const ShowContextLines = 10
 
+const UseANSIHighlight = false
+
 class Lint {
     static get globalContext() {
         if(!this._globalContext) {
@@ -156,26 +158,44 @@ class Lint {
      * @returns {string}
      */
     static highlight(line, start = null, end = null) {
-        if(start === null && end === null) {
-            return line + "\n" + line.replace(/\S/g, "~")
-        } else if(start === null) {
-            return line +
-                "\n" +
-                line.substr(0, end).replace(/\S/g, "~")
-        } else {
-            let prefix_space = line.substr(0, start).replace(/\S/g, " ")
-            if(end === null) {
-                return line +
-                    "\n" +
-                    prefix_space +
-                    "^" +
-                    line.substr(start + 1).replace(/\S/g, "~")
+        if(UseANSIHighlight) {
+            if(start === null && end === null) {
+                return `\x1b[4m${line}\x1b[24m`
+            } else if(start === null) {
+                return `\x1b[4m${line.substr(0, end)}\x1b[24m` +
+                    line.substr(end)
             } else {
+                if(end === null) {
+                    return line.substr(0, start) +
+                        `\x1b[4m${line.substr(start)}\x1b[24m`
+                } else {
+                    return line.substr(0, start) +
+                        `\x1b[4m${line.substr(start, end + 1)}\x1b[24m` +
+                        line.substr(end + 1)
+                }
+            }
+        } else {
+            if(start === null && end === null) {
+                return line + "\n" + line.replace(/\S/g, "~")
+            } else if(start === null) {
                 return line +
                     "\n" +
-                    prefix_space +
-                    "^" +
-                    "~".repeat(end - start - 1)
+                    line.substr(0, end).replace(/\S/g, "~")
+            } else {
+                let prefix_space = line.substr(0, start).replace(/\S/g, " ")
+                if(end === null) {
+                    return line +
+                        "\n" +
+                        prefix_space +
+                        "^" +
+                        line.substr(start + 1).replace(/\S/g, "~")
+                } else {
+                    return line +
+                        "\n" +
+                        prefix_space +
+                        "^" +
+                        "~".repeat(end - start - 1)
+                }
             }
         }
     }
