@@ -92,7 +92,6 @@ export default class Context {
     constructor(file_context, global_context, class_context = null, ns = null, depth = 0) {
         this.classContext = class_context
         this.depth = depth
-        this.directory = null
         this.globalContext = global_context || new GlobalContext()
         this.fileContext = file_context
         /** @type {?PHPTypeUnion} */
@@ -111,6 +110,17 @@ export default class Context {
                 name => name.match(/^[$]/)
             )
         )
+    }
+
+    /**
+     * @type {string}
+     */
+    get directory() {
+        return this.globalContext.workingDirectory
+    }
+
+    set directory(v) {
+        this.globalContext.workingDirectory = v
     }
 
     /**

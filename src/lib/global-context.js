@@ -132,6 +132,9 @@ export class GlobalContext {
         }
         /** @type {{[x: string]: boolean}} */
         this.filesSeen = {}
+
+        /** @type {?string} */
+        this.workingDirectory = null
         PHPClasses.forEach(
             name => this.addUnknownClass("\\" + name)
         )
