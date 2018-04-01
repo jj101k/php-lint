@@ -108,8 +108,9 @@ class ClassContext {
             if(superclass_types) {
                 return superclass_types
             }
+        } else {
+            return null
         }
-        return null
     }
 
     /**
