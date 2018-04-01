@@ -31,7 +31,8 @@ export default class Assign extends Statement {
     check(context, parser_state = {}, doc = null) {
         super.check(context, parser_state, doc)
         let left_context = context.childContext(true)
-        left_context.assigningType = this.right.check(context, {}, doc).expressionType
+        left_context.assigningType =
+            this.right.check(context, {inAssignment: true}, doc).expressionType
         this.left.check(left_context, {}, doc)
         if(
             this.left instanceof Variable &&

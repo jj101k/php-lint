@@ -35,6 +35,7 @@ const DEBUG = false
 
 /**
  * @typedef parserStateOptions
+ * @property {boolean} [inAssignment]
  * @property {boolean} [inCall]
  */
 
