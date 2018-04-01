@@ -1,6 +1,7 @@
-//import Doc from "./doc"
+import AbstractNode from "./abstract-node"
 import Context from "../context"
 import ContextTypes from "../context-types"
+import Doc from "./doc"
 import {PHPTypeUnion} from "../phptype"
 import * as PHPError from "../php-error"
 import * as ShadowTree from "../shadowtree"
@@ -14,18 +15,6 @@ const DEBUG = false
  * @property {string} kind
  * @property {?ParserLocation} loc
  */
-/**
- * @typedef ParserPosition
- * @property {number} line
- * @property {number} column
- * @property {number} offset
- */
-/**
- * @typedef ParserLocation
- * @property {?string} source
- * @property {ParserPosition} start
- * @property {ParserPosition} end
- */
 
 /**
  * @typedef parserStateOptions
@@ -38,7 +27,7 @@ const DEBUG = false
  */
 let ignoreErrors = []
 
-export default class _Node {
+export default class _Node extends AbstractNode {
     /**
      * @type {{[x: string]: (boolean|{[y: string]: boolean})}} The error classes to ignore
      */
@@ -83,23 +72,26 @@ export default class _Node {
         return this._ignoreErrorMap
     }
     /**
+     * Returns the shadow tree counterpart of the given node.
+     * @param {ParserNode} node
+     * @returns {_Node}
+     */
+    static typed(node) {
+        var c = ShadowTree[node.constructor.name] ||
+            ShadowTree[node.constructor.name.replace(/^_/, "")]
+        if(!c) {
+            throw new Error(`No handler for ${node.constructor.name}`);
+        }
+        return new c(node);
+    }
+    /**
      * Builds the shadow node
      * @param {ParserNode} node
      */
     constructor(node) {
-        this._cache = {}
-        /** @type {Object} */
-        this.node = node
+        super(node)
     }
-    /** @type {string} */
-    get kind() {
-        return this.node.kind;
-    }
-    /** @type {?ParserLocation} */
-    get loc() {
-        return this.node.loc;
-    }
-    /**
+        /**
      * Returns the types for the local name, or throws
      * @param {Context} context
      * @param {string} name
@@ -160,19 +152,6 @@ export default class _Node {
         }
     }
     /**
-     * Returns a cached copy of the named property, calling f(node_property)
-     * if needed.
-     * @param {string} name
-     * @param {function(*): *} f
-     * @returns {Object}
-     */
-    cacheProperty(name, f) {
-        if(!this._cache.hasOwnProperty(name)) {
-            this._cache[name] = f(this.node[name]);
-        }
-        return this._cache[name];
-    }
-    /**
      * Checks that syntax seems ok
      * @param {Context} context
      * @param {parserStateOptions} [parser_state]
@@ -213,18 +192,5 @@ export default class _Node {
         if(ignoreErrors.every(o => !(e instanceof o))) {
             throw e.withContext(context, this)
         }
-    }
-    /**
-     * Returns the shadow tree counterpart of the given node.
-     * @param {ParserNode} node
-     * @returns {_Node}
-     */
-    static typed(node) {
-        var c = ShadowTree[node.constructor.name] ||
-            ShadowTree[node.constructor.name.replace(/^_/, "")]
-        if(!c) {
-            throw new Error(`No handler for ${node.constructor.name}`);
-        }
-        return new c(node);
     }
 }

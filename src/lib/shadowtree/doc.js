@@ -1,9 +1,10 @@
 import Context from "../context"
 import ContextTypes from "../context-types"
 import _Node from "./node"
+import AbstractNode from "./abstract-node";
 const doc_parser = require("doc-parser")
 const reader = new doc_parser()
-export default class Doc extends _Node {
+export default class Doc extends AbstractNode {
     /** @type {boolean} */
     get isDoc() {
         return this.node.isDoc
