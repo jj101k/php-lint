@@ -171,7 +171,7 @@ class Lint {
      * @returns {string}
      */
     static highlight(line, start = null, end = null) {
-        if(UseANSIHighlight) {
+        if(UseANSIHighlight && process.stdout.isTTY) {
             if(start === null && end === null) {
                 return `\x1b[4m${line}\x1b[24m`
             } else if(start === null) {
