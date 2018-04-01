@@ -112,35 +112,70 @@ class Lint {
                     } else {
                         console.log(lines.slice(0, e.loc.start.line - 1).join("\n"))
                     }
-                    let prefix_space = lines[e.loc.start.line - 1].substr(0, e.loc.start.column).replace(/\S/g, " ")
                     if(e.loc.start.line == e.loc.end.line) {
                         console.log(
-                            lines[e.loc.start.line - 1] +
-                            "\n" +
-                            prefix_space + "^" +
-                            "~".repeat(e.loc.end.column - e.loc.start.column - 1)
+                            this.highlight(
+                                lines[e.loc.start.line - 1],
+                                e.loc.start.column,
+                                e.loc.end.column
+                            )
                         )
                     } else {
                         console.log(
-                            lines[e.loc.start.line - 1] +
-                            "\n" +
-                            prefix_space + "^" +
-                            lines[e.loc.start.line - 1].substr(e.loc.start.column + 1).replace(/\S/g, "~") +
+                            this.highlight(
+                                lines[e.loc.start.line - 1],
+                                e.loc.start.column
+                            ) +
                             "\n" +
                             lines.slice(
                                 e.loc.start.line,
                                 e.loc.end.line - 1
-                            ).map((l, i) => l + "\n" + l.replace(/\S/g, "~")).join("\n") +
+                            ).map(l => this.highlight(l)).join("\n") +
                             "\n" +
-                            lines[e.loc.end.line - 1] +
-                            "\n" +
-                            lines[e.loc.end.line - 1].substr(0, e.loc.end.column).replace(/\S/g, "~")
+                            this.highlight(
+                                lines[e.loc.end.line - 1],
+                                null,
+                                e.loc.end.column
+                            )
                         )
                     }
                 }
                 return null
             } else {
                 throw e
+            }
+        }
+    }
+    /**
+     * Returns the string with the given range highlighted. null-null is the
+     * whole string.
+     *
+     * @param {string} line
+     * @param {?number} [start]
+     * @param {?number} [end]
+     * @returns {string}
+     */
+    static highlight(line, start = null, end = null) {
+        if(start === null && end === null) {
+            return line + "\n" + line.replace(/\S/g, "~")
+        } else if(start === null) {
+            return line +
+                "\n" +
+                line.substr(0, end).replace(/\S/g, "~")
+        } else {
+            let prefix_space = line.substr(0, start).replace(/\S/g, " ")
+            if(end === null) {
+                return line +
+                    "\n" +
+                    prefix_space +
+                    "^" +
+                    line.substr(start + 1).replace(/\S/g, "~")
+            } else {
+                return line +
+                    "\n" +
+                    prefix_space +
+                    "^" +
+                    "~".repeat(end - start - 1)
             }
         }
     }
