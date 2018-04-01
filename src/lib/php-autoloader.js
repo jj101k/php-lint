@@ -19,7 +19,7 @@ export default class PHPAutoloader {
      */
     get classmapResults() {
         if(!this._classmapResults) {
-            let s = new Date()
+            let s = new Date().valueOf()
             let classmap_results = {}
             this.classmapPaths.forEach(
                 path => {
@@ -76,7 +76,7 @@ export default class PHPAutoloader {
                     })
                 }
             )
-            let e = new Date()
+            let e = new Date().valueOf()
             if(this.classmapPaths.length) {
                 console.log(`Trivial classmap load took ${(e-s)/1000} seconds`)
             }
@@ -100,13 +100,17 @@ export default class PHPAutoloader {
      */
     add(autoloader) {
         for(var k in autoloader.paths) {
+            console.log(this.paths)
+            console.log(autoloader.paths)
             this.paths[k] = (this.paths[k]||[]).concat(autoloader.paths[k])
         }
         this.classmapPaths = this.classmapPaths.concat(autoloader.classmapPaths)
     }
+
     /**
      * Finds the filename that holds the class, if possible.
-     * @param {string} class_name
+     *
+     * @param {string} name
      * @returns {?string}
      */
     findClassFile(name) {
