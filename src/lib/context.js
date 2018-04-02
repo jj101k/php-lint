@@ -257,27 +257,47 @@ export default class Context {
      * Variable names are not handled here as they do not require resolution.
      *
      * @param {string} name
+     * @param {string} [resolution] eg. "uqn"
      * @returns {string}
      */
-    resolveName(name) {
-        if(PHPSimpleType.coreTypes[name]) {
-            return name
-        } else if(this.classContext) {
-            let class_name
-            try {
-                class_name = this.classContext.resolveName(name)
-            } catch(e) {
-                if(e instanceof PHPError.Error && IgnoreInvalidParent) {
-                    class_name = this.globalContext.addUnknownClass().name
+    resolveName(name, resolution = "uqn") {
+        let md
+        switch(resolution) {
+            case "fqn":
+                if(
+                    (md = name.match(/^\u005c(.+)/)) &&
+                    PHPSimpleType.coreTypes[md[1]]
+                ) {
+                    return md[1]
                 } else {
-                    throw e
+                    return name
                 }
-            }
-            if(class_name) {
-                return class_name
-            }
+            case "uqn":
+                if(PHPSimpleType.coreTypes[name]) {
+                    return name
+                } else if(this.classContext) {
+                    let class_name
+                    try {
+                        class_name = this.classContext.resolveName(name)
+                    } catch(e) {
+                        if(e instanceof PHPError.Error && IgnoreInvalidParent) {
+                            class_name = this.globalContext.addUnknownClass().name
+                        } else {
+                            throw e
+                        }
+                    }
+                    if(class_name) {
+                        return class_name
+                    }
+                }
+                return this.fileContext.resolveName(name)
+            case "qn":
+                md = name.match(/^(.*)\\(.*)/)
+                return `${this.resolveName(md[1])}\\${md[2]}`
+            default:
+                console.log(name)
+                throw new Error(`TODO don't know how to resolve ${resolution}`)
         }
-        return this.fileContext.resolveName(name)
     }
 
     /**
@@ -290,18 +310,7 @@ export default class Context {
         if(node.name instanceof Identifier) {
             return this.resolveNodeName(node.name)
         } else if(node instanceof Identifier) {
-            switch(node.resolution) {
-                case "fqn":
-                    return node.name
-                case "uqn":
-                    return this.resolveName(node.name)
-                case "qn":
-                    let md = node.name.match(/^(.*)\\(.*)/)
-                    return `${this.resolveName(md[1])}\\${md[2]}`
-                default:
-                    console.log(node.name)
-                    throw new Error(`TODO don't know how to resolve ${node.resolution}`)
-            }
+            return this.resolveName(node.name, node.resolution)
         } else if(typeof node.name == "string") {
             return this.resolveName(node.name)
         }

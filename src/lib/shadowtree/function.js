@@ -105,11 +105,7 @@ export default class _Function extends Declaration {
 
         let signature_type
         if(this.type) {
-            if(this.type.resolution == "fqn") {
-                signature_type = PHPSimpleType.named(this.type.name.replace(/^\u005c/, ""))
-            } else {
-                signature_type = PHPSimpleType.named(context.resolveName(this.type.name))
-            }
+            signature_type = PHPSimpleType.named(context.resolveName(this.type.name, this.type.resolution))
             if(this.nullable) {
                 signature_type = signature_type.addTypesFrom(PHPSimpleType.coreTypes.null)
             }

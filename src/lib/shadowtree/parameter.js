@@ -35,20 +35,8 @@ export default class Parameter extends Declaration {
     check(context, parser_state = new Set(), doc = null) {
         let type
         if(this.type) {
-            let type_name = this.type.name
-            let md
-            if(
-                this.type.resolution == "fqn" &&
-                (md = type_name.match(/^\u005c(.+)/)) &&
-                PHPSimpleType.coreTypes[md[1]]
-            ) {
-                type_name = md[1]
-            }
-            if(this.type.resolution == "fqn") {
-                type = PHPSimpleType.named(type_name)
-            } else {
-                type = PHPSimpleType.named(context.resolveName(type_name))
-            }
+            let type_name = context.resolveName(this.type.name, this.type.resolution)
+            type = PHPSimpleType.named(type_name)
         } else {
             type = PHPSimpleType.coreTypes.mixed
         }
