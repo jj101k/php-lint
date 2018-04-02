@@ -1,7 +1,7 @@
 import {PHPFunctionType, PHPSimpleType, PHPTypeUnion} from "./phptype"
 import {Identifier, Class, ConstRef} from "./shadowtree"
 import * as PHPError from "./php-error"
-import {ClassContext} from "./class-context"
+import {ClassContext, TraitContext} from "./class-context"
 import {FileContext} from "./file-context"
 import {GlobalContext} from "./global-context"
 
@@ -273,7 +273,9 @@ export default class Context {
                     return name
                 }
             case "uqn":
-                if(PHPSimpleType.coreTypes[name]) {
+                if(name == "self" && this.classContext && !(this.classContext instanceof TraitContext)) {
+                    return this.classContext.name
+                } else if(PHPSimpleType.coreTypes[name]) {
                     return name
                 } else if(this.classContext) {
                     let class_name
