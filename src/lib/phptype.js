@@ -129,7 +129,8 @@ class PHPSimpleType extends PHPType {
     }
     /**
      * Returns a cached type by name
-     * @param {string} type_name
+     *
+     * @param {string} type_name A fully qualified canonical name
      * @returns {PHPTypeUnion}
      */
     static named(type_name) {
@@ -144,7 +145,7 @@ class PHPSimpleType extends PHPType {
     /**
      * Builds the object
      * @param {string} type_name
-     * @param {Object[]} [values]
+     * @param {*[]} [values]
      */
     constructor(type_name, values = []) {
         super()
