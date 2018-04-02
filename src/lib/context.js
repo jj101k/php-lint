@@ -337,7 +337,11 @@ export default class Context {
      * @returns {PHPTypeUnion}
      */
     setThis() {
-        this.ns["$this"] = PHPSimpleType.coreTypes.self
-        return PHPSimpleType.coreTypes.self
+        if(this.classContext && !(this.classContext instanceof TraitContext)) {
+            this.ns["$this"] = PHPSimpleType.named(this.classContext.name)
+        } else {
+            this.ns["$this"] = PHPSimpleType.coreTypes.self
+        }
+        return this.ns["$this"]
     }
 }
