@@ -268,13 +268,17 @@ class PHPFunctionType extends PHPType {
      * @returns {boolean}
      */
     compatibleWith(expected_type) {
-        return (
-            this.argTypes.length == expected_type.argTypes.length &&
-            expected_type.argTypes.every(
-                (v, i) => v.compatibleWith(this.argTypes[i])
-            ) &&
-            this.returnType.compatibleWith(expected_type.returnType)
-        )
+        if(expected_type instanceof PHPFunctionType) {
+            return (
+                this.argTypes.length == expected_type.argTypes.length &&
+                expected_type.argTypes.every(
+                    (v, i) => v.compatibleWith(this.argTypes[i])
+                ) &&
+                this.returnType.compatibleWith(expected_type.returnType)
+            )
+        } else {
+            return false
+        }
     }
 
     /**
