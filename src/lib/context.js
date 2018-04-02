@@ -275,7 +275,7 @@ export default class Context {
             case "uqn":
                 if(name == "self" && this.classContext && !(this.classContext instanceof TraitContext)) {
                     return this.classContext.name
-                } else if(PHPSimpleType.coreTypes[name]) {
+                } else if(PHPSimpleType.coreTypes[name.replace(/(?:\[\])?$/, "")]) {
                     return name
                 } else if(this.classContext) {
                     let class_name
