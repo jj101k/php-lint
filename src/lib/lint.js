@@ -51,22 +51,17 @@ class Lint {
      */
     check(depth = 0, working_directory = null) {
         if(this.filename) {
-            if(!Lint.globalContext.depths.hasOwnProperty(this.filename)) {
-                Lint.globalContext.depths[this.filename] = depth
-                Lint.globalContext.results[this.filename] = false
+            Lint.globalContext.addFile(this.filename, depth, () => {
                 if(working_directory) {
                     Lint.globalContext.workingDirectory = working_directory
                 }
-                try {
-                    Lint.globalContext.results[this.filename] = this.checkUncached(depth)
-                } catch(e) {
-                    Lint.globalContext.results[this.filename] = e
-                }
-            }
-            if(Lint.globalContext.results[this.filename] instanceof Error) {
-                throw Lint.globalContext.results[this.filename]
+                return this.checkUncached(depth)
+            })
+            let fr = Lint.globalContext.results.find(fr => fr.filename == this.filename)
+            if(fr.result instanceof Error) {
+                throw fr.result
             } else {
-                return Lint.globalContext.results[this.filename]
+                return fr.result
             }
         } else {
             return this.checkUncached(depth)

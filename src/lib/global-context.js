@@ -26,6 +26,22 @@ const PHPClasses = JSON.parse(fs.readFileSync(__dirname + "/../../data/php-class
  */
 const PHPInterfaces = JSON.parse(fs.readFileSync(__dirname + "/../../data/php-interfaces.json", "utf8"))
 
+class FileResult {
+    /**
+     *
+     * @param {string} filename
+     * @param {number} depth
+     */
+    constructor(filename, depth) {
+        this.depth = depth
+        this.filename = filename
+        /**
+         * @type {boolean | Error}
+         */
+        this.result = null
+    }
+}
+
 /**
  * This defines content that's defined from the global scope, ie. everything
  * that is not anonymous.
@@ -124,12 +140,8 @@ export class GlobalContext {
     constructor() {
         /** @type {{[x: string]: ClassContext}} */
         this.classes = {}
-        /** @type {{[x: string]: number}} The minimum depth for each class */
-        this.depths = {
-        }
-        /** @type {{[x: string]: boolean | Error}} */
-        this.results = {
-        }
+        /** @type {FileResult[]} */
+        this.results = []
         /** @type {{[x: string]: boolean}} */
         this.filesSeen = {}
 
@@ -150,9 +162,9 @@ export class GlobalContext {
      */
     get depthCounts() {
         let counts = {}
-        Object.values(this.depths).forEach(n => {
-            if(!counts[n]) counts[n] = 0
-            counts[n]++
+        this.results.forEach(fr => {
+            if(!counts[fr.depth]) counts[fr.depth] = 0
+            counts[fr.depth]++
         })
         return counts
     }
@@ -173,6 +185,25 @@ export class GlobalContext {
                 superclass,
                 file_context
             )
+        }
+    }
+
+    /**
+     * Adds a file to the result set, and calls the supplied function to check it.
+     *
+     * @param {string} filename
+     * @param {number} depth
+     * @param {function(): boolean} f
+     */
+    addFile(filename, depth, f) {
+        if(!this.results.some(fr => fr.filename == filename)) {
+            let fr = new FileResult(filename, depth)
+            this.results.push(fr)
+            try {
+                fr.result = f()
+            } catch(e) {
+                fr.result = e
+            }
         }
     }
 
@@ -264,8 +295,11 @@ export class GlobalContext {
         let filename = file_context.filename
         if(this.classes.hasOwnProperty(name)) {
             let c = this.classes[name]
-            if(c.fileContext && load_depth < this.depths[c.fileContext.filename]) {
-                this.depths[c.fileContext.filename] = load_depth
+            if(c.fileContext) {
+                let fr = this.results.find(fr => fr.filename == c.fileContext.filename)
+                if(fr && fr.depth > load_depth) {
+                    fr.depth = load_depth
+                }
             }
             return this.classes[name]
         } else if(load_depth > MAX_DEPTH) {

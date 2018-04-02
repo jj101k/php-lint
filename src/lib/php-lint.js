@@ -28,7 +28,7 @@ class PHPLint {
      * @type {number}
      */
     static get processed() {
-        return Object.keys(Lint.globalContext.depths).length
+        return Lint.globalContext.results.length
     }
     /**
      * Checks the file
