@@ -45,14 +45,18 @@ class Lint {
     /**
      * Checks the current data
      * @param {number} [depth] The current load depth
+     * @param {?string} [working_directory]
      * @throws
      * @returns {boolean}
      */
-    check(depth = 0) {
+    check(depth = 0, working_directory = null) {
         if(this.filename) {
             if(!Lint.globalContext.depths.hasOwnProperty(this.filename)) {
                 Lint.globalContext.depths[this.filename] = depth
                 Lint.globalContext.results[this.filename] = false
+                if(working_directory) {
+                    Lint.globalContext.workingDirectory = working_directory
+                }
                 try {
                     Lint.globalContext.results[this.filename] = this.checkUncached(depth)
                 } catch(e) {
@@ -97,13 +101,14 @@ class Lint {
      * @param {?string} [filename]
      * @param {boolean} [throw_on_error]
      * @param {number} [depth]
+     * @param {?string} [working_directory]
      * @throws
      * @returns {boolean}
      */
-    static check(tree, filename = null, throw_on_error = true, depth = 0) {
+    static check(tree, filename = null, throw_on_error = true, depth = 0, working_directory = null) {
         var l = new Lint(tree, filename)
         try {
-            return l.check(depth)
+            return l.check(depth, working_directory)
         } catch(e) {
             if(e instanceof PHPStrictError && !throw_on_error) {
                 console.log(e.message)

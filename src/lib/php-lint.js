@@ -58,15 +58,16 @@ class PHPLint {
      * @param {string} filename
      * @param {boolean} [throw_on_error]
      * @param {number} [depth]
+     * @param {?string} [working_directory]
      * @throws
      * @returns {?boolean}
      */
-    static checkFileSync(filename, throw_on_error = true, depth = 0) {
+    static checkFileSync(filename, throw_on_error = true, depth = 0, working_directory = null) {
         if(!depth) depth = 0
         //
         var data = fs.readFileSync(filename, "utf8")
         var tree = parser.parseCode(data, filename)
-        return Lint.check(tree, filename, throw_on_error, depth)
+        return Lint.check(tree, filename, throw_on_error, depth, working_directory)
     }
 
     /**

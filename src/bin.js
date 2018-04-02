@@ -4,6 +4,7 @@ const PHPLint = require("./index")
 let opt = getopt.create([
     ["x" , "exclude-tests=ARG" , "List of tests to exclude"],
     ["t" , "show-tests"  , "Show list of tests which will be included"],
+    ["", "working-directory=ARG", "Set the initial working directory"],
     ["h" , "help" , "Display this help"],
     ["v" , "version" , "Show version"]
 ]).bindHelp().parseSystem()
@@ -48,7 +49,7 @@ if(opt.options.version) {
     }
     let start_time = new Date().valueOf()
     opt.argv.forEach(
-        filename => PHPLint.checkFileSync(filename, false)
+        filename => PHPLint.checkFileSync(filename, false, 0, opt.options["working-directory"])
     )
     let end_time = new Date().valueOf()
     //console.log(PHPLint.depthCounts)
