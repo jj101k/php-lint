@@ -60,7 +60,9 @@ export default class _Function extends Declaration {
                             c.type.name.split(/\|/).forEach(
                                 t => {
                                     type = type.addTypesFrom(PHPSimpleType.named(
-                                        t.match(/^[A-Z0-9]/) ? "\\" + t : t
+                                        t.match(/^[A-Z0-9]/) ?
+                                            "\\" + t :
+                                            context.resolveName(t, "uqn")
                                     ))
                                 }
                             )
@@ -73,7 +75,9 @@ export default class _Function extends Declaration {
                                 c.what.name.split(/\|/).forEach(
                                     t => {
                                         rtype = rtype.addTypesFrom(PHPSimpleType.named(
-                                            t.match(/^[A-Z0-9]/) ? "\\" + t : t
+                                            t.match(/^[A-Z0-9]/) ?
+                                                "\\" + t :
+                                                context.resolveName(t, "uqn")
                                         ))
                                     }
                                 )
