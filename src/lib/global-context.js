@@ -230,11 +230,15 @@ export class GlobalContext {
      * @returns {ClassContext}
      */
     addTrait(name, superclass = null, file_context = null) {
-        return this.classes[name] = this.classes[name] || new TraitContext(
-            name,
-            superclass,
-            file_context
-        )
+        if(this.classes[name] && !(this.classes[name] instanceof UnknownClassContext)) {
+            return this.classes[name]
+        } else {
+            return this.classes[name] = new TraitContext(
+                name,
+                superclass,
+                file_context
+            )
+        }
     }
 
     /**
@@ -245,11 +249,15 @@ export class GlobalContext {
      * @returns {ClassContext}
      */
     addInterface(name, superclass = null, file_context = null) {
-        return this.classes[name] = this.classes[name] || new InterfaceContext(
-            name,
-            superclass,
-            file_context
-        )
+        if(this.classes[name] && !(this.classes[name] instanceof UnknownClassContext)) {
+            return this.classes[name]
+        } else {
+            return this.classes[name] = new InterfaceContext(
+                name,
+                superclass,
+                file_context
+            )
+        }
     }
 
     /**
