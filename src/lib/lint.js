@@ -58,8 +58,8 @@ class Lint {
                 return this.checkUncached(depth)
             })
             let fr = Lint.globalContext.results.find(fr => fr.filename == this.filename)
-            if(fr.result instanceof Error) {
-                throw fr.result
+            if(fr.error) {
+                throw fr.error
             } else {
                 return fr.result
             }

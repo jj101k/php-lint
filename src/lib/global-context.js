@@ -35,8 +35,10 @@ class FileResult {
     constructor(filename, depth) {
         this.depth = depth
         this.filename = filename
+        /** @type {?Error} */
+        this.error = null
         /**
-         * @type {boolean | Error}
+         * @type {?boolean}
          */
         this.result = null
     }
@@ -202,7 +204,7 @@ export class GlobalContext {
             try {
                 fr.result = f()
             } catch(e) {
-                fr.result = e
+                fr.error = e
             }
         }
     }
