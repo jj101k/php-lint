@@ -313,6 +313,8 @@ export default class Context {
             return this.resolveName(node.name, node.resolution)
         } else if(typeof node.name == "string") {
             return this.resolveName(node.name)
+        } else {
+            throw new Error(`Unable to resolve node name for ${node}`)
         }
     }
 
