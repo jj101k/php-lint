@@ -13,11 +13,17 @@ const ShowContextLines = 10
 const UseANSIHighlight = false
 
 class Lint {
+    /**
+     * @type {GlobalContext}
+     */
     static get globalContext() {
         if(!this._globalContext) {
             this._globalContext = new GlobalContext()
         }
         return this._globalContext
+    }
+    static set globalContext(v) {
+        this._globalContext = v
     }
     /**
      * @type {{[x: string]: (boolean|{[y: string]: boolean})}} The error classes to ignore

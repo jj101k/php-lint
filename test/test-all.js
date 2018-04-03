@@ -43,20 +43,25 @@ exports["test async"] = (assert, done) => {
 exports["test sync"] = (assert) => {
     var result = phpLint.checkSourceCodeSync(good_code);
     assert.ok(result, "Valid code looks ok");
+    phpLint.resetGlobalState()
     good_files.forEach(good_file => assert.ok(
         phpLint.checkFileSync(good_file),
         `Valid file ${good_file} looks ok`
     ));
+    phpLint.resetGlobalState()
     bug_files.forEach(file => assert.ok(
         phpLint.checkFileSync(file),
         `Valid file ${file} looks ok`
     ));
+    phpLint.resetGlobalState()
     assert.throws(() => {
         var result = phpLint.checkSourceCodeSync(bad_code);
     }, "Invalid code looks bad");
+    phpLint.resetGlobalState()
     bad_files.forEach(bad_file => assert.throws(() => {
         var result = phpLint.checkFileSync(bad_file);
     }, `Invalid file ${bad_file} looks bad`));
+    phpLint.resetGlobalState()
     skip_files.forEach(skip_file => assert.throws(() => {
         var result = phpLint.checkFileSync(skip_file);
     }, `Skip ${skip_file}`));

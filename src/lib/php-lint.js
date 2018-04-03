@@ -12,6 +12,7 @@ var parser = new phpParser({
 
 var fs = require("fs")
 import Lint from "./lint"
+import { GlobalContext } from "./global-context";
 
 class PHPLint {
     /**
@@ -105,6 +106,13 @@ class PHPLint {
      */
     static get ignoreErrorMap() {
         return Lint.ignoreErrorMap
+    }
+
+    /**
+     * Resets the global state, eg. if you're checking multiple different projects
+     */
+    static resetGlobalState() {
+        Lint.globalContext = new GlobalContext()
     }
 }
 
