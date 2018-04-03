@@ -316,7 +316,7 @@ export default class Context {
         } else if(typeof node.name == "string") {
             return this.resolveName(node.name)
         } else {
-            throw new Error(`Unable to resolve node name for ${node}`)
+            throw new Error(`Unable to resolve node name for node ${JSON.stringify(node)}`)
         }
     }
 
