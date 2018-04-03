@@ -49,56 +49,64 @@ export default class _Function extends Declaration {
             } else {
                 doc_structure = doc.structure
             }
-            let structure_arg_types = []
-            let structure_arg_names = []
-            let structure_return = null
-            doc_structure.forEach(
-                c => {
-                    /**
-                     * @param {string} t
-                     * @returns {string}
-                     */
-                    let resolve_name = t => {
-                        let md = t.match(/^(.*?)(\[.*)?$/)
-                        let [stem, tail] = [md[1], md[2] || ""]
-                        if(stem.match(/^[A-Z0-9]/)) {
-                            return (context.fileContext.resolveAliasName(stem) || "\\" + stem) + tail
-                        } else {
-                            return context.resolveName(stem, "uqn") + tail
+            if(doc_structure.some(c => c.kind.match(/^(var|param|return)$/))) {
+                let structure_arg_types = []
+                let structure_arg_names = []
+                let structure_return = null
+                doc_structure.forEach(
+                    c => {
+                        /**
+                         * @param {string} t
+                         * @returns {string}
+                         */
+                        let resolve_name = t => {
+                            let md = t.match(/^(.*?)(\[.*)?$/)
+                            let [stem, tail] = [md[1], md[2] || ""]
+                            if(stem.match(/^[A-Z0-9]/)) {
+                                return (
+                                    context.fileContext.resolveAliasName(stem) ||
+                                    "\\" + stem
+                                ) + tail
+                            } else {
+                                return context.resolveName(stem, "uqn") + tail
+                            }
                         }
-                    }
-                    switch(c.kind) {
-                        case "param":
-                            let type = PHPTypeUnion.empty
-                            c.type.name.split(/\|/).forEach(
-                                t => {
-                                    type = type.addTypesFrom(PHPSimpleType.named(
-                                        resolve_name(t)
-                                    ))
-                                }
-                            )
-                            structure_arg_types.push(type)
-                            structure_arg_names.push(c.name)
-                            break
-                        case "return":
-                            let rtype = PHPTypeUnion.empty
-                            if(c.what.name) {
-                                c.what.name.split(/\|/).forEach(
+                        switch(c.kind) {
+                            case "param":
+                                let type = PHPTypeUnion.empty
+                                c.type.name.split(/\|/).forEach(
                                     t => {
-                                        rtype = rtype.addTypesFrom(PHPSimpleType.named(
-                                            resolve_name(t)
-                                        ))
+                                        type = type.addTypesFrom(
+                                            PHPSimpleType.named(resolve_name(t))
+                                        )
                                     }
                                 )
-                            }
-                            structure_return = rtype
-                            break
-                        default:
-                            console.log(`Skipping ${c.kind}`)
+                                structure_arg_types.push(type)
+                                structure_arg_names.push(c.name)
+                                break
+                            case "return":
+                                let rtype = PHPTypeUnion.empty
+                                if(c.what.name) {
+                                    c.what.name.split(/\|/).forEach(
+                                        t => {
+                                            rtype = rtype.addTypesFrom(
+                                                PHPSimpleType.named(
+                                                    resolve_name(t)
+                                                )
+                                            )
+                                        }
+                                    )
+                                }
+                                structure_return = rtype
+                                break
+                            default:
+                                console.log(`Skipping ${c.kind}`)
+                        }
                     }
-                }
-            )
-            doc_function_type = new PHPFunctionType(structure_arg_types, structure_return)
+                )
+                doc_function_type =
+                    new PHPFunctionType(structure_arg_types, structure_return)
+            }
         }
         var inner_context = context.childContext()
 
