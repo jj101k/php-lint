@@ -35,9 +35,14 @@ class PHPLint {
      * Checks the file
      * @param {string} filename
      * @param {number} [depth]
+     * @param {?string} [working_directory]
      * @returns {Promise} Rejects on failure
      */
-    static checkFile(filename, depth = 0) {
+    static checkFile(
+        filename,
+        depth = 0,
+        working_directory = null
+    ) {
         return new Promise((resolve, reject) => {
             fs.readFile(filename, "utf8", (err, data) => {
                 if(err) {
@@ -45,7 +50,13 @@ class PHPLint {
                 } else {
                     try {
                         var tree = parser.parseCode(data, filename)
-                        resolve(Lint.check(tree, filename, true, depth))
+                        resolve(Lint.check(
+                            tree,
+                            filename,
+                            true,
+                            depth,
+                            working_directory
+                        ))
                     } catch(e) {
                         reject(e)
                     }
