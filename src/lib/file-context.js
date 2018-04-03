@@ -21,7 +21,7 @@ export class FileContext {
 
     /** @type {string} The directory the file's in (resolved) */
     get directory() {
-        return path.resolve(path.dirname(this.filename))
+        return this.filename ? path.resolve(path.dirname(this.filename)) : "."
     }
 
     /** @type {?string} eg "\\Foo" for the class \Foo\Bar */
