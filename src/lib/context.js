@@ -262,8 +262,8 @@ export default class Context {
      */
     resolveName(name, resolution = "uqn") {
         let md
-        if(md = name.match(/^\u005c(.+)/)) {
-            if(PHPSimpleType.coreTypes[md[1]]) {
+        if(md = name.match(/^\u005c(([a-z]+)(?:\W.*)?)/)) {
+            if(PHPSimpleType.coreTypes[md[2]]) {
                 return md[1]
             } else {
                 return name
@@ -275,7 +275,7 @@ export default class Context {
             case "uqn":
                 if(name == "self" && this.classContext && !(this.classContext instanceof TraitContext)) {
                     return this.classContext.name
-                } else if(PHPSimpleType.coreTypes[name.replace(/(?:\[\])?$/, "")]) {
+                } else if(PHPSimpleType.coreTypes[name.replace(/\W.*$/, "")]) {
                     return name
                 } else if(this.classContext) {
                     let class_name
