@@ -46,6 +46,23 @@ class Lint {
     constructor(tree, filename = null) {
         this.filename = filename
         this.tree = tree
+        /**
+         * @type {GlobalContext}
+         */
+        this._globalContext = null
+    }
+
+    /**
+     * @type {GlobalContext}
+     */
+    get globalContext() {
+        if(!this._globalContext) {
+            return Lint.globalContext
+        }
+        return this._globalContext
+    }
+    set globalContext(v) {
+        this._globalContext = v
     }
 
     /**
@@ -57,13 +74,13 @@ class Lint {
      */
     check(depth = 0, working_directory = null) {
         if(this.filename) {
-            Lint.globalContext.addFile(this.filename, depth, () => {
+            this.globalContext.addFile(this.filename, depth, () => {
                 if(working_directory) {
-                    Lint.globalContext.workingDirectory = working_directory
+                    this.globalContext.workingDirectory = working_directory
                 }
                 return this.checkUncached(depth)
             })
-            let fr = Lint.globalContext.results.find(fr => fr.filename == this.filename)
+            let fr = this.globalContext.results.find(fr => fr.filename == this.filename)
             if(fr.error) {
                 throw fr.error
             } else {
@@ -85,7 +102,7 @@ class Lint {
         ShadowTree.Node.typed(this.tree).check(
             new Context(
                 new FileContext(this.filename, depth),
-                Lint.globalContext,
+                this.globalContext,
                 null,
                 null,
                 depth
