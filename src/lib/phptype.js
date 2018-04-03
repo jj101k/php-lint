@@ -115,6 +115,12 @@ class PHPSimpleType extends PHPType {
                     return this.bool
                 }
             })
+            Object.defineProperty(types, "integer", {
+                get() {
+                    console.log("'int' incorrectly referred to as 'integer'")
+                    return this.int
+                }
+            })
             Object.freeze(types)
             this._coreTypes = types
         }
