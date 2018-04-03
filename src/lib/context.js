@@ -262,7 +262,7 @@ export default class Context {
      */
     resolveName(name, resolution = "uqn") {
         let md
-        if(md = name.match(/^\u005c(([a-z]+)(?:\W.*)?)/)) {
+        if(md = name.match(/^\u005c((\w+)(?:\W.*)?)/)) {
             if(PHPSimpleType.coreTypes[md[2]]) {
                 return md[1]
             } else {
