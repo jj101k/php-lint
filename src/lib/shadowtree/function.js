@@ -54,15 +54,24 @@ export default class _Function extends Declaration {
             let structure_return = null
             doc_structure.forEach(
                 c => {
+                    /**
+                     * @param {string} t
+                     * @returns {string}
+                     */
+                    let resolve_name = t => {
+                        if(t.match(/^[A-Z0-9]/)) {
+                            return (context.fileContext.resolveAliasName(t) || "\\" + t)
+                        } else {
+                            return context.resolveName(t, "uqn")
+                        }
+                    }
                     switch(c.kind) {
                         case "param":
                             let type = PHPTypeUnion.empty
                             c.type.name.split(/\|/).forEach(
                                 t => {
                                     type = type.addTypesFrom(PHPSimpleType.named(
-                                        t.match(/^[A-Z0-9]/) ?
-                                            (context.fileContext.resolveAliasName(t) || "\\" + t) :
-                                            context.resolveName(t, "uqn")
+                                        resolve_name(t)
                                     ))
                                 }
                             )
@@ -75,9 +84,7 @@ export default class _Function extends Declaration {
                                 c.what.name.split(/\|/).forEach(
                                     t => {
                                         rtype = rtype.addTypesFrom(PHPSimpleType.named(
-                                            t.match(/^[A-Z0-9]/) ?
-                                                (context.fileContext.resolveAliasName(t) || "\\" + t) :
-                                                context.resolveName(t, "uqn")
+                                            resolve_name(t)
                                         ))
                                     }
                                 )
