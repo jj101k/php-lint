@@ -59,10 +59,12 @@ export default class _Function extends Declaration {
                      * @returns {string}
                      */
                     let resolve_name = t => {
-                        if(t.match(/^[A-Z0-9]/)) {
-                            return (context.fileContext.resolveAliasName(t) || "\\" + t)
+                        let md = t.match(/^(.*?)(\[.*)?$/)
+                        let [stem, tail] = [md[1], md[2] || ""]
+                        if(stem.match(/^[A-Z0-9]/)) {
+                            return (context.fileContext.resolveAliasName(stem) || "\\" + stem) + tail
                         } else {
-                            return context.resolveName(t, "uqn")
+                            return context.resolveName(stem, "uqn") + tail
                         }
                     }
                     switch(c.kind) {
