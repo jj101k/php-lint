@@ -262,16 +262,16 @@ export default class Context {
      */
     resolveName(name, resolution = "uqn") {
         let md
+        if(md = name.match(/^\u005c(.+)/)) {
+            if(PHPSimpleType.coreTypes[md[1]]) {
+                return md[1]
+            } else {
+                return name
+            }
+        }
         switch(resolution) {
             case "fqn":
-                if(
-                    (md = name.match(/^\u005c(.+)/)) &&
-                    PHPSimpleType.coreTypes[md[1]]
-                ) {
-                    return md[1]
-                } else {
-                    return name
-                }
+                return name
             case "uqn":
                 if(name == "self" && this.classContext && !(this.classContext instanceof TraitContext)) {
                     return this.classContext.name
