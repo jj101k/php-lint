@@ -3,11 +3,11 @@ import {PHPSimpleType, PHPTypeUnion} from "../phptype"
 import _Node from "./node"
 import Identifier from "./identifier"
 import Variable from "./variable"
-import Class from "./class"
+import _Class from "./class"
 import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
 
 export default class New extends Statement {
-    /** @type {Identifier|Variable|Class} */
+    /** @type {Identifier|Variable|_Class} */
     get what() {
         return this.cacheNode("what")
     }
