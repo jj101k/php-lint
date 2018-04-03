@@ -36,12 +36,14 @@ class PHPLint {
      * @param {string} filename
      * @param {number} [depth]
      * @param {?string} [working_directory]
+     * @param {boolean} [reuse_global_context]
      * @returns {Promise} Rejects on failure
      */
     static checkFile(
         filename,
         depth = 0,
-        working_directory = null
+        working_directory = null,
+        reuse_global_context = true
     ) {
         return new Promise((resolve, reject) => {
             fs.readFile(filename, "utf8", (err, data) => {
@@ -55,7 +57,8 @@ class PHPLint {
                             filename,
                             true,
                             depth,
-                            working_directory
+                            working_directory,
+                            reuse_global_context
                         ))
                     } catch(e) {
                         reject(e)
@@ -71,15 +74,29 @@ class PHPLint {
      * @param {boolean} [throw_on_error]
      * @param {number} [depth]
      * @param {?string} [working_directory]
+     * @param {boolean} [reuse_global_context]
      * @throws
      * @returns {?boolean}
      */
-    static checkFileSync(filename, throw_on_error = true, depth = 0, working_directory = null) {
+    static checkFileSync(
+        filename,
+        throw_on_error = true,
+        depth = 0,
+        working_directory = null,
+        reuse_global_context = true
+    ) {
         if(!depth) depth = 0
         //
         var data = fs.readFileSync(filename, "utf8")
         var tree = parser.parseCode(data, filename)
-        return Lint.check(tree, filename, throw_on_error, depth, working_directory)
+        return Lint.check(
+            tree,
+            filename,
+            throw_on_error,
+            depth,
+            working_directory,
+            reuse_global_context
+        )
     }
 
     /**
@@ -93,7 +110,14 @@ class PHPLint {
         return new Promise((resolve, reject) => {
             try {
                 var tree = parser.parseCode(code)
-                resolve(Lint.check(tree, null, true, depth))
+                resolve(Lint.check(
+                    tree,
+                    null,
+                    true,
+                    depth,
+                    null,
+                    false
+                ))
             } catch(e) {
                 reject(e)
             }
@@ -110,7 +134,14 @@ class PHPLint {
      */
     static checkSourceCodeSync(code, throw_on_error = true, depth = 0) {
         var tree = parser.parseCode(code);
-        return Lint.check(tree, null, throw_on_error, depth);
+        return Lint.check(
+            tree,
+            null,
+            throw_on_error,
+            depth,
+            null,
+            false
+        )
     }
     /**
      * @type {{[x: string]: (boolean|{[y: string]: boolean})}} The error classes to ignore

@@ -120,11 +120,22 @@ class Lint {
      * @param {boolean} [throw_on_error]
      * @param {number} [depth]
      * @param {?string} [working_directory]
+     * @param {boolean} [reuse_global_context]
      * @throws
      * @returns {boolean}
      */
-    static check(tree, filename = null, throw_on_error = true, depth = 0, working_directory = null) {
+    static check(
+        tree,
+        filename = null,
+        throw_on_error = true,
+        depth = 0,
+        working_directory = null,
+        reuse_global_context = true
+    ) {
         var l = new Lint(tree, filename)
+        if(!reuse_global_context) {
+            l.globalContext = new GlobalContext()
+        }
         try {
             return l.check(depth, working_directory)
         } catch(e) {
