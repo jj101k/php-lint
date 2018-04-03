@@ -43,16 +43,26 @@ export class FileContext {
     }
 
     /**
+     * If there's an alias by that name, returns its name.
+     *
+     * @param {string} name
+     * @returns {?string}
+     */
+    resolveAliasName(name) {
+        return this.aliases[name] && "\\" + this.aliases[name]
+    }
+
+    /**
      * The fully resolved name
      *
      * @param {string} name
      * @returns {string}
      */
     resolveName(name) {
-        if(this.aliases[name]) {
-            return "\\" + this.aliases[name]
-        }
-        if(this.namespace) {
+        let alias_name = this.resolveAliasName(name)
+        if(alias_name) {
+            return alias_name
+        } else if(this.namespace) {
             return `\\${this.namespace}\\${name}`
         } else {
             return `\\${name}`

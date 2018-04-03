@@ -61,7 +61,7 @@ export default class _Function extends Declaration {
                                 t => {
                                     type = type.addTypesFrom(PHPSimpleType.named(
                                         t.match(/^[A-Z0-9]/) ?
-                                            "\\" + t :
+                                            (context.fileContext.resolveAliasName(t) || "\\" + t) :
                                             context.resolveName(t, "uqn")
                                     ))
                                 }
@@ -76,7 +76,7 @@ export default class _Function extends Declaration {
                                     t => {
                                         rtype = rtype.addTypesFrom(PHPSimpleType.named(
                                             t.match(/^[A-Z0-9]/) ?
-                                                "\\" + t :
+                                                (context.fileContext.resolveAliasName(t) || "\\" + t) :
                                                 context.resolveName(t, "uqn")
                                         ))
                                     }
