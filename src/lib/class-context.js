@@ -6,7 +6,7 @@ import * as ParserStateOption from "./parser-state-option"
 /**
  * Defines content in a specific class
  */
-class ClassContext {
+class PartialClassContext {
     /**
      * Builds the object
      * @param {string} name Fully qualified only
@@ -179,6 +179,13 @@ class ClassContext {
 }
 
 /**
+ * Covers class behaviour
+ */
+class ClassContext extends PartialClassContext {
+
+}
+
+/**
  * This handles interfaces
  */
 class InterfaceContext extends ClassContext {
@@ -206,7 +213,7 @@ class InterfaceContext extends ClassContext {
 /**
  * This handles traits
  */
-class TraitContext extends ClassContext {
+class TraitContext extends PartialClassContext {
     /**
      * Finds the named identifier
      * @param {string} name
@@ -300,4 +307,38 @@ class UnknownClassContext extends ClassContext {
     }
 }
 
-export {AnonymousFunctionContext, ClassContext, InterfaceContext, TraitContext, UnknownClassContext}
+
+/**
+ * This handles unknown traits
+ */
+class UnknownTraitContext extends TraitContext {
+    /**
+     * Builds the object
+     * @param {string} name Fully qualified only
+     */
+    constructor(name, superclass = null) {
+        super(name)
+    }
+
+    /**
+     * Finds the named identifier
+     * @param {string} name
+     * @param {?ClassContext} from_class_context
+     * @returns {?PHPTypeUnion}
+     */
+    findInstanceIdentifier(name, from_class_context) {
+        return PHPSimpleType.coreTypes.mixed
+    }
+
+    /**
+     * Finds the named identifier
+     * @param {string} name
+     * @param {?ClassContext} from_class_context
+     * @returns {?PHPTypeUnion}
+     */
+    findStaticIdentifier(name, from_class_context) {
+        return PHPSimpleType.coreTypes.mixed
+    }
+}
+
+export {AnonymousFunctionContext, ClassContext, InterfaceContext, TraitContext, UnknownClassContext, UnknownTraitContext}

@@ -234,6 +234,16 @@ export default class Context {
     }
 
     /**
+     * Finds the trait context with the given name
+     *
+     * @param {string} name Fully qualified only
+     * @returns {?TraitContext}
+     */
+    findTrait(name) {
+        return this.globalContext.findTrait(name, this.fileContext, this.depth)
+    }
+
+    /**
      * Copies the namespace from one context to another. The existing namespace
      * will still be retained.
      * @param {Context} context

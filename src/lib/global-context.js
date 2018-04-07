@@ -1,7 +1,7 @@
 const fs = require("fs")
 const path = require("path")
 
-import {AnonymousFunctionContext, ClassContext, InterfaceContext, TraitContext, UnknownClassContext} from "./class-context"
+import {AnonymousFunctionContext, ClassContext, InterfaceContext, TraitContext, UnknownClassContext, UnknownTraitContext} from "./class-context"
 import {FileContext} from "./file-context"
 import * as PHPError from "./php-error"
 import PHPLint from "./php-lint"
@@ -142,10 +142,12 @@ export class GlobalContext {
     constructor() {
         /** @type {{[x: string]: ClassContext}} */
         this.classes = {}
-        /** @type {FileResult[]} */
-        this.results = []
         /** @type {{[x: string]: boolean}} */
         this.filesSeen = {}
+        /** @type {FileResult[]} */
+        this.results = []
+        /** @type {{[x: string]: TraitContext}} */
+        this.traits = {}
 
         /** @type {?string} */
         this.workingDirectory = null
@@ -223,6 +225,20 @@ export class GlobalContext {
     }
 
     /**
+     * Adds an unknown trait. For when the real name isn't known and you have to
+     * use a placeholder. You can get the name from the return value.
+     *
+     * @param {?string} [name]
+     * @returns {UnknownTraitContext}
+     */
+    addUnknownTrait(name = null) {
+        if(!name) {
+            name = "Unknown" + Math.random()
+        }
+        return this.traits[name] = new UnknownTraitContext(name)
+    }
+
+    /**
      * Adds a known trait
      * @param {string} name Fully qualified only
      * @param {?ClassContext} [superclass]
@@ -230,10 +246,10 @@ export class GlobalContext {
      * @returns {ClassContext}
      */
     addTrait(name, superclass = null, file_context = null) {
-        if(this.classes[name] && !(this.classes[name] instanceof UnknownClassContext)) {
-            return this.classes[name]
+        if(this.traits[name] && !(this.traits[name] instanceof UnknownClassContext)) {
+            return this.traits[name]
         } else {
-            return this.classes[name] = new TraitContext(
+            return this.traits[name] = new TraitContext(
                 name,
                 superclass,
                 file_context
@@ -341,6 +357,57 @@ export class GlobalContext {
             } else {
                 console.log(`Could not load ${name}`)
                 return this.classes[name]
+            }
+        }
+    }
+
+    /**
+     * Finds the trait context with the given name
+     *
+     * @param {string} name Fully qualified only
+     * @param {FileContext} file_context
+     * @param {number} [depth] The current load depth
+     * @returns {?TraitContext}
+     */
+    findTrait(name, file_context, depth = 0) {
+        let load_depth = depth + 1
+        let filename = file_context.filename
+        if(this.traits.hasOwnProperty(name)) {
+            let t = this.traits[name]
+            if(t.fileContext) {
+                let fr = this.results.find(fr => fr.filename == t.fileContext.filename)
+                if(fr && fr.depth > load_depth) {
+                    fr.depth = load_depth
+                }
+            }
+            return this.traits[name]
+        } else {
+            this.addUnknownTrait(name)
+            // Autoload go!
+            if(!this.autoloader) {
+                this.autoloader = GlobalContext.autoloadFromComposer(
+                    this.findComposerConfig(this.workingDirectory)
+                )
+            }
+            if(this.autoloader) {
+                let full_path = this.autoloader.findClassFile(name)
+                if(full_path) {
+                    this.checkFile(full_path, load_depth)
+                    if(!this.traits[name]) {
+                        console.log(
+                            `Trait ${name} not found at ${full_path}`
+                        )
+                        this.addUnknownTrait(name)
+                    }
+                    return this.traits[name]
+                }
+            }
+            if(DEBUG_AUTOLOAD) {
+                console.log(this.autoloader)
+                throw new PHPError.ClassLoadFailed(`Could not load ${name}`)
+            } else {
+                console.log(`Could not load ${name}`)
+                return this.traits[name]
             }
         }
     }

@@ -23,7 +23,7 @@ export default class TraitUse extends _Node {
         if(this.traits) {
             this.traits.forEach(
                 t => context.classContext.importTrait(
-                    context.findClass(context.resolveNodeName(t))
+                    context.findTrait(context.resolveNodeName(t))
                 )
             )
         }
