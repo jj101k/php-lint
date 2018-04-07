@@ -22,9 +22,9 @@ export default class TraitUse extends _Node {
         // TODO adaptations not yet supported
         if(this.traits) {
             this.traits.forEach(
-                t => context.classContext.importTrait(
-                    context.findTrait(context.resolveNodeName(t))
-                )
+                t => context.findTrait(
+                    context.resolveNodeName(t)
+                ).export(context)
             )
         }
         return ContextTypes.empty

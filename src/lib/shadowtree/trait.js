@@ -26,19 +26,30 @@ export default class Trait extends Declaration {
      */
     check(context, parser_state = new Set(), doc = null) {
         super.check(context, parser_state, doc)
-        let inner_context = context.childContext()
-        inner_context.classContext = inner_context.globalContext.addTrait(
+        context.globalContext.addTrait(
             context.resolveNodeName(this),
             this.extends ?
-                context.findClass(context.resolveNodeName(this.extends)) :
+                context.findTrait(context.resolveNodeName(this.extends)) :
                 null,
-            context.fileContext
+            context.fileContext,
+            this
         )
-        inner_context.setThis()
+        return ContextTypes.empty
+    }
+
+    /**
+     * Checks that the syntax of the inner parts seem ok
+     *
+     * @param {Context} context
+     * @param {Set<ParserStateOption.Base>} [parser_state]
+     * @param {?Doc} [doc]
+     * @returns {void}
+     */
+    checkInner(context, parser_state = new Set(), doc = null) {
         this.body.forEach(
             b => {
                 if(b instanceof Method) {
-                    inner_context.classContext.addIdentifier(
+                    context.classContext.addIdentifier(
                         b.name,
                         b.visibility,
                         b.isStatic,
@@ -54,11 +65,10 @@ export default class Trait extends Declaration {
                 if(b instanceof Doc) {
                     last_doc = b
                 } else {
-                    b.check(inner_context, new Set(), last_doc)
+                    b.check(context, new Set(), last_doc)
                     last_doc = null
                 }
             }
         )
-        return ContextTypes.empty
     }
 }

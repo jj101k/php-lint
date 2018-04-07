@@ -6,6 +6,7 @@ import {FileContext} from "./file-context"
 import * as PHPError from "./php-error"
 import PHPLint from "./php-lint"
 import PHPAutoloader from "./php-autoloader"
+import {Trait} from "./shadowtree"
 
 /**
  * @type {boolean} If true, autoload failure may throw. This can help with
@@ -241,18 +242,20 @@ export class GlobalContext {
     /**
      * Adds a known trait
      * @param {string} name Fully qualified only
-     * @param {?ClassContext} [superclass]
-     * @param {?FileContext} [file_context]
-     * @returns {ClassContext}
+     * @param {?TraitContext} superclass
+     * @param {?FileContext} file_context
+     * @param {Trait} trait_node
+     * @returns {TraitContext}
      */
-    addTrait(name, superclass = null, file_context = null) {
-        if(this.traits[name] && !(this.traits[name] instanceof UnknownClassContext)) {
+    addTrait(name, superclass, file_context, trait_node) {
+        if(this.traits[name] && !(this.traits[name] instanceof UnknownTraitContext)) {
             return this.traits[name]
         } else {
             return this.traits[name] = new TraitContext(
                 name,
                 superclass,
-                file_context
+                file_context,
+                trait_node
             )
         }
     }

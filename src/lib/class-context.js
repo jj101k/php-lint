@@ -2,6 +2,8 @@ import {PHPTypeUnion, PHPSimpleType} from "./phptype"
 import * as PHPError from "./php-error"
 import {FileContext} from "./file-context"
 import * as ParserStateOption from "./parser-state-option"
+import {Trait} from "./shadowtree"
+import Context from "./context"
 
 /**
  * Defines content in a specific class
@@ -124,20 +126,6 @@ class PartialClassContext {
     }
 
     /**
-     * Imports a trait into the current context
-     *
-     * @param {ClassContext} trait
-     */
-    importTrait(trait) {
-        for(var k in trait.staticIdentifiers) {
-            this.staticIdentifiers[k] = trait.staticIdentifiers[k]
-        }
-        for(var k in trait.instanceIdentifiers) {
-            this.instanceIdentifiers[k] = trait.instanceIdentifiers[k]
-        }
-    }
-
-    /**
      * Returns true if this is a subclass of that class.
      * @param {ClassContext} other_class
      * @returns {boolean}
@@ -214,6 +202,27 @@ class InterfaceContext extends ClassContext {
  * This handles traits
  */
 class TraitContext extends PartialClassContext {
+    /**
+     * Builds the object
+     * @param {string} name Fully qualified only
+     * @param {?TraitContext} superclass
+     * @param {FileContext} file_context
+     * @param {Trait} trait_node
+     */
+    constructor(name, superclass, file_context, trait_node) {
+        super(name, superclass, file_context)
+        this.traitNode = trait_node
+    }
+
+    /**
+     *
+     * @param {Context} context
+     * @returns {void}
+     */
+    export(context) {
+        this.traitNode.checkInner(context, new Set(), null)
+    }
+
     /**
      * Finds the named identifier
      * @param {string} name
@@ -317,7 +326,15 @@ class UnknownTraitContext extends TraitContext {
      * @param {string} name Fully qualified only
      */
     constructor(name, superclass = null) {
-        super(name)
+        super(name, null, null, null)
+    }
+
+    /**
+     *
+     * @param {Context} context
+     * @returns {void}
+     */
+    export(context) {
     }
 
     /**
