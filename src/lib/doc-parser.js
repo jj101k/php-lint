@@ -42,7 +42,7 @@ class DocParser {
                 } else {
                     node.tail = tail
                 }
-            } else if(md = line.match(/^\s*\}\s*$/)) {
+            } else if(parser_state.length > 1 && (md = line.match(/^\s*\}\s*$/))) {
                 parser_state.shift()
             } else {
                 parser_state[0].tail += "\n" + line
