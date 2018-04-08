@@ -107,6 +107,14 @@ export default class _Function extends Declaration {
                                 }
                                 structure_return = rtype
                                 break
+                            case "api":
+                            case "deprecated":
+                            case "example":
+                            case "internal":
+                            case "link":
+                            case "see":
+                            case "throws":
+                                break
                             default:
                                 console.log(`Skipping ${c.kind}`)
                         }
