@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 const getopt = require("node-getopt")
 const PHPLint = require("./index")
 
