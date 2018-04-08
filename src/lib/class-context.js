@@ -32,6 +32,19 @@ class PartialClassContext {
     }
 
     /**
+     * @type {string[]}
+     */
+    get accessibleInstanceIdentifiers() {
+        if(this.superclass) {
+            return this.superclass.accessibleInstanceIdentifiers.concat(
+                Object.keys(this.instanceIdentifiers)
+            )
+        } else {
+            return Object.keys(this.instanceIdentifiers)
+        }
+    }
+
+    /**
      * Adds a known identifier
      * @param {string} name
      * @param {string} scope "public", "private" or "protected"

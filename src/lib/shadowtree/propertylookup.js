@@ -63,7 +63,7 @@ export default class PropertyLookup extends Lookup {
                     } else {
                         this.throw(new PHPError.NoProperty(
                             `No accessible identifier ${class_context.name}->${offset}\n` +
-                            `Accessible properties are: ${Object.keys(class_context.instanceIdentifiers).sort()}`
+                            `Accessible properties are: ${class_context.accessibleInstanceIdentifiers.sort()}`
                         ), context)
                     }
                 }
