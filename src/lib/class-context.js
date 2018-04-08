@@ -220,7 +220,9 @@ class TraitContext extends PartialClassContext {
      * @returns {void}
      */
     export(context) {
-        this.traitNode.checkInner(context, new Set(), null)
+        let inner_context = context.childContext(true)
+        inner_context.fileContext = this.fileContext
+        this.traitNode.checkInner(inner_context, new Set(), null)
     }
 
     /**
