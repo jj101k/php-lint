@@ -27,6 +27,9 @@ class PartialClassContext {
                 types: PHPSimpleType.coreTypes.string,
             }
         }
+        /**
+         * @type {{[x: string]: {scope: string, types: PHPTypeUnion}}}
+         */
         this.instanceIdentifiers = {}
         this.superclass = superclass
     }
@@ -36,11 +39,11 @@ class PartialClassContext {
      */
     get accessibleInstanceIdentifiers() {
         if(this.superclass) {
-            return this.superclass.accessibleInstanceIdentifiers.concat(
-                Object.keys(this.instanceIdentifiers)
+            return this.superclass.instanceIdentifiersWithScope("protected").concat(
+                this.instanceIdentifiersWithScope("private")
             )
         } else {
-            return Object.keys(this.instanceIdentifiers)
+            return this.instanceIdentifiersWithScope("private")
         }
     }
 
@@ -136,6 +139,35 @@ class PartialClassContext {
         } else {
             return null
         }
+    }
+
+    /**
+     * Returns all local instance identifier names accessible with the supplied scope.
+     *
+     * @param {string} scope
+     * @return {string[]}
+     */
+    instanceIdentifiersWithScope(scope = "private") {
+        return Object.keys(this.instanceIdentifiers).filter(identifier => {
+            switch(scope) {
+                case "private":
+                    if(this.instanceIdentifiers[identifier].scope == "private") {
+                        return true
+                    }
+                    //
+                case "protected":
+                    if(this.instanceIdentifiers[identifier].scope == "protected") {
+                        return true
+                    }
+                case "public":
+                    if(this.instanceIdentifiers[identifier].scope == "public") {
+                        return true
+                    }
+                    //
+                default:
+                    return false
+            }
+        })
     }
 
     /**
