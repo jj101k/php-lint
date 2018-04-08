@@ -12,7 +12,7 @@
     "test": "^0.6.0"
   },
   "bin": {
-    "php-lint": "src/index.js"
+    "php-lint": "src/bin.js"
   },
   "devDependencies": {},
   "scripts": {
