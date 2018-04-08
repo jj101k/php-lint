@@ -53,7 +53,7 @@ export default class Bin extends Operation {
                 break
             case "+":
                 // Numeric (2)
-                if(left_types.types.length == 1 && "" + left_types[0] == "array") {
+                if(left_types.types.length == 1 && "" + left_types.types[0] == "array") {
                     types = types.addTypesFrom(left_types)
                 } else {
                     types = types.addTypesFrom(PHPSimpleType.coreTypes.float)
