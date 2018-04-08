@@ -28,6 +28,18 @@ export default class Unary extends Operation {
                 coerced_values.forEach(cv => rtype = rtype.withValue(!cv))
             }
             return new ContextTypes(rtype)
+        } else if(this.type == "-" || this.type == "+") {
+            let etype = this.what.check(context, new Set(), null).expressionType
+            let rtype = PHPSimpleType.coreTypes.float
+            let coerced_values = etype.coercedValues("float")
+            if(coerced_values) {
+                if(this.type == "-") {
+                    coerced_values.forEach(cv => rtype = rtype.withValue(-cv))
+                } else {
+                    coerced_values.forEach(cv => rtype = rtype.withValue(+cv))
+                }
+            }
+            return new ContextTypes(rtype)
         } else {
             console.log(`TODO: Unary type ${this.type} not handled yet`)
             return this.what.check(context, new Set(), null)
