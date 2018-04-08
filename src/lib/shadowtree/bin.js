@@ -55,6 +55,9 @@ export default class Bin extends Operation {
                 // Numeric (2)
                 if(left_types.types.length == 1 && "" + left_types.types[0] == "array") {
                     types = types.addTypesFrom(left_types)
+                } else if(left_types.types.length != 1 || "" + left_types.types[0] != "float") {
+                    console.log(`Possibly bad cast from type ${left_types}`)
+                    types = types.addTypesFrom(PHPSimpleType.coreTypes.float)
                 } else {
                     types = types.addTypesFrom(PHPSimpleType.coreTypes.float)
                 }
