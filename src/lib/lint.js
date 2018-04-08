@@ -141,8 +141,8 @@ class Lint {
         } catch(e) {
             if(e instanceof PHPStrictError && !throw_on_error) {
                 console.log(e.message)
-                if(filename) {
-                    var lines = fs.readFileSync(filename, "utf8").split(/\n/)
+                if(e.filename) {
+                    let lines = fs.readFileSync(e.filename, "utf8").split(/\n/)
                     if(e.loc.start.line >= ShowContextLines) {
                         console.log(lines.slice(e.loc.start.line - ShowContextLines, e.loc.start.line - 1).join("\n"))
                     } else {

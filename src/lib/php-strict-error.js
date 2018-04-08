@@ -27,6 +27,7 @@ class PHPStrictError extends Error {
             `${message} at ${context.fileContext.filename} line ${node.loc.start.line}`
         )
         this.loc = node.loc
+        this.filename = context.fileContext.filename
     }
 }
 export default PHPStrictError
