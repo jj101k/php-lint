@@ -3,7 +3,7 @@ import Parameter from "./parameter"
 import Block from "./block"
 import Identifier from "./identifier"
 import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
-import {PHPSimpleType, PHPFunctionType, PHPTypeUnion} from "../phptype"
+import {PHPSimpleType, PHPFunctionType, PHPTypeUnion, WrongType} from "../phptype"
 import * as PHPError from "../php-error"
 import DocParser from "../doc-parser"
 
@@ -62,13 +62,21 @@ export default class _Function extends Declaration {
                         let resolve_name = t => {
                             let md = t.match(/^(.*?)(\[.*)?$/)
                             let [stem, tail] = [md[1], md[2] || ""]
-                            if(stem.match(/^[A-Z0-9]/)) {
-                                return (
-                                    context.fileContext.resolveAliasName(stem) ||
-                                    "\\" + stem
-                                ) + tail
-                            } else {
-                                return context.resolveName(stem, "uqn") + tail
+                            try {
+                                if(stem.match(/^[A-Z0-9]/)) {
+                                    return (
+                                        context.fileContext.resolveAliasName(stem) ||
+                                        "\\" + stem
+                                    ) + tail
+                                } else {
+                                    return context.resolveName(stem, "uqn") + tail
+                                }
+                            } catch(e) {
+                                if(e instanceof WrongType) {
+                                    this.throw(new PHPError.BadDoc(e.message), context, doc.loc)
+                                } else {
+                                    throw e
+                                }
                             }
                         }
                         switch(c.kind) {

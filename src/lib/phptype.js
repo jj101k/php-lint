@@ -81,6 +81,19 @@ class PHPType {
     }
 }
 
+class WrongType extends Error {
+    /**
+     *
+     * @param {string} supplied_name
+     * @param {string} real_name
+     */
+    constructor(supplied_name, real_name) {
+        super(`'${real_name}' incorrectly referred to as '${supplied_name}'`)
+        this.suppliedName = supplied_name
+        this.realName = real_name
+    }
+}
+
 /**
  * @typedef coreTypes
  * @property {PHPTypeUnion} string
@@ -111,20 +124,17 @@ class PHPSimpleType extends PHPType {
             )
             Object.defineProperty(types, "boolean", {
                 get() {
-                    console.log("'bool' incorrectly referred to as 'boolean'")
-                    return this.bool
+                    throw new WrongType("boolean", "bool")
                 }
             })
             Object.defineProperty(types, "integer", {
                 get() {
-                    console.log("'int' incorrectly referred to as 'integer'")
-                    return this.int
+                    throw new WrongType("integer", "int")
                 }
             })
             Object.defineProperty(types, "$this", {
                 get() {
-                    console.log("'self' incorrectly referred to as '$this'")
-                    return this.self
+                    throw new WrongType("$this", "self")
                 }
             })
             Object.freeze(types)
@@ -531,4 +541,4 @@ class PHPTypeUnion {
         }
     }
 }
-export {PHPType, PHPFunctionType, PHPSimpleType, PHPTypeUnion}
+export {PHPType, PHPFunctionType, PHPSimpleType, PHPTypeUnion, WrongType}
