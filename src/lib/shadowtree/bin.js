@@ -53,17 +53,25 @@ export default class Bin extends Operation {
                 break
             case "+":
                 // Numeric (2)
-                if(left_types.types.length == 1 && "" + left_types.types[0] == "array") {
-                    types = types.addTypesFrom(left_types)
-                } else if(left_types.types.length == 1 && "" + left_types.types[0] == "mixed") {
-                    // mixed -> ?
-                    types = types.addTypesFrom(PHPSimpleType.coreTypes.mixed)
-                } else if(left_types.types.length != 1 || "" + left_types.types[0] != "float") {
-                    console.log(`Possibly bad cast from type ${left_types}`)
-                    types = types.addTypesFrom(PHPSimpleType.coreTypes.float)
-                } else {
-                    types = types.addTypesFrom(PHPSimpleType.coreTypes.float)
-                }
+                left_types.types.forEach(type => {
+                    switch("" + type) {
+                        case "null":
+                            // Yes null casts to number.
+                        case "int":
+                        case "float":
+                            types = types.addTypesFrom(PHPSimpleType.coreTypes.float)
+                            break
+                        case "array":
+                            types = types.addTypesFrom(PHPSimpleType.coreTypes.array)
+                            break
+                        case "mixed":
+                            types = types.addTypesFrom(PHPSimpleType.coreTypes.mixed)
+                            break
+                        default:
+                            console.log(`Possibly bad cast from type ${type}`)
+                            types = types.addTypesFrom(PHPSimpleType.coreTypes.float)
+                    }
+                })
                 break
             case ".":
                 // String
