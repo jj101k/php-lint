@@ -116,7 +116,7 @@ export default class _Function extends Declaration {
                             case "throws":
                                 break
                             default:
-                                console.log(`Skipping ${c.kind}`)
+                                console.log(`Skipping unrecognised PHPDoc tag @${c.kind}`)
                         }
                     }
                 )
