@@ -46,7 +46,7 @@ const PHPSuperglobals = {
     "_COOKIE": "array",
     "_FILES": "array",
     "argv": "array",
-    "argc": "integer",
+    "argc": "int",
     "_SERVER": "array",
     "_SESSION": "array",
     "GLOBALS": "array",
