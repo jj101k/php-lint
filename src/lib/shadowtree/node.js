@@ -7,6 +7,19 @@ import {PHPTypeUnion} from "../phptype"
 import * as PHPError from "../php-error"
 import * as ShadowTree from "../shadowtree"
 
+/**
+ * @typedef ParserPosition
+ * @property {number} line
+ * @property {number} column
+ * @property {number} offset
+ */
+/**
+ * @typedef ParserLocation
+ * @property {?string} source
+ * @property {ParserPosition} start
+ * @property {ParserPosition} end
+ */
+
 /** @type {boolean} True if you want lots of debugging messages */
 const DEBUG = false
 
@@ -181,11 +194,12 @@ export default class _Node extends AbstractNode {
      * Wraps throwing. This may conditionally not throw.
      * @param {PHPError.Error} e
      * @param {Context} context
+     * @param {?ParserLocation} [effective_location]
      * @throws {PHPError.Error}
      */
-    throw(e, context) {
+    throw(e, context, effective_location = null) {
         if(ignoreErrors.every(o => !(e instanceof o))) {
-            throw e.withContext(context, this)
+            throw e.withContext(context, this, effective_location)
         }
     }
 }
