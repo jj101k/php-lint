@@ -466,6 +466,11 @@ class PHPTypeUnion {
                     out[+!!v] = !!v
                 }))
                 return Object.values(out)
+            case "string":
+                this.types.forEach(t => t.values.forEach(v => {
+                    out["" + v] = "" + v
+                }))
+                return Object.values(out)
             default:
                 console.log(`Coercion to ${type} not yet implemented`)
                 return null
