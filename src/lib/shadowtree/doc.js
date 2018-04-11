@@ -1,10 +1,6 @@
 import AbstractNode from "./abstract-node"
-
-const USE_INTERNAL_DOC_PARSER = true
 import DocParser from "../doc-parser"
 
-const doc_parser = require("doc-parser")
-const reader = new doc_parser()
 export default class Doc extends AbstractNode {
     /** @type {boolean} */
     get isDoc() {
@@ -19,11 +15,7 @@ export default class Doc extends AbstractNode {
      */
     get structure() {
         if(!this._structure) {
-            if(USE_INTERNAL_DOC_PARSER) {
-                this._structure = new DocParser(this.lines).top.children
-            } else {
-                this._structure = reader.parse(this.lines).body
-            }
+            this._structure = new DocParser(this.lines).top.children
         }
         return this._structure
     }

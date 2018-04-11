@@ -4,7 +4,6 @@
   "description": "Utility for linting PHP scripts",
   "main": "index.js",
   "dependencies": {
-    "doc-parser": "^0.4.8",
     "eximport": "git+https://github.com/jj101k/eximport.git",
     "glob": "^7.1.1",
     "node-getopt": "^0.2.3",
