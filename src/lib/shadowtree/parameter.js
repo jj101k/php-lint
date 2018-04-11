@@ -1,6 +1,6 @@
 import Declaration from "./declaration"
 import Identifier from "./identifier"
-import {PHPSimpleType} from "../php-type"
+import {PHPTypeCore} from "../php-type"
 import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
 import _Node from "./node"
 import ConstRef from "./constref"
@@ -36,9 +36,9 @@ export default class Parameter extends Declaration {
         let type
         if(this.type) {
             let type_name = context.resolveName(this.type.name, this.type.resolution)
-            type = PHPSimpleType.named(type_name)
+            type = PHPTypeCore.named(type_name)
         } else {
-            type = PHPSimpleType.coreTypes.mixed
+            type = PHPTypeCore.types.mixed
         }
         if(
             this.nullable ||
@@ -49,7 +49,7 @@ export default class Parameter extends Declaration {
                 this.value.name.name.toLowerCase() == "null"
             )
         ) {
-            type = type.addTypesFrom(PHPSimpleType.coreTypes.null)
+            type = type.addTypesFrom(PHPTypeCore.types.null)
         }
         context.setName(
             "$" + this.name,

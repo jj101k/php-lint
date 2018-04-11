@@ -1,7 +1,7 @@
 import Operation from "./operation"
 import Expression from "./expression"
 import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
-import {PHPSimpleType, PHPTypeUnion} from "../php-type"
+import {PHPTypeCore, PHPTypeUnion} from "../php-type"
 export default class Bin extends Operation {
     /** @type {string} */
     get type() {
@@ -32,13 +32,13 @@ export default class Bin extends Operation {
             case "|":
             case "or":
                 // Boolean (or)
-                types = types.addTypesFrom(PHPSimpleType.coreTypes.bool)
+                types = types.addTypesFrom(PHPTypeCore.types.bool)
                 break
             case "&":
             case "&&":
             case "and":
                 // Boolean (and)
-                types = types.addTypesFrom(PHPSimpleType.coreTypes.bool)
+                types = types.addTypesFrom(PHPTypeCore.types.bool)
                 break
             case "*":
             case "/":
@@ -49,7 +49,7 @@ export default class Bin extends Operation {
             case ">>":
             case "^":
                 // Numeric (1)
-                types = types.addTypesFrom(PHPSimpleType.coreTypes.float)
+                types = types.addTypesFrom(PHPTypeCore.types.float)
                 break
             case "+":
                 // Numeric (2)
@@ -59,23 +59,23 @@ export default class Bin extends Operation {
                             // Yes null casts to number.
                         case "int":
                         case "float":
-                            types = types.addTypesFrom(PHPSimpleType.coreTypes.float)
+                            types = types.addTypesFrom(PHPTypeCore.types.float)
                             break
                         case "array":
-                            types = types.addTypesFrom(PHPSimpleType.coreTypes.array)
+                            types = types.addTypesFrom(PHPTypeCore.types.array)
                             break
                         case "mixed":
-                            types = types.addTypesFrom(PHPSimpleType.coreTypes.mixed)
+                            types = types.addTypesFrom(PHPTypeCore.types.mixed)
                             break
                         default:
                             console.log(`Possibly bad cast from type ${type}`)
-                            types = types.addTypesFrom(PHPSimpleType.coreTypes.float)
+                            types = types.addTypesFrom(PHPTypeCore.types.float)
                     }
                 })
                 break
             case ".":
                 // String
-                types = types.addTypesFrom(PHPSimpleType.coreTypes.string)
+                types = types.addTypesFrom(PHPTypeCore.types.string)
                 break
             case "~":
             case "!~":
@@ -92,7 +92,7 @@ export default class Bin extends Operation {
             case "===":
             case "instanceof":
                 // Comparison (boolean)
-                types = types.addTypesFrom(PHPSimpleType.coreTypes.bool)
+                types = types.addTypesFrom(PHPTypeCore.types.bool)
                 break
             case "??":
                 // Left (not null) or right

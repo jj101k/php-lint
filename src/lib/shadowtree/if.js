@@ -1,6 +1,6 @@
 import Expression from "./expression"
 import Statement from "./statement"
-import {PHPTypeUnion, PHPSimpleType} from "../php-type"
+import {PHPTypeUnion, PHPTypeCore} from "../php-type"
 import Block from "./block"
 import Bin from "./bin"
 import Variable from "./variable"
@@ -44,7 +44,7 @@ export default class If extends Statement {
         ) {
             body_context.setName(
                 '$' + this.test.left.name,
-                PHPSimpleType.named(context.resolveNodeName(this.test.right))
+                PHPTypeCore.named(context.resolveNodeName(this.test.right))
             )
         }
         let type = PHPTypeUnion.empty

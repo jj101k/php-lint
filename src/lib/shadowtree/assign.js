@@ -2,7 +2,7 @@ import Statement from "./statement"
 import Expression from "./expression"
 import Variable from "./variable"
 import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
-import {PHPSimpleType} from "../php-type"
+import {PHPTypeCore} from "../php-type"
 import * as PHPError from "../php-error"
 export default class Assign extends Statement {
     /** @type {string} */
@@ -35,7 +35,7 @@ export default class Assign extends Statement {
         if(
             this.left instanceof Variable &&
             this.left.name.length == 1 &&
-            !PHPSimpleType.coreTypes[left_context.assigningType.typeSignature]
+            !PHPTypeCore.types[left_context.assigningType.typeSignature]
         ) {
             this.throw(new PHPError.SingleCharacterVariable(
                 `Use of 1-character name $${this.left.name} of non-trivial type ${left_context.assigningType.typeSignature}`
@@ -43,7 +43,7 @@ export default class Assign extends Statement {
         }
         if(left_context.assigningType.isEmpty) {
             this.throw(new PHPError.AssignNoValue(), context)
-            return new ContextTypes(PHPSimpleType.coreTypes.null)
+            return new ContextTypes(PHPTypeCore.types.null)
         } else {
             return new ContextTypes(left_context.assigningType)
         }

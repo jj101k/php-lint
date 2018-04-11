@@ -1,7 +1,7 @@
 import Expression from "./expression"
 import Entry from "./entry"
 import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
-import {PHPSimpleType, PHPTypeUnion} from "../php-type"
+import {PHPTypeCore, PHPTypeUnion} from "../php-type"
 export default class _Array extends Expression {
      /** @type {Entry[]} */
      get items() {
@@ -31,9 +31,9 @@ export default class _Array extends Expression {
                 }
             )
             if(this.items.length && !this.items.some(item => !!item.key)) {
-                return new ContextTypes(PHPSimpleType.named(`${types.typeSignatureToken}[]`))
+                return new ContextTypes(PHPTypeCore.named(`${types.typeSignatureToken}[]`))
             }
         }
-        return new ContextTypes(PHPSimpleType.coreTypes.array)
+        return new ContextTypes(PHPTypeCore.types.array)
     }
 }

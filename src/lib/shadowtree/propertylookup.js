@@ -1,5 +1,5 @@
 import Lookup from "./lookup"
-import {PHPFunctionType, PHPSimpleType, PHPTypeUnion} from "../php-type"
+import {PHPFunctionType, PHPTypeCore, PHPTypeUnion} from "../php-type"
 import Variable from "./variable"
 import StaticLookup from "./staticlookup"
 import OffsetLookup from "./offsetlookup"
@@ -28,16 +28,16 @@ export default class PropertyLookup extends Lookup {
         } else if(this.offset instanceof _String) {
             offset = this.offset.value
         } else if(this.offset instanceof Variable) {
-            return new ContextTypes(PHPSimpleType.coreTypes.mixed)
+            return new ContextTypes(PHPTypeCore.types.mixed)
         } else {
             console.log(this.node)
             console.log("TODO don't know how to check this kind of lookup")
-            return new ContextTypes(PHPSimpleType.coreTypes.mixed)
+            return new ContextTypes(PHPTypeCore.types.mixed)
         }
         let types_out = PHPTypeUnion.empty
         try {
             type_union.types.filter(
-                t => t !== PHPSimpleType.coreTypes.null.types[0]
+                t => t !== PHPTypeCore.types.null.types[0]
             ).forEach(t => {
                 let class_context = context.findClass("" + t)
                 if(class_context) {

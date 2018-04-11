@@ -1,5 +1,5 @@
 import Lookup from "./lookup"
-import {PHPFunctionType, PHPSimpleType} from "../php-type"
+import {PHPTypeCore} from "../php-type"
 import Variable from "./variable"
 import PropertyLookup from "./propertylookup"
 import StaticLookup from "./staticlookup"
@@ -20,9 +20,9 @@ export default class OffsetLookup extends Lookup {
         inner_context.assigningType = null
         let type_union = this.what.check(inner_context, new Set(), null).expressionType
         if(this.offset instanceof Variable) {
-            return new ContextTypes(PHPSimpleType.coreTypes.mixed)
+            return new ContextTypes(PHPTypeCore.types.mixed)
         } else {
-            return new ContextTypes(PHPSimpleType.coreTypes.mixed) // TODO improve
+            return new ContextTypes(PHPTypeCore.types.mixed) // TODO improve
         }
     }
 }

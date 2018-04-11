@@ -1,5 +1,5 @@
 import Statement from "./statement"
-import {PHPFunctionType, PHPTypeUnion, PHPSimpleType} from "../php-type"
+import {PHPFunctionType, PHPTypeUnion, PHPTypeCore} from "../php-type"
 import Identifier from "./identifier"
 import Variable from "./variable"
 import _String from "./string"
@@ -45,7 +45,7 @@ export default class Call extends Statement {
         ) {
             pbr_positions = {}
             let effective_this_type = this.arguments[1].check(context, new Set(), null).expressionType
-            if(effective_this_type === PHPSimpleType.coreTypes.null) {
+            if(effective_this_type === PHPTypeCore.types.null) {
                 let arg_2 = this.arguments[2]
                 if(
                     arg_2 instanceof StaticLookup &&
@@ -53,7 +53,7 @@ export default class Call extends Statement {
                     arg_2.offset.name == "class" &&
                     arg_2.what instanceof Identifier
                 ) {
-                    effective_this_type = PHPSimpleType.named(context.resolveNodeName(arg_2.what))
+                    effective_this_type = PHPTypeCore.named(context.resolveNodeName(arg_2.what))
                 } else {
                     effective_this_type = arg_2.check(context, new Set(), null).expressionType
                 }
@@ -71,7 +71,7 @@ export default class Call extends Statement {
         this.arguments.forEach((arg, i) => {
             if(pbr_positions[i]) {
                 let inner_context = context.childContext(true)
-                inner_context.assigningType = context.findName(arg.name) || PHPSimpleType.coreTypes.mixed
+                inner_context.assigningType = context.findName(arg.name) || PHPTypeCore.types.mixed
                 arg.check(inner_context, new Set(), null)
             } else if(callback_positions[i]) {
                 let inner_context = context.childContext(false)
@@ -104,7 +104,7 @@ export default class Call extends Statement {
             if(t instanceof PHPFunctionType) {
                 types = types.addTypesFrom(t.returnType)
             } else {
-                types = types.addTypesFrom(PHPSimpleType.coreTypes.mixed)
+                types = types.addTypesFrom(PHPTypeCore.types.mixed)
             }
         })
         return new ContextTypes(types)

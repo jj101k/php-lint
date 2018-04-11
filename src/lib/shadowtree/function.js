@@ -3,7 +3,7 @@ import Parameter from "./parameter"
 import Block from "./block"
 import Identifier from "./identifier"
 import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
-import {PHPSimpleType, PHPFunctionType, PHPTypeUnion, WrongType} from "../php-type"
+import {PHPTypeCore, PHPFunctionType, PHPTypeUnion, WrongType} from "../php-type"
 import * as PHPError from "../php-error"
 
 export default class _Function extends Declaration {
@@ -79,7 +79,7 @@ export default class _Function extends Declaration {
                                 c.type.name.split(/\|/).forEach(
                                     t => {
                                         type = type.addTypesFrom(
-                                            PHPSimpleType.named(resolve_name(t))
+                                            PHPTypeCore.named(resolve_name(t))
                                         )
                                     }
                                 )
@@ -92,7 +92,7 @@ export default class _Function extends Declaration {
                                     c.what.name.split(/\|/).forEach(
                                         t => {
                                             rtype = rtype.addTypesFrom(
-                                                PHPSimpleType.named(
+                                                PHPTypeCore.named(
                                                     resolve_name(t)
                                                 )
                                             )
@@ -136,9 +136,9 @@ export default class _Function extends Declaration {
 
         let signature_type
         if(this.type) {
-            signature_type = PHPSimpleType.named(context.resolveName(this.type.name, this.type.resolution))
+            signature_type = PHPTypeCore.named(context.resolveName(this.type.name, this.type.resolution))
             if(this.nullable) {
-                signature_type = signature_type.addTypesFrom(PHPSimpleType.coreTypes.null)
+                signature_type = signature_type.addTypesFrom(PHPTypeCore.types.null)
             }
         }
         let return_type
@@ -152,7 +152,7 @@ export default class _Function extends Declaration {
         } else if(signature_type) {
             return_type = signature_type
         } else {
-            return_type = PHPSimpleType.coreTypes.mixed
+            return_type = PHPTypeCore.types.mixed
         }
         let function_type = new PHPFunctionType(
             arg_types,
@@ -173,7 +173,7 @@ export default class _Function extends Declaration {
         if(context.classContext && context.classContext.name == "\\Slim\\App") {
             switch(this.name) {
                 case "group":
-                    function_type.callbackPositions[1] = PHPSimpleType.named("\\Slim\\App")
+                    function_type.callbackPositions[1] = PHPTypeCore.named("\\Slim\\App")
                     break
                 default:
             }

@@ -1,4 +1,4 @@
-import {PHPFunctionType, PHPSimpleType, PHPTypeUnion} from "./php-type"
+import {PHPFunctionType, PHPTypeCore, PHPTypeUnion} from "./php-type"
 import {Identifier, Class, ConstRef} from "./shadowtree"
 import * as PHPError from "./php-error"
 import {ClassContext, TraitContext} from "./class-context"
@@ -64,17 +64,17 @@ export default class Context {
         if(!this._superGlobals) {
             this._superGlobals = {}
             Object.keys(PHPSuperglobals).forEach(
-                name => this._superGlobals["$" + name] = PHPSimpleType.named(PHPSuperglobals[name])
+                name => this._superGlobals["$" + name] = PHPTypeCore.named(PHPSuperglobals[name])
             )
             Object.keys(PHPFunctions).forEach(
                 name => this._superGlobals[name] = new PHPTypeUnion(new PHPFunctionType(
-                    PHPFunctions[name].map(arg => PHPSimpleType.coreTypes.mixed),
-                    name == "array_keys" ? PHPSimpleType.named("string[]") : PHPSimpleType.coreTypes.mixed,
+                    PHPFunctions[name].map(arg => PHPTypeCore.types.mixed),
+                    name == "array_keys" ? PHPTypeCore.named("string[]") : PHPTypeCore.types.mixed,
                     PHPFunctions[name]
                 ))
             )
             PHPConstants.forEach(
-                name => this._superGlobals[name] = PHPSimpleType.coreTypes.mixed
+                name => this._superGlobals[name] = PHPTypeCore.types.mixed
             )
             Object.freeze(this._superGlobals)
         }
@@ -213,7 +213,7 @@ export default class Context {
     findClass(name) {
         if(name == "self") {
             return this.classContext
-        } else if(name != "mixed" && name != "object" && PHPSimpleType.coreTypes[name]) {
+        } else if(name != "mixed" && name != "object" && PHPTypeCore.types[name]) {
             console.log(`Attempt to access core type ${name} as class`)
             return null
         } else {
@@ -273,7 +273,7 @@ export default class Context {
     resolveName(name, resolution = "uqn") {
         let md
         if(md = name.match(/^\u005c((\w+)(?:\W.*)?)/)) {
-            if(PHPSimpleType.coreTypes[md[2]]) {
+            if(PHPTypeCore.types[md[2]]) {
                 return md[1]
             } else {
                 return name
@@ -285,7 +285,7 @@ export default class Context {
             case "uqn":
                 if(name == "self" && this.classContext && !(this.classContext instanceof TraitContext)) {
                     return this.classContext.name
-                } else if(PHPSimpleType.coreTypes[name.replace(/\W.*$/, "")]) {
+                } else if(PHPTypeCore.types[name.replace(/\W.*$/, "")]) {
                     return name
                 } else if(this.classContext) {
                     let class_name
@@ -348,9 +348,9 @@ export default class Context {
      */
     setThis() {
         if(this.classContext && !(this.classContext instanceof TraitContext)) {
-            this.ns["$this"] = PHPSimpleType.named(this.classContext.name)
+            this.ns["$this"] = PHPTypeCore.named(this.classContext.name)
         } else {
-            this.ns["$this"] = PHPSimpleType.coreTypes.self
+            this.ns["$this"] = PHPTypeCore.types.self
         }
         return this.ns["$this"]
     }

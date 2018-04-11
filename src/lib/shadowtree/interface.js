@@ -1,5 +1,5 @@
 import Declaration from "./declaration"
-import {PHPTypeUnion} from "../php-type"
+import {PHPFunctionType} from "../php-type"
 import Method from "./method"
 import Identifier from "./identifier"
 import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
@@ -37,7 +37,7 @@ export default class Interface extends Declaration {
                         b.name,
                         b.visibility,
                         b.isStatic,
-                        PHPTypeUnion.mixedFunction
+                        PHPFunctionType.mixed.union
                     )
                 }
             }

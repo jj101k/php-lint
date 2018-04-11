@@ -1,5 +1,5 @@
 import Declaration from "./declaration"
-import {PHPSimpleType, PHPTypeUnion} from "../php-type"
+import {PHPFunctionType} from "../php-type"
 import Identifier from "./identifier"
 import Method from "./method"
 import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
@@ -53,7 +53,7 @@ export default class Trait extends Declaration {
                         b.name,
                         b.visibility,
                         b.isStatic,
-                        PHPTypeUnion.mixedFunction
+                        PHPFunctionType.mixed.union
                     )
                 }
             }

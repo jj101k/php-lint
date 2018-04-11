@@ -1,7 +1,7 @@
 import Operation from "./operation"
 import Expression from "./expression"
 import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
-import {PHPSimpleType} from "../php-type"
+import {PHPTypeCore} from "../php-type"
 export default class Cast extends Operation {
     /** @type {string} */
     get type() {
@@ -21,6 +21,6 @@ export default class Cast extends Operation {
     check(context, parser_state = new Set(), doc = null) {
         super.check(context, parser_state, doc)
         this.what.check(context, new Set(), null)
-        return new ContextTypes(PHPSimpleType.named(context.resolveName(this.type)))
+        return new ContextTypes(PHPTypeCore.named(context.resolveName(this.type)))
     }
 }

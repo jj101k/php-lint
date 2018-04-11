@@ -1,6 +1,6 @@
 import Literal from "./literal"
 import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
-import {PHPSimpleType} from "../php-type"
+import {PHPTypeCore} from "../php-type"
 export default class _Number extends Literal {
     /** @type {number} */
     get value() {
@@ -21,9 +21,9 @@ export default class _Number extends Literal {
             this.value > 2**63 - 1 ||
             this.value < -(2**63)
         ) {
-            types = PHPSimpleType.coreTypes.float.withValue(this.value)
+            types = PHPTypeCore.types.float.withValue(this.value)
         } else {
-            types = PHPSimpleType.coreTypes.int.withValue(this.value)
+            types = PHPTypeCore.types.int.withValue(this.value)
         }
         return new ContextTypes(types)
     }
