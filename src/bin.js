@@ -3,11 +3,11 @@ const getopt = require("node-getopt")
 const PHPLint = require("./index")
 
 let opt = getopt.create([
-    ["x" , "exclude-tests=ARG" , "List of tests to exclude"],
-    ["t" , "show-tests"  , "Show list of tests which will be included"],
+    ["x", "exclude-tests=ARG", "List of tests to exclude"],
+    ["t", "show-tests", "Show list of tests which will be included"],
     ["", "working-directory=ARG", "Set the initial working directory"],
-    ["h" , "help" , "Display this help"],
-    ["v" , "version" , "Show version"]
+    ["h", "help", "Display this help"],
+    ["v", "version", "Show version"]
 ]).bindHelp().parseSystem()
 
 if(opt.options.version) {
