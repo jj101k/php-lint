@@ -1,5 +1,4 @@
 import _Any from "./any"
-//FIXME//import _Simple from "./simple"
 /**
  * A set of possible types
  */
@@ -128,7 +127,7 @@ export default class _Union {
      */
     coercedValues(type) {
         if(this.isEmpty) return null
-        if(this.types.some(t => !(("values" in t) && t.values.length))) return null
+        if(this.types.some(t => !(t.values && t.values.length))) return null
         let out = {}
         switch(type) {
             case "bool":

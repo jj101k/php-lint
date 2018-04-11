@@ -19,6 +19,13 @@ export default class _Any {
         return new _Union(this)
     }
     /**
+     * @type {?*[]} The values this instance can have. N/A for anything but a
+     * simple type.
+     */
+    get values() {
+        return null
+    }
+    /**
      * Returns a type combining this one with another. Only meaningful for types
      * which preserve values, for which the end type will have a union of
      * values (usually).

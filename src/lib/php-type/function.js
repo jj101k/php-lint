@@ -1,6 +1,5 @@
 import _Any from "./any"
 import _Core from "./core"
-import _Simple from "./simple"
 import _Union from "./union"
 /**
  * A function/closure

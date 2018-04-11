@@ -22,6 +22,15 @@ export default class _Simple extends _Any {
         return this.typeName
     }
     /**
+     * @type {*[]}
+     */
+    get values() {
+        return this._values
+    }
+    set values(v) {
+        this._values = v
+    }
+    /**
      * Returns a type combining this with the other. The eventual values will
      * generally be a union.
      * @param {_Simple} other_type
