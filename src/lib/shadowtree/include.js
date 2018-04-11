@@ -4,7 +4,7 @@ import _String from "./string"
 import Bin from "./bin"
 import Magic from "./magic"
 import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
-import {PHPSimpleType} from "../phptype"
+import {PHPSimpleType} from "../php-type"
 export default class Include extends Statement {
     /** @type {Expression} */
     get target() {

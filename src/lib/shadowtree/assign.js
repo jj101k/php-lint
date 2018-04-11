@@ -2,7 +2,7 @@ import Statement from "./statement"
 import Expression from "./expression"
 import Variable from "./variable"
 import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
-import {PHPSimpleType} from "../phptype"
+import {PHPSimpleType} from "../php-type"
 import * as PHPError from "../php-error"
 export default class Assign extends Statement {
     /** @type {string} */

@@ -1,5 +1,5 @@
 import Literal from "./literal"
-import {PHPSimpleType} from "../phptype"
+import {PHPSimpleType} from "../php-type"
 import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
 export default class _String extends Literal {
     /** @type {string} */

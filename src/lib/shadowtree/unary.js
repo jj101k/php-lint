@@ -1,7 +1,7 @@
 import Operation from "./operation"
 import Expression from "./expression"
 import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
-import {PHPSimpleType} from "../phptype"
+import {PHPSimpleType} from "../php-type"
 export default class Unary extends Operation {
     /** @type {string} */
     get type() {

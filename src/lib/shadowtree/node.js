@@ -3,7 +3,7 @@ import Context from "../context"
 import ContextTypes from "../context-types"
 import Doc from "./doc"
 import * as ParserStateOption from "../parser-state-option"
-import {PHPTypeUnion} from "../phptype"
+import {PHPTypeUnion} from "../php-type"
 import * as PHPError from "../php-error"
 import * as ShadowTree from "../shadowtree"
 

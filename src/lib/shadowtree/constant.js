@@ -1,6 +1,6 @@
 import Declaration from "./declaration"
 import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
-import {PHPTypeUnion, PHPSimpleType} from "../phptype"
+import {PHPTypeUnion, PHPSimpleType} from "../php-type"
 import _Node from "./node"
 export default class Constant extends Declaration {
     /** @type {?_Node} */

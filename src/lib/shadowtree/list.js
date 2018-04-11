@@ -1,6 +1,6 @@
 import Sys from "./sys"
 import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
-import {PHPSimpleType} from "../phptype"
+import {PHPSimpleType} from "../php-type"
 export default class List extends Sys {
     /**
      * Checks that syntax seems ok

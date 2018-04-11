@@ -2,7 +2,7 @@ import Statement from "./statement"
 import Expression from "./expression"
 import Block from "./block"
 import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
-import {PHPTypeUnion} from "../phptype"
+import {PHPTypeUnion} from "../php-type"
 export default class Switch extends Statement {
     /** @type {Expression} */
     get test() {

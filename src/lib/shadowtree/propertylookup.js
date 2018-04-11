@@ -1,5 +1,5 @@
 import Lookup from "./lookup"
-import {PHPFunctionType, PHPSimpleType, PHPTypeUnion} from "../phptype"
+import {PHPFunctionType, PHPSimpleType, PHPTypeUnion} from "../php-type"
 import Variable from "./variable"
 import StaticLookup from "./staticlookup"
 import OffsetLookup from "./offsetlookup"

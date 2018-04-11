@@ -1,4 +1,4 @@
-import {PHPFunctionType, PHPSimpleType, PHPTypeUnion} from "./phptype"
+import {PHPFunctionType, PHPSimpleType, PHPTypeUnion} from "./php-type"
 import {Identifier, Class, ConstRef} from "./shadowtree"
 import * as PHPError from "./php-error"
 import {ClassContext, TraitContext} from "./class-context"

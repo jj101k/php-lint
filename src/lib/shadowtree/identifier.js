@@ -1,6 +1,6 @@
 import _Node from "./node"
 import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
-import {PHPSimpleType} from "../phptype"
+import {PHPSimpleType} from "../php-type"
 export default class Identifier extends _Node {
     /** @type {string} */
     get name() {

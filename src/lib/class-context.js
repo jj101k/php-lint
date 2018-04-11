@@ -1,4 +1,4 @@
-import {PHPTypeUnion, PHPSimpleType} from "./phptype"
+import {PHPTypeUnion, PHPSimpleType} from "./php-type"
 import * as PHPError from "./php-error"
 import {FileContext} from "./file-context"
 import * as ParserStateOption from "./parser-state-option"

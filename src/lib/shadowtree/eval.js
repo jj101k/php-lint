@@ -1,5 +1,5 @@
 import Statement from "./statement"
-import {PHPSimpleType} from "../phptype"
+import {PHPSimpleType} from "../php-type"
 import _Node from "./node"
 import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
 export default class Eval extends Statement {

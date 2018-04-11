@@ -1,6 +1,6 @@
 import Declaration from "./declaration"
 import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
-import {PHPSimpleType} from "../phptype"
+import {PHPSimpleType} from "../php-type"
 import _Node from "./node"
 export default class Property extends Declaration {
     /** @type {boolean} */

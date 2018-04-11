@@ -3,7 +3,7 @@ import Parameter from "./parameter"
 import Block from "./block"
 import Identifier from "./identifier"
 import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
-import {PHPSimpleType, PHPFunctionType, PHPTypeUnion, WrongType} from "../phptype"
+import {PHPSimpleType, PHPFunctionType, PHPTypeUnion, WrongType} from "../php-type"
 import * as PHPError from "../php-error"
 
 export default class _Function extends Declaration {

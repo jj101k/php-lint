@@ -1,5 +1,5 @@
 import Statement from "./statement"
-import {PHPTypeUnion} from "../phptype"
+import {PHPTypeUnion} from "../php-type"
 import Expression from "./expression"
 import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
 export default class RetIf extends Statement {

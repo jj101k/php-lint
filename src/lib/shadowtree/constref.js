@@ -1,6 +1,6 @@
 import Expression from "./expression"
 import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
-import {PHPSimpleType, PHPTypeUnion} from "../phptype"
+import {PHPSimpleType, PHPTypeUnion} from "../php-type"
 import Identifier from "./identifier"
 export default class ConstRef extends Expression {
     /** @type {string|Identifier} */

@@ -1,5 +1,5 @@
 import Statement from "./statement"
-import {PHPSimpleType} from "../phptype"
+import {PHPSimpleType} from "../php-type"
 import Variable from "./variable"
 import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
 export default class Global extends Statement {

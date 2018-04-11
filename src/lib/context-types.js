@@ -1,4 +1,4 @@
-import {PHPTypeUnion} from "./phptype"
+import {PHPTypeUnion} from "./php-type"
 /**
  * The types applicable to this point in the code.
  */

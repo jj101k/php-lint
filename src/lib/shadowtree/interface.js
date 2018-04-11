@@ -1,5 +1,5 @@
 import Declaration from "./declaration"
-import {PHPTypeUnion} from "../phptype"
+import {PHPTypeUnion} from "../php-type"
 import Method from "./method"
 import Identifier from "./identifier"
 import {Context, ContextTypes, Doc, ParserStateOption} from "./node"

@@ -1,6 +1,6 @@
 import Lookup from "./lookup"
 import OffsetLookup from "./offsetlookup"
-import {PHPSimpleType} from "../phptype"
+import {PHPSimpleType} from "../php-type"
 import Identifier from "./identifier"
 import Variable from "./variable"
 import ConstRef from "./constref"

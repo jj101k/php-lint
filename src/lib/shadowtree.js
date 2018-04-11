@@ -1,5 +1,5 @@
 import Context from "./context"
-import {PHPFunctionType, PHPSimpleType, PHPTypeUnion} from "./phptype"
+import {PHPFunctionType, PHPSimpleType, PHPTypeUnion} from "./php-type"
 
 export {default as Array} from "./shadowtree/array";
 export {default as Assign} from "./shadowtree/assign";

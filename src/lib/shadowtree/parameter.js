@@ -1,6 +1,6 @@
 import Declaration from "./declaration"
 import Identifier from "./identifier"
-import {PHPSimpleType} from "../phptype"
+import {PHPSimpleType} from "../php-type"
 import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
 import _Node from "./node"
 import ConstRef from "./constref"

@@ -1,6 +1,6 @@
 import Expression from "./expression"
 import Statement from "./statement"
-import {PHPTypeUnion, PHPSimpleType} from "../phptype"
+import {PHPTypeUnion, PHPSimpleType} from "../php-type"
 import Block from "./block"
 import Bin from "./bin"
 import Variable from "./variable"

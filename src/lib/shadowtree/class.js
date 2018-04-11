@@ -1,5 +1,5 @@
 import Declaration from "./declaration"
-import {PHPSimpleType, PHPTypeUnion} from "../phptype"
+import {PHPSimpleType, PHPTypeUnion} from "../php-type"
 import Method from "./method"
 import Property from "./property"
 import ClassConstant from "./classconstant"

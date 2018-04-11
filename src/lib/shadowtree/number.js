@@ -1,6 +1,6 @@
 import Literal from "./literal"
 import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
-import {PHPSimpleType} from "../phptype"
+import {PHPSimpleType} from "../php-type"
 export default class _Number extends Literal {
     /** @type {number} */
     get value() {

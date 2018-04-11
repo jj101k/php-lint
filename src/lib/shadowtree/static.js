@@ -1,5 +1,5 @@
 import Statement from "./statement"
-import {PHPSimpleType} from "../phptype"
+import {PHPSimpleType} from "../php-type"
 import Variable from "./variable"
 import Assign from "./assign"
 import {Context, ContextTypes, Doc, ParserStateOption} from "./node"

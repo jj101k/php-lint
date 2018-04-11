@@ -1,5 +1,5 @@
 import Statement from "./statement"
-import {PHPSimpleType, PHPTypeUnion} from "../phptype"
+import {PHPSimpleType, PHPTypeUnion} from "../php-type"
 import _Node from "./node"
 import Identifier from "./identifier"
 import Variable from "./variable"

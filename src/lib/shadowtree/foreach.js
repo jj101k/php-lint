@@ -1,7 +1,7 @@
 import Statement from "./statement"
 import Expression from "./expression"
 import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
-import {PHPSimpleType} from "../phptype"
+import {PHPSimpleType} from "../php-type"
 export default class Foreach extends Statement {
     /** @type {Expression} */
     get source() {
