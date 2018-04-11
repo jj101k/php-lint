@@ -1,11 +1,10 @@
 import _Any from "./any"
-import _AssociativeArray from "./associative-array"
 import _Core from "./core"
 import _Union from "./union"
 /**
- * An array of some types.
+ * An map of strings to some types.
  */
-export default class _IndexedArray extends _Any {
+export default class _AssociativeArray extends _Any {
     /**
      *
      * @param {?_Union} type
@@ -19,7 +18,7 @@ export default class _IndexedArray extends _Any {
      * checking.
      */
     get typeSignature() {
-        return `${this.type.typeSignatureToken}[]`
+        return "array"
     }
 
     /**
@@ -29,9 +28,7 @@ export default class _IndexedArray extends _Any {
      * @returns {boolean}
      */
     compatibleWith(expected_type) {
-        if(expected_type instanceof _IndexedArray) {
-            return this.type.compatibleWith(expected_type.type)
-        } else if(expected_type instanceof _AssociativeArray) {
+        if(expected_type instanceof _AssociativeArray) {
             return this.type.compatibleWith(expected_type.type)
         } else {
             return super.compatibleWith(expected_type)

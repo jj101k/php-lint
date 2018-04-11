@@ -1,3 +1,4 @@
+export {default as PHPAssociativeArray} from "./php-type/associative-array"
 export {default as PHPTypeCore, WrongType} from "./php-type/core"
 export {default as PHPFunctionType} from "./php-type/function"
 export {default as PHPIndexedArray} from "./php-type/indexed-array"
