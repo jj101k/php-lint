@@ -20,3 +20,4 @@ export default class Doc extends AbstractNode {
         return this._structure
     }
 }
+export {DocTypeNode} from "../doc-parser"

@@ -1,8 +1,9 @@
 import Declaration from "./declaration"
+import {default as Doc, DocTypeNode} from "./doc"
 import Parameter from "./parameter"
 import Block from "./block"
 import Identifier from "./identifier"
-import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
+import {Context, ContextTypes, ParserStateOption} from "./node"
 import * as PHPType from "../php-type"
 import * as PHPError from "../php-error"
 
@@ -53,64 +54,77 @@ export default class _Function extends Declaration {
                          * @returns {string}
                          */
                         let resolve_name = t => {
-                            let md = t.match(/^(.*?)(\[.*)?$/)
-                            let [stem, tail] = [md[1], md[2] || ""]
                             try {
-                                if(stem.match(/^[A-Z0-9]/)) {
+                                if(t.match(/^[A-Z0-9]/)) {
                                     return (
-                                        context.fileContext.resolveAliasName(stem) ||
-                                        "\\" + stem
-                                    ) + tail
+                                        context.fileContext.resolveAliasName(t) ||
+                                        "\\" + t
+                                    )
+                                } else if(PHPType.Core.types.hasOwnProperty(t)) {
+                                    return context.resolveName(PHPType.Core.types[t].toString())
                                 } else {
-                                    return context.resolveName(stem, "uqn") + tail
+                                    return context.resolveName(t, "uqn")
                                 }
                             } catch(e) {
                                 if(e instanceof PHPType.WrongType) {
                                     this.throw(new PHPError.BadCoreType(e.message), context, doc.loc)
-                                    return e.realName + tail
+                                    return context.resolveName(e.realName)
                                 } else {
                                     throw e
                                 }
                             }
                         }
-                        switch(c.kind) {
-                            case "param":
-                                let type = PHPType.Union.empty
-                                c.type.name.split(/\|/).forEach(
-                                    t => {
-                                        type = type.addTypesFrom(
-                                            PHPType.Core.named(resolve_name(t))
-                                        )
-                                    }
-                                )
-                                structure_arg_types.push(type)
-                                structure_arg_names.push(c.name)
-                                break
-                            case "return":
-                                let rtype = PHPType.Union.empty
-                                if(c.what.name) {
-                                    c.what.name.split(/\|/).forEach(
-                                        t => {
-                                            rtype = rtype.addTypesFrom(
-                                                PHPType.Core.named(
-                                                    resolve_name(t)
-                                                )
-                                            )
-                                        }
-                                    )
+                        /**
+                         *
+                         * @param {PHPType.Union} u
+                         */
+                        let resolve_all_names = u => {
+                            let types = u.types
+                            for(let i = 0; i < types.length; i++) {
+                                let m = types[i]
+                                if(m instanceof PHPType.Array) {
+                                    types = types.concat(m.type.types)
+                                } else if(m instanceof PHPType.IndexedArray) {
+                                    types = types.concat(m.type.types)
+                                } else if(m instanceof PHPType.Simple) {
+                                    m.typeName = resolve_name(m.typeName)
+                                } else if(m instanceof PHPType.Function) {
+                                    m.argTypes.forEach(atype => types = types.concat(atype.types))
+                                    types = types.concat(m.returnType.types)
+                                } else {
+                                    throw new Error(m.toString())
                                 }
-                                structure_return = rtype
-                                break
-                            case "api":
-                            case "deprecated":
-                            case "example":
-                            case "internal":
-                            case "link":
-                            case "see":
-                            case "throws":
-                                break
-                            default:
-                                console.log(`Skipping unrecognised PHPDoc tag @${c.kind}`)
+                            }
+                        }
+                        if(c instanceof DocTypeNode) {
+                            switch(c.kind) {
+                                case "param":
+                                    let param_type = c.typeStructure
+                                    resolve_all_names(param_type)
+                                    structure_arg_types.push(param_type)
+                                    structure_arg_names.push(c.name)
+                                    break
+                                case "return":
+                                    let return_type = c.typeStructure
+                                    resolve_all_names(return_type)
+                                    structure_return = return_type
+                                    break
+                                default:
+                                    console.log(`Skipping unrecognised PHPDoc tag @${c.kind}`)
+                            }
+                        } else {
+                            switch(c.kind) {
+                                case "api":
+                                case "deprecated":
+                                case "example":
+                                case "internal":
+                                case "link":
+                                case "see":
+                                case "throws":
+                                    break
+                                default:
+                                    console.log(`Skipping unrecognised PHPDoc tag @${c.kind}`)
+                            }
                         }
                     }
                 )

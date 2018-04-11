@@ -1,4 +1,13 @@
+import * as PHPType from "./php-type"
+
+/**
+ * A tagged (hopefully) doc directive
+ */
 class DocNode {
+    /**
+     *
+     * @param {?string} tag
+     */
     constructor(tag = null) {
         /**
          * @type {DocNode[]}
@@ -24,14 +33,149 @@ class DocNode {
         return this.type
     }
 }
+/**
+ * A token of some kind
+ */
+class TypeToken {
+    /**
+     *
+     */
+    constructor() {
+        this.isArray = false
+    }
+    /**
+     * @type {PHPType.Union}
+     */
+    get type() {
+        throw new Error("Not implemented")
+    }
+}
+/**
+ * A set of possible tokens
+ */
+class OptTypeToken extends TypeToken {
+    constructor() {
+        super()
+        /**
+         * @type {TypeToken[]}
+         */
+        this.tokens = []
+    }
+    /**
+     * @type {PHPType.Union}
+     */
+    get type() {
+        let t = PHPType.Union.empty
+        this.tokens.forEach(token => t = t.addTypesFrom(token.type))
+        if(this.isArray) {
+            return new PHPType.Array(t).union
+        } else {
+            return t
+        }
+    }
+    add(token) {
+        this.tokens.push(token)
+    }
+}
+/**
+ * A token with a name
+ */
+class NamedTypeToken extends TypeToken {
+    /**
+     *
+     * @param {string} name
+     */
+    constructor(name) {
+        super()
+        this.name = name
+    }
+    /**
+     * @type {PHPType.Union}
+     */
+    get type() {
+        let t = new PHPType.Simple(this.name).union
+        if(this.isArray) {
+            return new PHPType.Array(t).union
+        } else {
+            return t
+        }
+    }
+}
+/**
+ * A doc directive that has a PHP type
+ */
 class DocTypeNode extends DocNode {
     get type() {
         return this._type
     }
     set type(v) {
         this._type = v
+        if(v && v.name) {
+            /**
+             * @type {string}
+             */
+            let name = v.name
+            /**
+             * @type {OptTypeToken[]}
+             */
+            let tokens = []
+            let current_token = new OptTypeToken()
+            /**
+             * @type {TypeToken}
+             */
+            let last_token = null
+            let i = 0
+            while(name.length && i < 10) {
+                i++
+                //console.log(name)
+                name = name.replace(
+                    /^\(/,
+                    () => {
+                        let new_token = new OptTypeToken()
+                        current_token.add(new_token)
+                        tokens.push(current_token)
+                        current_token = new_token
+                        return ""
+                    }
+                ).replace(
+                    /^\|/,
+                    () => {
+                        return ""
+                    }
+                ).replace(
+                    /^([\w\\$]+)/,
+                    (s, md1) => {
+                        last_token = new NamedTypeToken(md1)
+                        current_token.add(last_token)
+                        return ""
+                    }
+                ).replace(
+                    /^[)]/,
+                    () => {
+                        last_token = current_token
+                        current_token = tokens.pop()
+                        return ""
+                    }
+                ).replace(
+                    /^\[\]/,
+                    () => {
+                        last_token.isArray = true
+                        return ""
+                    }
+                )
+            }
+            if(i == 10) {
+                throw new Error(`Infinite loop parsing ${v.name}?`)
+            }
+            this.typeStructure = current_token.type
+        } else {
+            this.typeStructure = null
+        }
     }
 }
+/**
+ * Parse the doc
+ */
 class DocParser {
     /**
      * Builds the object.
@@ -51,6 +195,7 @@ class DocParser {
                 switch(tag) {
                     case "param":
                     case "property":
+                    case "return":
                     case "var":
                         node = new DocTypeNode(tag)
                         break
@@ -74,4 +219,4 @@ class DocParser {
     }
 }
 export default DocParser
-export {DocNode}
+export {DocNode, DocTypeNode}
