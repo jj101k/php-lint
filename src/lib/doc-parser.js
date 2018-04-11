@@ -1,5 +1,8 @@
 class DocNode {
     constructor(tag = null) {
+        /**
+         * @type {DocNode[]}
+         */
         this.children = []
         /**
          * @type {?string}
@@ -51,3 +54,4 @@ class DocParser {
     }
 }
 export default DocParser
+export {DocNode}

@@ -1,5 +1,5 @@
 import AbstractNode from "./abstract-node"
-import DocParser from "../doc-parser"
+import {default as DocParser, DocNode} from "../doc-parser"
 
 export default class Doc extends AbstractNode {
     /** @type {boolean} */
@@ -11,7 +11,7 @@ export default class Doc extends AbstractNode {
         return this.node.lines
     }
     /**
-     * @type {Object[]}
+     * @type {DocNode[]}
      */
     get structure() {
         if(!this._structure) {
