@@ -24,6 +24,14 @@ class DocNode {
         return this.type
     }
 }
+class DocTypeNode extends DocNode {
+    get type() {
+        return this._type
+    }
+    set type(v) {
+        this._type = v
+    }
+}
 class DocParser {
     /**
      * Builds the object.
@@ -39,7 +47,16 @@ class DocParser {
             if(md = line.match(/^\s*@(\w+)(?:\s+(\S.*))?/)) {
                 let tag = md[1]
                 let tail = md[2]
-                let node = new DocNode(tag)
+                let node
+                switch(tag) {
+                    case "param":
+                    case "property":
+                    case "var":
+                        node = new DocTypeNode(tag)
+                        break
+                    default:
+                        node = new DocNode(tag)
+                }
                 parser_state[0].children.push(node)
                 let mdx
                 if(tail && (mdx = tail.match(/(\S.*?)?\s*\{\s*$/))) {
