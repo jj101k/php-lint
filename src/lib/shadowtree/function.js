@@ -5,9 +5,7 @@ import Identifier from "./identifier"
 import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
 import {PHPSimpleType, PHPFunctionType, PHPTypeUnion, WrongType} from "../phptype"
 import * as PHPError from "../php-error"
-import DocParser from "../doc-parser"
 
-const USE_INTERNAL_DOC_PARSER = true
 export default class _Function extends Declaration {
     /** @type {Parameter[]} */
     get arguments() {
@@ -43,12 +41,7 @@ export default class _Function extends Declaration {
         }
         let doc_function_type
         if(doc) {
-            let doc_structure
-            if(USE_INTERNAL_DOC_PARSER) {
-                doc_structure = new DocParser(doc.lines).top.children
-            } else {
-                doc_structure = doc.structure
-            }
+            let doc_structure = doc.structure
             if(doc_structure.some(c => c.kind.match(/^(var|param|return)$/))) {
                 let structure_arg_types = []
                 let structure_arg_names = []
