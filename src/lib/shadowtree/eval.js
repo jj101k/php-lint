@@ -1,5 +1,5 @@
 import Statement from "./statement"
-import {PHPTypeCore} from "../php-type"
+import * as PHPType from "../php-type"
 import _Node from "./node"
 import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
 export default class Eval extends Statement {
@@ -17,6 +17,6 @@ export default class Eval extends Statement {
     check(context, parser_state = new Set(), doc = null) {
         super.check(context, parser_state, doc)
         this.source.check(context, new Set(), null)
-        return new ContextTypes(PHPTypeCore.types.mixed)
+        return new ContextTypes(PHPType.Core.types.mixed)
     }
 }

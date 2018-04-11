@@ -1,6 +1,6 @@
 import Lookup from "./lookup"
 import OffsetLookup from "./offsetlookup"
-import {PHPTypeCore} from "../php-type"
+import * as PHPType from "../php-type"
 import Identifier from "./identifier"
 import Variable from "./variable"
 import ConstRef from "./constref"
@@ -27,7 +27,7 @@ export default class StaticLookup extends Lookup {
             this.what.check(context, new Set(), null)
             // $x::$y
             //this.offset.check(context)
-            return new ContextTypes(PHPTypeCore.types.mixed)
+            return new ContextTypes(PHPType.Core.types.mixed)
         } else if(
             this.what instanceof Identifier ||
             this.what instanceof ConstRef
@@ -53,13 +53,13 @@ export default class StaticLookup extends Lookup {
                 ) {
                     // TODO this doesn't distinguish between methods and constants
                     types = class_context.findInstanceIdentifier(this.offset.name, context.classContext)
-                    if(!(types && types !== PHPTypeCore.types.mixed)) {
+                    if(!(types && types !== PHPType.Core.types.mixed)) {
                         types = class_context.findStaticIdentifier(this.offset.name, context.classContext)
                     }
                 } else {
                     types = class_context.findStaticIdentifier(this.offset.name, context.classContext)
                 }
-                if(types && types !== PHPTypeCore.types.mixed) {
+                if(types && types !== PHPType.Core.types.mixed) {
                     return new ContextTypes(types)
                 } else if(this.what instanceof ConstRef && this.what.name == "static") {
                     if(WARN_UNDECLARED_STATIC) {
@@ -73,9 +73,9 @@ export default class StaticLookup extends Lookup {
                         this.offset.name,
                         "public",
                         true,
-                        PHPTypeCore.types.mixed
+                        PHPType.Core.types.mixed
                     )
-                    return new ContextTypes(PHPTypeCore.types.mixed)
+                    return new ContextTypes(PHPType.Core.types.mixed)
                 } else if(types) {
                     return new ContextTypes(types)
                 } else {
@@ -91,7 +91,7 @@ export default class StaticLookup extends Lookup {
             // Bar::$FOO
             // TODO
             //this.offset.check(context)
-            return new ContextTypes(PHPTypeCore.types.mixed)
+            return new ContextTypes(PHPType.Core.types.mixed)
         } else {
             console.log(this.node)
             console.log("TODO don't know how to check this kind of lookup")

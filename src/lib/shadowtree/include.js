@@ -4,7 +4,7 @@ import _String from "./string"
 import Bin from "./bin"
 import Magic from "./magic"
 import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
-import {PHPTypeCore} from "../php-type"
+import * as PHPType from "../php-type"
 export default class Include extends Statement {
     /** @type {Expression} */
     get target() {
@@ -38,6 +38,6 @@ export default class Include extends Statement {
         ) {
             context.checkFile(context.fileContext.directory + this.target.right.value, this.require)
         }
-        return new ContextTypes(PHPTypeCore.types.string)
+        return new ContextTypes(PHPType.Core.types.string)
     }
 }

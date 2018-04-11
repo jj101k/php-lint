@@ -1,6 +1,6 @@
 import _Node from "./node"
 import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
-import {PHPTypeCore} from "../php-type"
+import * as PHPType from "../php-type"
 export default class Identifier extends _Node {
     /** @type {string} */
     get name() {
@@ -21,6 +21,6 @@ export default class Identifier extends _Node {
      */
     check(context, parser_state = new Set(), doc = null) {
         super.check(context, parser_state, doc)
-        return new ContextTypes(context.findName(this.name) || PHPTypeCore.types.mixed)
+        return new ContextTypes(context.findName(this.name) || PHPType.Core.types.mixed)
     }
 }

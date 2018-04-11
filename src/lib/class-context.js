@@ -1,4 +1,4 @@
-import {PHPTypeUnion, PHPTypeCore} from "./php-type"
+import * as PHPType from "./php-type"
 import * as PHPError from "./php-error"
 import {FileContext} from "./file-context"
 import * as ParserStateOption from "./parser-state-option"
@@ -19,16 +19,16 @@ class PartialClassContext {
         this.name = name
         this.fileContext = file_context
         /**
-         * @type {{[x: string]: {scope: string, types: PHPTypeUnion}}}
+         * @type {{[x: string]: {scope: string, types: PHPType.Union}}}
          */
         this.staticIdentifiers = {
             class: {
                 scope: "public",
-                types: PHPTypeCore.types.string,
+                types: PHPType.Core.types.string,
             }
         }
         /**
-         * @type {{[x: string]: {scope: string, types: PHPTypeUnion}}}
+         * @type {{[x: string]: {scope: string, types: PHPType.Union}}}
          */
         this.instanceIdentifiers = {}
         this.superclass = superclass
@@ -51,7 +51,7 @@ class PartialClassContext {
      * Adds a known identifier
      * @param {string} name
      * @param {string} scope "public", "private" or "protected"
-     * @param {PHPTypeUnion} types
+     * @param {PHPType.Union} types
      * @param {boolean} is_static
      */
     addIdentifier(name, scope, is_static, types) {
@@ -72,7 +72,7 @@ class PartialClassContext {
      * @param {string} name
      * @param {?ClassContext} from_class_context
      * @param {Set<ParserStateOption.Base>} [parser_state]
-     * @returns {?PHPTypeUnion}
+     * @returns {?PHPType.Union}
      */
     findInstanceIdentifier(name, from_class_context, parser_state = new Set()) {
         let m = this.instanceIdentifiers[name]
@@ -107,7 +107,7 @@ class PartialClassContext {
             return this.findInstanceIdentifier("__call", from_class_context, new Set([ParserStateOption.InCall]))
         } else if(!parser_state.has(ParserStateOption.InCall) && name != "__get") {
             if(this.findInstanceIdentifier("__get", from_class_context, new Set([ParserStateOption.InCall]))) {
-                return PHPTypeCore.types.mixed
+                return PHPType.Core.types.mixed
             }
         }
         return null
@@ -118,7 +118,7 @@ class PartialClassContext {
      *
      * @param {string} name
      * @param {?ClassContext} from_class_context
-     * @returns {?PHPTypeUnion}
+     * @returns {?PHPType.Union}
      */
     findStaticIdentifier(name, from_class_context) {
         let m = this.staticIdentifiers[name]
@@ -226,20 +226,20 @@ class InterfaceContext extends ClassContext {
      * Finds the named identifier
      * @param {string} name
      * @param {?ClassContext} from_class_context
-     * @returns {?PHPTypeUnion}
+     * @returns {?PHPType.Union}
      */
     findInstanceIdentifier(name, from_class_context) {
-        return super.findInstanceIdentifier(name, from_class_context) || PHPTypeCore.types.mixed
+        return super.findInstanceIdentifier(name, from_class_context) || PHPType.Core.types.mixed
     }
 
     /**
      * Finds the named identifier
      * @param {string} name
      * @param {?ClassContext} from_class_context
-     * @returns {?PHPTypeUnion}
+     * @returns {?PHPType.Union}
      */
     findStaticIdentifier(name, from_class_context) {
-        return super.findStaticIdentifier(name, from_class_context) || PHPTypeCore.types.mixed
+        return super.findStaticIdentifier(name, from_class_context) || PHPType.Core.types.mixed
     }
 }
 
@@ -274,20 +274,20 @@ class TraitContext extends PartialClassContext {
      * Finds the named identifier
      * @param {string} name
      * @param {?ClassContext} from_class_context
-     * @returns {?PHPTypeUnion}
+     * @returns {?PHPType.Union}
      */
     findInstanceIdentifier(name, from_class_context) {
-        return super.findInstanceIdentifier(name, from_class_context) || PHPTypeCore.types.mixed
+        return super.findInstanceIdentifier(name, from_class_context) || PHPType.Core.types.mixed
     }
 
     /**
      * Finds the named identifier
      * @param {string} name
      * @param {?ClassContext} from_class_context
-     * @returns {?PHPTypeUnion}
+     * @returns {?PHPType.Union}
      */
     findStaticIdentifier(name, from_class_context) {
-        return super.findStaticIdentifier(name, from_class_context) || PHPTypeCore.types.mixed
+        return super.findStaticIdentifier(name, from_class_context) || PHPType.Core.types.mixed
     }
 }
 
@@ -312,18 +312,18 @@ class AnonymousFunctionContext extends ClassContext {
      * Finds the named identifier
      * @param {string} name
      * @param {?ClassContext} from_class_context
-     * @returns {?PHPTypeUnion}
+     * @returns {?PHPType.Union}
      */
     findInstanceIdentifier(name, from_class_context) {
         // TODO: Limit to the actual methods.
-        return PHPTypeCore.types.mixed
+        return PHPType.Core.types.mixed
     }
 
     /**
      * Finds the named identifier
      * @param {string} name
      * @param {?ClassContext} from_class_context
-     * @returns {?PHPTypeUnion}
+     * @returns {?PHPType.Union}
      */
     findStaticIdentifier(name, from_class_context) {
         return null
@@ -346,20 +346,20 @@ class UnknownClassContext extends ClassContext {
      * Finds the named identifier
      * @param {string} name
      * @param {?ClassContext} from_class_context
-     * @returns {?PHPTypeUnion}
+     * @returns {?PHPType.Union}
      */
     findInstanceIdentifier(name, from_class_context) {
-        return PHPTypeCore.types.mixed
+        return PHPType.Core.types.mixed
     }
 
     /**
      * Finds the named identifier
      * @param {string} name
      * @param {?ClassContext} from_class_context
-     * @returns {?PHPTypeUnion}
+     * @returns {?PHPType.Union}
      */
     findStaticIdentifier(name, from_class_context) {
-        return PHPTypeCore.types.mixed
+        return PHPType.Core.types.mixed
     }
 }
 
@@ -388,20 +388,20 @@ class UnknownTraitContext extends TraitContext {
      * Finds the named identifier
      * @param {string} name
      * @param {?ClassContext} from_class_context
-     * @returns {?PHPTypeUnion}
+     * @returns {?PHPType.Union}
      */
     findInstanceIdentifier(name, from_class_context) {
-        return PHPTypeCore.types.mixed
+        return PHPType.Core.types.mixed
     }
 
     /**
      * Finds the named identifier
      * @param {string} name
      * @param {?ClassContext} from_class_context
-     * @returns {?PHPTypeUnion}
+     * @returns {?PHPType.Union}
      */
     findStaticIdentifier(name, from_class_context) {
-        return PHPTypeCore.types.mixed
+        return PHPType.Core.types.mixed
     }
 }
 

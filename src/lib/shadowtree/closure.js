@@ -1,5 +1,5 @@
 import Statement from "./statement"
-import {PHPFunctionType, PHPTypeCore} from "../php-type"
+import * as PHPType from "../php-type"
 import Block from "./block"
 import Identifier from "./identifier"
 import Variable from "./variable"
@@ -58,14 +58,14 @@ export default class Closure extends Statement {
             t => inner_context.addName(
                 '$' + t.name,
                 t.byref ?
-                    (context.findName('$' + t.name) || PHPTypeCore.types.mixed) :
+                    (context.findName('$' + t.name) || PHPType.Core.types.mixed) :
                     this.assertHasName(context, '$' + t.name)
             )
         )
         if(context.findName("$this")) {
             inner_context.setName("$this", context.findName("$this"))
         }
-        let signature_type = this.type && PHPTypeCore.named(context.resolveName(this.type.name))
+        let signature_type = this.type && PHPType.Core.named(context.resolveName(this.type.name))
         let return_type
         if(this.body) {
             return_type = this.body.check(inner_context, new Set(), null).returnType
@@ -77,9 +77,9 @@ export default class Closure extends Statement {
         } else if(signature_type) {
             return_type = signature_type
         } else {
-            return_type = PHPTypeCore.types.mixed
+            return_type = PHPType.Core.types.mixed
         }
-        let function_type = new PHPFunctionType(
+        let function_type = new PHPType.Function(
             arg_types,
             return_type,
             pass_by_reference_positions

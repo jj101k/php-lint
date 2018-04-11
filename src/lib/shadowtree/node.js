@@ -3,7 +3,7 @@ import Context from "../context"
 import ContextTypes from "../context-types"
 import Doc from "./doc"
 import * as ParserStateOption from "../parser-state-option"
-import {PHPTypeUnion} from "../php-type"
+import * as PHPType from "../php-type"
 import * as PHPError from "../php-error"
 import * as ShadowTree from "../shadowtree"
 
@@ -103,7 +103,7 @@ export default class _Node extends AbstractNode {
      * Returns the types for the local name, or throws
      * @param {Context} context
      * @param {string} name
-     * @returns {?PHPTypeUnion}
+     * @returns {?PHPType.Union}
      */
     assertHasName(context, name) {
         var types = context.findName(name)
@@ -174,7 +174,7 @@ export default class _Node extends AbstractNode {
                 console.info(`Checking ${context.fileContext.filename}:?:?:${this.kind}`)
             }
         }
-        return new ContextTypes(PHPTypeUnion.empty)
+        return new ContextTypes(PHPType.Union.empty)
     }
     /**
      * Converts PHPError.Error into PHPStrictError, otherwise just rethrows.

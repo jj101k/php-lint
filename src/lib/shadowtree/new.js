@@ -1,5 +1,5 @@
 import Statement from "./statement"
-import {PHPTypeCore, PHPTypeUnion} from "../php-type"
+import * as PHPType from "../php-type"
 import _Node from "./node"
 import Identifier from "./identifier"
 import Variable from "./variable"
@@ -29,24 +29,24 @@ export default class New extends Statement {
             arg => arg.check(context, new Set(), null)
         )
         if(this.what instanceof Variable) {
-            return new ContextTypes(PHPTypeCore.types.mixed)
+            return new ContextTypes(PHPType.Core.types.mixed)
         } else if(
             (this.what instanceof Identifier) ||
             (this.what instanceof _Class) ||
             (this.what instanceof ConstRef)
         ) {
-            return new ContextTypes(PHPTypeCore.named(
+            return new ContextTypes(PHPType.Core.named(
                 context.resolveNodeName(this.what)
             ))
         } else {
             /** @type {string[]} */
             let values = this.what.check(context).expressionType.coercedValues("string")
             if(values) {
-                let type = PHPTypeUnion.empty
-                values.forEach(v => type = type.addTypesFrom(PHPTypeCore.named(v)))
+                let type = PHPType.Union.empty
+                values.forEach(v => type = type.addTypesFrom(PHPType.Core.named(v)))
                 return new ContextTypes(type)
             } else {
-                return new ContextTypes(PHPTypeCore.types.mixed)
+                return new ContextTypes(PHPType.Core.types.mixed)
             }
         }
     }

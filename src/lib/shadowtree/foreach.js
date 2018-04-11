@@ -1,7 +1,7 @@
 import Statement from "./statement"
 import Expression from "./expression"
 import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
-import {PHPTypeCore} from "../php-type"
+import * as PHPType from "../php-type"
 export default class Foreach extends Statement {
     /** @type {Expression} */
     get source() {
@@ -34,7 +34,7 @@ export default class Foreach extends Statement {
         super.check(context, parser_state, doc)
         this.source.check(context, new Set(), null)
         let assign_context = context.childContext(true)
-        assign_context.assigningType = PHPTypeCore.types.mixed
+        assign_context.assigningType = PHPType.Core.types.mixed
         if(this.key) {
             this.key.check(assign_context, new Set(), null)
         }

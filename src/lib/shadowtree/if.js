@@ -1,6 +1,6 @@
 import Expression from "./expression"
 import Statement from "./statement"
-import {PHPTypeUnion, PHPTypeCore} from "../php-type"
+import * as PHPType from "../php-type"
 import Block from "./block"
 import Bin from "./bin"
 import Variable from "./variable"
@@ -44,10 +44,10 @@ export default class If extends Statement {
         ) {
             body_context.setName(
                 '$' + this.test.left.name,
-                PHPTypeCore.named(context.resolveNodeName(this.test.right))
+                PHPType.Core.named(context.resolveNodeName(this.test.right))
             )
         }
-        let type = PHPTypeUnion.empty
+        let type = PHPType.Union.empty
         type = type.addTypesFrom(this.body.check(body_context, new Set(), null).returnType)
         if(this.alternate) {
             let alt_context = context.childContext(false)
@@ -56,6 +56,6 @@ export default class If extends Statement {
             context.importNamespaceFrom(alt_context)
         }
         context.importNamespaceFrom(body_context)
-        return new ContextTypes(PHPTypeUnion.empty, type)
+        return new ContextTypes(PHPType.Union.empty, type)
     }
 }

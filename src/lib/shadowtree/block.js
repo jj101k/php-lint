@@ -1,5 +1,5 @@
 import Statement from "./statement"
-import {PHPTypeUnion} from "../php-type"
+import * as PHPType from "../php-type"
 import _Node from "./node"
 import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
 export default class Block extends Statement {
@@ -16,7 +16,7 @@ export default class Block extends Statement {
      */
     check(context, parser_state = new Set(), doc = null) {
         super.check(context, parser_state, doc)
-        let types = PHPTypeUnion.empty
+        let types = PHPType.Union.empty
         /** @type {?Doc} */
         let last_doc = null
         this.children.forEach(node => {
@@ -27,6 +27,6 @@ export default class Block extends Statement {
                 last_doc = null
             }
         })
-        return new ContextTypes(PHPTypeUnion.empty, types)
+        return new ContextTypes(PHPType.Union.empty, types)
     }
 }

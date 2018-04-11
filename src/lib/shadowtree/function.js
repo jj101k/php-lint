@@ -3,7 +3,7 @@ import Parameter from "./parameter"
 import Block from "./block"
 import Identifier from "./identifier"
 import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
-import {PHPTypeCore, PHPFunctionType, PHPTypeUnion, WrongType} from "../php-type"
+import * as PHPType from "../php-type"
 import * as PHPError from "../php-error"
 
 export default class _Function extends Declaration {
@@ -65,7 +65,7 @@ export default class _Function extends Declaration {
                                     return context.resolveName(stem, "uqn") + tail
                                 }
                             } catch(e) {
-                                if(e instanceof WrongType) {
+                                if(e instanceof PHPType.WrongType) {
                                     this.throw(new PHPError.BadCoreType(e.message), context, doc.loc)
                                     return e.realName + tail
                                 } else {
@@ -75,11 +75,11 @@ export default class _Function extends Declaration {
                         }
                         switch(c.kind) {
                             case "param":
-                                let type = PHPTypeUnion.empty
+                                let type = PHPType.Union.empty
                                 c.type.name.split(/\|/).forEach(
                                     t => {
                                         type = type.addTypesFrom(
-                                            PHPTypeCore.named(resolve_name(t))
+                                            PHPType.Core.named(resolve_name(t))
                                         )
                                     }
                                 )
@@ -87,12 +87,12 @@ export default class _Function extends Declaration {
                                 structure_arg_names.push(c.name)
                                 break
                             case "return":
-                                let rtype = PHPTypeUnion.empty
+                                let rtype = PHPType.Union.empty
                                 if(c.what.name) {
                                     c.what.name.split(/\|/).forEach(
                                         t => {
                                             rtype = rtype.addTypesFrom(
-                                                PHPTypeCore.named(
+                                                PHPType.Core.named(
                                                     resolve_name(t)
                                                 )
                                             )
@@ -115,7 +115,7 @@ export default class _Function extends Declaration {
                     }
                 )
                 doc_function_type =
-                    new PHPFunctionType(structure_arg_types, structure_return)
+                    new PHPType.Function(structure_arg_types, structure_return)
             }
         }
         var inner_context = context.childContext()
@@ -136,9 +136,9 @@ export default class _Function extends Declaration {
 
         let signature_type
         if(this.type) {
-            signature_type = PHPTypeCore.named(context.resolveName(this.type.name, this.type.resolution))
+            signature_type = PHPType.Core.named(context.resolveName(this.type.name, this.type.resolution))
             if(this.nullable) {
-                signature_type = signature_type.addTypesFrom(PHPTypeCore.types.null)
+                signature_type = signature_type.addTypesFrom(PHPType.Core.types.null)
             }
         }
         let return_type
@@ -152,9 +152,9 @@ export default class _Function extends Declaration {
         } else if(signature_type) {
             return_type = signature_type
         } else {
-            return_type = PHPTypeCore.types.mixed
+            return_type = PHPType.Core.types.mixed
         }
-        let function_type = new PHPFunctionType(
+        let function_type = new PHPType.Function(
             arg_types,
             return_type,
             pass_by_reference_positions
@@ -173,7 +173,7 @@ export default class _Function extends Declaration {
         if(context.classContext && context.classContext.name == "\\Slim\\App") {
             switch(this.name) {
                 case "group":
-                    function_type.callbackPositions[1] = PHPTypeCore.named("\\Slim\\App")
+                    function_type.callbackPositions[1] = PHPType.Core.named("\\Slim\\App")
                     break
                 default:
             }

@@ -1,5 +1,5 @@
 import Lookup from "./lookup"
-import {PHPFunctionType, PHPTypeCore, PHPTypeUnion} from "../php-type"
+import * as PHPType from "../php-type"
 import Variable from "./variable"
 import StaticLookup from "./staticlookup"
 import OffsetLookup from "./offsetlookup"
@@ -28,16 +28,16 @@ export default class PropertyLookup extends Lookup {
         } else if(this.offset instanceof _String) {
             offset = this.offset.value
         } else if(this.offset instanceof Variable) {
-            return new ContextTypes(PHPTypeCore.types.mixed)
+            return new ContextTypes(PHPType.Core.types.mixed)
         } else {
             console.log(this.node)
             console.log("TODO don't know how to check this kind of lookup")
-            return new ContextTypes(PHPTypeCore.types.mixed)
+            return new ContextTypes(PHPType.Core.types.mixed)
         }
-        let types_out = PHPTypeUnion.empty
+        let types_out = PHPType.Union.empty
         try {
             type_union.types.filter(
-                t => t !== PHPTypeCore.types.null.types[0]
+                t => t !== PHPType.Core.types.null.types[0]
             ).forEach(t => {
                 let class_context = context.findClass("" + t)
                 if(class_context) {
@@ -46,11 +46,11 @@ export default class PropertyLookup extends Lookup {
                         identifier_types.types.forEach(
                             itype => {
                                 if(
-                                    itype instanceof PHPFunctionType &&
+                                    itype instanceof PHPType.Function &&
                                     "" + itype.returnType == "self" &&
                                     "" + type_union != "self"
                                 ) {
-                                    let resolved_type = new PHPFunctionType(
+                                    let resolved_type = new PHPType.Function(
                                         itype.argTypes,
                                         type_union,
                                         itype.passByReferencePositions,

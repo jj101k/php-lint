@@ -2,7 +2,7 @@ import Statement from "./statement"
 import Expression from "./expression"
 import Block from "./block"
 import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
-import {PHPTypeUnion} from "../php-type"
+import * as PHPType from "../php-type"
 export default class Switch extends Statement {
     /** @type {Expression} */
     get test() {
@@ -26,7 +26,7 @@ export default class Switch extends Statement {
     check(context, parser_state = new Set(), doc = null) {
         super.check(context, parser_state, doc)
         this.test.check(context, new Set(), null)
-        let type = PHPTypeUnion.empty
+        let type = PHPType.Union.empty
         let child_contexts = []
         this.body.children.forEach(
             c => { // FIXME fallthrough
@@ -38,6 +38,6 @@ export default class Switch extends Statement {
         )
         child_contexts.forEach(case_context => context.importNamespaceFrom(case_context))
 
-        return new ContextTypes(PHPTypeUnion.empty, type)
+        return new ContextTypes(PHPType.Union.empty, type)
     }
 }

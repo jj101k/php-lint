@@ -1,6 +1,6 @@
 import Declaration from "./declaration"
 import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
-import {PHPTypeCore} from "../php-type"
+import * as PHPType from "../php-type"
 import _Node from "./node"
 export default class Property extends Declaration {
     /** @type {boolean} */
@@ -32,7 +32,7 @@ export default class Property extends Declaration {
             this.name,
             this.visibility,
             this.isStatic,
-            this.value ? this.value.check(context, new Set(), null).expressionType : PHPTypeCore.types.mixed
+            this.value ? this.value.check(context, new Set(), null).expressionType : PHPType.Core.types.mixed
         )
         return ContextTypes.empty
     }

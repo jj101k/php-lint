@@ -1,5 +1,5 @@
 import Statement from "./statement"
-import {PHPTypeUnion} from "../php-type"
+import * as PHPType from "../php-type"
 import Expression from "./expression"
 import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
 export default class RetIf extends Statement {
@@ -25,7 +25,7 @@ export default class RetIf extends Statement {
     check(context, parser_state = new Set(), doc = null) {
         super.check(context, parser_state, doc)
         let test_type = this.test.check(context, new Set(), null).expressionType
-        let types = PHPTypeUnion.empty
+        let types = PHPType.Union.empty
         if(this.trueExpr) {
             types = types.addTypesFrom(this.trueExpr.check(context, new Set(), null).expressionType)
         } else {

@@ -1,7 +1,7 @@
 import Operation from "./operation"
 import Expression from "./expression"
 import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
-import {PHPTypeCore} from "../php-type"
+import * as PHPType from "../php-type"
 export default class Unary extends Operation {
     /** @type {string} */
     get type() {
@@ -22,7 +22,7 @@ export default class Unary extends Operation {
         super.check(context, parser_state, doc)
         if(this.type == "!") {
             let etype = this.what.check(context, new Set(), null).expressionType
-            let rtype = PHPTypeCore.types.bool
+            let rtype = PHPType.Core.types.bool
             let coerced_values = etype.coercedValues("bool")
             if(coerced_values) {
                 coerced_values.forEach(cv => rtype = rtype.withValue(!cv))
@@ -30,7 +30,7 @@ export default class Unary extends Operation {
             return new ContextTypes(rtype)
         } else if(this.type == "-" || this.type == "+") {
             let etype = this.what.check(context, new Set(), null).expressionType
-            let rtype = PHPTypeCore.types.float
+            let rtype = PHPType.Core.types.float
             let coerced_values = etype.coercedValues("float")
             if(coerced_values) {
                 if(this.type == "-") {

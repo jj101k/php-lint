@@ -1,4 +1,4 @@
-import {PHPFunctionType, PHPIndexedArray, PHPTypeCore, PHPTypeUnion} from "./php-type"
+import * as PHPType from "./php-type"
 import {Identifier, Class, ConstRef} from "./shadowtree"
 import * as PHPError from "./php-error"
 import {ClassContext, TraitContext} from "./class-context"
@@ -57,24 +57,24 @@ const PHPSuperglobals = {
  */
 export default class Context {
     /**
-     * @type {{[x: string]: PHPTypeUnion}} A map of names to types for the
+     * @type {{[x: string]: PHPType.Union}} A map of names to types for the
      * "always global" core PHP variables and functions.
      */
     static get superGlobals() {
         if(!this._superGlobals) {
             this._superGlobals = {}
             Object.keys(PHPSuperglobals).forEach(
-                name => this._superGlobals["$" + name] = PHPTypeCore.named(PHPSuperglobals[name])
+                name => this._superGlobals["$" + name] = PHPType.Core.named(PHPSuperglobals[name])
             )
             Object.keys(PHPFunctions).forEach(
-                name => this._superGlobals[name] = new PHPTypeUnion(new PHPFunctionType(
-                    PHPFunctions[name].map(arg => PHPTypeCore.types.mixed),
-                    name == "array_keys" ? new PHPIndexedArray(PHPTypeCore.types.string).union : PHPTypeCore.types.mixed,
+                name => this._superGlobals[name] = new PHPType.Union(new PHPType.Function(
+                    PHPFunctions[name].map(arg => PHPType.Core.types.mixed),
+                    name == "array_keys" ? new PHPType.IndexedArray(PHPType.Core.types.string).union : PHPType.Core.types.mixed,
                     PHPFunctions[name]
                 ))
             )
             PHPConstants.forEach(
-                name => this._superGlobals[name] = PHPTypeCore.types.mixed
+                name => this._superGlobals[name] = PHPType.Core.types.mixed
             )
             Object.freeze(this._superGlobals)
         }
@@ -86,7 +86,7 @@ export default class Context {
      * @param {FileContext} file_context
      * @param {?GlobalContext} global_context
      * @param {?ClassContext} [class_context]
-     * @param {?{[x: string]: PHPTypeUnion}} [ns]
+     * @param {?{[x: string]: PHPType.Union}} [ns]
      * @param {number} [depth]
      */
     constructor(file_context, global_context, class_context = null, ns = null, depth = 0) {
@@ -94,7 +94,7 @@ export default class Context {
         this.depth = depth
         this.globalContext = global_context || new GlobalContext()
         this.fileContext = file_context
-        /** @type {?PHPTypeUnion} */
+        /** @type {?PHPType.Union} */
         this.assigningType = null
         this.ns = ns || {}
     }
@@ -146,12 +146,12 @@ export default class Context {
     /**
      * Adds a name to the namespace list.
      * @param {string} name eg. "$foo"
-     * @param {PHPTypeUnion} types
-     * @returns {PHPTypeUnion} The original types
+     * @param {PHPType.Union} types
+     * @returns {PHPType.Union} The original types
      */
     addName(name, types) {
         if(!this.ns[name]) {
-            this.ns[name] = Context.superGlobals[name] || PHPTypeUnion.empty
+            this.ns[name] = Context.superGlobals[name] || PHPType.Union.empty
         }
         this.ns[name] = this.ns[name].addTypesFrom(types)
         if(DEBUG_TYPES) {
@@ -213,7 +213,7 @@ export default class Context {
     findClass(name) {
         if(name == "self") {
             return this.classContext
-        } else if(name != "mixed" && name != "object" && PHPTypeCore.types[name]) {
+        } else if(name != "mixed" && name != "object" && PHPType.Core.types[name]) {
             console.log(`Attempt to access core type ${name} as class`)
             return null
         } else {
@@ -226,7 +226,7 @@ export default class Context {
      * finds variables and functions.
      *
      * @param {string} name eg "$bar"
-     * @returns {PHPTypeUnion}
+     * @returns {PHPType.Union}
      */
     findName(name) {
         var types = this.ns[name] || Context.superGlobals[name]
@@ -273,7 +273,7 @@ export default class Context {
     resolveName(name, resolution = "uqn") {
         let md
         if(md = name.match(/^\u005c((\w+)(?:\W.*)?)/)) {
-            if(PHPTypeCore.types[md[2]]) {
+            if(PHPType.Core.types[md[2]]) {
                 return md[1]
             } else {
                 return name
@@ -285,7 +285,7 @@ export default class Context {
             case "uqn":
                 if(name == "self" && this.classContext && !(this.classContext instanceof TraitContext)) {
                     return this.classContext.name
-                } else if(PHPTypeCore.types[name.replace(/\W.*$/, "")]) {
+                } else if(PHPType.Core.types[name.replace(/\W.*$/, "")]) {
                     return name
                 } else if(this.classContext) {
                     let class_name
@@ -334,8 +334,8 @@ export default class Context {
      * Sets the type(s) for a name. This overwrites any types already assigned
      * to the name.
      * @param {string} name
-     * @param {PHPTypeUnion} types
-     * @returns {PHPTypeUnion}
+     * @param {PHPType.Union} types
+     * @returns {PHPType.Union}
      */
     setName(name, types) {
         this.ns[name] = types
@@ -344,13 +344,13 @@ export default class Context {
 
     /**
      * Sets $this in the scope.
-     * @returns {PHPTypeUnion}
+     * @returns {PHPType.Union}
      */
     setThis() {
         if(this.classContext && !(this.classContext instanceof TraitContext)) {
-            this.ns["$this"] = PHPTypeCore.named(this.classContext.name)
+            this.ns["$this"] = PHPType.Core.named(this.classContext.name)
         } else {
-            this.ns["$this"] = PHPTypeCore.types.self
+            this.ns["$this"] = PHPType.Core.types.self
         }
         return this.ns["$this"]
     }

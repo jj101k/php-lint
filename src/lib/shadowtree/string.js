@@ -1,5 +1,5 @@
 import Literal from "./literal"
-import {PHPTypeCore} from "../php-type"
+import * as PHPType from "../php-type"
 import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
 export default class _String extends Literal {
     /** @type {string} */
@@ -19,7 +19,7 @@ export default class _String extends Literal {
      */
     check(context, parser_state = new Set(), doc = null) {
         super.check(context, parser_state, doc)
-        let types = PHPTypeCore.types.string.withValue(this.value)
+        let types = PHPType.Core.types.string.withValue(this.value)
         return new ContextTypes(types)
     }
 }

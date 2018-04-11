@@ -1,6 +1,6 @@
 import Literal from "./literal"
 import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
-import {PHPTypeCore} from "../php-type"
+import * as PHPType from "../php-type"
 export default class Encapsed extends Literal {
     /** @type {string} */
     get type() {
@@ -19,6 +19,6 @@ export default class Encapsed extends Literal {
      */
     check(context, parser_state = new Set(), doc = null) {
         super.check(context, parser_state, doc)
-        return new ContextTypes(PHPTypeCore.types.string)
+        return new ContextTypes(PHPType.Core.types.string)
     }
 }

@@ -1,6 +1,6 @@
 import Sys from "./sys"
 import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
-import {PHPTypeCore} from "../php-type"
+import * as PHPType from "../php-type"
 export default class List extends Sys {
     /**
      * Checks that syntax seems ok
@@ -15,7 +15,7 @@ export default class List extends Sys {
             this.arguments.forEach(
                 arg => {
                     let inner_context = context.childContext(true)
-                    inner_context.assigningType = PHPTypeCore.types.mixed
+                    inner_context.assigningType = PHPType.Core.types.mixed
                     arg.check(inner_context, new Set(), null)
                 }
             )

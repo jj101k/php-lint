@@ -1,5 +1,5 @@
 import _Node from "./node"
-import {PHPTypeUnion} from "../php-type"
+import * as PHPType from "../php-type"
 import Expression from "./expression"
 import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
 export default class Return extends _Node {
@@ -18,13 +18,13 @@ export default class Return extends _Node {
         super.check(context, parser_state, doc)
         if(this.expr) {
             return new ContextTypes(
-                PHPTypeUnion.empty,
+                PHPType.Union.empty,
                 this.expr.check(context, new Set(), null).expressionType
             )
         } else {
             return new ContextTypes(
-                PHPTypeUnion.empty,
-                PHPTypeUnion.empty
+                PHPType.Union.empty,
+                PHPType.Union.empty
             )
         }
     }

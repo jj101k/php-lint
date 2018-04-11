@@ -1,7 +1,7 @@
 import Expression from "./expression"
 import Entry from "./entry"
 import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
-import {PHPIndexedArray, PHPTypeCore, PHPTypeUnion} from "../php-type"
+import * as PHPType from "../php-type"
 export default class _Array extends Expression {
      /** @type {Entry[]} */
      get items() {
@@ -20,10 +20,10 @@ export default class _Array extends Expression {
      */
     check(context, parser_state = new Set(), doc = null) {
         super.check(context, parser_state, doc)
-        /** @type {?PHPTypeUnion} */
+        /** @type {?PHPType.Union} */
         let types
         if(this.items) {
-            types = PHPTypeUnion.empty
+            types = PHPType.Union.empty
             this.items.forEach(
                 item => {
                     let t = item.check(context, new Set(), null)
@@ -31,9 +31,9 @@ export default class _Array extends Expression {
                 }
             )
             if(this.items.length && !this.items.some(item => !!item.key)) {
-                return new ContextTypes(new PHPIndexedArray(types).union)
+                return new ContextTypes(new PHPType.IndexedArray(types).union)
             }
         }
-        return new ContextTypes(PHPTypeCore.types.array)
+        return new ContextTypes(PHPType.Core.types.array)
     }
 }

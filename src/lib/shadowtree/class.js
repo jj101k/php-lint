@@ -1,5 +1,5 @@
 import Declaration from "./declaration"
-import {PHPFunctionType, PHPTypeCore} from "../php-type"
+import * as PHPType from "../php-type"
 import Method from "./method"
 import Property from "./property"
 import ClassConstant from "./classconstant"
@@ -84,21 +84,21 @@ export default class Class extends Declaration {
                         b.name,
                         b.visibility,
                         b.isStatic,
-                        PHPFunctionType.mixed.union
+                        PHPType.Function.mixed.union
                     )
                 } else if(b instanceof Property) {
                     inner_context.classContext.addIdentifier(
                         b.name,
                         b.visibility,
                         b.isStatic,
-                        PHPTypeCore.types.mixed
+                        PHPType.Core.types.mixed
                     )
                 } else if(b instanceof ClassConstant) {
                     inner_context.classContext.addIdentifier(
                         b.name,
                         "public",
                         true,
-                        PHPTypeCore.types.mixed
+                        PHPType.Core.types.mixed
                     )
                 } else if(b instanceof TraitUse) {
                     // Do nothing - loaded shortly

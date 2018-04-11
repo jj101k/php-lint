@@ -1,6 +1,6 @@
 import Literal from "./literal"
 import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
-import {PHPTypeCore} from "../php-type"
+import * as PHPType from "../php-type"
 export default class _Boolean extends Literal {
     /**
      * Checks that syntax seems ok
@@ -11,6 +11,6 @@ export default class _Boolean extends Literal {
      */
     check(context, parser_state = new Set(), doc = null) {
         super.check(context, parser_state, doc)
-        return new ContextTypes(PHPTypeCore.types.bool.withValue(this.value))
+        return new ContextTypes(PHPType.Core.types.bool.withValue(this.value))
     }
 }
