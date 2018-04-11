@@ -43,7 +43,7 @@ export default class _Function extends Declaration {
         let doc_function_type
         if(doc) {
             let doc_structure = doc.structure
-            if(doc_structure.some(c => c.kind.match(/^(var|param|return)$/))) {
+            if(doc_structure.some(c => !!c.kind.match(/^(var|param|return)$/))) {
                 let structure_arg_types = []
                 let structure_arg_names = []
                 let structure_return = null
