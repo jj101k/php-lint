@@ -9,16 +9,19 @@ class DocNode {
          */
         this.tail = null
         this.kind = tag
+        this.type = null
     }
-    get type() {
-        return {
-            name: this.tail && this.tail.split(/[\s\r\n]/)[0]
+    get tail() {
+        return this._tail
+    }
+    set tail(v) {
+        this._tail = v
+        this.type = {
+            name: v && v.split(/[\s\r\n]/)[0],
         }
     }
     get what() {
-        return {
-            name: this.tail && this.tail.split(/[\s\r\n]/)[0]
-        }
+        return this.type
     }
 }
 class DocParser {
