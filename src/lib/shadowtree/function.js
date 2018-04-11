@@ -74,6 +74,7 @@ export default class _Function extends Declaration {
                             } catch(e) {
                                 if(e instanceof WrongType) {
                                     this.throw(new PHPError.BadCoreType(e.message), context, doc.loc)
+                                    return e.realName + tail
                                 } else {
                                     throw e
                                 }
