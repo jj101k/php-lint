@@ -1,3 +1,6 @@
+/**
+ * A representation of any type
+ */
 class PHPType {
     /**
      * @type {string} A string representation of the type as meaningful for type
@@ -81,6 +84,9 @@ class PHPType {
     }
 }
 
+/**
+ * Lightweight exception to express type name misses
+ */
 class WrongType extends Error {
     /**
      *
@@ -109,6 +115,9 @@ class WrongType extends Error {
  * @property {PHPTypeUnion} void
  */
 
+ /**
+  * A simple type expression (eg string, int)
+  */
 class PHPSimpleType extends PHPType {
     /** @type {coreTypes} */
     static get coreTypes() {
@@ -240,6 +249,9 @@ class PHPSimpleType extends PHPType {
     }
 }
 
+/**
+ * A function/closure
+ */
 class PHPFunctionType extends PHPType {
     /**
      *
@@ -321,6 +333,10 @@ class PHPFunctionType extends PHPType {
         return `(${args_composed.join(", ")}) -> ${this.returnType}`
     }
 }
+
+/**
+ * A set of possible types
+ */
 class PHPTypeUnion {
     /**
      * An empty type union
