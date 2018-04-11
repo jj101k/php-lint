@@ -1,4 +1,4 @@
-import {PHPFunctionType, PHPTypeCore, PHPTypeUnion} from "./php-type"
+import {PHPFunctionType, PHPIndexedArray, PHPTypeCore, PHPTypeUnion} from "./php-type"
 import {Identifier, Class, ConstRef} from "./shadowtree"
 import * as PHPError from "./php-error"
 import {ClassContext, TraitContext} from "./class-context"
@@ -69,7 +69,7 @@ export default class Context {
             Object.keys(PHPFunctions).forEach(
                 name => this._superGlobals[name] = new PHPTypeUnion(new PHPFunctionType(
                     PHPFunctions[name].map(arg => PHPTypeCore.types.mixed),
-                    name == "array_keys" ? PHPTypeCore.named("string[]") : PHPTypeCore.types.mixed,
+                    name == "array_keys" ? new PHPIndexedArray(PHPTypeCore.types.string).union : PHPTypeCore.types.mixed,
                     PHPFunctions[name]
                 ))
             )

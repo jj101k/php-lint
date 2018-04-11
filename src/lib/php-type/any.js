@@ -50,17 +50,7 @@ export default class _Any {
      * @returns {boolean}
      */
     compatibleWith(other_type) {
-        return(
-            this.matches(other_type) ||
-            (
-                this.typeSignature.match(/\[\]$/) &&
-                other_type.typeSignature == "array"
-            ) ||
-            (
-                this.typeSignature.match(/\[\]$/) &&
-                other_type.typeSignature == "mixed[]"
-            )
-        )
+        return this.matches(other_type)
     }
 
     /**
