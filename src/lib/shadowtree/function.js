@@ -179,7 +179,7 @@ export default class _Function extends Declaration {
         ) {
             this.throw(
                 new PHPError.BadDoc(
-                    `Documented type ${doc_function_type} does not match actual ${function_type} for ${this.name}`
+                    `Practical type ${function_type} does not comply with documented type ${doc_function_type} for ${this.name}`
                 ),
                 context
             )
