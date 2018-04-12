@@ -22,16 +22,20 @@ export default class _AssociativeArray extends _Any {
     }
 
     /**
-     * Returns true if this array type and another are mutually compatible.
+     * Returns true if this type does not violate the expectations of another
+     * associative array type.
+     *
+     * Please note that associative arrays DO violate the expectations of
+     * indexed arrays.
      *
      * @param {_Any} expected_type The other array type
      * @returns {boolean}
      */
-    compatibleWith(expected_type) {
+    compliesWith(expected_type) {
         if(expected_type instanceof _AssociativeArray) {
-            return this.type.compatibleWith(expected_type.type)
+            return this.type.compliesWith(expected_type.type)
         } else {
-            return super.compatibleWith(expected_type)
+            return super.compliesWith(expected_type)
         }
     }
 

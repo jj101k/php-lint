@@ -44,12 +44,15 @@ export default class _Any {
     }
 
     /**
-     * Returns true if this type is a subset of the supplied type.
+     * Returns true if this type does not violate behaviour defined by the
+     * supplied type. As an example, "int" complies with "string" because it can
+     * just be coerced, whereas "string" doesn't comply with "int" because it
+     * may not represent a numeric value.
      *
      * @param {_Any} other_type
      * @returns {boolean}
      */
-    compatibleWith(other_type) {
+    compliesWith(other_type) {
         return this.matches(other_type)
     }
 

@@ -145,27 +145,26 @@ export default class _Union {
                 return null
         }
     }
+
     /**
-     * Returns true if this type and another are mutually compatible.
-     * This doesn't mean that one is a valid subclass override of the other,
-     * just that they could be the same.
+     * Returns true if this set of types does not violate behaviour defined by
+     * the supplied set of types. In other words, every type here must be
+     * compliant with at least one type on the supplied union.
      *
-     * Where the supplied type includes something and this does not, that's a
-     * success. The reverse is a failure.
+     * (int) is compliant with (int|null); (int|null) is not compliant with (int).
      *
      * @param {?_Union} expected_type The other type
      * @returns {boolean}
      */
-    compatibleWith(expected_type) {
+    compliesWith(expected_type) {
         if(!expected_type) {
             return false;
         }
         return (
-            this === expected_type ||
-            this.isMixed ||
             expected_type.isMixed ||
+            this === expected_type ||
             this.types.every(
-                t => expected_type.types.some(et => t.compatibleWith(et))
+                t => expected_type.types.some(et => t.compliesWith(et))
             )
         )
     }

@@ -52,26 +52,28 @@ export default class _Function extends _Any {
     }
 
     /**
-     * Returns true if this function type and another are mutually compatible.
-     * This doesn't mean that one is a valid subclass override of the other,
-     * just that the input and output could be the same.
+     * Returns true if this function type does not violate the behaviours
+     * expected by another function type.
      *
-     * For arguments, this supplied types must be a subset of this. For return
-     * values, this must be a subset of the supplied type. In other words, the
-     * supplied function type must describe ALL supported outputs and SOME
-     * supported inputs.
+     * In other words, all the arguments defined by the other function must be
+     * accepted by this type, and the return type defined here must be accepted
+     * by the other type.
+     *
+     * (int) -> void complies with () -> void
+     *
+     * () -> int complies with () -> mixed
      *
      * @param {_Function} expected_type The other function type
      * @returns {boolean}
      */
-    compatibleWith(expected_type) {
+    compliesWith(expected_type) {
         if(expected_type instanceof _Function) {
             return (
-                this.argTypes.length == expected_type.argTypes.length &&
+                this.argTypes.length >= expected_type.argTypes.length &&
                 expected_type.argTypes.every(
-                    (v, i) => v.compatibleWith(this.argTypes[i])
+                    (v, i) => v.compliesWith(this.argTypes[i])
                 ) &&
-                this.returnType.compatibleWith(expected_type.returnType)
+                this.returnType.compliesWith(expected_type.returnType)
             )
         } else {
             return false
