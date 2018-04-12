@@ -20,7 +20,7 @@ const IgnoreInvalidParent = true
 const PHPConstants = JSON.parse(fs.readFileSync(__dirname + "/../../data/php-constants.json", "utf8"))
 
 /**
- * @type {{[x: string]: boolean[]}}
+ * @type {{[x: string]: {pbr: boolean[]}}}
  *
  * From: ./php-bin/php-functions > data/php-functions.json
  */
@@ -65,9 +65,9 @@ export default class Context {
             )
             Object.keys(PHPFunctions).forEach(
                 name => this._superGlobals[name] = new PHPType.Function(
-                    PHPFunctions[name].map(arg => PHPType.Core.types.mixed),
+                    PHPFunctions[name].pbr.map(arg => PHPType.Core.types.mixed),
                     PHPFunctionReturnType[name] || PHPType.Core.types.mixed,
-                    PHPFunctions[name]
+                    PHPFunctions[name].pbr
                 ).union
             )
             PHPConstants.forEach(
