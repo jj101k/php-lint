@@ -15,26 +15,14 @@ const DEBUG_TYPES = false
 const IgnoreInvalidParent = true
 
 /**
- * @type {string[]} From `print json_encode(array_keys(get_defined_constants()), JSON_PRETTY_PRINT);`
+ * @type {string[]} From ./php-bin/php-constants > data/php-constants.json
  */
 const PHPConstants = JSON.parse(fs.readFileSync(__dirname + "/../../data/php-constants.json", "utf8"))
 
 /**
  * @type {{[x: string]: boolean[]}}
  *
- * From:
- *
- * ```
- * print json_encode(array_combine(
- *     get_defined_functions()["internal"],
- *     array_map(function($n) {
- *         return array_map(
- *             function($p) {return $p->isPassedByReference();},
- *             (new ReflectionFunction($n))->getParameters()
- *         );
- *     }, get_defined_functions()["internal"])
- * ), JSON_PRETTY_PRINT);
- * ```
+ * From: ./php-bin/php-functions > data/php-functions.json
  */
 const PHPFunctions = JSON.parse(fs.readFileSync(__dirname + "/../../data/php-functions.json", "utf8"))
 

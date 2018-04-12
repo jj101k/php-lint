@@ -18,12 +18,12 @@ const DEBUG_AUTOLOAD = false
 const MAX_DEPTH = Infinity
 
 /**
- * @type {string[]} From `print json_encode(get_declared_classes(), JSON_PRETTY_PRINT);`
+ * @type {string[]} From ./php-bin/php-classes > data/php-classes.json
  */
 const PHPClasses = JSON.parse(fs.readFileSync(__dirname + "/../../data/php-classes.json", "utf8"))
 
 /**
- * @type {string[]} From `print json_encode(get_declared_interfaces(), JSON_PRETTY_PRINT);`
+ * @type {string[]} From ./php-bin/php-interfaces > data/php-interfaces.json
  */
 const PHPInterfaces = JSON.parse(fs.readFileSync(__dirname + "/../../data/php-interfaces.json", "utf8"))
 
