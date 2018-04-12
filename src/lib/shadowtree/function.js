@@ -82,7 +82,7 @@ export default class _Function extends Declaration {
                             let types = u.types
                             for(let i = 0; i < types.length; i++) {
                                 let m = types[i]
-                                if(m instanceof PHPType.Array) {
+                                if(m instanceof PHPType.AssociativeArray) {
                                     types = types.concat(m.type.types)
                                 } else if(m instanceof PHPType.IndexedArray) {
                                     types = types.concat(m.type.types)
