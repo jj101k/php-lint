@@ -55,6 +55,10 @@ const PHPSuperglobals = {
 const PHPFunctionReturnType = {
     array_key_exists: PHPType.Core.types.bool,
     array_keys: new PHPType.IndexedArray(PHPType.Core.types.string).union,
+    array_values: new PHPType.IndexedArray(PHPType.Core.types.mixed).union,
+    count: PHPType.Core.types.int,
+    preg_replace: PHPType.Core.types.string,
+    strcmp: PHPType.Core.types.int,
 }
 
 /**
