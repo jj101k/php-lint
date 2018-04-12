@@ -52,6 +52,11 @@ const PHPSuperglobals = {
     "GLOBALS": "array",
 }
 
+const PHPFunctionReturnType = {
+    array_key_exists: PHPType.Core.types.bool,
+    array_keys: new PHPType.IndexedArray(PHPType.Core.types.string).union,
+}
+
 /**
  * This defines the entire context applying to the current node.
  */
@@ -67,11 +72,11 @@ export default class Context {
                 name => this._superGlobals["$" + name] = PHPType.Core.named(PHPSuperglobals[name])
             )
             Object.keys(PHPFunctions).forEach(
-                name => this._superGlobals[name] = new PHPType.Union(new PHPType.Function(
+                name => this._superGlobals[name] = new PHPType.Function(
                     PHPFunctions[name].map(arg => PHPType.Core.types.mixed),
-                    name == "array_keys" ? new PHPType.IndexedArray(PHPType.Core.types.string).union : PHPType.Core.types.mixed,
+                    PHPFunctionReturnType[name] || PHPType.Core.types.mixed,
                     PHPFunctions[name]
-                ))
+                ).union
             )
             PHPConstants.forEach(
                 name => this._superGlobals[name] = PHPType.Core.types.mixed
