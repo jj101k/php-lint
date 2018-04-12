@@ -211,8 +211,9 @@ export default class _Node extends AbstractNode {
      */
     throw(e, context, effective_location = null) {
         if(
+            context.fileContext &&
             silenceVendor.some(
-            sv => context.fileContext.filename.startsWith(
+                sv => context.fileContext.filename.startsWith(
                     context.globalContext.workingDirectory + "/" + sv + "/"
                 )
             )
