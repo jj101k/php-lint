@@ -68,7 +68,7 @@ class OptTypeToken extends TypeToken {
         let t = PHPType.Union.empty
         this.tokens.forEach(token => t = t.addTypesFrom(token.type))
         if(this.isArray) {
-            return new PHPType.Array(t).union
+            return new PHPType.IndexedArray(t).union
         } else {
             return t
         }
@@ -100,7 +100,7 @@ class NamedTypeToken extends TypeToken {
             t = new PHPType.Simple(this.name).union
         }
         if(this.isArray) {
-            return new PHPType.Array(t).union
+            return new PHPType.IndexedArray(t).union
         } else {
             return t
         }
