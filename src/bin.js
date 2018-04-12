@@ -31,9 +31,9 @@ if(opt.options.version) {
     }
     if("silence-vendor" in opt.options) {
         if(opt.options["silence-vendor"]) {
-            PHPLint.silenceVendor = opt.options["silence-vendor"]
+            PHPLint.silenceVendor = opt.options["silence-vendor"].split(/,/)
         } else {
-            PHPLint.silenceVendor = "vendor"
+            PHPLint.silenceVendor = ["vendor"]
         }
     }
     if(opt.options["show-tests"]) {

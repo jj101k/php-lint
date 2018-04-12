@@ -36,9 +36,9 @@ const DEBUG = false
 let ignoreErrors = []
 
 /**
- * @type {?string}
+ * @type {string[]}
  */
-let silenceVendor = null
+let silenceVendor = []
 
 export default class _Node extends AbstractNode {
     /**
@@ -211,9 +211,10 @@ export default class _Node extends AbstractNode {
      */
     throw(e, context, effective_location = null) {
         if(
-            silenceVendor &&
-            context.fileContext.filename.startsWith(
-                context.globalContext.workingDirectory + "/" + silenceVendor + "/"
+            silenceVendor.some(
+            sv => context.fileContext.filename.startsWith(
+                    context.globalContext.workingDirectory + "/" + sv + "/"
+                )
             )
         ) {
             // Skip
