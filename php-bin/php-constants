@@ -1,3 +1,5 @@
 #!/usr/bin/env php
 <?php
-print json_encode(array_keys(get_defined_constants()), JSON_PRETTY_PRINT);
+$constants = array_keys(get_defined_constants());
+sort($constants);
+print json_encode($constants, JSON_PRETTY_PRINT);

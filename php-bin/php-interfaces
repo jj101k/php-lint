@@ -1,3 +1,5 @@
 #!/usr/bin/env php
 <?php
-print json_encode(get_declared_interfaces(), JSON_PRETTY_PRINT);
+$interfaces = get_declared_interfaces();
+sort($interfaces);
+print json_encode($interfaces, JSON_PRETTY_PRINT);

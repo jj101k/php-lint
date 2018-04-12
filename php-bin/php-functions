@@ -1,11 +1,14 @@
 #!/usr/bin/env php
 <?php
+$names = get_defined_functions()["internal"];
+sort($names);
 print json_encode(array_combine(
-    get_defined_functions()["internal"],
+    $names,
     array_map(function($n) {
+        $rf = new ReflectionFunction($n);
         return array_map(
             function($p) {return $p->isPassedByReference();},
-            (new ReflectionFunction($n))->getParameters()
+            $rf->getParameters()
         );
-    }, get_defined_functions()["internal"])
+    }, $names)
 ), JSON_PRETTY_PRINT);

@@ -1,3 +1,5 @@
 #!/usr/bin/env php
 <?php
-print json_encode(get_declared_classes(), JSON_PRETTY_PRINT);
+$classes = get_declared_classes();
+sort($classes);
+print json_encode($classes, JSON_PRETTY_PRINT);
