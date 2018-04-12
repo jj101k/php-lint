@@ -35,6 +35,11 @@ const DEBUG = false
  */
 let ignoreErrors = []
 
+/**
+ * @type {?string}
+ */
+let silenceVendor = null
+
 export default class _Node extends AbstractNode {
     /**
      * @type {{[x: string]: (boolean|{[y: string]: boolean})}} The error classes to ignore
@@ -78,6 +83,13 @@ export default class _Node extends AbstractNode {
             this._ignoreErrorMap = out
         }
         return this._ignoreErrorMap
+    }
+
+    static get silenceVendor() {
+        return silenceVendor
+    }
+    static set silenceVendor(v) {
+        silenceVendor = v
     }
     /**
      * Returns the shadow tree counterpart of the given node.
@@ -198,7 +210,14 @@ export default class _Node extends AbstractNode {
      * @throws {PHPError.Error}
      */
     throw(e, context, effective_location = null) {
-        if(ignoreErrors.every(o => !(e instanceof o))) {
+        if(
+            silenceVendor &&
+            context.fileContext.filename.startsWith(
+                context.globalContext.workingDirectory + "/" + silenceVendor + "/"
+            )
+        ) {
+            // Skip
+        } else if(ignoreErrors.every(o => !(e instanceof o))) {
             throw e.withContext(context, this, effective_location)
         }
     }

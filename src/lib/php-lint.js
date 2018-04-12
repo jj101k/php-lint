@@ -150,6 +150,13 @@ class PHPLint {
         return Lint.ignoreErrorMap
     }
 
+    static get silenceVendor() {
+        return Lint.silenceVendor
+    }
+    static set silenceVendor(v) {
+        Lint.silenceVendor = v
+    }
+
     /**
      * Resets the global state, eg. if you're checking multiple different projects
      */

@@ -3,6 +3,7 @@ const getopt = require("node-getopt")
 const PHPLint = require("./index")
 
 let opt = getopt.create([
+    ["", "silence-vendor[=ARG]", "Silence warnings on vendor directory"],
     ["x", "exclude-tests=ARG", "List of tests to exclude"],
     ["t", "show-tests", "Show list of tests which will be included"],
     ["", "working-directory=ARG", "Set the initial working directory"],
@@ -27,6 +28,13 @@ if(opt.options.version) {
             }
             ignore_map[parts[parts.length - 1]] = true
         })
+    }
+    if("silence-vendor" in opt.options) {
+        if(opt.options["silence-vendor"]) {
+            PHPLint.silenceVendor = opt.options["silence-vendor"]
+        } else {
+            PHPLint.silenceVendor = "vendor"
+        }
     }
     if(opt.options["show-tests"]) {
         let out = {}

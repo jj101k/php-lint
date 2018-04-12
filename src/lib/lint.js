@@ -37,6 +37,12 @@ class Lint {
     static get ShadowTree() {
         return ShadowTree
     }
+    static get silenceVendor() {
+        return ShadowTree.Node.silenceVendor
+    }
+    static set silenceVendor(v) {
+        ShadowTree.Node.silenceVendor = v
+    }
 
     /**
      * Builds the object
