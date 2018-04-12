@@ -93,7 +93,12 @@ class NamedTypeToken extends TypeToken {
      * @type {PHPType.Union}
      */
     get type() {
-        let t = new PHPType.Simple(this.name).union
+        let t
+        if(this.name == "array") {
+            t = new PHPType.Array(PHPType.Core.types.mixed).union
+        } else {
+            t = new PHPType.Simple(this.name).union
+        }
         if(this.isArray) {
             return new PHPType.Array(t).union
         } else {
