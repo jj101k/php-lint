@@ -26,7 +26,7 @@ class DocNode {
     set tail(v) {
         this._tail = v
         this.type = {
-            name: v && v.split(/[\s\r\n]/)[0],
+            name: v && v.split(/[\s\r\n]+/)[0],
         }
     }
     get what() {
