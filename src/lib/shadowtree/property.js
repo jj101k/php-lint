@@ -45,66 +45,19 @@ export default class Property extends Declaration {
             if(doc_structure && doc_structure.length) {
                 doc_structure.forEach(
                     c => {
-                        /**
-                         * @param {string} t
-                         * @returns {string}
-                         */
-                        let resolve_name = t => {
-                            try {
-                                if(t.match(/^[A-Z0-9]/)) {
-                                    return (
-                                        context.fileContext.resolveAliasName(t) ||
-                                        "\\" + t
-                                    )
-                                } else if(PHPType.Core.types.hasOwnProperty(t)) {
-                                    return context.resolveName(PHPType.Core.types[t].toString())
-                                } else {
-                                    return context.resolveName(t, "uqn")
-                                }
-                            } catch(e) {
-                                if(e instanceof PHPType.WrongType) {
-                                    this.throw(new PHPError.BadCoreType(e.message), context, doc.loc)
-                                    return context.resolveName(e.realName)
-                                } else {
-                                    throw e
-                                }
-                            }
-                        }
-                        /**
-                         *
-                         * @param {PHPType.Union} u
-                         */
-                        let resolve_all_names = u => {
-                            let types = u.types
-                            for(let i = 0; i < types.length; i++) {
-                                let m = types[i]
-                                if(m instanceof PHPType.AssociativeArray) {
-                                    types = types.concat(m.memberType.types)
-                                } else if(m instanceof PHPType.IndexedArray) {
-                                    types = types.concat(m.memberType.types)
-                                } else if(m instanceof PHPType.Simple) {
-                                    m.typeName = resolve_name(m.typeName)
-                                } else if(m instanceof PHPType.Function) {
-                                    m.argTypes.forEach(atype => types = types.concat(atype.types))
-                                    types = types.concat(m.returnType.types)
-                                } else {
-                                    throw new Error(m.toString())
-                                }
-                            }
-                        }
                         if(c instanceof DocTypeNode) {
                             if(
                                 (this.isStatic && c.kind == "var") ||
                                 (!this.isStatic && c.kind == "property")
                             ) {
                                 doc_type = c.typeStructure
-                                resolve_all_names(doc_type)
+                                this.resolveAllDocNames(doc_type, context, doc)
                             } else if(
                                 (!this.isStatic && c.kind == "var")
                             ) {
                                 console.log("@var used instead of @property")
                                 doc_type = c.typeStructure
-                                resolve_all_names(doc_type)
+                                this.resolveAllDocNames(doc_type, context, doc)
                             } else {
                                 console.log(`Skipping unrecognised PHPDoc tag @${c.kind}`)
                             }
