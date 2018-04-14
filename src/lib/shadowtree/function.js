@@ -42,59 +42,69 @@ export default class _Function extends Declaration {
         }
         let doc_function_type
         if(doc) {
-            let doc_structure
             try {
-                doc_structure = doc.structure
+                let doc_structure = doc.structure
+                if(
+                    doc_structure.some(c => !!c.kind.match(/^(var|param|return)$/))
+                ) {
+                    let structure_arg_types = []
+                    let structure_arg_names = []
+                    let structure_return = null
+                    doc_structure.forEach(
+                        c => {
+                            if(c instanceof DocTypeNode) {
+                                switch(c.kind) {
+                                    case "param":
+                                        let param_type = c.typeStructure
+                                        this.resolveAllDocNames(
+                                            param_type,
+                                            context,
+                                            doc
+                                        )
+                                        structure_arg_types.push(param_type)
+                                        structure_arg_names.push(c.name)
+                                        break
+                                    case "return":
+                                        let return_type = c.typeStructure
+                                        this.resolveAllDocNames(
+                                            return_type,
+                                            context,
+                                            doc
+                                        )
+                                        structure_return = return_type
+                                        break
+                                    default:
+                                        console.log(
+                                            `Skipping unrecognised PHPDoc tag @${c.kind}`
+                                        )
+                                }
+                            } else {
+                                switch(c.kind) {
+                                    case "api":
+                                    case "deprecated":
+                                    case "example":
+                                    case "internal":
+                                    case "link":
+                                    case "see":
+                                    case "throws":
+                                        break
+                                    default:
+                                        console.log(
+                                            `Skipping unrecognised PHPDoc tag @${c.kind}`
+                                        )
+                                }
+                            }
+                        }
+                    )
+                    doc_function_type =
+                        new PHPType.Function(structure_arg_types, structure_return)
+                }
             } catch(e) {
                 this.throw(
                     new PHPError.BadDoc(`Doc parse failure: ${e.message}`),
                     context,
                     doc.loc
                 )
-            }
-            if(
-                doc_structure &&
-                doc_structure.some(c => !!c.kind.match(/^(var|param|return)$/))
-            ) {
-                let structure_arg_types = []
-                let structure_arg_names = []
-                let structure_return = null
-                doc_structure.forEach(
-                    c => {
-                        if(c instanceof DocTypeNode) {
-                            switch(c.kind) {
-                                case "param":
-                                    let param_type = c.typeStructure
-                                    this.resolveAllDocNames(param_type, context, doc)
-                                    structure_arg_types.push(param_type)
-                                    structure_arg_names.push(c.name)
-                                    break
-                                case "return":
-                                    let return_type = c.typeStructure
-                                    this.resolveAllDocNames(return_type, context, doc)
-                                    structure_return = return_type
-                                    break
-                                default:
-                                    console.log(`Skipping unrecognised PHPDoc tag @${c.kind}`)
-                            }
-                        } else {
-                            switch(c.kind) {
-                                case "api":
-                                case "deprecated":
-                                case "example":
-                                case "internal":
-                                case "link":
-                                case "see":
-                                case "throws":
-                                    break
-                                default:
-                                    console.log(`Skipping unrecognised PHPDoc tag @${c.kind}`)
-                            }
-                        }
-                    }
-                )
-                doc_function_type =
-                    new PHPType.Function(structure_arg_types, structure_return)
             }
         }
         var inner_context = context.childContext()

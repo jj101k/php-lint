@@ -32,50 +32,53 @@ export default class Property extends Declaration {
         super.check(context, parser_state, doc)
         let doc_type
         if(doc) {
-            let doc_structure
             try {
-                doc_structure = doc.structure
+                let doc_structure = doc.structure
+                if(doc_structure && doc_structure.length) {
+                    doc_structure.forEach(
+                        c => {
+                            if(c instanceof DocTypeNode) {
+                                if(
+                                    (this.isStatic && c.kind == "var") ||
+                                    (!this.isStatic && c.kind == "property")
+                                ) {
+                                    doc_type = c.typeStructure
+                                    this.resolveAllDocNames(doc_type, context, doc)
+                                } else if(
+                                    (!this.isStatic && c.kind == "var")
+                                ) {
+                                    console.log("@var used instead of @property")
+                                    doc_type = c.typeStructure
+                                    this.resolveAllDocNames(doc_type, context, doc)
+                                } else {
+                                    console.log(
+                                        `Skipping unrecognised PHPDoc tag @${c.kind}`
+                                    )
+                                }
+                            } else {
+                                switch(c.kind) {
+                                    case "api":
+                                    case "deprecated":
+                                    case "example":
+                                    case "internal":
+                                    case "link":
+                                    case "see":
+                                    case "throws":
+                                        break
+                                    default:
+                                        console.log(
+                                            `Skipping unrecognised PHPDoc tag @${c.kind}`
+                                        )
+                                }
+                            }
+                        }
+                    )
+                }
             } catch(e) {
                 this.throw(
                     new PHPError.BadDoc(`Doc parse failure: ${e.message}`),
                     context,
                     doc.loc
-                )
-            }
-            if(doc_structure && doc_structure.length) {
-                doc_structure.forEach(
-                    c => {
-                        if(c instanceof DocTypeNode) {
-                            if(
-                                (this.isStatic && c.kind == "var") ||
-                                (!this.isStatic && c.kind == "property")
-                            ) {
-                                doc_type = c.typeStructure
-                                this.resolveAllDocNames(doc_type, context, doc)
-                            } else if(
-                                (!this.isStatic && c.kind == "var")
-                            ) {
-                                console.log("@var used instead of @property")
-                                doc_type = c.typeStructure
-                                this.resolveAllDocNames(doc_type, context, doc)
-                            } else {
-                                console.log(`Skipping unrecognised PHPDoc tag @${c.kind}`)
-                            }
-                        } else {
-                            switch(c.kind) {
-                                case "api":
-                                case "deprecated":
-                                case "example":
-                                case "internal":
-                                case "link":
-                                case "see":
-                                case "throws":
-                                    break
-                                default:
-                                    console.log(`Skipping unrecognised PHPDoc tag @${c.kind}`)
-                            }
-                        }
-                    }
                 )
             }
         }
