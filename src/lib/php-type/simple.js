@@ -8,12 +8,13 @@ export default class _Simple extends _Any {
      * Builds the object
      * @param {string} type_name
      * @param {*[]} [values]
+     * @param {boolean} [poly_value]
      */
-    constructor(type_name, values = []) {
+    constructor(type_name, values = [], poly_value = false) {
         super()
         this.typeName = type_name
         this.values = values
-        this.polyValue = false
+        this.polyValue = poly_value
     }
     /**
      * @type {string} A string representation of the type, as meaningful for type
@@ -41,11 +42,19 @@ export default class _Simple extends _Any {
     combineWith(other_type) {
         super.combineWith(other_type)
         if(this.values.length && other_type.values.length) {
-            return new _Simple(
-                this.typeName,
-                this.values.concat(other_type.values)
-            )
-        } else if(this.values.length) {
+            if(this.values.length + other_type.values.length >= 10) {
+                return new _Simple(
+                    this.typeName,
+                    [],
+                    true
+                )
+            } else {
+                return new _Simple(
+                    this.typeName,
+                    this.values.concat(other_type.values)
+                )
+            }
+        } else if(this.values.length || this.polyValue) {
             return this
         } else {
             return other_type
