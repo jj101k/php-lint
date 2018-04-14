@@ -13,6 +13,7 @@ export default class _Simple extends _Any {
         super()
         this.typeName = type_name
         this.values = values
+        this.polyValue = false
     }
     /**
      * @type {string} A string representation of the type, as meaningful for type
@@ -80,8 +81,15 @@ export default class _Simple extends _Any {
      * @returns {_Simple}
      */
     withValue(v) {
-        if(this.values.length) {
-            this.values.push(v)
+        if(this.polyValue) {
+            return this
+        } else if(this.values.length) {
+            if(this.values.length + 1 >= 10) {
+                this.polyValue = true
+                this.values = []
+            } else {
+                this.values.push(v)
+            }
             return this
         } else {
             return new _Simple(this.typeName, [v])
