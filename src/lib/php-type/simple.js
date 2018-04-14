@@ -46,9 +46,9 @@ export default class _Simple extends _Any {
                 this.values.concat(other_type.values)
             )
         } else if(this.values.length) {
-            return other_type
-        } else {
             return this
+        } else {
+            return other_type
         }
     }
     /**
