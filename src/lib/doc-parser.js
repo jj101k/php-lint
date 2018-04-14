@@ -174,7 +174,7 @@ class DocTypeNode extends DocNode {
             }
             this.typeStructure = current_token.type
         } else {
-            this.typeStructure = null
+            this.typeStructure = PHPType.Core.types.mixed
         }
     }
 }
