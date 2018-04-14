@@ -19,6 +19,7 @@ class DocNode {
         this.tail = null
         this.kind = tag
         this.type = null
+        this.typeStructure = null
     }
     get tail() {
         return this._tail
@@ -31,6 +32,29 @@ class DocNode {
     }
     get what() {
         return this.type
+    }
+    /**
+     *
+     * @param {?{[tag: string]: function(DocNode)}} [resolver_by_type]
+     */
+    resolve(resolver_by_type = null) {
+        switch(this.kind) {
+            case "api":
+            case "deprecated":
+            case "example":
+            case "internal":
+            case "link":
+            case "see":
+            case "throws":
+                if(resolver_by_type && resolver_by_type[this.kind]) {
+                    resolver_by_type[this.kind]()
+                }
+                break
+            default:
+                console.log(
+                    `Skipping unrecognised PHPDoc tag @${this.kind}`
+                )
+        }
     }
 }
 /**
@@ -175,6 +199,19 @@ class DocTypeNode extends DocNode {
             this.typeStructure = current_token.type
         } else {
             this.typeStructure = PHPType.Core.types.mixed
+        }
+    }
+    /**
+     *
+     * @param {?{[tag: string]: function(DocTypeNode)}} [resolver_by_type]
+     */
+    resolve(resolver_by_type = null) {
+        if(resolver_by_type && resolver_by_type[this.kind]) {
+            resolver_by_type[this.kind]()
+        } else {
+            console.log(
+                `Skipping unrecognised PHPDoc tag @${this.kind}`
+            )
         }
     }
 }
