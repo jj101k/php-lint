@@ -14,5 +14,4 @@ export default class TraitPrecedence extends _Node {
     get instead() {
         return this.cacheNodeArray("instead")
     }
-    // FIXME WTF
 }
