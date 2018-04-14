@@ -30,7 +30,7 @@ export default class Catch extends Statement {
             w => types = types.addTypesFrom(PHPType.Core.named(context.resolveName(w.name)))
         )
         let inner_context = context.childContext(true)
-        inner_context.assigningType = PHPType.Core.types.mixed
+        inner_context.assigningType = types
         this.variable.check(inner_context, new Set(), null)
         this.body.check(context, new Set(), null)
         return ContextTypes.empty
