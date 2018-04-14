@@ -3,7 +3,7 @@ import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
 import * as PHPType from "../php-type"
 import _Node from "./node"
 export default class Constant extends Declaration {
-    /** @type {?_Node} */
+    /** @type {_Node} */
     get value() {
         return this.cacheNode("value")
     }
@@ -17,12 +17,7 @@ export default class Constant extends Declaration {
      */
     check(context, parser_state = new Set(), doc = null) {
         super.check(context, parser_state, doc)
-        let types
-        if(this.value) {
-            types = this.value.check(context, new Set(), doc).expressionType
-        } else {
-            types = PHPType.Core.types.mixed
-        }
+        let types = this.value.check(context, new Set(), doc).expressionType
         context.classContext.addIdentifier(this.name, "public", true, types)
         return ContextTypes.empty
     }
