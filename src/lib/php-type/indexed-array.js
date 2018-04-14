@@ -8,18 +8,18 @@ import _Union from "./union"
 export default class _IndexedArray extends _Any {
     /**
      *
-     * @param {?_Union} type
+     * @param {_Union} member_type
      */
-    constructor(type) {
+    constructor(member_type) {
         super()
-        this.type = type || _Core.types.void
+        this.memberType = member_type
     }
     /**
      * @type {string} A string representation of the type, as meaningful for type
      * checking.
      */
     get typeSignature() {
-        return `${this.type.typeSignatureToken}[]`
+        return `${this.memberType.typeSignatureToken}[]`
     }
 
     /**
@@ -34,9 +34,9 @@ export default class _IndexedArray extends _Any {
      */
     compliesWith(expected_type) {
         if(expected_type instanceof _IndexedArray) {
-            return this.type.compliesWith(expected_type.type)
+            return this.memberType.compliesWith(expected_type.memberType)
         } else if(expected_type instanceof _AssociativeArray) {
-            return this.type.compliesWith(expected_type.type)
+            return this.memberType.compliesWith(expected_type.memberType)
         } else {
             return super.compliesWith(expected_type)
         }
