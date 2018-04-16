@@ -53,9 +53,16 @@ const PHPFunctionReturnType = {
     array_key_exists: PHPType.Core.types.bool,
     array_keys: new PHPType.IndexedArray(PHPType.Core.types.string).union,
     array_values: new PHPType.IndexedArray(PHPType.Core.types.mixed).union,
+    ceil: PHPType.Core.types.float,
     count: PHPType.Core.types.int,
+    floor: PHPType.Core.types.float,
+    openssl_decrypt: PHPType.Core.types.string.addTypesFrom(PHPType.Core.types.bool),
+    openssl_encrypt: PHPType.Core.types.string.addTypesFrom(PHPType.Core.types.bool),
     preg_replace: PHPType.Core.types.string,
     strcmp: PHPType.Core.types.int,
+    stripos: PHPType.Core.types.int.addTypesFrom(PHPType.Core.types.bool),
+    strrpos: PHPType.Core.types.int.addTypesFrom(PHPType.Core.types.bool),
+    time: PHPType.Core.types.int,
 }
 
 /**
