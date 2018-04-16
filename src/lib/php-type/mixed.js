@@ -28,7 +28,7 @@ export default class _Mixed extends _Any {
     toString() {
         if(this.originSymbol) {
             if(this.originClass) {
-                return `${this.typeSignature}?${this.originClass}\\${this.originSymbol}`
+                return `${this.typeSignature}?${this.originClass}::${this.originSymbol}`
             } else {
                 return `${this.typeSignature}?${this.originSymbol}`
             }
