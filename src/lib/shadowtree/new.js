@@ -40,10 +40,14 @@ export default class New extends Statement {
             ))
         } else {
             /** @type {string[]} */
-            let values = this.what.check(context).expressionType.coercedValues("string")
+            let values = this.what.check(
+                context
+            ).expressionType.coercedValues("string")
             if(values) {
                 let type = PHPType.Union.empty
-                values.forEach(v => type = type.addTypesFrom(PHPType.Core.named(v)))
+                values.forEach(
+                    v => type = type.addTypesFrom(PHPType.Core.named(v))
+                )
                 return new ContextTypes(type)
             } else {
                 return new ContextTypes(PHPType.Core.types.mixed)

@@ -105,7 +105,9 @@ export default class _Union {
             Object.keys(union.uniqueTypes).forEach(
                 k => {
                     if(this.uniqueTypes[k]) {
-                        let merge_type = this.uniqueTypes[k].combineWith(union.uniqueTypes[k])
+                        let merge_type = this.uniqueTypes[k].combineWith(
+                            union.uniqueTypes[k]
+                        )
                         if(merge_type !== this.uniqueTypes[k]) {
                             this.uniqueTypes[k] = merge_type
                         }

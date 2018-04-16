@@ -20,12 +20,18 @@ const MAX_DEPTH = Infinity
 /**
  * @type {string[]} From ./php-bin/php-classes > data/php-classes.json
  */
-const PHPClasses = JSON.parse(fs.readFileSync(__dirname + "/../../data/php-classes.json", "utf8"))
+const PHPClasses = JSON.parse(fs.readFileSync(
+    __dirname + "/../../data/php-classes.json",
+    "utf8"
+))
 
 /**
  * @type {string[]} From ./php-bin/php-interfaces > data/php-interfaces.json
  */
-const PHPInterfaces = JSON.parse(fs.readFileSync(__dirname + "/../../data/php-interfaces.json", "utf8"))
+const PHPInterfaces = JSON.parse(fs.readFileSync(
+    __dirname + "/../../data/php-interfaces.json",
+    "utf8"
+))
 
 class FileResult {
     /**
@@ -79,9 +85,10 @@ export class GlobalContext {
                 if(psr4) {
                     Object.keys(psr4).forEach(
                         prefix => {
-                            autoload_paths[prefix] = (psr4[prefix] instanceof Array ?
-                                psr4[prefix] :
-                                [psr4[prefix]]
+                            autoload_paths[prefix] =
+                                (psr4[prefix] instanceof Array ?
+                                    psr4[prefix] :
+                                    [psr4[prefix]]
                             ).map(
                                 path => {
                                     if(path.match(/\/$/) || path == "") {
@@ -97,7 +104,9 @@ export class GlobalContext {
                 }
                 let classmap = composer_config.autoload["classmap"]
                 if(classmap) {
-                    console.log("WARNING, this project uses classmap autoload, this is extremely unwise and takes non-trivial time to parse")
+                    console.log(
+                        "WARNING, this project uses classmap autoload, this is extremely unwise and takes non-trivial time to parse"
+                    )
                     classmap_paths = classmap.map(
                         path => {
                             if(path.match(/\/$/) || path == "") {
@@ -182,7 +191,10 @@ export class GlobalContext {
      * @returns {ClassContext}
      */
     addClass(name, superclass = null, file_context = null) {
-        if(this.classes[name] && !(this.classes[name] instanceof UnknownClassContext)) {
+        if(
+            this.classes[name] &&
+            !(this.classes[name] instanceof UnknownClassContext)
+        ) {
             return this.classes[name]
         } else {
             return this.classes[name] = new ClassContext(
@@ -248,7 +260,10 @@ export class GlobalContext {
      * @returns {TraitContext}
      */
     addTrait(name, superclass, file_context, trait_node) {
-        if(this.traits[name] && !(this.traits[name] instanceof UnknownTraitContext)) {
+        if(
+            this.traits[name] &&
+            !(this.traits[name] instanceof UnknownTraitContext)
+        ) {
             return this.traits[name]
         } else {
             return this.traits[name] = new TraitContext(
@@ -268,7 +283,10 @@ export class GlobalContext {
      * @returns {ClassContext}
      */
     addInterface(name, superclass = null, file_context = null) {
-        if(this.classes[name] && !(this.classes[name] instanceof UnknownClassContext)) {
+        if(
+            this.classes[name] &&
+            !(this.classes[name] instanceof UnknownClassContext)
+        ) {
             return this.classes[name]
         } else {
             return this.classes[name] = new InterfaceContext(
@@ -294,7 +312,8 @@ export class GlobalContext {
     }
 
     /**
-     * Given a path for the current file, walks up the tree looking for composer.json.
+     * Given a path for the current file, walks up the tree looking for
+     * composer.json.
      *
      * @param {string} actual_path eg. /foo/bar/lib/Baz/
      * @return {?string} eg. /foo/bar/composer.json
@@ -325,7 +344,9 @@ export class GlobalContext {
         if(this.classes.hasOwnProperty(name)) {
             let c = this.classes[name]
             if(c.fileContext) {
-                let fr = this.results.find(fr => fr.filename == c.fileContext.filename)
+                let fr = this.results.find(
+                    fr => fr.filename == c.fileContext.filename
+                )
                 if(fr && fr.depth > load_depth) {
                     fr.depth = load_depth
                 }
@@ -378,7 +399,9 @@ export class GlobalContext {
         if(this.traits.hasOwnProperty(name)) {
             let t = this.traits[name]
             if(t.fileContext) {
-                let fr = this.results.find(fr => fr.filename == t.fileContext.filename)
+                let fr = this.results.find(
+                    fr => fr.filename == t.fileContext.filename
+                )
                 if(fr && fr.depth > load_depth) {
                     fr.depth = load_depth
                 }

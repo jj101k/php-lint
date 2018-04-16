@@ -93,20 +93,37 @@ class PartialClassContext {
                 )
             }
             // TODO inheritance
-        } else if(wrong_case = Object.keys(this.instanceIdentifiers).find(n => n.toLowerCase() == name.toLowerCase())) {
-            console.log(`Wrong case for identifier, ${name} should be ${wrong_case}`)
+        } else if(
+            wrong_case = Object.keys(this.instanceIdentifiers).find(
+                n => n.toLowerCase() == name.toLowerCase()
+            )
+        ) {
+            console.log(
+                `Wrong case for identifier, ${name} should be ${wrong_case}`
+            )
             this.instanceIdentifiers[name] = this.instanceIdentifiers[wrong_case]
             return this.findInstanceIdentifier(wrong_case, from_class_context)
         } else if(this.superclass) {
-            let superclass_types = this.superclass.findInstanceIdentifier(name, from_class_context)
+            let superclass_types = this.superclass.findInstanceIdentifier(
+                name,
+                from_class_context
+            )
             if(superclass_types) {
                 return superclass_types
             }
         }
         if(parser_state.has(ParserStateOption.InCall) && name != "__call") {
-            return this.findInstanceIdentifier("__call", from_class_context, new Set([ParserStateOption.InCall]))
+            return this.findInstanceIdentifier(
+                "__call",
+                from_class_context,
+                new Set([ParserStateOption.InCall])
+            )
         } else if(!parser_state.has(ParserStateOption.InCall) && name != "__get") {
-            if(this.findInstanceIdentifier("__get", from_class_context, new Set([ParserStateOption.InCall]))) {
+            if(this.findInstanceIdentifier(
+                "__get",
+                from_class_context,
+                new Set([ParserStateOption.InCall])
+            )) {
                 return PHPType.Core.types.mixed
             }
         }
@@ -132,7 +149,10 @@ class PartialClassContext {
             this.staticIdentifiers[name] = this.staticIdentifiers[wrong_case]
             return this.findStaticIdentifier(wrong_case, from_class_context)
         } else if(this.superclass) {
-            let superclass_types = this.superclass.findStaticIdentifier(name, from_class_context)
+            let superclass_types = this.superclass.findStaticIdentifier(
+                name,
+                from_class_context
+            )
             if(superclass_types) {
                 return superclass_types
             }
@@ -142,7 +162,8 @@ class PartialClassContext {
     }
 
     /**
-     * Returns all local instance identifier names accessible with the supplied scope.
+     * Returns all local instance identifier names accessible with the supplied
+     * scope.
      *
      * @param {string} scope
      * @return {string[]}
@@ -229,7 +250,8 @@ class InterfaceContext extends ClassContext {
      * @returns {?PHPType.Union}
      */
     findInstanceIdentifier(name, from_class_context) {
-        return super.findInstanceIdentifier(name, from_class_context) || PHPType.Core.types.mixed
+        return super.findInstanceIdentifier(name, from_class_context) ||
+            PHPType.Core.types.mixed
     }
 
     /**
@@ -239,7 +261,8 @@ class InterfaceContext extends ClassContext {
      * @returns {?PHPType.Union}
      */
     findStaticIdentifier(name, from_class_context) {
-        return super.findStaticIdentifier(name, from_class_context) || PHPType.Core.types.mixed
+        return super.findStaticIdentifier(name, from_class_context) ||
+            PHPType.Core.types.mixed
     }
 }
 
@@ -277,7 +300,8 @@ class TraitContext extends PartialClassContext {
      * @returns {?PHPType.Union}
      */
     findInstanceIdentifier(name, from_class_context) {
-        return super.findInstanceIdentifier(name, from_class_context) || PHPType.Core.types.mixed
+        return super.findInstanceIdentifier(name, from_class_context) ||
+            PHPType.Core.types.mixed
     }
 
     /**
@@ -287,7 +311,8 @@ class TraitContext extends PartialClassContext {
      * @returns {?PHPType.Union}
      */
     findStaticIdentifier(name, from_class_context) {
-        return super.findStaticIdentifier(name, from_class_context) || PHPType.Core.types.mixed
+        return super.findStaticIdentifier(name, from_class_context) ||
+            PHPType.Core.types.mixed
     }
 }
 

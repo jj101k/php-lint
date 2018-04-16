@@ -52,16 +52,28 @@ export default class StaticLookup extends Lookup {
                     context.findName("$this")
                 ) {
                     // TODO this doesn't distinguish between methods and constants
-                    types = class_context.findInstanceIdentifier(this.offset.name, context.classContext)
+                    types = class_context.findInstanceIdentifier(
+                        this.offset.name,
+                        context.classContext
+                    )
                     if(!(types && types !== PHPType.Core.types.mixed)) {
-                        types = class_context.findStaticIdentifier(this.offset.name, context.classContext)
+                        types = class_context.findStaticIdentifier(
+                            this.offset.name,
+                            context.classContext
+                        )
                     }
                 } else {
-                    types = class_context.findStaticIdentifier(this.offset.name, context.classContext)
+                    types = class_context.findStaticIdentifier(
+                        this.offset.name,
+                        context.classContext
+                    )
                 }
                 if(types && types !== PHPType.Core.types.mixed) {
                     return new ContextTypes(types)
-                } else if(this.what instanceof ConstRef && this.what.name == "static") {
+                } else if(
+                    this.what instanceof ConstRef &&
+                    this.what.name == "static"
+                ) {
                     if(WARN_UNDECLARED_STATIC) {
                         PHPStrictError.warn(
                             `Undeclared static property static::${this.offset.name}`,

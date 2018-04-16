@@ -27,7 +27,8 @@ export default class ConstRef extends Expression {
             if(constant_type) {
                 return new ContextTypes(constant_type)
             }
-            let constant_type_munged = context.findName(this.name.name.toUpperCase())
+            let constant_type_munged =
+                context.findName(this.name.name.toUpperCase())
             if(constant_type_munged) {
                 return new ContextTypes(constant_type_munged)
             }

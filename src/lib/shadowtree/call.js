@@ -34,7 +34,11 @@ export default class Call extends Statement {
         let pbr_positions
         /** @type {{[x: number]: PHPType.Union}} */
         let callback_positions
-        let callable_types = this.what.check(context, new Set([ParserStateOption.InCall]), null).expressionType
+        let callable_types = this.what.check(
+            context,
+            new Set([ParserStateOption.InCall]),
+            null
+        ).expressionType
         let callable_type = callable_types.types[0]
         if(
             this.what instanceof StaticLookup &&
@@ -44,7 +48,8 @@ export default class Call extends Statement {
             context.resolveNodeName(this.what.what) == "\\Closure"
         ) {
             pbr_positions = {}
-            let effective_this_type = this.arguments[1].check(context, new Set(), null).expressionType
+            let effective_this_type =
+                this.arguments[1].check(context, new Set(), null).expressionType
             if(effective_this_type === PHPType.Core.types.null) {
                 let arg_2 = this.arguments[2]
                 if(
@@ -53,9 +58,15 @@ export default class Call extends Statement {
                     arg_2.offset.name == "class" &&
                     arg_2.what instanceof Identifier
                 ) {
-                    effective_this_type = PHPType.Core.named(context.resolveNodeName(arg_2.what))
+                    effective_this_type = PHPType.Core.named(
+                        context.resolveNodeName(arg_2.what)
+                    )
                 } else {
-                    effective_this_type = arg_2.check(context, new Set(), null).expressionType
+                    effective_this_type = arg_2.check(
+                        context,
+                        new Set(),
+                        null
+                    ).expressionType
                 }
             }
             callback_positions = {
@@ -71,13 +82,15 @@ export default class Call extends Statement {
         this.arguments.forEach((arg, i) => {
             if(pbr_positions[i]) {
                 let inner_context = context.childContext(true)
-                inner_context.assigningType = context.findName(arg.name) || PHPType.Core.types.mixed
+                inner_context.assigningType =
+                    context.findName(arg.name) || PHPType.Core.types.mixed
                 arg.check(inner_context, new Set(), null)
             } else if(callback_positions[i]) {
                 let inner_context = context.childContext(false)
                 inner_context.importNamespaceFrom(context)
                 inner_context.setName("$this", callback_positions[i])
-                inner_context.classContext = context.findClass(callback_positions[i].types[0].typeName)
+                inner_context.classContext =
+                    context.findClass(callback_positions[i].types[0].typeName)
                 arg.check(inner_context, new Set(), null)
             } else {
                 arg.check(context, new Set(), null)
@@ -96,7 +109,9 @@ export default class Call extends Statement {
                 this.arguments[0].left.value == "__DIR__" &&
                 this.arguments[0].right instanceof _String
             ) {
-                context.chdir(context.fileContext.directory + this.arguments[0].right.value)
+                context.chdir(
+                    context.fileContext.directory + this.arguments[0].right.value
+                )
             }
         }
         let types = PHPType.Union.empty

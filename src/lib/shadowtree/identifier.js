@@ -21,6 +21,8 @@ export default class Identifier extends _Node {
      */
     check(context, parser_state = new Set(), doc = null) {
         super.check(context, parser_state, doc)
-        return new ContextTypes(context.findName(this.name) || PHPType.Core.types.mixed)
+        return new ContextTypes(
+            context.findName(this.name) || PHPType.Core.types.mixed
+        )
     }
 }

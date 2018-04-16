@@ -35,7 +35,10 @@ export default class Parameter extends Declaration {
     check(context, parser_state = new Set(), doc = null) {
         let type
         if(this.type) {
-            let type_name = context.resolveName(this.type.name, this.type.resolution)
+            let type_name = context.resolveName(
+                this.type.name,
+                this.type.resolution
+            )
             type = PHPType.Core.named(type_name)
         } else {
             type = PHPType.Core.types.mixed

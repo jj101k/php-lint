@@ -18,7 +18,11 @@ export default class OffsetLookup extends Lookup {
         super.check(context, parser_state, doc)
         let inner_context = context.childContext(true)
         inner_context.assigningType = null
-        let type_union = this.what.check(inner_context, new Set(), null).expressionType
+        let type_union = this.what.check(
+            inner_context,
+            new Set(),
+            null
+        ).expressionType
         if(this.offset instanceof Variable) {
             return new ContextTypes(PHPType.Core.types.mixed)
         } else {

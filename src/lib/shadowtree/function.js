@@ -88,7 +88,11 @@ export default class _Function extends Declaration {
         let pass_by_reference_positions = {}
         this.arguments.forEach(
             (node, index) => {
-                arg_types.push(node.check(inner_context, parser_state, null).expressionType)
+                arg_types.push(node.check(
+                    inner_context,
+                    parser_state,
+                    null
+                ).expressionType)
                 if(node.byref) {
                     pass_by_reference_positions[index] = true
                 }
@@ -100,14 +104,22 @@ export default class _Function extends Declaration {
 
         let signature_type
         if(this.type) {
-            signature_type = PHPType.Core.named(context.resolveName(this.type.name, this.type.resolution))
+            signature_type = PHPType.Core.named(
+                context.resolveName(this.type.name, this.type.resolution)
+            )
             if(this.nullable) {
-                signature_type = signature_type.addTypesFrom(PHPType.Core.types.null)
+                signature_type = signature_type.addTypesFrom(
+                    PHPType.Core.types.null
+                )
             }
         }
         let return_type
         if(this.body) {
-            return_type = this.body.check(inner_context, new Set(), null).returnType
+            return_type = this.body.check(
+                inner_context,
+                new Set(),
+                null
+            ).returnType
             if(signature_type && !return_type.compliesWith(signature_type)) {
                 this.throw(new PHPError.ReturnTypeMismatch(
                     `Practical return type ${return_type} does not match signature ${signature_type}`
@@ -137,7 +149,8 @@ export default class _Function extends Declaration {
         if(context.classContext && context.classContext.name == "\\Slim\\App") {
             switch(this.name) {
                 case "group":
-                    function_type.callbackPositions[1] = PHPType.Core.named("\\Slim\\App")
+                    function_type.callbackPositions[1] =
+                        PHPType.Core.named("\\Slim\\App")
                     break
                 default:
             }

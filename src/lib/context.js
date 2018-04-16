@@ -17,16 +17,25 @@ const IgnoreInvalidParent = true
 /**
  * @type {string[]} From ./php-bin/php-constants > data/php-constants.json
  */
-const PHPConstants = JSON.parse(fs.readFileSync(__dirname + "/../../data/php-constants.json", "utf8"))
+const PHPConstants = JSON.parse(fs.readFileSync(
+    __dirname + "/../../data/php-constants.json",
+    "utf8"
+))
 
 /**
  * @type {{[x: string]: {pbr: boolean[]}}}
  *
  * From: ./php-bin/php-functions > data/php-functions.json
  */
-const PHPFunctions = JSON.parse(fs.readFileSync(__dirname + "/../../data/php-functions.json", "utf8"))
+const PHPFunctions = JSON.parse(fs.readFileSync(
+    __dirname + "/../../data/php-functions.json",
+    "utf8"
+))
 
-/** @type {{[x: string]: string}} From `print json_encode(array_map("gettype", get_defined_vars()), JSON_PRETTY_PRINT);` */
+/**
+ * @type {{[x: string]: string}} From `print json_encode(array_map("gettype",
+ * get_defined_vars()), JSON_PRETTY_PRINT);`
+ */
 const PHPSuperglobals = {
     "_ENV": "array",
     "_GET": "array",
@@ -61,7 +70,8 @@ export default class Context {
         if(!this._superGlobals) {
             this._superGlobals = {}
             Object.keys(PHPSuperglobals).forEach(
-                name => this._superGlobals["$" + name] = PHPType.Core.named(PHPSuperglobals[name])
+                name => this._superGlobals["$" + name] =
+                    PHPType.Core.named(PHPSuperglobals[name])
             )
             Object.keys(PHPFunctions).forEach(
                 name => this._superGlobals[name] = new PHPType.Function(
@@ -86,7 +96,13 @@ export default class Context {
      * @param {?{[x: string]: PHPType.Union}} [ns]
      * @param {number} [depth]
      */
-    constructor(file_context, global_context, class_context = null, ns = null, depth = 0) {
+    constructor(
+        file_context,
+        global_context,
+        class_context = null,
+        ns = null,
+        depth = 0
+    ) {
         this.classContext = class_context
         this.depth = depth
         this.globalContext = global_context || new GlobalContext()
@@ -131,7 +147,8 @@ export default class Context {
         this._fileContext = v
         if(v && !this.directory) {
             let file_directory = v.directory
-            let composer_path = this.globalContext.findComposerConfig(file_directory)
+            let composer_path =
+                this.globalContext.findComposerConfig(file_directory)
             if(composer_path) {
                 this.directory = path.dirname(composer_path)
             } else {
@@ -210,7 +227,11 @@ export default class Context {
     findClass(name) {
         if(name == "self") {
             return this.classContext
-        } else if(name != "mixed" && name != "object" && PHPType.Core.types[name]) {
+        } else if(
+            name != "mixed" &&
+            name != "object" &&
+            PHPType.Core.types[name]
+        ) {
             console.log(`Attempt to access core type ${name} as class`)
             return null
         } else {
@@ -280,7 +301,11 @@ export default class Context {
             case "fqn":
                 return name
             case "uqn":
-                if(name == "self" && this.classContext && !(this.classContext instanceof TraitContext)) {
+                if(
+                    name == "self" &&
+                    this.classContext &&
+                    !(this.classContext instanceof TraitContext)
+                ) {
                     return this.classContext.name
                 } else if(PHPType.Core.types[name.replace(/\W.*$/, "")]) {
                     return name
@@ -323,7 +348,9 @@ export default class Context {
         } else if(typeof node.name == "string") {
             return this.resolveName(node.name)
         } else {
-            throw new Error(`Unable to resolve node name for node ${JSON.stringify(node)}`)
+            throw new Error(
+                `Unable to resolve node name for node ${JSON.stringify(node)}`
+            )
         }
     }
 

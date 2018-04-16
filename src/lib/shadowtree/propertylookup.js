@@ -21,7 +21,11 @@ export default class PropertyLookup extends Lookup {
         super.check(context, parser_state, doc)
         let inner_context = context.childContext(true)
         inner_context.assigningType = null
-        let type_union = this.what.check(inner_context, new Set(), null).expressionType
+        let type_union = this.what.check(
+            inner_context,
+            new Set(),
+            null
+        ).expressionType
         let offset
         if(this.offset instanceof ConstRef) {
             offset = this.offset.name
@@ -41,7 +45,11 @@ export default class PropertyLookup extends Lookup {
             ).forEach(t => {
                 let class_context = context.findClass("" + t)
                 if(class_context) {
-                    let identifier_types = class_context.findInstanceIdentifier(offset, context.classContext, parser_state)
+                    let identifier_types = class_context.findInstanceIdentifier(
+                        offset,
+                        context.classContext,
+                        parser_state
+                    )
                     if(identifier_types) {
                         identifier_types.types.forEach(
                             itype => {
