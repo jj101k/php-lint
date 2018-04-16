@@ -33,7 +33,7 @@ export default class _Union {
     get isMixed() {
         return(
             this.types.some(
-                t => t.toString() == "mixed"
+                t => t.typeSignature == "mixed"
             )
         )
     }
