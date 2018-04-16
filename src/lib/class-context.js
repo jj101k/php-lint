@@ -430,4 +430,9 @@ class UnknownTraitContext extends TraitContext {
     }
 }
 
-export {AnonymousFunctionContext, ClassContext, InterfaceContext, TraitContext, UnknownClassContext, UnknownTraitContext}
+export {AnonymousFunctionContext as AnonymousFunction}
+export {ClassContext as Class}
+export {InterfaceContext as Interface}
+export {TraitContext as Trait}
+export {UnknownClassContext as UnknownClass}
+export {UnknownTraitContext as UnknownTrait}

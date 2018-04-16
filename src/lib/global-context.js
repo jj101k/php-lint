@@ -1,7 +1,7 @@
 const fs = require("fs")
 const path = require("path")
 
-import {AnonymousFunctionContext, ClassContext, InterfaceContext, TraitContext, UnknownClassContext, UnknownTraitContext} from "./class-context"
+import * as ClassContext from "./class-context"
 import {FileContext} from "./file-context"
 import * as PHPError from "./php-error"
 import PHPLint from "./php-lint"
@@ -150,13 +150,13 @@ export class GlobalContext {
      * Builds the context
      */
     constructor() {
-        /** @type {{[x: string]: ClassContext}} */
+        /** @type {{[x: string]: ClassContext.Class}} */
         this.classes = {}
         /** @type {{[x: string]: boolean}} */
         this.filesSeen = {}
         /** @type {FileResult[]} */
         this.results = []
-        /** @type {{[x: string]: TraitContext}} */
+        /** @type {{[x: string]: ClassContext.Trait}} */
         this.traits = {}
 
         /** @type {?string} */
@@ -186,18 +186,18 @@ export class GlobalContext {
     /**
      * Adds a known class
      * @param {string} name Fully qualified only
-     * @param {?ClassContext} [superclass]
+     * @param {?ClassContext.Class} [superclass]
      * @param {?FileContext} [file_context]
-     * @returns {ClassContext}
+     * @returns {ClassContext.Class}
      */
     addClass(name, superclass = null, file_context = null) {
         if(
             this.classes[name] &&
-            !(this.classes[name] instanceof UnknownClassContext)
+            !(this.classes[name] instanceof ClassContext.UnknownClass)
         ) {
             return this.classes[name]
         } else {
-            return this.classes[name] = new ClassContext(
+            return this.classes[name] = new ClassContext.Class(
                 name,
                 superclass,
                 file_context
@@ -228,13 +228,13 @@ export class GlobalContext {
      * Adds an unknown class. For when the real name isn't known and you have to
      * use a placeholder. You can get the name from the return value.
      * @param {?string} [name]
-     * @returns {UnknownClassContext}
+     * @returns {ClassContext.UnknownClass}
      */
     addUnknownClass(name = null) {
         if(!name) {
             name = "Unknown" + Math.random()
         }
-        return this.classes[name] = new UnknownClassContext(name)
+        return this.classes[name] = new ClassContext.UnknownClass(name)
     }
 
     /**
@@ -242,31 +242,31 @@ export class GlobalContext {
      * use a placeholder. You can get the name from the return value.
      *
      * @param {?string} [name]
-     * @returns {UnknownTraitContext}
+     * @returns {ClassContext.UnknownTrait}
      */
     addUnknownTrait(name = null) {
         if(!name) {
             name = "Unknown" + Math.random()
         }
-        return this.traits[name] = new UnknownTraitContext(name)
+        return this.traits[name] = new ClassContext.UnknownTrait(name)
     }
 
     /**
      * Adds a known trait
      * @param {string} name Fully qualified only
-     * @param {?TraitContext} superclass
+     * @param {?ClassContext.Trait} superclass
      * @param {?FileContext} file_context
      * @param {Trait} trait_node
-     * @returns {TraitContext}
+     * @returns {ClassContext.Trait}
      */
     addTrait(name, superclass, file_context, trait_node) {
         if(
             this.traits[name] &&
-            !(this.traits[name] instanceof UnknownTraitContext)
+            !(this.traits[name] instanceof ClassContext.UnknownTrait)
         ) {
             return this.traits[name]
         } else {
-            return this.traits[name] = new TraitContext(
+            return this.traits[name] = new ClassContext.Trait(
                 name,
                 superclass,
                 file_context,
@@ -278,18 +278,18 @@ export class GlobalContext {
     /**
      * Adds a known interface
      * @param {string} name Fully qualified only
-     * @param {?ClassContext} [superclass]
+     * @param {?ClassContext.Class} [superclass]
      * @param {?FileContext} [file_context]
-     * @returns {ClassContext}
+     * @returns {ClassContext.Class}
      */
     addInterface(name, superclass = null, file_context = null) {
         if(
             this.classes[name] &&
-            !(this.classes[name] instanceof UnknownClassContext)
+            !(this.classes[name] instanceof ClassContext.UnknownClass)
         ) {
             return this.classes[name]
         } else {
-            return this.classes[name] = new InterfaceContext(
+            return this.classes[name] = new ClassContext.Interface(
                 name,
                 superclass,
                 file_context
@@ -333,11 +333,11 @@ export class GlobalContext {
      * @param {string} name Fully qualified only
      * @param {FileContext} file_context
      * @param {number} [depth] The current load depth
-     * @returns {?ClassContext}
+     * @returns {?ClassContext.Class}
      */
     findClass(name, file_context, depth = 0) {
         if(name.match(/ -> /)) {
-            return AnonymousFunctionContext.inst
+            return ClassContext.AnonymousFunction.inst
         }
         let load_depth = depth + 1
         let filename = file_context.filename
@@ -353,7 +353,7 @@ export class GlobalContext {
             }
             return this.classes[name]
         } else if(load_depth > MAX_DEPTH) {
-            return new UnknownClassContext(name)
+            return new ClassContext.UnknownClass(name)
         } else {
             this.addUnknownClass(name)
             // Autoload go!
@@ -391,7 +391,7 @@ export class GlobalContext {
      * @param {string} name Fully qualified only
      * @param {FileContext} file_context
      * @param {number} [depth] The current load depth
-     * @returns {?TraitContext}
+     * @returns {?ClassContext.Trait}
      */
     findTrait(name, file_context, depth = 0) {
         let load_depth = depth + 1

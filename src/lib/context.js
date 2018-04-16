@@ -1,7 +1,7 @@
 import * as PHPType from "./php-type"
 import {Identifier, Class, ConstRef} from "./shadowtree"
 import * as PHPError from "./php-error"
-import {ClassContext, TraitContext} from "./class-context"
+import * as ClassContext from "./class-context"
 import {FileContext} from "./file-context"
 import {GlobalContext} from "./global-context"
 
@@ -92,7 +92,7 @@ export default class Context {
      * Builds the object
      * @param {FileContext} file_context
      * @param {?GlobalContext} global_context
-     * @param {?ClassContext} [class_context]
+     * @param {?ClassContext.Class} [class_context]
      * @param {?{[x: string]: PHPType.Union}} [ns]
      * @param {number} [depth]
      */
@@ -222,7 +222,7 @@ export default class Context {
     /**
      * Finds the class context with the given name
      * @param {string} name Fully qualified only
-     * @returns {?ClassContext}
+     * @returns {?ClassContext.Class}
      */
     findClass(name) {
         if(name == "self") {
@@ -255,7 +255,7 @@ export default class Context {
      * Finds the trait context with the given name
      *
      * @param {string} name Fully qualified only
-     * @returns {?TraitContext}
+     * @returns {?ClassContext.Trait}
      */
     findTrait(name) {
         return this.globalContext.findTrait(name, this.fileContext, this.depth)
@@ -304,7 +304,7 @@ export default class Context {
                 if(
                     name == "self" &&
                     this.classContext &&
-                    !(this.classContext instanceof TraitContext)
+                    !(this.classContext instanceof ClassContext.Trait)
                 ) {
                     return this.classContext.name
                 } else if(PHPType.Core.types[name.replace(/\W.*$/, "")]) {
@@ -371,7 +371,7 @@ export default class Context {
      * @returns {PHPType.Union}
      */
     setThis() {
-        if(this.classContext && !(this.classContext instanceof TraitContext)) {
+        if(this.classContext && !(this.classContext instanceof ClassContext.Trait)) {
             this.ns["$this"] = PHPType.Core.named(this.classContext.name)
         } else {
             this.ns["$this"] = PHPType.Core.types.self
