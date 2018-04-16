@@ -22,7 +22,7 @@ export default class Variable extends Expression {
         super.check(context, parser_state, doc)
         if(context.assigningType) {
             if(DEBUG) {
-                console.log(`$${this.name} = ${context.assigningType} (${context.assigningType.typeSignature})`)
+                console.log(`$${this.name} = ${context.assigningType} (${context.assigningType})`)
             }
             return new ContextTypes(context.setName(
                 '$' + this.name,
@@ -31,7 +31,7 @@ export default class Variable extends Expression {
         } else {
             let types = this.assertHasName(context, '$' + this.name)
             if(DEBUG) {
-                console.log(`$${this.name} == ${types} (${types.typeSignature})`)
+                console.log(`$${this.name} == ${types} (${types})`)
             }
             return new ContextTypes(types)
         }

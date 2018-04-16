@@ -37,7 +37,7 @@ export default class _Any {
     combineWith(other_type) {
         if(this.typeSignature != other_type.typeSignature) {
             throw new Error(
-                `Cannot combine different types ${this.typeSignature} and ${other_type.typeSignature}`
+                `Cannot combine different types ${this} and ${other_type}`
             )
         }
         return this

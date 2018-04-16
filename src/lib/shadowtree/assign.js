@@ -38,7 +38,7 @@ export default class Assign extends Statement {
             !PHPType.Core.types[left_context.assigningType.typeSignature]
         ) {
             this.throw(new PHPError.SingleCharacterVariable(
-                `Use of 1-character name $${this.left.name} of non-trivial type ${left_context.assigningType.typeSignature}`
+                `Use of 1-character name $${this.left.name} of non-trivial type ${left_context.assigningType}`
             ), context)
         }
         if(left_context.assigningType.isEmpty) {
