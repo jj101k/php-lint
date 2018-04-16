@@ -33,7 +33,13 @@ export default class _AssociativeArray extends _Any {
      */
     compliesWith(expected_type) {
         if(expected_type instanceof _AssociativeArray) {
-            return this.memberType.compliesWith(expected_type.memberType)
+            if(!expected_type.memberType) {
+                return true
+            } else if(!this.memberType) {
+                return false
+            } else {
+                return this.memberType.compliesWith(expected_type.memberType)
+            }
         } else {
             return super.compliesWith(expected_type)
         }
