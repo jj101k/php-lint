@@ -76,12 +76,12 @@ export default class Context {
             Object.keys(PHPFunctions).forEach(
                 name => this._superGlobals[name] = new PHPType.Function(
                     PHPFunctions[name].pbr.map(arg => PHPType.Core.types.mixed),
-                    PHPFunctionReturnType[name] || PHPType.Core.types.mixed,
+                    PHPFunctionReturnType[name] || new PHPType.Mixed(null, name).union,
                     PHPFunctions[name].pbr
                 ).union
             )
             PHPConstants.forEach(
-                name => this._superGlobals[name] = PHPType.Core.types.mixed
+                name => this._superGlobals[name] = new PHPType.Mixed(null, name).union
             )
             Object.freeze(this._superGlobals)
         }

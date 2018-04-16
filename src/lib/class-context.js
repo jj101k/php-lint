@@ -124,7 +124,7 @@ class PartialClassContext {
                 from_class_context,
                 new Set([ParserStateOption.InCall])
             )) {
-                return PHPType.Core.types.mixed
+                return new PHPType.Mixed(this.name, "__get").union
             }
         }
         return null

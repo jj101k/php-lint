@@ -1,5 +1,6 @@
 import _Any from "./any"
 import _AssociativeArray from "./associative-array"
+import _Mixed from "./mixed"
 import _Simple from "./simple"
 import _Union from "./union"
 /**
@@ -48,7 +49,7 @@ export default class _Core {
     static get types() {
         if(!this._coreTypes) {
             let known_types = ["string", "int", "float", "bool", "callable"]
-            let pseudo_types = ["null", "mixed", "self", "object", "void"]
+            let pseudo_types = ["null", "self", "object", "void"]
             let types = {}
             known_types.forEach(
                 type_name => types[type_name] = new _Simple(type_name).union
@@ -56,6 +57,7 @@ export default class _Core {
             pseudo_types.forEach(
                 type_name => types[type_name] = new _Simple(type_name).union
             )
+            types.mixed = new _Mixed().union
             types.array = new _AssociativeArray(types.mixed).union
             Object.defineProperty(types, "boolean", {
                 get() {
