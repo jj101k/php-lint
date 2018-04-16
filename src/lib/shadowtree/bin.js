@@ -54,7 +54,7 @@ export default class Bin extends Operation {
             case "+":
                 // Numeric (2)
                 left_types.types.forEach(type => {
-                    switch("" + type) {
+                    switch(type.typeSignature) {
                         case "null":
                             // Yes null casts to number.
                         case "int":

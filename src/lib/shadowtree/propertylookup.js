@@ -43,7 +43,7 @@ export default class PropertyLookup extends Lookup {
             type_union.types.filter(
                 t => t !== PHPType.Core.types.null.types[0]
             ).forEach(t => {
-                let class_context = context.findClass("" + t)
+                let class_context = context.findClass(t.typeSignature)
                 if(class_context) {
                     let identifier_types = class_context.findInstanceIdentifier(
                         offset,
@@ -55,8 +55,8 @@ export default class PropertyLookup extends Lookup {
                             itype => {
                                 if(
                                     itype instanceof PHPType.Function &&
-                                    "" + itype.returnType == "self" &&
-                                    "" + type_union != "self"
+                                    itype.returnType.typeSignature == "self" &&
+                                    type_union.typeSignature != "self"
                                 ) {
                                     let resolved_type = new PHPType.Function(
                                         itype.argTypes,
