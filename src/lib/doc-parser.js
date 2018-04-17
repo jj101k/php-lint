@@ -47,7 +47,7 @@ class DocNode {
             case "see":
             case "throws":
                 if(resolver_by_type && resolver_by_type[this.kind]) {
-                    resolver_by_type[this.kind]()
+                    resolver_by_type[this.kind](this)
                 }
                 break
             default:
@@ -207,7 +207,7 @@ class DocTypeNode extends DocNode {
      */
     resolve(resolver_by_type = null) {
         if(resolver_by_type && resolver_by_type[this.kind]) {
-            resolver_by_type[this.kind]()
+            resolver_by_type[this.kind](this)
         } else {
             console.log(
                 `Skipping unrecognised PHPDoc tag @${this.kind}`
