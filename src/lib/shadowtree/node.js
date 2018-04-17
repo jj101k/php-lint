@@ -221,6 +221,8 @@ export default class _Node extends AbstractNode {
             } else if(m instanceof PHPType.Function) {
                 m.argTypes.forEach(atype => types = types.concat(atype.types))
                 types = types.concat(m.returnType.types)
+            } else if(m instanceof PHPType.Mixed) {
+                // Do nothing
             } else {
                 throw new Error(m.toString())
             }
