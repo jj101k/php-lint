@@ -77,36 +77,45 @@ export default class Class extends Declaration {
             context.fileContext
         )
         inner_context.setThis()
+
+        /** @type {?Doc} */
+        let last_doc = null
         this.body.forEach(
             b => {
-                if(b instanceof Method) {
-                    inner_context.classContext.addIdentifier(
+                let doc = last_doc
+                if(b instanceof Doc) {
+                    last_doc = b
+                } else if(b instanceof Method) {
+                    inner_context.classContext.addTemporaryIdentifier(
                         b.name,
                         b.visibility,
                         b.isStatic,
-                        PHPType.Function.mixed.union
+                        () => b.check(inner_context, new Set(), doc).expressionType
                     )
                 } else if(b instanceof Property) {
-                    inner_context.classContext.addIdentifier(
+                    inner_context.classContext.addTemporaryIdentifier(
                         b.name,
                         b.visibility,
                         b.isStatic,
-                        PHPType.Core.types.mixed
+                        () => b.check(inner_context, new Set(), doc).expressionType
                     )
                 } else if(b instanceof ClassConstant) {
-                    inner_context.classContext.addIdentifier(
+                    inner_context.classContext.addTemporaryIdentifier(
                         b.name,
                         "public",
                         true,
-                        PHPType.Core.types.mixed
+                        () => b.check(inner_context, new Set(), doc).expressionType
                     )
                 } else if(b instanceof TraitUse) {
                     // Do nothing - loaded shortly
+                } else {
+                    b.check(inner_context, new Set(), last_doc)
+                    last_doc = null
                 }
             }
         )
-        /** @type {?Doc} */
-        let last_doc = null
+
+        last_doc = null
         this.body.forEach(
             b => {
                 if(b instanceof Doc) {

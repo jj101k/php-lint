@@ -32,6 +32,10 @@ class PartialClassContext {
          */
         this.instanceIdentifiers = {}
         this.superclass = superclass
+        /**
+         * @type {{[x: string]: {compile: () => PHPType.Union, compileStarted: boolean, isStatic: boolean, scope: string}}}
+         */
+        this.temporaryIdentifiers = {}
     }
 
     /**
@@ -67,6 +71,26 @@ class PartialClassContext {
             }
         }
     }
+
+    /**
+     * A lot like addIdentifier, except that this tries to add a replacer to be
+     * invoked immediately on access.
+     *
+     * @param {string} name
+     * @param {string} scope "public", "private" or "protected"
+     * @param {boolean} is_static
+     * @param {() => PHPType.Union} compile
+     */
+    addTemporaryIdentifier(name, scope, is_static, compile) {
+        let canonical_name = is_static ? name : name.replace(/^[$]/, "")
+        this.temporaryIdentifiers[canonical_name] = {
+            compile: compile,
+            compileStarted: false,
+            isStatic: is_static,
+            scope: scope,
+        }
+    }
+
     /**
      * Finds the named identifier
      * @param {string} name
@@ -94,12 +118,42 @@ class PartialClassContext {
             }
             // TODO inheritance
         } else if(
+            this.temporaryIdentifiers[name] &&
+            !this.temporaryIdentifiers[name].isStatic
+        ) {
+            let ti = this.temporaryIdentifiers[name]
+            if(ti.compileStarted) {
+                return PHPType.Core.types.mixed
+            } else {
+                ti.compileStarted = true
+                this.instanceIdentifiers[name] = {
+                    scope: ti.scope,
+                    types: ti.compile()
+                }
+                delete this.temporaryIdentifiers[name]
+                return this.instanceIdentifiers[name].types
+            }
+        } else if(
+            wrong_case = Object.keys(this.temporaryIdentifiers).find(
+                n => n.toLowerCase() == name.toLowerCase() && !this.temporaryIdentifiers[n].isStatic
+            )
+        ) {
+            console.log(
+                `Wrong case for instance identifier, ${name} should be ${wrong_case}`
+            )
+            let type = this.findInstanceIdentifier(wrong_case, from_class_context)
+            if(this.instanceIdentifiers[wrong_case]) {
+                this.instanceIdentifiers[name] =
+                    this.instanceIdentifiers[wrong_case]
+            }
+            return type
+        } else if(
             wrong_case = Object.keys(this.instanceIdentifiers).find(
                 n => n.toLowerCase() == name.toLowerCase()
             )
         ) {
             console.log(
-                `Wrong case for identifier, ${name} should be ${wrong_case}`
+                `Wrong case for instance identifier, ${name} should be ${wrong_case}`
             )
             this.instanceIdentifiers[name] = this.instanceIdentifiers[wrong_case]
             return this.findInstanceIdentifier(wrong_case, from_class_context)
@@ -144,8 +198,38 @@ class PartialClassContext {
             if(from_class_context === this || m.scope == "public") {
                 return m.types
             }
+        } else if(
+            this.temporaryIdentifiers[name] &&
+            this.temporaryIdentifiers[name].isStatic
+        ) {
+            let ti = this.temporaryIdentifiers[name]
+            if(ti.compileStarted) {
+                return PHPType.Core.types.mixed
+            } else {
+                ti.compileStarted = true
+                this.staticIdentifiers[name] = {
+                    scope: ti.scope,
+                    types: ti.compile()
+                }
+                delete this.temporaryIdentifiers[name]
+                return this.staticIdentifiers[name].types
+            }
+        } else if(
+            wrong_case = Object.keys(this.temporaryIdentifiers).find(
+                n => n.toLowerCase() == name.toLowerCase() && this.temporaryIdentifiers[n].isStatic
+            )
+        ) {
+            console.log(
+                `Wrong case for static identifier, ${name} should be ${wrong_case}`
+            )
+            let type = this.findStaticIdentifier(wrong_case, from_class_context)
+            if(this.staticIdentifiers[wrong_case]) {
+                this.staticIdentifiers[name] =
+                    this.staticIdentifiers[wrong_case]
+            }
+            return type
         } else if(wrong_case = Object.keys(this.staticIdentifiers).find(n => n.toLowerCase() == name.toLowerCase())) {
-            console.log(`Wrong case for identifier, ${name} should be ${wrong_case}`)
+            console.log(`Wrong case for static identifier, ${name} should be ${wrong_case}`)
             this.staticIdentifiers[name] = this.staticIdentifiers[wrong_case]
             return this.findStaticIdentifier(wrong_case, from_class_context)
         } else if(this.superclass) {
