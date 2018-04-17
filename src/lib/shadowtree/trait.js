@@ -46,18 +46,6 @@ export default class Trait extends Declaration {
      * @returns {void}
      */
     checkInner(context, parser_state = new Set(), doc = null) {
-        this.body.forEach(
-            b => {
-                if(b instanceof Method) {
-                    context.classContext.addIdentifier(
-                        b.name,
-                        b.visibility,
-                        b.isStatic,
-                        PHPType.Function.mixed.union
-                    )
-                }
-            }
-        )
         /** @type {?Doc} */
         let last_doc = null
         this.body.forEach(
@@ -65,7 +53,28 @@ export default class Trait extends Declaration {
                 if(b instanceof Doc) {
                     last_doc = b
                 } else {
-                    b.check(context, new Set(), last_doc)
+                    let doc = last_doc
+                    last_doc = null
+                    if(b instanceof Method) {
+                        context.classContext.addTemporaryIdentifier(
+                            b.name,
+                            b.visibility,
+                            b.isStatic,
+                            () => b.check(context, new Set(), doc)
+                        )
+                    }
+                }
+            }
+        )
+        last_doc = null
+        this.body.forEach(
+            b => {
+                if(b instanceof Doc) {
+                    last_doc = b
+                } else {
+                    if(!(b instanceof Method)) {
+                        b.check(context, new Set(), last_doc)
+                    }
                     last_doc = null
                 }
             }
