@@ -34,10 +34,11 @@ export default class Foreach extends Statement {
         super.check(context, parser_state, doc)
         this.source.check(context, new Set(), null)
         let assign_context = context.childContext(true)
-        assign_context.assigningType = PHPType.Core.types.mixed
         if(this.key) {
+            assign_context.assigningType = PHPType.Core.types.string
             this.key.check(assign_context, new Set(), null)
         }
+        assign_context.assigningType = PHPType.Core.types.mixed
         this.value.check(assign_context, new Set(), null)
         this.body.check(context, new Set(), null)
         return ContextTypes.empty
