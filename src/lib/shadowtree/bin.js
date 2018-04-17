@@ -68,7 +68,7 @@ export default class Bin extends Operation {
                             types = types.addTypesFrom(PHPType.Core.types.mixed)
                             break
                         default:
-                            console.log(`Possibly bad cast from type ${type}`)
+                            console.log(`Possibly bad cast from type ${type} for +`)
                             types = types.addTypesFrom(PHPType.Core.types.float)
                     }
                 })
