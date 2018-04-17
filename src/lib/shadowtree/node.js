@@ -224,7 +224,7 @@ export default class _Node extends AbstractNode {
             } else if(m instanceof PHPType.Mixed) {
                 // Do nothing
             } else {
-                throw new Error(m.toString())
+                throw new Error(`Don't know how to resolve doc names in type ${m}`)
             }
         }
     }
