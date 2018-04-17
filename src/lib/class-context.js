@@ -33,7 +33,7 @@ class PartialClassContext {
         this.instanceIdentifiers = {}
         this.superclass = superclass
         /**
-         * @type {{[x: string]: {compile: () => PHPType.Union, compileStarted: boolean, isStatic: boolean, scope: string}}}
+         * @type {{[x: string]: {compile: () => void, compileStarted: boolean, isStatic: boolean, scope: string}}}
          */
         this.temporaryIdentifiers = {}
     }
@@ -79,7 +79,7 @@ class PartialClassContext {
      * @param {string} name
      * @param {string} scope "public", "private" or "protected"
      * @param {boolean} is_static
-     * @param {() => PHPType.Union} compile
+     * @param {() => void} compile
      */
     addTemporaryIdentifier(name, scope, is_static, compile) {
         let canonical_name = is_static ? name : name.replace(/^[$]/, "")
@@ -126,10 +126,7 @@ class PartialClassContext {
                 return PHPType.Core.types.mixed
             } else {
                 ti.compileStarted = true
-                this.instanceIdentifiers[name] = {
-                    scope: ti.scope,
-                    types: ti.compile()
-                }
+                ti.compile()
                 delete this.temporaryIdentifiers[name]
                 return this.instanceIdentifiers[name].types
             }
@@ -207,10 +204,7 @@ class PartialClassContext {
                 return PHPType.Core.types.mixed
             } else {
                 ti.compileStarted = true
-                this.staticIdentifiers[name] = {
-                    scope: ti.scope,
-                    types: ti.compile()
-                }
+                ti.compile()
                 delete this.temporaryIdentifiers[name]
                 return this.staticIdentifiers[name].types
             }
