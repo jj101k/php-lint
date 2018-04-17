@@ -213,15 +213,28 @@ export default class Context {
 
     /**
      * Returns a new context which inherits from this one.
-     * @param {boolean} keep_ns If this is true, the same namespace will be linked.
+     *
+     * @param {boolean} keep_ns If this is true, the same namespace will be
+     * linked. Otherwise it will copy non-variables into the new namespace.
      * @returns {Context}
      */
     childContext(keep_ns = false) {
+        let ns
+        if(keep_ns) {
+            ns = this.ns
+        } else {
+            ns = {}
+            Object.keys(this.ns).filter(
+                name => name.match(/^\w/)
+            ).forEach(name => {
+                ns[name] = this.ns[name]
+            })
+        }
         return new Context(
             this.fileContext,
             this.globalContext,
             this.classContext,
-            keep_ns ? this.ns : null,
+            ns,
             this.depth
         )
     }
