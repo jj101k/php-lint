@@ -59,7 +59,7 @@ export default class _Function extends Declaration {
                                 doc
                             )
                             structure_arg_types.push(param_type)
-                            structure_arg_names.push(c.name)
+                            structure_arg_names.push(c.what.name)
                         },
                         return: c => {
                             let return_type = c.typeStructure
