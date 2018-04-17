@@ -250,8 +250,7 @@ class InterfaceContext extends ClassContext {
      * @returns {?PHPType.Union}
      */
     findInstanceIdentifier(name, from_class_context) {
-        return super.findInstanceIdentifier(name, from_class_context) ||
-            PHPType.Core.types.mixed
+        return super.findInstanceIdentifier(name, from_class_context)
     }
 
     /**
@@ -261,8 +260,7 @@ class InterfaceContext extends ClassContext {
      * @returns {?PHPType.Union}
      */
     findStaticIdentifier(name, from_class_context) {
-        return super.findStaticIdentifier(name, from_class_context) ||
-            PHPType.Core.types.mixed
+        return super.findStaticIdentifier(name, from_class_context)
     }
 }
 
@@ -300,8 +298,7 @@ class TraitContext extends PartialClassContext {
      * @returns {?PHPType.Union}
      */
     findInstanceIdentifier(name, from_class_context) {
-        return super.findInstanceIdentifier(name, from_class_context) ||
-            PHPType.Core.types.mixed
+        return super.findInstanceIdentifier(name, from_class_context)
     }
 
     /**
@@ -311,8 +308,7 @@ class TraitContext extends PartialClassContext {
      * @returns {?PHPType.Union}
      */
     findStaticIdentifier(name, from_class_context) {
-        return super.findStaticIdentifier(name, from_class_context) ||
-            PHPType.Core.types.mixed
+        return super.findStaticIdentifier(name, from_class_context)
     }
 }
 
