@@ -370,7 +370,13 @@ class UnknownClassContext extends ClassContext {
      * @returns {?PHPType.Union}
      */
     findInstanceIdentifier(name, from_class_context) {
-        return PHPType.Core.types.mixed
+        if(!this.instanceIdentifiers[name]) {
+            this.instanceIdentifiers[name] = {
+                scope: "public",
+                types: PHPType.Core.types.mixed,
+            }
+        }
+        return super.findInstanceIdentifier(name, from_class_context)
     }
 
     /**
@@ -380,7 +386,13 @@ class UnknownClassContext extends ClassContext {
      * @returns {?PHPType.Union}
      */
     findStaticIdentifier(name, from_class_context) {
-        return PHPType.Core.types.mixed
+        if(!this.staticIdentifiers[name]) {
+            this.staticIdentifiers[name] = {
+                scope: "public",
+                types: PHPType.Core.types.mixed,
+            }
+        }
+        return super.findStaticIdentifier(name, from_class_context)
     }
 }
 
@@ -412,7 +424,13 @@ class UnknownTraitContext extends TraitContext {
      * @returns {?PHPType.Union}
      */
     findInstanceIdentifier(name, from_class_context) {
-        return PHPType.Core.types.mixed
+        if(!this.instanceIdentifiers[name]) {
+            this.instanceIdentifiers[name] = {
+                scope: "public",
+                types: PHPType.Core.types.mixed,
+            }
+        }
+        return super.findInstanceIdentifier(name, from_class_context)
     }
 
     /**
@@ -422,7 +440,13 @@ class UnknownTraitContext extends TraitContext {
      * @returns {?PHPType.Union}
      */
     findStaticIdentifier(name, from_class_context) {
-        return PHPType.Core.types.mixed
+        if(!this.staticIdentifiers[name]) {
+            this.staticIdentifiers[name] = {
+                scope: "public",
+                types: PHPType.Core.types.mixed,
+            }
+        }
+        return super.findStaticIdentifier(name, from_class_context)
     }
 }
 
