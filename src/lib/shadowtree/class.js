@@ -121,11 +121,21 @@ export default class Class extends Declaration {
                 if(b instanceof Doc) {
                     last_doc = b
                 } else {
-                    b.check(inner_context, new Set(), last_doc)
+                    if(b instanceof TraitUse) {
+                        b.check(inner_context, new Set(), last_doc)
+                    }
                     last_doc = null
                 }
             }
         )
+        Object.keys(inner_context.classContext.temporaryIdentifiers).forEach(name => {
+            let ti = inner_context.classContext.temporaryIdentifiers[name]
+            if(ti && !ti.compileStarted) {
+                ti.compileStarted = true
+                ti.compile()
+                delete inner_context.classContext.temporaryIdentifiers[name]
+            }
+        })
         return ContextTypes.empty
     }
 }
