@@ -32,13 +32,23 @@ export default class Foreach extends Statement {
      */
     check(context, parser_state = new Set(), doc = null) {
         super.check(context, parser_state, doc)
-        this.source.check(context, new Set(), null)
+        let source_type = this.source.check(context, new Set(), null).expressionType
         let assign_context = context.childContext(true)
         if(this.key) {
             assign_context.assigningType = PHPType.Core.types.string
             this.key.check(assign_context, new Set(), null)
         }
-        assign_context.assigningType = PHPType.Core.types.mixed
+        let inner_types = PHPType.Union.empty
+        source_type.types.forEach(t => {
+            if(t instanceof PHPType.AssociativeArray) {
+                inner_types = inner_types.addTypesFrom(t.memberType)
+            } else if(t instanceof PHPType.IndexedArray) {
+                inner_types = inner_types.addTypesFrom(t.memberType)
+            } else {
+                inner_types = inner_types.addType(new PHPType.Mixed())
+            }
+        })
+        assign_context.assigningType = inner_types
         this.value.check(assign_context, new Set(), null)
         this.body.check(context, new Set(), null)
         return ContextTypes.empty
