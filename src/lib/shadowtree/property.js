@@ -81,7 +81,7 @@ export default class Property extends Declaration {
             this.name,
             this.visibility,
             this.isStatic,
-            practical_type || doc_type || PHPType.Core.types.mixed
+            doc_type || practical_type ||PHPType.Core.types.mixed
         )
         return ContextTypes.empty
     }
