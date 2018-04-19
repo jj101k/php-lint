@@ -48,7 +48,11 @@ export default class Property extends Declaration {
                                 this.resolveAllDocNames(doc_type, context, doc)
                             },
                             "var": c => {
-                                console.log("@var used instead of @property")
+                                this.throw(
+                                    new PHPError.BadDoc(`@var used instead of @property`),
+                                    context,
+                                    doc.loc
+                                )
                                 doc_type = c.typeStructure
                                 this.resolveAllDocNames(doc_type, context, doc)
                             },
