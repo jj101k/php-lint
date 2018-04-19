@@ -294,8 +294,7 @@ export class GlobalContext {
             return this.classes[name] = new ClassContext.Interface(
                 name,
                 superclass,
-                file_context,
-                null
+                file_context
             )
         }
     }

@@ -371,6 +371,17 @@ class ClassContext extends PartialClassContext {
  */
 class InterfaceContext extends ClassContext {
     /**
+     * Builds the object
+     * @param {string} name Fully qualified only
+     * @param {?ClassContext} superclass
+     * @param {FileContext} file_context
+     */
+    constructor(name, superclass, file_context) {
+        super(name, superclass, file_context, null)
+        this.superclass = superclass // Not cold copy
+    }
+
+    /**
      * Finds the named identifier
      * @param {string} name
      * @param {?ClassContext} from_class_context
