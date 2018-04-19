@@ -77,7 +77,19 @@ export default class Class extends Declaration {
             context.fileContext
         )
         inner_context.setThis()
+        this.checkInner(inner_context, parser_state, doc)
+        return ContextTypes.empty
+    }
 
+    /**
+     * Checks that the syntax of the inner parts seem ok
+     *
+     * @param {Context} context
+     * @param {Set<ParserStateOption.Base>} [parser_state]
+     * @param {?Doc} [doc]
+     * @returns {void}
+     */
+    checkInner(context, parser_state = new Set(), doc = null) {
         /** @type {?Doc} */
         let last_doc = null
         this.body.forEach(
@@ -86,30 +98,30 @@ export default class Class extends Declaration {
                 if(b instanceof Doc) {
                     last_doc = b
                 } else if(b instanceof Method) {
-                    inner_context.classContext.addTemporaryIdentifier(
+                    context.classContext.addTemporaryIdentifier(
                         b.name,
                         b.visibility,
                         b.isStatic,
-                        () => b.check(inner_context, new Set(), doc).expressionType
+                        () => b.check(context, new Set(), doc).expressionType
                     )
                 } else if(b instanceof Property) {
-                    inner_context.classContext.addTemporaryIdentifier(
+                    context.classContext.addTemporaryIdentifier(
                         b.name,
                         b.visibility,
                         b.isStatic,
-                        () => b.check(inner_context, new Set(), doc).expressionType
+                        () => b.check(context, new Set(), doc).expressionType
                     )
                 } else if(b instanceof ClassConstant) {
-                    inner_context.classContext.addTemporaryIdentifier(
+                    context.classContext.addTemporaryIdentifier(
                         b.name,
                         "public",
                         true,
-                        () => b.check(inner_context, new Set(), doc).expressionType
+                        () => b.check(context, new Set(), doc).expressionType
                     )
                 } else if(b instanceof TraitUse) {
                     // Do nothing - loaded shortly
                 } else {
-                    b.check(inner_context, new Set(), last_doc)
+                    b.check(context, new Set(), last_doc)
                     last_doc = null
                 }
             }
@@ -122,20 +134,19 @@ export default class Class extends Declaration {
                     last_doc = b
                 } else {
                     if(b instanceof TraitUse) {
-                        b.check(inner_context, new Set(), last_doc)
+                        b.check(context, new Set(), last_doc)
                     }
                     last_doc = null
                 }
             }
         )
-        Object.keys(inner_context.classContext.temporaryIdentifiers).forEach(name => {
-            let ti = inner_context.classContext.temporaryIdentifiers[name]
+        Object.keys(context.classContext.temporaryIdentifiers).forEach(name => {
+            let ti = context.classContext.temporaryIdentifiers[name]
             if(ti && !ti.compileStarted) {
                 ti.compileStarted = true
                 ti.compile()
-                delete inner_context.classContext.temporaryIdentifiers[name]
+                delete context.classContext.temporaryIdentifiers[name]
             }
         })
-        return ContextTypes.empty
     }
 }
