@@ -404,7 +404,7 @@ class AnonymousFunctionContext extends ClassContext {
      * Builds the object
      */
     constructor() {
-        super("() -> ()") // Just something that looks functiony.
+        super("() -> ()", null, null, null) // Just something that looks functiony.
     }
 
     /**
@@ -438,7 +438,7 @@ class UnknownClassContext extends ClassContext {
      * @param {string} name Fully qualified only
      */
     constructor(name, superclass = null) {
-        super(name)
+        super(name, superclass, null, null)
     }
 
     /**
