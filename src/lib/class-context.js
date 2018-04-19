@@ -2,7 +2,7 @@ import * as PHPType from "./php-type"
 import * as PHPError from "./php-error"
 import {FileContext} from "./file-context"
 import * as ParserStateOption from "./parser-state-option"
-import {Trait} from "./shadowtree"
+import * as ShadowTree from "./shadowtree"
 import Context from "./context"
 
 /**
@@ -351,7 +351,7 @@ class TraitContext extends PartialClassContext {
      * @param {string} name Fully qualified only
      * @param {?TraitContext} superclass
      * @param {FileContext} file_context
-     * @param {Trait} trait_node
+     * @param {ShadowTree.Trait} trait_node
      */
     constructor(name, superclass, file_context, trait_node) {
         super(name, superclass, file_context)
