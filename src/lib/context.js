@@ -390,13 +390,15 @@ export default class Context {
 
     /**
      * Sets $this in the scope.
+     *
+     * @param {?PHPType.Union} [type]
      * @returns {PHPType.Union}
      */
-    setThis() {
+    setThis(type = null) {
         if(this.classContext && !(this.classContext instanceof ClassContext.Trait)) {
-            this.ns["$this"] = PHPType.Core.named(this.classContext.name)
+            this.ns["$this"] = type || PHPType.Core.named(this.classContext.name)
         } else {
-            this.ns["$this"] = PHPType.Core.types.self
+            this.ns["$this"] = type || PHPType.Core.types.self
         }
         return this.ns["$this"]
     }

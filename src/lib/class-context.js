@@ -34,6 +34,7 @@ class PartialClassContext {
          * @type {{[x: string]: {compile: () => void, compileStarted: boolean, isStatic: boolean, scope: string}}}
          */
         this.temporaryIdentifiers = {}
+        this.warmingFor = null
     }
 
     /**
@@ -41,7 +42,7 @@ class PartialClassContext {
      */
     get accessibleInstanceIdentifiers() {
         if(this.parentEntity) {
-            return this.parentEntity.instanceIdentifiersWithScope("protected").concat(
+            return this.parentEntity.warm(this.warmingFor || this).instanceIdentifiersWithScope("protected").concat(
                 this.instanceIdentifiersWithScope("private")
             )
         } else {
@@ -174,7 +175,7 @@ class PartialClassContext {
             this.instanceIdentifiers[name] = this.instanceIdentifiers[wrong_case]
             return this.findInstanceIdentifier(wrong_case, from_class_context)
         } else if(this.parentEntity) {
-            let superclass_types = this.parentEntity.findInstanceIdentifier(
+            let superclass_types = this.parentEntity.warm(this.warmingFor || this).findInstanceIdentifier(
                 name,
                 from_class_context
             )
@@ -246,7 +247,7 @@ class PartialClassContext {
             this.staticIdentifiers[name] = this.staticIdentifiers[wrong_case]
             return this.findStaticIdentifier(wrong_case, from_class_context)
         } else if(this.parentEntity) {
-            let superclass_types = this.parentEntity.findStaticIdentifier(
+            let superclass_types = this.parentEntity.warm(this.warmingFor || this).findStaticIdentifier(
                 name,
                 from_class_context
             )
@@ -328,6 +329,13 @@ class PartialClassContext {
             return null
         }
     }
+    /**
+     * @param {ClassContext} from_class
+     * @return {this}
+     */
+    warm(from_class) {
+        return this
+    }
 }
 
 /**
@@ -339,12 +347,13 @@ class ClassContext extends PartialClassContext {
      * @param {string} name Fully qualified only
      * @param {?ClassContext} superclass
      * @param {FileContext} file_context
-     * @param {?ShadowTree.Class} class_node
+     * @param {?{context: Context, node: ShadowTree.Class}} warm_info
      */
-    constructor(name, superclass, file_context, class_node) {
+    constructor(name, superclass, file_context, warm_info) {
         super(name, file_context)
         this.superclass = superclass
-        this.classNode = class_node
+        this.warmInfo = warm_info
+        this.isCold = true
     }
 
     get parentEntity() {
@@ -362,7 +371,22 @@ class ClassContext extends PartialClassContext {
      * @returns {PartialClassContext}
      */
     coldCopy() {
-        return new ClassContext(this.name, this.superclass, this.fileContext, this.classNode)
+        return new ClassContext(this.name, this.superclass, this.fileContext, this.warmInfo)
+    }
+
+    /**
+     * @param {ClassContext} from_class
+     * @return {this}
+     */
+    warm(from_class) {
+        if(this.isCold && this.warmInfo) {
+            this.isCold = false
+            this.warmingFor = from_class
+            this.warmInfo.context.setThis(PHPType.Core.named(from_class.name))
+            this.warmInfo.node.checkInner(this.warmInfo.context, new Set(), null)
+            this.warmingFor = null
+        }
+        return this
     }
 }
 
@@ -379,6 +403,7 @@ class InterfaceContext extends ClassContext {
     constructor(name, superclass, file_context) {
         super(name, superclass, file_context, null)
         this.superclass = superclass // Not cold copy
+        this.isCold = false
     }
 
     /**
@@ -417,6 +442,7 @@ class TraitContext extends PartialClassContext {
         super(name, file_context)
         this.superclass = superclass
         this.traitNode = trait_node
+        this.isCold = true
     }
 
     get parentEntity() {

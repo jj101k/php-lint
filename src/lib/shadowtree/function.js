@@ -99,7 +99,7 @@ export default class _Function extends Declaration {
             }
         )
         if(context.findName("$this")) {
-            inner_context.setThis()
+            inner_context.setThis(context.ns["$this"])
         }
 
         let signature_type

@@ -7,6 +7,7 @@ import * as PHPError from "./php-error"
 import PHPLint from "./php-lint"
 import PHPAutoloader from "./php-autoloader"
 import * as ShadowTree from "./shadowtree"
+import Context from "./context"
 
 /**
  * @type {boolean} If true, autoload failure may throw. This can help with
@@ -188,10 +189,10 @@ export class GlobalContext {
      * @param {string} name Fully qualified only
      * @param {?ClassContext.Class} [superclass]
      * @param {?FileContext} [file_context]
-     * @param {?ShadowTree.Class} [node]
+     * @param {?{context: Context, node: ShadowTree.Class}} [warm_info]
      * @returns {ClassContext.Class}
      */
-    addClass(name, superclass = null, file_context = null, node = null) {
+    addClass(name, superclass = null, file_context = null, warm_info = null) {
         if(
             this.classes[name] &&
             !(this.classes[name] instanceof ClassContext.UnknownClass)
@@ -202,7 +203,7 @@ export class GlobalContext {
                 name,
                 superclass,
                 file_context,
-                node
+                warm_info
             )
         }
     }
