@@ -97,6 +97,20 @@ class PartialClassContext {
     }
 
     /**
+     * Returns a copy of this class with nothing but the top-level metadata (as
+     * it was when originally loaded).
+     *
+     * This means everything needs to be reevaluated.
+     *
+     * As a fallback this may return the original object.
+     *
+     * @returns {PartialClassContext}
+     */
+    coldCopy() {
+        return this
+    }
+
+    /**
      * Finds the named identifier
      * @param {string} name
      * @param {?ClassContext} from_class_context
@@ -324,14 +338,30 @@ class ClassContext extends PartialClassContext {
      * @param {string} name Fully qualified only
      * @param {?ClassContext} superclass
      * @param {FileContext} file_context
+     * @param {ShadowTree.Class} class_node
      */
-    constructor(name, superclass, file_context) {
+    constructor(name, superclass, file_context, class_node) {
         super(name, file_context)
         this.superclass = superclass
+        this.classNode = class_node
     }
 
     get parentEntity() {
         return this.superclass
+    }
+
+    /**
+     * Returns a copy of this class with nothing but the top-level metadata (as
+     * it was when originally loaded).
+     *
+     * This means everything needs to be reevaluated.
+     *
+     * As a fallback this may return the original object.
+     *
+     * @returns {PartialClassContext}
+     */
+    coldCopy() {
+        return new ClassContext(this.name, this.superclass, this.fileContext, this.classNode)
     }
 }
 
