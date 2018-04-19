@@ -12,10 +12,9 @@ class PartialClassContext {
     /**
      * Builds the object
      * @param {string} name Fully qualified only
-     * @param {?ClassContext} [superclass]
      * @param {?FileContext} [file_context]
      */
-    constructor(name, superclass = null, file_context = null) {
+    constructor(name, file_context = null) {
         this.name = name
         this.fileContext = file_context
         /**
@@ -31,7 +30,6 @@ class PartialClassContext {
          * @type {{[x: string]: {scope: string, types: PHPType.Union}}}
          */
         this.instanceIdentifiers = {}
-        this.superclass = superclass
         /**
          * @type {{[x: string]: {compile: () => void, compileStarted: boolean, isStatic: boolean, scope: string}}}
          */
@@ -42,13 +40,20 @@ class PartialClassContext {
      * @type {string[]}
      */
     get accessibleInstanceIdentifiers() {
-        if(this.superclass) {
-            return this.superclass.instanceIdentifiersWithScope("protected").concat(
+        if(this.parentEntity) {
+            return this.parentEntity.instanceIdentifiersWithScope("protected").concat(
                 this.instanceIdentifiersWithScope("private")
             )
         } else {
             return this.instanceIdentifiersWithScope("private")
         }
+    }
+
+    /**
+     * @type {PartialClassContext}
+     */
+    get parentEntity() {
+        throw new Error("Not implemented")
     }
 
     /**
@@ -154,8 +159,8 @@ class PartialClassContext {
             )
             this.instanceIdentifiers[name] = this.instanceIdentifiers[wrong_case]
             return this.findInstanceIdentifier(wrong_case, from_class_context)
-        } else if(this.superclass) {
-            let superclass_types = this.superclass.findInstanceIdentifier(
+        } else if(this.parentEntity) {
+            let superclass_types = this.parentEntity.findInstanceIdentifier(
                 name,
                 from_class_context
             )
@@ -226,8 +231,8 @@ class PartialClassContext {
             console.log(`Wrong case for static identifier, ${name} should be ${wrong_case}`)
             this.staticIdentifiers[name] = this.staticIdentifiers[wrong_case]
             return this.findStaticIdentifier(wrong_case, from_class_context)
-        } else if(this.superclass) {
-            let superclass_types = this.superclass.findStaticIdentifier(
+        } else if(this.parentEntity) {
+            let superclass_types = this.parentEntity.findStaticIdentifier(
                 name,
                 from_class_context
             )
@@ -275,10 +280,10 @@ class PartialClassContext {
      * @returns {boolean}
      */
     isSubclassOf(other_class) {
-        if(this.superclass) {
+        if(this.parentEntity) {
             return(
-                this.superclass === other_class ||
-                this.superclass.isSubclassOf(other_class)
+                this.parentEntity === other_class ||
+                this.parentEntity.isSubclassOf(other_class)
             )
         } else {
             return false
@@ -295,8 +300,8 @@ class PartialClassContext {
      */
     resolveName(name) {
         if(name == "parent") {
-            if(this.superclass) {
-                return this.superclass.name
+            if(this.parentEntity) {
+                return this.parentEntity.name
             } else {
                 throw new PHPError.NoSuperclassParent()
             }
@@ -314,7 +319,20 @@ class PartialClassContext {
  * Covers class behaviour
  */
 class ClassContext extends PartialClassContext {
+    /**
+     * Builds the object
+     * @param {string} name Fully qualified only
+     * @param {?ClassContext} superclass
+     * @param {FileContext} file_context
+     */
+    constructor(name, superclass, file_context) {
+        super(name, file_context)
+        this.superclass = superclass
+    }
 
+    get parentEntity() {
+        return this.superclass
+    }
 }
 
 /**
@@ -354,8 +372,13 @@ class TraitContext extends PartialClassContext {
      * @param {ShadowTree.Trait} trait_node
      */
     constructor(name, superclass, file_context, trait_node) {
-        super(name, superclass, file_context)
+        super(name, file_context)
+        this.superclass = superclass
         this.traitNode = trait_node
+    }
+
+    get parentEntity() {
+        return this.superclass
     }
 
     /**
