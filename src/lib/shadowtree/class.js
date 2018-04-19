@@ -74,7 +74,8 @@ export default class Class extends Declaration {
         inner_context.classContext = inner_context.globalContext.addClass(
             context.resolveNodeName(this),
             extended_class,
-            context.fileContext
+            context.fileContext,
+            this
         )
         inner_context.setThis()
         this.checkInner(inner_context, parser_state, doc)

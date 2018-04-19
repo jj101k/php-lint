@@ -339,7 +339,7 @@ class ClassContext extends PartialClassContext {
      * @param {string} name Fully qualified only
      * @param {?ClassContext} superclass
      * @param {FileContext} file_context
-     * @param {ShadowTree.Class} class_node
+     * @param {?ShadowTree.Class} class_node
      */
     constructor(name, superclass, file_context, class_node) {
         super(name, file_context)
