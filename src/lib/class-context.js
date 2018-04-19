@@ -290,7 +290,8 @@ class PartialClassContext {
 
     /**
      * Returns true if this is a subclass of that class.
-     * @param {ClassContext} other_class
+     *
+     * @param {PartialClassContext} other_class
      * @returns {boolean}
      */
     isSubclassOf(other_class) {
