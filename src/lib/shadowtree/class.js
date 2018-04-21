@@ -21,10 +21,10 @@ export default class Class extends Declaration {
         return this.cacheNode("extends")
     }
     /**
-     * @type {Identifier[]}
+     * @type {?Identifier[]}
      */
     get implements() {
-        return this.cacheNode("implements")
+        return this.cacheNodeArray("implements")
     }
     /**
      * @type {boolean}
@@ -75,7 +75,8 @@ export default class Class extends Declaration {
             context.resolveNodeName(this),
             extended_class,
             context.fileContext,
-            {node: this, context: inner_context}
+            {node: this, context: inner_context},
+            (this.implements||[]).map(i => context.resolveName(i.name))
         )
         inner_context.setThis()
         this.checkInner(inner_context, parser_state, doc)

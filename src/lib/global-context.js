@@ -190,9 +190,16 @@ export class GlobalContext {
      * @param {?ClassContext.Class} [superclass]
      * @param {?FileContext} [file_context]
      * @param {?{context: Context, node: ShadowTree.Class}} [warm_info]
+     * @param {string[]} [interface_names]
      * @returns {ClassContext.Class}
      */
-    addClass(name, superclass = null, file_context = null, warm_info = null) {
+    addClass(
+        name,
+        superclass = null,
+        file_context = null,
+        warm_info = null,
+        interface_names = []
+    ) {
         if(
             this.classes[name] &&
             !(this.classes[name] instanceof ClassContext.UnknownClass)
@@ -203,7 +210,8 @@ export class GlobalContext {
                 name,
                 superclass,
                 file_context,
-                warm_info
+                warm_info,
+                interface_names
             )
         }
     }

@@ -255,6 +255,7 @@ export default class Context {
             while(c.superclass) {
                 c = c.superclass
                 types.push(c.name)
+                types = types.concat(c.interfaceNames)
             }
             return types
         } else {

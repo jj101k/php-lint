@@ -348,12 +348,14 @@ class ClassContext extends PartialClassContext {
      * @param {?ClassContext} superclass
      * @param {FileContext} file_context
      * @param {?{context: Context, node: ShadowTree.Class}} warm_info
+     * @param {string[]} interface_names
      */
-    constructor(name, superclass, file_context, warm_info) {
+    constructor(name, superclass, file_context, warm_info, interface_names) {
         super(name, file_context)
         this.superclass = superclass
         this.warmInfo = warm_info
         this.isCold = true
+        this.interfaceNames = interface_names
     }
 
     get parentEntity() {
@@ -371,7 +373,13 @@ class ClassContext extends PartialClassContext {
      * @returns {PartialClassContext}
      */
     coldCopy() {
-        return new ClassContext(this.name, this.superclass, this.fileContext, this.warmInfo)
+        return new ClassContext(
+            this.name,
+            this.superclass,
+            this.fileContext,
+            this.warmInfo,
+            this.interfaceNames
+        )
     }
 
     /**
@@ -401,7 +409,7 @@ class InterfaceContext extends ClassContext {
      * @param {FileContext} file_context
      */
     constructor(name, superclass, file_context) {
-        super(name, superclass, file_context, null)
+        super(name, superclass, file_context, null, [])
         this.superclass = superclass // Not cold copy
         this.isCold = false
     }
@@ -495,7 +503,7 @@ class AnonymousFunctionContext extends ClassContext {
      * Builds the object
      */
     constructor() {
-        super("() -> ()", null, null, null) // Just something that looks functiony.
+        super("() -> ()", null, null, null, []) // Just something that looks functiony.
     }
 
     /**
@@ -529,7 +537,7 @@ class UnknownClassContext extends ClassContext {
      * @param {string} name Fully qualified only
      */
     constructor(name, superclass = null) {
-        super(name, superclass, null, null)
+        super(name, superclass, null, null, [])
     }
 
     /**
