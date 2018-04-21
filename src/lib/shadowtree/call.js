@@ -89,8 +89,12 @@ export default class Call extends Statement {
                 let inner_context = context.childContext(false)
                 inner_context.importNamespaceFrom(context)
                 inner_context.setName("$this", callback_positions[i])
-                inner_context.classContext =
-                    context.findClass(callback_positions[i].types[0].typeName)
+                try {
+                    inner_context.classContext =
+                        context.findClass(callback_positions[i].types[0].typeName)
+                } catch(e) {
+                    this.handleException(e, context)
+                }
                 arg.check(inner_context, new Set(), null)
             } else {
                 arg.check(context, new Set(), null)

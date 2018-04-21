@@ -23,13 +23,17 @@ export default class Interface extends Declaration {
     check(context, parser_state = new Set(), doc = null) {
         super.check(context, parser_state, doc)
         let inner_context = context.childContext()
-        inner_context.classContext = inner_context.globalContext.addInterface(
-            context.resolveNodeName(this),
-            this.extends ?
-                context.findClass(context.resolveNodeName(this.extends)) :
-                null,
-            context.fileContext
-        )
+        try {
+            inner_context.classContext = inner_context.globalContext.addInterface(
+                context.resolveNodeName(this),
+                this.extends ?
+                    context.findClass(context.resolveNodeName(this.extends)) :
+                    null,
+                context.fileContext
+            )
+        } catch(e) {
+            this.handleException(e, context)
+        }
         this.body.forEach(
             b => {
                 if(b instanceof Method) {

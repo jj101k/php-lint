@@ -33,7 +33,12 @@ export default class ConstRef extends Expression {
                 return new ContextTypes(constant_type_munged)
             }
         }
-        let classContext = context.findClass(context.resolveNodeName(this))
+        let classContext
+        try {
+            classContext = context.findClass(context.resolveNodeName(this))
+        } catch(e) {
+            this.handleException(e, context)
+        }
         if(classContext) {
             return new ContextTypes(PHPType.Core.named(classContext.name))
         } else {

@@ -43,7 +43,12 @@ export default class PropertyLookup extends Lookup {
             type_union.types.filter(
                 t => t !== PHPType.Core.types.null.types[0]
             ).forEach(t => {
-                let class_context = context.findClass(t.typeSignature)
+                let class_context
+                try {
+                    class_context = context.findClass(t.typeSignature)
+                } catch(e) {
+                    this.handleException(e, context)
+                }
                 if(class_context) {
                     let identifier_types = class_context.findInstanceIdentifier(
                         offset,
