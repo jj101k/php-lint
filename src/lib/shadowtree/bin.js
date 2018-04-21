@@ -2,6 +2,7 @@ import Operation from "./operation"
 import Expression from "./expression"
 import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
 import * as PHPType from "../php-type"
+import * as PHPError from "../php-error"
 export default class Bin extends Operation {
     /** @type {string} */
     get type() {
@@ -68,7 +69,11 @@ export default class Bin extends Operation {
                             types = types.addTypesFrom(PHPType.Core.types.mixed)
                             break
                         default:
-                            console.log(`Possibly bad cast from type ${type} for +`)
+                            this.throw(
+                                new PHPError.BadTypeCast(`Possibly bad cast from type ${type} for +`),
+                                context,
+                                this.loc
+                            )
                             types = types.addTypesFrom(PHPType.Core.types.float)
                     }
                 })
