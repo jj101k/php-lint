@@ -248,18 +248,22 @@ export default class Context {
      * @returns {string[]}
      */
     compliantNames(name) {
-        let c = this.findClass(name)
-        if(c) {
-            /** @type {string[]} */
-            let types = []
-            while(c.superclass) {
-                c = c.superclass
-                types.push(c.name)
-                types = types.concat(c.interfaceNames)
-            }
-            return types
-        } else {
+        if(PHPType.Core.types[name]) {
             return []
+        } else {
+            let c = this.findClass(name)
+            if(c) {
+                /** @type {string[]} */
+                let types = []
+                while(c.superclass) {
+                    c = c.superclass
+                    types.push(c.name)
+                    types = types.concat(c.interfaceNames)
+                }
+                return types
+            } else {
+                return []
+            }
         }
     }
 
