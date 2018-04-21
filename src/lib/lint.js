@@ -22,6 +22,9 @@ class Lint {
         }
         return this._single
     }
+    static set single(v) {
+        this._single = v
+    }
 
     /**
      * Builds the object

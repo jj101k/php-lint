@@ -159,9 +159,11 @@ class PHPLint {
 
     /**
      * Resets the global state, eg. if you're checking multiple different projects
+     * @return {PHPLint}
      */
     static resetGlobalState() {
-        Lint.single.globalContext = new GlobalContext()
+        Lint.single = null
+        return this
     }
 }
 
