@@ -280,8 +280,7 @@ export default class Context {
             name != "object" &&
             PHPType.Core.types[name]
         ) {
-            console.log(`Attempt to access core type ${name} as class`)
-            return null
+            throw new PHPError.NotClass(`Attempt to access core type ${name} as class`)
         } else {
             return this.globalContext.findClass(name, this.fileContext, this.depth)
         }
