@@ -20,7 +20,7 @@ class PHPLint {
      * @see GlobalContext.depthCounts
      */
     static get depthCounts() {
-        return Lint.globalContext.depthCounts
+        return Lint.single.globalContext.depthCounts
     }
     static get parser() {
         return parser
@@ -29,7 +29,7 @@ class PHPLint {
      * @type {number}
      */
     static get processed() {
-        return Lint.globalContext.results.length
+        return Lint.single.globalContext.results.length
     }
     /**
      * Checks the file
@@ -52,7 +52,7 @@ class PHPLint {
                 } else {
                     try {
                         var tree = parser.parseCode(data, filename)
-                        resolve(Lint.check(
+                        resolve(Lint.single.check(
                             tree,
                             filename,
                             true,
@@ -89,7 +89,7 @@ class PHPLint {
         //
         var data = fs.readFileSync(filename, "utf8")
         var tree = parser.parseCode(data, filename)
-        return Lint.check(
+        return Lint.single.check(
             tree,
             filename,
             throw_on_error,
@@ -110,7 +110,7 @@ class PHPLint {
         return new Promise((resolve, reject) => {
             try {
                 var tree = parser.parseCode(code)
-                resolve(Lint.check(
+                resolve(Lint.single.check(
                     tree,
                     null,
                     true,
@@ -134,7 +134,7 @@ class PHPLint {
      */
     static checkSourceCodeSync(code, throw_on_error = true, depth = 0) {
         var tree = parser.parseCode(code);
-        return Lint.check(
+        return Lint.single.check(
             tree,
             null,
             throw_on_error,
@@ -147,21 +147,21 @@ class PHPLint {
      * @type {{[x: string]: (boolean|{[y: string]: boolean})}} The error classes to ignore
      */
     static get ignoreErrorMap() {
-        return Lint.ignoreErrorMap
+        return Lint.single.ignoreErrorMap
     }
 
     static get silenceVendor() {
-        return Lint.silenceVendor
+        return Lint.single.silenceVendor
     }
     static set silenceVendor(v) {
-        Lint.silenceVendor = v
+        Lint.single.silenceVendor = v
     }
 
     /**
      * Resets the global state, eg. if you're checking multiple different projects
      */
     static resetGlobalState() {
-        Lint.globalContext = new GlobalContext()
+        Lint.single.globalContext = new GlobalContext()
     }
 }
 

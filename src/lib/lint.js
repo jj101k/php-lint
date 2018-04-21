@@ -14,34 +14,13 @@ const UseANSIHighlight = false
 
 class Lint {
     /**
-     * @type {GlobalContext}
+     * @type {LintSingle}
      */
-    static get globalContext() {
-        if(!this._globalContext) {
-            this._globalContext = new GlobalContext()
+    static get single() {
+        if(!this._single) {
+            this._single = new LintSingle()
         }
-        return this._globalContext
-    }
-    static set globalContext(v) {
-        this._globalContext = v
-    }
-    /**
-     * @type {{[x: string]: (boolean|{[y: string]: boolean})}} The error classes to ignore
-     */
-    static get ignoreErrorMap() {
-        return ShadowTree.Node.ignoreErrorMap
-    }
-    static get PHPStrictError() {
-        return PHPStrictError
-    }
-    static get ShadowTree() {
-        return ShadowTree
-    }
-    static get silenceVendor() {
-        return ShadowTree.Node.silenceVendor
-    }
-    static set silenceVendor(v) {
-        ShadowTree.Node.silenceVendor = v
+        return this._single
     }
 
     /**
@@ -63,7 +42,7 @@ class Lint {
      */
     get globalContext() {
         if(!this._globalContext) {
-            return Lint.globalContext
+            return Lint.single.globalContext
         }
         return this._globalContext
     }
@@ -118,6 +97,39 @@ class Lint {
         )
         return true
     }
+};
+
+class LintSingle {
+    /**
+     * @type {GlobalContext}
+     */
+    get globalContext() {
+        if(!this._globalContext) {
+            this._globalContext = new GlobalContext()
+        }
+        return this._globalContext
+    }
+    set globalContext(v) {
+        this._globalContext = v
+    }
+    /**
+     * @type {{[x: string]: (boolean|{[y: string]: boolean})}} The error classes to ignore
+     */
+    get ignoreErrorMap() {
+        return ShadowTree.Node.ignoreErrorMap
+    }
+    get PHPStrictError() {
+        return PHPStrictError
+    }
+    get ShadowTree() {
+        return ShadowTree
+    }
+    get silenceVendor() {
+        return ShadowTree.Node.silenceVendor
+    }
+    set silenceVendor(v) {
+        ShadowTree.Node.silenceVendor = v
+    }
 
     /**
      * Checks the provided AST
@@ -130,7 +142,7 @@ class Lint {
      * @throws
      * @returns {boolean}
      */
-    static check(
+    check(
         tree,
         filename = null,
         throw_on_error = true,
@@ -210,7 +222,7 @@ class Lint {
      * @param {?number} [end]
      * @returns {string}
      */
-    static highlight(line, start = null, end = null) {
+    highlight(line, start = null, end = null) {
         if(UseANSIHighlight && process.stdout.isTTY) {
             if(start === null && end === null) {
                 return `\x1b[4m${line}\x1b[24m`
@@ -252,6 +264,6 @@ class Lint {
             }
         }
     }
-};
+}
 
 export default Lint
