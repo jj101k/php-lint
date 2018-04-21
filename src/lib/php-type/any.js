@@ -50,9 +50,10 @@ export default class _Any {
      * may not represent a numeric value.
      *
      * @param {_Any} other_type
+     * @param {(string) => string[]} resolver
      * @returns {boolean}
      */
-    compliesWith(other_type) {
+    compliesWith(other_type, resolver) {
         return this.matches(other_type)
     }
 

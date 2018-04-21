@@ -29,19 +29,20 @@ export default class _AssociativeArray extends _Any {
      * indexed arrays.
      *
      * @param {_Any} expected_type The other array type
+     * @param {(string) => string[]} resolver
      * @returns {boolean}
      */
-    compliesWith(expected_type) {
+    compliesWith(expected_type, resolver) {
         if(expected_type instanceof _AssociativeArray) {
             if(!expected_type.memberType) {
                 return true
             } else if(!this.memberType) {
                 return false
             } else {
-                return this.memberType.compliesWith(expected_type.memberType)
+                return this.memberType.compliesWith(expected_type.memberType, resolver)
             }
         } else {
-            return super.compliesWith(expected_type)
+            return super.compliesWith(expected_type, resolver)
         }
     }
 

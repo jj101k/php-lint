@@ -30,15 +30,16 @@ export default class _IndexedArray extends _Any {
      * the same type.
      *
      * @param {_Any} expected_type The other array type
+     * @param {(string) => string[]} resolver
      * @returns {boolean}
      */
-    compliesWith(expected_type) {
+    compliesWith(expected_type, resolver) {
         if(expected_type instanceof _IndexedArray) {
-            return this.memberType.compliesWith(expected_type.memberType)
+            return this.memberType.compliesWith(expected_type.memberType, resolver)
         } else if(expected_type instanceof _AssociativeArray) {
-            return this.memberType.compliesWith(expected_type.memberType)
+            return this.memberType.compliesWith(expected_type.memberType, resolver)
         } else {
-            return super.compliesWith(expected_type)
+            return super.compliesWith(expected_type, resolver)
         }
     }
 

@@ -80,7 +80,7 @@ export default class Closure extends Statement {
                 new Set(),
                 null
             ).returnType
-            if(signature_type && !return_type.compliesWith(signature_type)) {
+            if(signature_type && !return_type.compliesWith(signature_type, name => context.compliantNames(name))) {
                 this.throw(new PHPError.ReturnTypeMismatch(
                     `Practical return type ${return_type} does not match signature ${signature_type}`
                 ), context)

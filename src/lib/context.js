@@ -242,6 +242,27 @@ export default class Context {
     }
 
     /**
+     * Returns the set of types that the given name complies with.
+     *
+     * @param {string} name
+     * @returns {string[]}
+     */
+    compliantNames(name) {
+        let c = this.findClass(name)
+        if(c) {
+            /** @type {string[]} */
+            let types = []
+            while(c.superclass) {
+                c = c.superclass
+                types.push(c.name)
+            }
+            return types
+        } else {
+            return []
+        }
+    }
+
+    /**
      * Finds the class context with the given name
      * @param {string} name Fully qualified only
      * @returns {?ClassContext.Class}

@@ -120,7 +120,7 @@ export default class _Function extends Declaration {
                 new Set(),
                 null
             ).returnType
-            if(signature_type && !return_type.compliesWith(signature_type)) {
+            if(signature_type && !return_type.compliesWith(signature_type, name => context.compliantNames(name))) {
                 this.throw(new PHPError.ReturnTypeMismatch(
                     `Practical return type ${return_type} does not match signature ${signature_type}`
                 ), context)
@@ -137,7 +137,7 @@ export default class _Function extends Declaration {
         )
         if(
             doc_function_type &&
-            !function_type.compliesWith(doc_function_type)
+            !function_type.compliesWith(doc_function_type, name => context.compliantNames(name))
         ) {
             this.throw(
                 new PHPError.BadDoc(

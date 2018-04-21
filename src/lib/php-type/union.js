@@ -156,9 +156,10 @@ export default class _Union {
      * (int) is compliant with (int|null); (int|null) is not compliant with (int).
      *
      * @param {?_Union} expected_type The other type
+     * @param {(string) => string[]} resolver
      * @returns {boolean}
      */
-    compliesWith(expected_type) {
+    compliesWith(expected_type, resolver) {
         if(!expected_type) {
             return false;
         }
@@ -166,7 +167,7 @@ export default class _Union {
             expected_type.isMixed ||
             this === expected_type ||
             this.types.every(
-                t => expected_type.types.some(et => t.compliesWith(et))
+                t => expected_type.types.some(et => t.compliesWith(et, resolver))
             )
         )
     }

@@ -64,16 +64,17 @@ export default class _Function extends _Any {
      * () -> int complies with () -> mixed
      *
      * @param {_Function} expected_type The other function type
+     * @param {(string) => string[]} resolver
      * @returns {boolean}
      */
-    compliesWith(expected_type) {
+    compliesWith(expected_type, resolver) {
         if(expected_type instanceof _Function) {
             return (
                 this.argTypes.length >= expected_type.argTypes.length &&
                 expected_type.argTypes.every(
-                    (v, i) => v.compliesWith(this.argTypes[i])
+                    (v, i) => v.compliesWith(this.argTypes[i], resolver)
                 ) &&
-                this.returnType.compliesWith(expected_type.returnType)
+                this.returnType.compliesWith(expected_type.returnType, resolver)
             )
         } else {
             return false

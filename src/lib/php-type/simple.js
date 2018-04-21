@@ -60,6 +60,38 @@ export default class _Simple extends _Any {
             return other_type
         }
     }
+
+    /**
+     * Returns true if this type does not violate behaviour defined by the
+     * supplied type. In this case, it also cares about ancestor classes and
+     * interfaces, so <subclass> complies with <superclass> and <implementation>
+     * complies with <interface> but not nice versa in either case.
+     *
+     * @param {_Any} other_type
+     * @param {(string) => string[]} resolver
+     * @returns {boolean}
+     */
+    compliesWith(other_type, resolver) {
+        return(
+            super.compliesWith(other_type, resolver) ||
+            this.resolvedTypeHierarchy(resolver).some(
+                t => t.matches(other_type)
+            )
+        )
+    }
+    /**
+     * Returns all the types this one matches, including all ancestors and
+     * interfaces.
+     *
+     * @param {(string) => string[]} resolver
+     * @returns {_Simple[]}
+     */
+    resolvedTypeHierarchy(resolver) {
+        if(!this._resolvedTypeHierarchy) {
+            this._resolvedTypeHierarchy = resolver(this.typeSignature).map(n => new _Simple(n))
+        }
+        return this._resolvedTypeHierarchy
+    }
     /**
      * @type {string} Represents best expression of the object, rather than
      * simply its type signature.

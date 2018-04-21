@@ -72,7 +72,7 @@ export default class Property extends Declaration {
             this.value.check(context, new Set(), null).expressionType
         if(
             practical_type &&
-            !practical_type.compliesWith(doc_type)
+            !practical_type.compliesWith(doc_type, name => context.compliantNames(name))
         ) {
             this.throw(
                 new PHPError.BadDoc(
