@@ -401,9 +401,9 @@ export class GlobalContext {
             }
             if(DEBUG_AUTOLOAD) {
                 console.log(this.autoloader)
-                throw new PHPError.ClassLoadFailed(`Could not load ${name}`)
+                throw new PHPError.ClassLoadFailed(`Could not autoload ${name}`)
             } else {
-                console.log(`Could not load ${name}`)
+                console.log(`Could not autoload ${name}`)
                 return this.classes[name]
             }
         }
@@ -454,9 +454,9 @@ export class GlobalContext {
             }
             if(DEBUG_AUTOLOAD) {
                 console.log(this.autoloader)
-                throw new PHPError.ClassLoadFailed(`Could not load ${name}`)
+                throw new PHPError.ClassLoadFailed(`Could not autoload ${name}`)
             } else {
-                console.log(`Could not load ${name}`)
+                console.log(`Could not autoload ${name}`)
                 return this.traits[name]
             }
         }
