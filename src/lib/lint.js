@@ -142,7 +142,6 @@ class LintSingle {
      * @param {boolean} [throw_on_error]
      * @param {number} [depth]
      * @param {?string} [working_directory]
-     * @param {boolean} [reuse_global_context]
      * @throws
      * @returns {boolean}
      */
@@ -151,13 +150,12 @@ class LintSingle {
         filename = null,
         throw_on_error = true,
         depth = 0,
-        working_directory = null,
-        reuse_global_context = true
+        working_directory = null
     ) {
         let l = new Lint(
             tree,
             filename,
-            reuse_global_context ? null : new GlobalContext(this)
+            this.globalContext
         )
         try {
             return l.check(depth, working_directory)

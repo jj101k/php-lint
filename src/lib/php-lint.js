@@ -36,14 +36,12 @@ class PHPLint {
      * @param {string} filename
      * @param {number} [depth]
      * @param {?string} [working_directory]
-     * @param {boolean} [reuse_global_context]
      * @returns {Promise} Rejects on failure
      */
     static checkFile(
         filename,
         depth = 0,
-        working_directory = null,
-        reuse_global_context = true
+        working_directory = null
     ) {
         let lint_single = Lint.single
         return new Promise((resolve, reject) => {
@@ -58,8 +56,7 @@ class PHPLint {
                             filename,
                             true,
                             depth,
-                            working_directory,
-                            reuse_global_context
+                            working_directory
                         ))
                     } catch(e) {
                         reject(e)
@@ -75,7 +72,6 @@ class PHPLint {
      * @param {boolean} [throw_on_error]
      * @param {number} [depth]
      * @param {?string} [working_directory]
-     * @param {boolean} [reuse_global_context]
      * @throws
      * @returns {?boolean}
      */
@@ -83,8 +79,7 @@ class PHPLint {
         filename,
         throw_on_error = true,
         depth = 0,
-        working_directory = null,
-        reuse_global_context = true
+        working_directory = null
     ) {
         if(!depth) depth = 0
         //
@@ -95,8 +90,7 @@ class PHPLint {
             filename,
             throw_on_error,
             depth,
-            working_directory,
-            reuse_global_context
+            working_directory
         )
     }
 
@@ -116,8 +110,7 @@ class PHPLint {
                     null,
                     true,
                     depth,
-                    null,
-                    false
+                    null
                 ))
             } catch(e) {
                 reject(e)
@@ -140,8 +133,7 @@ class PHPLint {
             null,
             throw_on_error,
             depth,
-            null,
-            false
+            null
         )
     }
     /**

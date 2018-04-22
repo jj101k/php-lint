@@ -330,8 +330,7 @@ export class GlobalContext {
                 filename,
                 false,
                 depth,
-                null,
-                true
+                null
             )
         }
     }
