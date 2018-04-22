@@ -352,7 +352,7 @@ class ClassContext extends PartialClassContext {
      */
     constructor(name, superclass, file_context, warm_info, interface_names) {
         super(name, file_context)
-        this.superclass = superclass
+        this.superclass = superclass ? superclass.coldCopy() : null
         this.warmInfo = warm_info
         this.isCold = true
         this.interfaceNames = interface_names
@@ -362,16 +362,6 @@ class ClassContext extends PartialClassContext {
         return this.superclass
     }
 
-    /**
-     * Returns a copy of this class with nothing but the top-level metadata (as
-     * it was when originally loaded).
-     *
-     * This means everything needs to be reevaluated.
-     *
-     * As a fallback this may return the original object.
-     *
-     * @returns {PartialClassContext}
-     */
     coldCopy() {
         return new ClassContext(
             this.name,
