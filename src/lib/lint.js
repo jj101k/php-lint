@@ -109,7 +109,7 @@ class LintSingle {
      */
     get globalContext() {
         if(!this._globalContext) {
-            this._globalContext = new GlobalContext()
+            this._globalContext = new GlobalContext(this)
         }
         return this._globalContext
     }
@@ -157,7 +157,7 @@ class LintSingle {
         let l = new Lint(
             tree,
             filename,
-            reuse_global_context ? null : new GlobalContext()
+            reuse_global_context ? null : new GlobalContext(this)
         )
         try {
             return l.check(depth, working_directory)
@@ -272,3 +272,4 @@ class LintSingle {
 }
 
 export default Lint
+export {LintSingle}

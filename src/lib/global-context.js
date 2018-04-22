@@ -8,6 +8,7 @@ import PHPLint from "./php-lint"
 import PHPAutoloader from "./php-autoloader"
 import * as ShadowTree from "./shadowtree"
 import Context from "./context"
+import {LintSingle} from "./lint"
 
 /**
  * @type {boolean} If true, autoload failure may throw. This can help with
@@ -149,8 +150,10 @@ export class GlobalContext {
 
     /**
      * Builds the context
+     *
+     * @param {LintSingle} lint_single
      */
-    constructor() {
+    constructor(lint_single) {
         /** @type {{[x: string]: ClassContext.Class}} */
         this.classes = {}
         /** @type {{[x: string]: boolean}} */
@@ -170,6 +173,8 @@ export class GlobalContext {
         )
         this.addUnknownClass("mixed")
         this.addUnknownClass("object")
+
+        this.lintSingle = lint_single
     }
 
     /**
@@ -318,7 +323,16 @@ export class GlobalContext {
         let resolved_filename = path.resolve(filename)
         if(!this.filesSeen[resolved_filename]) {
             this.filesSeen[resolved_filename] = true
-            PHPLint.checkFileSync(filename, false, depth)
+            let data = fs.readFileSync(filename, "utf8")
+            let tree = PHPLint.parser.parseCode(data, filename)
+            return this.lintSingle.checkTree(
+                tree,
+                filename,
+                false,
+                depth,
+                null,
+                true
+            )
         }
     }
 
