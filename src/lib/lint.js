@@ -30,14 +30,15 @@ class Lint {
      * Builds the object
      * @param {Object} tree AST from php-parser
      * @param {?string} [filename]
+     * @param {?GlobalContext} [global_context]
      */
-    constructor(tree, filename = null) {
+    constructor(tree, filename = null, global_context = null) {
         this.filename = filename
         this.tree = tree
         /**
          * @type {GlobalContext}
          */
-        this._globalContext = null
+        this._globalContext = global_context
     }
 
     /**
@@ -153,10 +154,11 @@ class LintSingle {
         working_directory = null,
         reuse_global_context = true
     ) {
-        var l = new Lint(tree, filename)
-        if(!reuse_global_context) {
-            l.globalContext = new GlobalContext()
-        }
+        let l = new Lint(
+            tree,
+            filename,
+            reuse_global_context ? null : new GlobalContext()
+        )
         try {
             return l.check(depth, working_directory)
         } catch(e) {
