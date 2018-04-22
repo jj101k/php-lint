@@ -45,6 +45,7 @@ class PHPLint {
         working_directory = null,
         reuse_global_context = true
     ) {
+        let lint_single = Lint.single
         return new Promise((resolve, reject) => {
             fs.readFile(filename, "utf8", (err, data) => {
                 if(err) {
@@ -52,7 +53,7 @@ class PHPLint {
                 } else {
                     try {
                         var tree = parser.parseCode(data, filename)
-                        resolve(Lint.single.checkTree(
+                        resolve(lint_single.checkTree(
                             tree,
                             filename,
                             true,
@@ -106,11 +107,11 @@ class PHPLint {
      * @returns {Promise} Rejects on failure
      */
     static checkSourceCode(code, depth = 0) {
-        //
+        let lint_single = Lint.single
         return new Promise((resolve, reject) => {
             try {
                 var tree = parser.parseCode(code)
-                resolve(Lint.single.checkTree(
+                resolve(lint_single.checkTree(
                     tree,
                     null,
                     true,
