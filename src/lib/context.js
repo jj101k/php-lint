@@ -100,7 +100,7 @@ export default class Context {
     /**
      * Builds the object
      * @param {FileContext} file_context
-     * @param {?GlobalContext} global_context
+     * @param {GlobalContext} global_context
      * @param {?ClassContext.Class} [class_context]
      * @param {?{[x: string]: PHPType.Union}} [ns]
      * @param {number} [depth]
@@ -114,7 +114,7 @@ export default class Context {
     ) {
         this.classContext = class_context
         this.depth = depth
-        this.globalContext = global_context || new GlobalContext()
+        this.globalContext = global_context
         this.fileContext = file_context
         /** @type {?PHPType.Union} */
         this.assigningType = null
