@@ -334,6 +334,7 @@ class PartialClassContext {
      * @return {this}
      */
     warm(from_class) {
+        console.log("NOOP warm on " + this.name)
         return this
     }
 }
@@ -383,6 +384,8 @@ class ClassContext extends PartialClassContext {
             this.warmInfo.context.setThis(PHPType.Core.named(from_class.name))
             this.warmInfo.node.checkInner(this.warmInfo.context, new Set(), null)
             this.warmingFor = null
+        } else if(!this.warmInfo) {
+            //console.log(`Cannot warm ${this.name}`)
         }
         return this
     }
