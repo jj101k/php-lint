@@ -52,7 +52,7 @@ class PHPLint {
                 } else {
                     try {
                         var tree = parser.parseCode(data, filename)
-                        resolve(Lint.single.check(
+                        resolve(Lint.single.checkTree(
                             tree,
                             filename,
                             true,
@@ -89,7 +89,7 @@ class PHPLint {
         //
         var data = fs.readFileSync(filename, "utf8")
         var tree = parser.parseCode(data, filename)
-        return Lint.single.check(
+        return Lint.single.checkTree(
             tree,
             filename,
             throw_on_error,
@@ -110,7 +110,7 @@ class PHPLint {
         return new Promise((resolve, reject) => {
             try {
                 var tree = parser.parseCode(code)
-                resolve(Lint.single.check(
+                resolve(Lint.single.checkTree(
                     tree,
                     null,
                     true,
@@ -134,7 +134,7 @@ class PHPLint {
      */
     static checkSourceCodeSync(code, throw_on_error = true, depth = 0) {
         var tree = parser.parseCode(code);
-        return Lint.single.check(
+        return Lint.single.checkTree(
             tree,
             null,
             throw_on_error,

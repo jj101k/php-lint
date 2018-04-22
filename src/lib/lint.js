@@ -146,7 +146,7 @@ class LintSingle {
      * @throws
      * @returns {boolean}
      */
-    check(
+    checkTree(
         tree,
         filename = null,
         throw_on_error = true,
