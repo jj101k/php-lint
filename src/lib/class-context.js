@@ -146,8 +146,12 @@ class PartialClassContext {
                 return PHPType.Core.types.mixed
             } else {
                 ti.compileStarted = true
+                //console.log(`Compile ${this.name}#${name}`)
                 ti.compile(this)
                 delete this.temporaryIdentifiers[name]
+                if(!this.instanceIdentifiers[name]) {
+                    throw new Error(`Compilation of temporary identifier ${this.name}#${name} failed`)
+                }
                 return this.instanceIdentifiers[name].types
             }
         } else if(
