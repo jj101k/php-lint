@@ -381,6 +381,7 @@ class ClassContext extends PartialClassContext {
         if(this.isCold && this.warmInfo) {
             this.isCold = false
             this.warmingFor = from_class
+            this.warmInfo.context.classContext = this
             this.warmInfo.context.setThis(PHPType.Core.named(from_class.name))
             this.warmInfo.node.checkInner(this.warmInfo.context, new Set(), null)
             this.warmingFor = null
