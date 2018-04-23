@@ -104,21 +104,21 @@ export default class Class extends Declaration {
                         b.name,
                         b.visibility,
                         b.isStatic,
-                        () => b.check(context, new Set(), doc).expressionType
+                        class_context => b.check(context.forClass(class_context), new Set(), doc)
                     )
                 } else if(b instanceof Property) {
                     context.classContext.addTemporaryIdentifier(
                         b.name,
                         b.visibility,
                         b.isStatic,
-                        () => b.check(context, new Set(), doc).expressionType
+                        class_context => b.check(context.forClass(class_context), new Set(), doc)
                     )
                 } else if(b instanceof ClassConstant) {
                     context.classContext.addTemporaryIdentifier(
                         b.name,
                         "public",
                         true,
-                        () => b.check(context, new Set(), doc).expressionType
+                        class_context => b.check(context.forClass(class_context), new Set(), doc)
                     )
                 } else if(b instanceof TraitUse) {
                     // Do nothing - loaded shortly
@@ -146,7 +146,7 @@ export default class Class extends Declaration {
             let ti = context.classContext.temporaryIdentifiers[name]
             if(ti && !ti.compileStarted) {
                 ti.compileStarted = true
-                ti.compile()
+                ti.compile(context.classContext)
                 delete context.classContext.temporaryIdentifiers[name]
             }
         })

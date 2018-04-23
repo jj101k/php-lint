@@ -31,7 +31,7 @@ class PartialClassContext {
          */
         this.instanceIdentifiers = {}
         /**
-         * @type {{[x: string]: {compile: () => void, compileStarted: boolean, isStatic: boolean, scope: string}}}
+         * @type {{[x: string]: {compile: (class_context: PartialClassContext) => void, compileStarted: boolean, isStatic: boolean, scope: string}}}
          */
         this.temporaryIdentifiers = {}
         this.warmingFor = null
@@ -85,7 +85,7 @@ class PartialClassContext {
      * @param {string} name
      * @param {string} scope "public", "private" or "protected"
      * @param {boolean} is_static
-     * @param {() => void} compile
+     * @param {(class_context: PartialClassContext) => void} compile
      */
     addTemporaryIdentifier(name, scope, is_static, compile) {
         let canonical_name = is_static ? name : name.replace(/^[$]/, "")
@@ -146,7 +146,7 @@ class PartialClassContext {
                 return PHPType.Core.types.mixed
             } else {
                 ti.compileStarted = true
-                ti.compile()
+                ti.compile(this)
                 delete this.temporaryIdentifiers[name]
                 return this.instanceIdentifiers[name].types
             }
@@ -224,7 +224,7 @@ class PartialClassContext {
                 return PHPType.Core.types.mixed
             } else {
                 ti.compileStarted = true
-                ti.compile()
+                ti.compile(this)
                 delete this.temporaryIdentifiers[name]
                 return this.staticIdentifiers[name].types
             }

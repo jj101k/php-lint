@@ -60,7 +60,7 @@ export default class Trait extends Declaration {
                             b.name,
                             b.visibility,
                             b.isStatic,
-                            () => b.check(context, new Set(), doc)
+                            class_context => b.check(context.forClass(class_context), new Set(), doc)
                         )
                     }
                 }

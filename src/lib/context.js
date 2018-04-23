@@ -309,6 +309,17 @@ export default class Context {
     }
 
     /**
+     * Chainable way of setting the class context
+     *
+     * @param {ClassContext.Class} class_context
+     * @returns {this}
+     */
+    forClass(class_context) {
+        this.classContext = class_context
+        return this
+    }
+
+    /**
      * Copies the namespace from one context to another. The existing namespace
      * will still be retained.
      * @param {Context} context
