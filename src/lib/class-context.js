@@ -139,6 +139,46 @@ class PartialClassContext {
             ) {
                 return m.types
             } else {
+                if(parser_state.has(ParserStateOption.InCall) && name != "__call") {
+                    console.log(
+                        `Possible scope miss for name ${this.name}#${name} with scope ${m.scope}`
+                    )
+                    return this.findInstanceIdentifier(
+                        "__call",
+                        from_class_context,
+                        new Set([ParserStateOption.InCall])
+                    )
+                } else if(
+                    !parser_state.has(ParserStateOption.InCall) &&
+                    !parser_state.has(ParserStateOption.InAssignment) &&
+                    name != "__get"
+                ) {
+                    if(this.findInstanceIdentifier(
+                        "__get",
+                        from_class_context,
+                        new Set([ParserStateOption.InCall])
+                    )) {
+                        console.log(
+                            `Possible scope miss for name ${this.name}#${name} with scope ${m.scope}`
+                        )
+                        return new PHPType.Mixed(this.name, "__get").union
+                    }
+                } else if(
+                    !parser_state.has(ParserStateOption.InCall) &&
+                    parser_state.has(ParserStateOption.InAssignment) &&
+                    name != "__set"
+                ) {
+                    if(this.findInstanceIdentifier(
+                        "__set",
+                        from_class_context,
+                        new Set([ParserStateOption.InCall])
+                    )) {
+                        console.log(
+                            `Possible scope miss for name ${this.name}#${name} with scope ${m.scope}`
+                        )
+                        return PHPType.Core.types.mixed
+                    }
+                }
                 throw new PHPError.ScopeMiss(
                     `Scope miss for name ${this.name}#${name} with scope ${m.scope} ($this instanceof ${from_class_context.name})`
                 )
