@@ -126,6 +126,7 @@ class PartialClassContext {
                 m.scope == "public" ||
                 (
                     m.scope == "protected" &&
+                    from_class_context &&
                     from_class_context.isSubclassOf(this)
                 ) ||
                 from_class_context === this
