@@ -129,7 +129,10 @@ class PartialClassContext {
                     from_class_context &&
                     from_class_context.isSubclassOf(this)
                 ) ||
-                from_class_context === this
+                (
+                    from_class_context &&
+                    from_class_context.name == this.name
+                )
             ) {
                 return m.types
             } else {
@@ -217,7 +220,10 @@ class PartialClassContext {
         let m = this.staticIdentifiers[name]
         let wrong_case
         if(m) {
-            if(from_class_context === this || m.scope == "public") {
+            if(
+                (from_class_context && from_class_context.name == this.name) ||
+                m.scope == "public"
+            ) {
                 return m.types
             }
         } else if(
