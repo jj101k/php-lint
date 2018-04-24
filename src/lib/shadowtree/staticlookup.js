@@ -68,7 +68,7 @@ export default class StaticLookup extends Lookup {
                         context.classContext
                     )
                 }
-                if(types && types !== PHPType.Core.types.mixed) {
+                if(types && !types.isMixed) {
                     return new ContextTypes(types)
                 } else if(
                     this.what instanceof ConstRef &&
