@@ -89,15 +89,17 @@ export default class PropertyLookup extends Lookup {
                             }
                         )
                     } else {
+                        let context_name = context.classContext && context.classContext.name || "non-class code"
                         this.throw(new PHPError.NoProperty(
-                            `No accessible instance property ${class_context.name}->${offset}\n` +
+                            `No accessible instance property ${class_context.name}->${offset} (from ${context_name})\n` +
                             `Accessible properties are: ${class_context.accessibleInstanceIdentifiers.sort()}`
                         ), context)
                         types_out = types_out.addTypesFrom(PHPType.Core.types.mixed)
                     }
                 } else {
+                    let context_name = context.classContext && context.classContext.name || "non-class code"
                     this.throw(new PHPError.NoProperty(
-                        `No accessible instance property ${t.typeSignature}->${offset}`
+                        `No accessible instance property ${t.typeSignature}->${offset} (from ${context_name})`
                     ), context)
                     types_out = types_out.addTypesFrom(PHPType.Core.types.mixed)
                 }
