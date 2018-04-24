@@ -39,6 +39,19 @@ export default class PropertyLookup extends Lookup {
             return new ContextTypes(PHPType.Core.types.mixed)
         }
         let types_out = PHPType.Union.empty
+        if(type_union.isEmpty) {
+            this.throw(new PHPError.NotClass(
+                `Can't look up property "${offset}" on empty type`
+            ), context)
+            return new ContextTypes(PHPType.Core.types.mixed)
+        } else if(!type_union.types.some(
+            t => t !== PHPType.Core.types.null.types[0]
+        )) {
+            this.throw(new PHPError.NotClass(
+                `Can't look up property "${offset}" on null`
+            ), context)
+            return new ContextTypes(PHPType.Core.types.mixed)
+        }
         try {
             type_union.types.filter(
                 t => t !== PHPType.Core.types.null.types[0]
