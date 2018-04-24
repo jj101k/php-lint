@@ -200,13 +200,29 @@ class PartialClassContext {
                 from_class_context,
                 new Set([ParserStateOption.InCall])
             )
-        } else if(!parser_state.has(ParserStateOption.InCall) && name != "__get") {
+        } else if(
+            !parser_state.has(ParserStateOption.InCall) &&
+            !parser_state.has(ParserStateOption.InAssignment) &&
+            name != "__get"
+        ) {
             if(this.findInstanceIdentifier(
                 "__get",
                 from_class_context,
                 new Set([ParserStateOption.InCall])
             )) {
                 return new PHPType.Mixed(this.name, "__get").union
+            }
+        } else if(
+            !parser_state.has(ParserStateOption.InCall) &&
+            parser_state.has(ParserStateOption.InAssignment) &&
+            name != "__set"
+        ) {
+            if(this.findInstanceIdentifier(
+                "__set",
+                from_class_context,
+                new Set([ParserStateOption.InCall])
+            )) {
+                return PHPType.Core.types.mixed
             }
         }
         return null
