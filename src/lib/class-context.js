@@ -51,6 +51,19 @@ class PartialClassContext {
     }
 
     /**
+     * @type {string[]}
+     */
+    get accessibleStaticIdentifiers() {
+        if(this.parentEntity) {
+            return this.parentEntity.warm(this.warmingFor || this).staticIdentifiersWithScope("protected").concat(
+                this.staticIdentifiersWithScope("private")
+            )
+        } else {
+            return this.staticIdentifiersWithScope("private")
+        }
+    }
+
+    /**
      * @type {PartialClassContext}
      */
     get parentEntity() {
@@ -406,6 +419,36 @@ class PartialClassContext {
     warm(from_class) {
         console.log("NOOP warm on " + this.name)
         return this
+    }
+
+    /**
+     * Returns all local static identifier names accessible with the supplied
+     * scope.
+     *
+     * @param {string} scope
+     * @return {string[]}
+     */
+    staticIdentifiersWithScope(scope = "private") {
+        return Object.keys(this.staticIdentifiers).filter(identifier => {
+            switch(scope) {
+                case "private":
+                    if(this.staticIdentifiers[identifier].scope == "private") {
+                        return true
+                    }
+                    //
+                case "protected":
+                    if(this.staticIdentifiers[identifier].scope == "protected") {
+                        return true
+                    }
+                case "public":
+                    if(this.staticIdentifiers[identifier].scope == "public") {
+                        return true
+                    }
+                    //
+                default:
+                    return false
+            }
+        })
     }
 }
 

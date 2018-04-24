@@ -93,7 +93,8 @@ export default class StaticLookup extends Lookup {
                 } else {
                     let context_name = context.classContext && context.classContext.name || "non-class code"
                     this.throw(new PHPError.NoStaticProperty(
-                        `No accessible static property ${resolved_name}::${this.offset.name} (from ${context_name})`
+                        `No accessible static property ${resolved_name}::${this.offset.name} (from ${context_name})\n` +
+                        `Accessible properties are: ${class_context.accessibleStaticIdentifiers.sort()}`
                     ), context)
                     return new ContextTypes(PHPType.Core.types.mixed)
                 }
