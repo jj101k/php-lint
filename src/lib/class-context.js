@@ -384,7 +384,7 @@ class PartialClassContext {
     isSubclassOf(other_class) {
         if(this.parentEntity) {
             return(
-                this.parentEntity === other_class ||
+                this.parentEntity.name == other_class.name ||
                 this.parentEntity.isSubclassOf(other_class)
             )
         } else {
