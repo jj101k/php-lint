@@ -69,9 +69,9 @@ export default class PropertyLookup extends Lookup {
                                         itype.passByReferencePositions,
                                         itype.callbackPositions
                                     )
-                                    types_out.addType(resolved_type)
+                                    types_out = types_out.addType(resolved_type)
                                 } else {
-                                    types_out.addType(itype)
+                                    types_out = types_out.addType(itype)
                                 }
                             }
                         )
@@ -80,11 +80,18 @@ export default class PropertyLookup extends Lookup {
                             `No accessible instance property ${class_context.name}->${offset}\n` +
                             `Accessible properties are: ${class_context.accessibleInstanceIdentifiers.sort()}`
                         ), context)
+                        types_out = types_out.addTypesFrom(PHPType.Core.types.mixed)
                     }
+                } else {
+                    this.throw(new PHPError.NoProperty(
+                        `No accessible instance property ${t.typeSignature}->${offset}`
+                    ), context)
+                    types_out = types_out.addTypesFrom(PHPType.Core.types.mixed)
                 }
             })
         } catch(e) {
             this.handleException(e, context)
+            types_out = types_out.addTypesFrom(PHPType.Core.types.mixed)
         }
         return new ContextTypes(types_out)
     }

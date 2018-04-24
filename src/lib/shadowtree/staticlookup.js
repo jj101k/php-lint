@@ -94,6 +94,7 @@ export default class StaticLookup extends Lookup {
                     this.throw(new PHPError.NoStaticProperty(
                         `No accessible static property ${resolved_name}::${this.offset.name}`
                     ), context)
+                    return new ContextTypes(PHPType.Core.types.mixed)
                 }
             }
         } else if(
