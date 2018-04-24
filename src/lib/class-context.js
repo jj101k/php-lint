@@ -129,12 +129,7 @@ class PartialClassContext {
                     from_class_context &&
                     (
                         from_class_context.isSubclassOf(this) ||
-                        (
-                            this.isSubclassOf(from_class_context) &&
-                            from_class_context.instanceIdentifiers[name] &&
-                            from_class_context.instanceIdentifiers[name].scope ==
-                                "protected"
-                        )
+                        this.isSubclassOf(from_class_context)
                     )
                 ) ||
                 (
