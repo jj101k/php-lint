@@ -309,6 +309,9 @@ class PartialClassContext {
                 ti.compileStarted = true
                 ti.compile(this)
                 delete this.temporaryIdentifiers[name]
+                if(!this.staticIdentifiers[name]) {
+                    throw new Error(`Compilation of temporary identifier ${this.name}#${name} failed`)
+                }
                 return this.staticIdentifiers[name].types
             }
         } else if(
