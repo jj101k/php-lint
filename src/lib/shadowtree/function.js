@@ -53,7 +53,7 @@ export default class _Function extends Declaration {
                     doc_structure.forEach(c => c.resolve({
                         param: c => {
                             let param_type = c.typeStructure
-                            this.resolveAllDocNames(
+                            doc.resolveAllDocNames(
                                 param_type,
                                 context,
                                 doc
@@ -63,7 +63,7 @@ export default class _Function extends Declaration {
                         },
                         return: c => {
                             let return_type = c.typeStructure
-                            this.resolveAllDocNames(
+                            doc.resolveAllDocNames(
                                 return_type,
                                 context,
                                 doc

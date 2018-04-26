@@ -39,13 +39,13 @@ export default class Property extends Declaration {
                         {
                             "var": c => {
                                 doc_type = c.typeStructure
-                                this.resolveAllDocNames(doc_type, context, doc)
+                                doc.resolveAllDocNames(doc_type, context, doc)
                             },
                         } :
                         {
                             property: c => {
                                 doc_type = c.typeStructure
-                                this.resolveAllDocNames(doc_type, context, doc)
+                                doc.resolveAllDocNames(doc_type, context, doc)
                             },
                             "var": c => {
                                 this.throw(
@@ -54,7 +54,7 @@ export default class Property extends Declaration {
                                     doc.loc
                                 )
                                 doc_type = c.typeStructure
-                                this.resolveAllDocNames(doc_type, context, doc)
+                                doc.resolveAllDocNames(doc_type, context, doc)
                             },
                         }
                     doc_structure.forEach(c => c.resolve(resolver))
