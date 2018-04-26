@@ -37,6 +37,15 @@ export default class Property extends Declaration {
                 if(doc_structure && doc_structure.length) {
                     let resolver = this.isStatic ?
                         {
+                            property: c => {
+                                this.throw(
+                                    new PHPError.BadDoc(`@property used instead of @var`),
+                                    context,
+                                    doc.loc
+                                )
+                                doc_type = c.typeStructure
+                                doc.resolveAllDocNames(doc_type, context, doc)
+                            },
                             "var": c => {
                                 doc_type = c.typeStructure
                                 doc.resolveAllDocNames(doc_type, context, doc)
