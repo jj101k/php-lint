@@ -71,6 +71,7 @@ export default class Property extends Declaration {
             this.value &&
             this.value.check(context, new Set(), null).expressionType
         if(
+            doc_type &&
             practical_type &&
             !practical_type.compliesWith(doc_type, name => context.compliantNames(name))
         ) {
