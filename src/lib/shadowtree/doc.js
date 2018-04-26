@@ -47,15 +47,15 @@ export default class Doc extends AbstractNode {
      */
     resolveDocName(t, context, doc) {
         try {
-            if(t.match(/^[A-Z0-9]/)) {
-                return (
-                    context.fileContext.resolveAliasName(t) ||
-                    "\\" + t
-                )
+            if(t.match(/^\\/)) {
+                return t
             } else if(PHPType.Core.types.hasOwnProperty(t)) {
                 return context.resolveName(PHPType.Core.types[t].toString())
             } else {
-                return context.resolveName(t, "uqn")
+                return(
+                    context.fileContext.resolveAliasName(t) ||
+                    context.resolveName(t, "uqn")
+                )
             }
         } catch(e) {
             if(e instanceof PHPType.WrongType) {
