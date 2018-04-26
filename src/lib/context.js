@@ -64,6 +64,8 @@ const PHPFunctionReturnType = {
     strcmp: PHPType.Core.types.int,
     stripos: PHPType.Core.types.int.addTypesFrom(PHPType.Core.types.bool),
     strrpos: PHPType.Core.types.int.addTypesFrom(PHPType.Core.types.bool),
+    strtolower: PHPType.Core.types.string,
+    strtoupper: PHPType.Core.types.string,
     time: PHPType.Core.types.int,
 }
 
