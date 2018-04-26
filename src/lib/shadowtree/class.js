@@ -106,6 +106,7 @@ export default class Class extends Declaration {
                         b.isStatic,
                         class_context => b.check(context.forClass(class_context), new Set(), doc)
                     )
+                    last_doc = null
                 } else if(b instanceof Property) {
                     context.classContext.addTemporaryIdentifier(
                         b.name,
@@ -113,6 +114,7 @@ export default class Class extends Declaration {
                         b.isStatic,
                         class_context => b.check(context.forClass(class_context), new Set(), doc)
                     )
+                    last_doc = null
                 } else if(b instanceof ClassConstant) {
                     context.classContext.addTemporaryIdentifier(
                         b.name,
@@ -120,8 +122,10 @@ export default class Class extends Declaration {
                         true,
                         class_context => b.check(context.forClass(class_context), new Set(), doc)
                     )
+                    last_doc = null
                 } else if(b instanceof TraitUse) {
                     // Do nothing - loaded shortly
+                    last_doc = null
                 } else {
                     b.check(context, new Set(), last_doc)
                     last_doc = null
