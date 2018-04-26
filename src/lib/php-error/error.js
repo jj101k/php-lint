@@ -1,6 +1,6 @@
 import Context from "../context"
 import PHPStrictError from "../php-strict-error"
-import _Node from "../shadowtree/node"
+import AbstractNode from "../shadowtree/abstract-node"
 
 /**
  * @typedef ParserPosition
@@ -19,7 +19,7 @@ export default class _Error extends Error {
     /**
      * Contextualises the error
      * @param {Context} context
-     * @param {_Node} node
+     * @param {AbstractNode} node
      * @param {?ParserLocation} [effective_location]
      * @returns {PHPStrictError}
      */

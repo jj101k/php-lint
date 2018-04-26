@@ -30,67 +30,7 @@ const DEBUG = false
  * @property {?ParserLocation} loc
  */
 
-/**
- * @type {Function[]} The errors to ignore
- */
-let ignoreErrors = []
-
-/**
- * @type {string[]}
- */
-let silenceVendor = []
-
 export default class _Node extends AbstractNode {
-    /**
-     * @type {{[x: string]: (boolean|{[y: string]: boolean})}} The error classes to ignore
-     */
-    static get ignoreErrorMap() {
-        if(!this._ignoreErrorMap) {
-            let out = {}
-            for(let k in PHPError) {
-                if(PHPError[k] instanceof Function) {
-                    Object.defineProperty(out, k, {
-                        enumerable: true,
-                        get: () => ignoreErrors.some(e => e === PHPError[k]),
-                        set: v => {
-                            ignoreErrors = ignoreErrors.filter(e => e !== PHPError[k])
-                            if(v) {
-                                ignoreErrors.push(PHPError[k])
-                            }
-                        }
-                    })
-                } else {
-                    let out_k = {}
-                    Object.defineProperty(out, k, {
-                        enumerable: true,
-                        get: () => out_k
-                    })
-                    for(let m in PHPError[k]) {
-                        Object.defineProperty(out_k, m, {
-                            enumerable: true,
-                            get: () => ignoreErrors.some(e => e === PHPError[k][m]),
-                            set: v => {
-                                ignoreErrors = ignoreErrors.filter(e => e !== PHPError[k][m])
-                                if(v) {
-                                    ignoreErrors.push(PHPError[k][m])
-                                }
-                            }
-                        })
-                    }
-                }
-            }
-            Object.freeze(out)
-            this._ignoreErrorMap = out
-        }
-        return this._ignoreErrorMap
-    }
-
-    static get silenceVendor() {
-        return silenceVendor
-    }
-    static set silenceVendor(v) {
-        silenceVendor = v
-    }
     /**
      * Returns the shadow tree counterpart of the given node.
      * @param {ParserNode} node
@@ -200,80 +140,6 @@ export default class _Node extends AbstractNode {
             this.throw(e, context)
         } else {
             throw e
-        }
-    }
-    /**
-     *
-     * @param {PHPType.Union} u
-     * @param {Context} context
-     * @param {Doc} doc
-     */
-    resolveAllDocNames(u, context, doc) {
-        let types = u.types
-        for(let i = 0; i < types.length; i++) {
-            let m = types[i]
-            if(m instanceof PHPType.AssociativeArray) {
-                types = types.concat(m.memberType.types)
-            } else if(m instanceof PHPType.IndexedArray) {
-                types = types.concat(m.memberType.types)
-            } else if(m instanceof PHPType.Simple) {
-                m.typeName = this.resolveDocName(m.typeName, context, doc)
-            } else if(m instanceof PHPType.Function) {
-                m.argTypes.forEach(atype => types = types.concat(atype.types))
-                types = types.concat(m.returnType.types)
-            } else if(m instanceof PHPType.Mixed) {
-                // Do nothing
-            } else {
-                throw new Error(`Don't know how to resolve doc names in type ${m}`)
-            }
-        }
-    }
-    /**
-     * @param {string} t
-     * @param {Context} context
-     * @param {Doc} doc
-     * @returns {string}
-     */
-    resolveDocName(t, context, doc) {
-        try {
-            if(t.match(/^[A-Z0-9]/)) {
-                return (
-                    context.fileContext.resolveAliasName(t) ||
-                    "\\" + t
-                )
-            } else if(PHPType.Core.types.hasOwnProperty(t)) {
-                return context.resolveName(PHPType.Core.types[t].toString())
-            } else {
-                return context.resolveName(t, "uqn")
-            }
-        } catch(e) {
-            if(e instanceof PHPType.WrongType) {
-                this.throw(new PHPError.BadCoreType(e.message), context, doc.loc)
-                return context.resolveName(e.realName)
-            } else {
-                throw e
-            }
-        }
-    }
-    /**
-     * Wraps throwing. This may conditionally not throw.
-     * @param {PHPError.Error} e
-     * @param {Context} context
-     * @param {?ParserLocation} [effective_location]
-     * @throws {PHPError.Error}
-     */
-    throw(e, context, effective_location = null) {
-        if(
-            context.fileContext &&
-            silenceVendor.some(
-                sv => context.fileContext.filename.startsWith(
-                    context.globalContext.workingDirectory + "/" + sv + "/"
-                )
-            )
-        ) {
-            // Skip
-        } else if(ignoreErrors.every(o => !(e instanceof o))) {
-            throw e.withContext(context, this, effective_location)
         }
     }
 }

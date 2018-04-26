@@ -1,5 +1,5 @@
 import Context from "./context"
-import _Node from "./shadowtree/node"
+import AbstractNode from "./shadowtree/abstract-node"
 
 /**
  * @typedef ParserPosition
@@ -20,7 +20,7 @@ class PHPStrictError extends Error {
      *
      * @param {string} message
      * @param {Context} context
-     * @param {_Node} node
+     * @param {AbstractNode} node
      */
     static warn(message, context, node) {
         console.log(
@@ -33,7 +33,7 @@ class PHPStrictError extends Error {
      * Builds the object
      * @param {string} message
      * @param {Context} context
-     * @param {_Node} node
+     * @param {AbstractNode} node
      * @param {?ParserLocation} [effective_location]
      */
     constructor(message, context, node, effective_location = null) {
