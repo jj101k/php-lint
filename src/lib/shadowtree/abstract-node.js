@@ -17,7 +17,9 @@ import Context from "../context"
 /**
  * @type {Function[]} The errors to ignore
  */
-let ignoreErrors = []
+let ignoreErrors = [
+    PHPError.MultitypeBadObject,
+]
 
 /**
  * @type {string[]}

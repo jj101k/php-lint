@@ -44,66 +44,80 @@ export default class PropertyLookup extends Lookup {
                 `Can't look up property "${offset}" on empty type`
             ), context)
             return new ContextTypes(PHPType.Core.types.mixed)
-        } else if(!type_union.types.some(
-            t => t !== PHPType.Core.types.null.types[0]
-        )) {
-            this.throw(new PHPError.NotClass(
-                `Can't look up property "${offset}" on null`
-            ), context)
-            return new ContextTypes(PHPType.Core.types.mixed)
         }
+        let seen_bad_type = false
         try {
-            type_union.types.filter(
-                t => t !== PHPType.Core.types.null.types[0]
-            ).forEach(t => {
-                let class_context
-                try {
-                    class_context = context.findClass(t.typeSignature)
-                } catch(e) {
-                    this.handleException(e, context)
-                }
-                if(class_context) {
-                    let identifier_types = class_context.findInstanceIdentifier(
-                        offset,
-                        context.classContext,
-                        parser_state
-                    )
-                    if(identifier_types) {
-                        identifier_types.types.forEach(
-                            itype => {
-                                if(
-                                    itype instanceof PHPType.Function &&
-                                    itype.returnType.typeSignature == "self" &&
-                                    type_union.typeSignature != "self"
-                                ) {
-                                    let resolved_type = new PHPType.Function(
-                                        itype.argTypes,
-                                        type_union,
-                                        itype.passByReferencePositions,
-                                        itype.callbackPositions
-                                    )
-                                    types_out = types_out.addType(resolved_type)
-                                } else {
-                                    types_out = types_out.addType(itype)
-                                }
-                            }
+            type_union.types.forEach(t => {
+                if(
+                    (t instanceof PHPType.IndexedArray) ||
+                    (t instanceof PHPType.AssociativeArray) ||
+                    t === PHPType.Core.types.null.types[0]
+                ) {
+                    if(!seen_bad_type) {
+                        this.throw(
+                            new PHPError.MultitypeBadObject(
+                                `One or more of ${type_union} cannot be used as an object`
+                            ),
+                            context
                         )
+                        seen_bad_type = true
+                    }
+                } else {
+                    let class_context
+                    try {
+                        class_context = context.findClass(t.typeSignature)
+                    } catch(e) {
+                        this.handleException(e, context)
+                    }
+                    if(class_context) {
+                        let identifier_types = class_context.findInstanceIdentifier(
+                            offset,
+                            context.classContext,
+                            parser_state
+                        )
+                        if(identifier_types) {
+                            identifier_types.types.forEach(
+                                itype => {
+                                    if(
+                                        itype instanceof PHPType.Function &&
+                                        itype.returnType.typeSignature == "self" &&
+                                        type_union.typeSignature != "self"
+                                    ) {
+                                        let resolved_type = new PHPType.Function(
+                                            itype.argTypes,
+                                            type_union,
+                                            itype.passByReferencePositions,
+                                            itype.callbackPositions
+                                        )
+                                        types_out = types_out.addType(resolved_type)
+                                    } else {
+                                        types_out = types_out.addType(itype)
+                                    }
+                                }
+                            )
+                        } else {
+                            let context_name = context.classContext && context.classContext.name || "non-class code"
+                            this.throw(new PHPError.NoProperty(
+                                `No accessible instance property ${class_context.name}->${offset} (from ${context_name})\n` +
+                                `Accessible properties are: ${class_context.accessibleInstanceIdentifiers.sort()}`
+                            ), context)
+                            types_out = types_out.addTypesFrom(PHPType.Core.types.mixed)
+                        }
                     } else {
                         let context_name = context.classContext && context.classContext.name || "non-class code"
                         this.throw(new PHPError.NoProperty(
-                            `No accessible instance property ${class_context.name}->${offset} (from ${context_name})\n` +
-                            `Accessible properties are: ${class_context.accessibleInstanceIdentifiers.sort()}`
+                            `No accessible instance property ${t.typeSignature}->${offset} (from ${context_name})`
                         ), context)
                         types_out = types_out.addTypesFrom(PHPType.Core.types.mixed)
                     }
-                } else {
-                    let context_name = context.classContext && context.classContext.name || "non-class code"
-                    this.throw(new PHPError.NoProperty(
-                        `No accessible instance property ${t.typeSignature}->${offset} (from ${context_name})`
-                    ), context)
-                    types_out = types_out.addTypesFrom(PHPType.Core.types.mixed)
                 }
             })
+            if(types_out.isEmpty) {
+                this.throw(new PHPError.NotClass(
+                    `Can't look up property "${offset}" on ${type_union}`
+                ), context)
+                return new ContextTypes(PHPType.Core.types.mixed)
+            }
         } catch(e) {
             this.handleException(e, context)
             types_out = types_out.addTypesFrom(PHPType.Core.types.mixed)
