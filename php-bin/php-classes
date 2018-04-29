@@ -2,4 +2,56 @@
 <?php
 $classes = get_declared_classes();
 sort($classes);
-print json_encode(array_fill_keys($classes, true), JSON_PRETTY_PRINT);
+$out = [];
+foreach($classes as $class) {
+    $info = [];
+    $reflection = new \ReflectionClass($class);
+    $info["constants"] = array_map(
+        function($p) {
+            return [
+                "name" => $p->getName(),
+                "isPublic" => $p->isPublic(),
+                "value" => $p->getValue(),
+            ];
+        },
+        $reflection->getReflectionConstants()
+    );
+    $info["methods"] = array_map(
+        function($p) {
+            return [
+                "name" => $p->getName(),
+                "isAbstract" => $p->isAbstract(),
+                "isPublic" => $p->isPublic(),
+                "isStatic" => $p->isStatic(),
+                "arguments" => array_map(
+                    function($a) {
+                        return [
+                            "type" => $a->getType() ? "" . $a->getType() : null,
+                        ];
+                    },
+                    $p->getParameters()
+                ),
+                "returnType" => $p->getReturnType() ? "" . $p->getReturnType() : null,
+            ];
+        },
+        $reflection->getMethods(
+            \ReflectionMethod::IS_PUBLIC |
+            \ReflectionMethod::IS_PROTECTED
+        )
+    );
+    $info["properties"] = array_map(
+        function($p) {
+            return [
+                "name" => $p->getName(),
+                "isPublic" => $p->isPublic(),
+                "isStatic" => $p->isStatic(),
+            ];
+        },
+        $reflection->getProperties(
+            \ReflectionProperty::IS_PUBLIC |
+            \ReflectionProperty::IS_PROTECTED
+        )
+    );
+    $out[$class] = $info;
+}
+print json_encode($out, JSON_PRETTY_PRINT);

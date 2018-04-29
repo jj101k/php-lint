@@ -7,6 +7,20 @@ import {GlobalContext} from "./global-context"
 
 const fs = require("fs")
 const path = require("path")
+const zlib = require("zlib")
+
+/**
+ * Reads JSON from a compressed PHP info data file
+ *
+ * @param {string} filename
+ * @returns {*}
+ */
+function readPHPInfo(filename) {
+    let compressed = fs.readFileSync(
+        __dirname + "/../../data/" + filename
+    )
+    return JSON.parse(zlib.gunzipSync(compressed).toString("utf8"))
+}
 
 /** @type {boolean} If true, this will dump out type info */
 const DEBUG_TYPES = false
@@ -15,22 +29,16 @@ const DEBUG_TYPES = false
 const IgnoreInvalidParent = true
 
 /**
- * @type {string[]} From ./php-bin/php-constants > data/php-constants.json
+ * @type {string[]} From ./php-bin/php-constants | gzip > data/php-constants.json.gz
  */
-const PHPConstants = JSON.parse(fs.readFileSync(
-    __dirname + "/../../data/php-constants.json",
-    "utf8"
-))
+const PHPConstants = readPHPInfo("php-constants.json.gz")
 
 /**
  * @type {{[x: string]: {pbr: boolean[]}}}
  *
- * From: ./php-bin/php-functions > data/php-functions.json
+ * From: ./php-bin/php-functions | gzip > data/php-functions.json.gz
  */
-const PHPFunctions = JSON.parse(fs.readFileSync(
-    __dirname + "/../../data/php-functions.json",
-    "utf8"
-))
+const PHPFunctions = readPHPInfo("php-functions.json.gz")
 
 /**
  * @type {{[x: string]: string}} From `print json_encode(array_map("gettype",

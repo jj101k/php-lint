@@ -1,5 +1,6 @@
 const fs = require("fs")
 const path = require("path")
+const zlib = require("zlib")
 
 import * as ClassContext from "./class-context"
 import {FileContext} from "./file-context"
@@ -11,6 +12,19 @@ import Context from "./context"
 import {LintSingle} from "./lint"
 
 /**
+ * Reads JSON from a compressed PHP info data file
+ *
+ * @param {string} filename
+ * @returns {*}
+ */
+function readPHPInfo(filename) {
+    let compressed = fs.readFileSync(
+        __dirname + "/../../data/" + filename
+    )
+    return JSON.parse(zlib.gunzipSync(compressed).toString("utf8"))
+}
+
+/**
  * @type {boolean} If true, autoload failure may throw. This can help with
  * debugging unexpected loads.
  */
@@ -20,20 +34,14 @@ const DEBUG_AUTOLOAD = false
 const MAX_DEPTH = Infinity
 
 /**
- * @type {string[]} From ./php-bin/php-classes > data/php-classes.json
+ * @type {string[]} From ./php-bin/php-classes | gzip > data/php-classes.json.gz
  */
-const PHPClasses = Object.keys(JSON.parse(fs.readFileSync(
-    __dirname + "/../../data/php-classes.json",
-    "utf8"
-)))
+const PHPClasses = Object.keys(readPHPInfo("php-classes.json.gz"))
 
 /**
- * @type {string[]} From ./php-bin/php-interfaces > data/php-interfaces.json
+ * @type {string[]} From ./php-bin/php-interfaces | gzip > data/php-interfaces.json.gz
  */
-const PHPInterfaces = JSON.parse(fs.readFileSync(
-    __dirname + "/../../data/php-interfaces.json",
-    "utf8"
-))
+const PHPInterfaces = readPHPInfo("php-interfaces.json.gz")
 
 class FileResult {
     /**
