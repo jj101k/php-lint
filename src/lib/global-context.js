@@ -6,6 +6,7 @@ import * as ClassContext from "./class-context"
 import {FileContext} from "./file-context"
 import * as PHPError from "./php-error"
 import PHPLint from "./php-lint"
+import * as PHPType from "./php-type"
 import PHPAutoloader from "./php-autoloader"
 import * as ShadowTree from "./shadowtree"
 import Context from "./context"
@@ -174,7 +175,25 @@ export class GlobalContext {
         /** @type {?string} */
         this.workingDirectory = null
         PHPClasses.forEach(
-            name => this.addUnknownClass("\\" + name)
+            name => {
+                if(name == "DateTime") {
+                    this.addUnknownClass("\\" + name).addIdentifier(
+                        "modify",
+                        "public",
+                        false,
+                        new PHPType.Union(
+                            new PHPType.Function(
+                                [PHPType.Core.types.string.addTypesFrom(
+                                    PHPType.Core.types.bool.withValue(false)
+                                )],
+                                PHPType.Core.named("\\" + name)
+                            )
+                        )
+                    )
+                } else {
+                    this.addUnknownClass("\\" + name)
+                }
+            }
         )
         PHPInterfaces.forEach(
             name => this.addUnknownClass("\\" + name)
