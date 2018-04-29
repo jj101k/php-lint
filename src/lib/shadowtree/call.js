@@ -83,7 +83,7 @@ export default class Call extends Statement {
             if(pbr_positions[i]) {
                 let inner_context = context.childContext(true)
                 inner_context.assigningType =
-                    context.findName(arg.name) || PHPType.Core.types.mixed
+                    context.findName(arg.name) || new PHPType.Mixed().union
                 arg.check(inner_context, new Set(), null)
             } else if(callback_positions[i]) {
                 let inner_context = context.childContext(false)
@@ -123,7 +123,7 @@ export default class Call extends Statement {
             if(t instanceof PHPType.Function) {
                 types = types.addTypesFrom(t.returnType)
             } else {
-                types = types.addTypesFrom(PHPType.Core.types.mixed)
+                types = types.addTypesFrom(new PHPType.Mixed().union)
             }
         })
         return new ContextTypes(types)

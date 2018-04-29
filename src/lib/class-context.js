@@ -189,7 +189,7 @@ class PartialClassContext {
                         console.log(
                             `Possible scope miss for name ${this.name}#${name} with scope ${m.scope}`
                         )
-                        return PHPType.Core.types.mixed
+                        return new PHPType.Mixed().union
                     }
                 }
                 throw new PHPError.ScopeMiss(
@@ -203,7 +203,7 @@ class PartialClassContext {
         ) {
             let ti = this.temporaryIdentifiers[name]
             if(ti.compileStarted) {
-                return PHPType.Core.types.mixed
+                return new PHPType.Mixed().union
             } else {
                 ti.compileStarted = true
                 //console.log(`Compile ${this.name}#${name}`)
@@ -275,7 +275,7 @@ class PartialClassContext {
                 from_class_context,
                 new Set([ParserStateOption.InCall])
             )) {
-                return PHPType.Core.types.mixed
+                return new PHPType.Mixed().union
             }
         }
         return null
@@ -304,7 +304,7 @@ class PartialClassContext {
         ) {
             let ti = this.temporaryIdentifiers[name]
             if(ti.compileStarted) {
-                return PHPType.Core.types.mixed
+                return new PHPType.Mixed().union
             } else {
                 ti.compileStarted = true
                 ti.compile(this)
@@ -624,7 +624,7 @@ class AnonymousFunctionContext extends ClassContext {
      */
     findInstanceIdentifier(name, from_class_context) {
         // TODO: Limit to the actual methods.
-        return PHPType.Core.types.mixed
+        return new PHPType.Mixed().union
     }
 
     /**

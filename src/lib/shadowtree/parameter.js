@@ -41,7 +41,7 @@ export default class Parameter extends Declaration {
             )
             type = PHPType.Core.named(type_name)
         } else {
-            type = PHPType.Core.types.mixed
+            type = new PHPType.Mixed().union
         }
         if(
             this.nullable ||

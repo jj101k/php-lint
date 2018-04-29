@@ -18,7 +18,7 @@ export default class Static extends Statement {
     check(context, parser_state = new Set(), doc = null) {
         super.check(context, parser_state, doc)
         let inner_context = context.childContext(true)
-        inner_context.assigningType = PHPType.Core.types.mixed
+        inner_context.assigningType = new PHPType.Mixed().union
         this.items.forEach(
             i => i.check(inner_context, new Set(), null)
         )

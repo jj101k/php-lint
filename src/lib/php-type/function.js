@@ -1,5 +1,6 @@
 import _Any from "./any"
 import _Core from "./core"
+import _Mixed from "./mixed"
 import _Union from "./union"
 /**
  * A function/closure
@@ -11,8 +12,8 @@ export default class _Function extends _Any {
      */
     static get mixed() {
         return new _Function(
-            [_Core.types.mixed],
-            _Core.types.mixed
+            [new _Mixed().union],
+            new _Mixed().union
         )
     }
     /**

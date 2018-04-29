@@ -24,7 +24,7 @@ export default class OffsetLookup extends Lookup {
             null
         ).expressionType
         if(this.offset instanceof Variable) {
-            return new ContextTypes(PHPType.Core.types.mixed)
+            return new ContextTypes(new PHPType.Mixed().union)
         } else {
             let types_out = PHPType.Union.empty
             type_union.types.forEach(t => {
