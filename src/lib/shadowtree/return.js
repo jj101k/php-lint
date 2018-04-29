@@ -21,14 +21,14 @@ export default class Return extends _Node {
             let return_type = this.expr.check(context, new Set(), null).expressionType
 
             if(return_type.isEmpty) {
-                this.throw(new PHPError.AssignNoValue(), context)
-                return new ContextTypes(PHPType.Core.types.null)
-            } else {
-                return new ContextTypes(
-                    PHPType.Union.empty,
-                    return_type
-                )
+                this.throw(new PHPError.AssignNoValue(
+                    `Explicit return with void expression`
+                ), context)
             }
+            return new ContextTypes(
+                PHPType.Union.empty,
+                return_type
+            )
         } else {
             return new ContextTypes(
                 PHPType.Union.empty,
