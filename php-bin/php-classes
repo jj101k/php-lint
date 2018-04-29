@@ -2,4 +2,4 @@
 <?php
 $classes = get_declared_classes();
 sort($classes);
-print json_encode($classes, JSON_PRETTY_PRINT);
+print json_encode(array_fill_keys($classes, true), JSON_PRETTY_PRINT);

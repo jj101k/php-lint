@@ -22,10 +22,10 @@ const MAX_DEPTH = Infinity
 /**
  * @type {string[]} From ./php-bin/php-classes > data/php-classes.json
  */
-const PHPClasses = JSON.parse(fs.readFileSync(
+const PHPClasses = Object.keys(JSON.parse(fs.readFileSync(
     __dirname + "/../../data/php-classes.json",
     "utf8"
-))
+)))
 
 /**
  * @type {string[]} From ./php-bin/php-interfaces > data/php-interfaces.json
