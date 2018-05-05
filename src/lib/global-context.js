@@ -119,14 +119,9 @@ export class GlobalContext {
                         "WARNING, this project uses classmap autoload, this is extremely unwise and takes non-trivial time to parse"
                     )
                     classmap_paths = classmap.map(
-                        path => {
-                            if(path.match(/\/$/) || path == "") {
-                                return `${current_module_path}/${path}`
-                            } else {
-                                //console.log(`Path ${path} for ${prefix} is missing a trailing slash`)
-                                return `${current_module_path}/${path}/`
-                            }
-                        }
+                        // Directory paths may be garbage here, but won't know
+                        // until we try to use them.
+                        path => `${current_module_path}/${path}`
                     )
                 }
             }

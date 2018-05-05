@@ -6,7 +6,7 @@ import * as ShadowTree from "./shadowtree"
 export default class PHPAutoloader {
     /**
      * Build the object
-     * @param {{[x: string]: string[]}} paths 
+     * @param {{[x: string]: string[]}} paths
      * @param {string[]} [classmap_paths]
      */
     constructor(paths, classmap_paths = []) {
@@ -23,20 +23,20 @@ export default class PHPAutoloader {
             let classmap_results = {}
             this.classmapPaths.forEach(
                 path => {
-                    let directories = [path]
+                    let paths = [path]
                     let filenames = []
-                    while(directories.length) {
-                        let d = directories.shift()
-                        if(fs.statSync(d).isDirectory()) {
-                            directories = directories.concat(
+                    while(paths.length) {
+                        let p = paths.shift()
+                        if(fs.statSync(p).isDirectory()) {
+                            paths = paths.concat(
                                 fs.readdirSync(d).filter(
                                     p => !p.match(/^([.]|[.][.])$/)
                                 ).map(
                                     p => d + "/" + p
                                 )
                             )
-                        } else if(d.match(/[.](php|inc)$/)) {
-                            filenames.push(d)
+                        } else if(p.match(/[.](php|inc)$/)) {
+                            filenames.push(p)
                         }
                     }
                     filenames.forEach(filename => {
@@ -96,7 +96,7 @@ export default class PHPAutoloader {
     }
     /**
      * Merges another autoloader into this one.
-     * @param {PHPAutoloader} autoloader 
+     * @param {PHPAutoloader} autoloader
      */
     add(autoloader) {
         for(var k in autoloader.paths) {
