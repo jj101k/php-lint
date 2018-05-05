@@ -128,7 +128,7 @@ export default class _Function extends Declaration {
         } else if(signature_type) {
             return_type = signature_type
         } else {
-            return_type = new PHPType.Mixed().union
+            return_type = new PHPType.Mixed(null, this.name).union
         }
         let function_type = new PHPType.Function(
             arg_types,

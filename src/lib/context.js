@@ -62,7 +62,7 @@ const PHPFunctionReturnType = {
     array_key_exists: PHPType.Core.types.bool,
     array_keys: new PHPType.IndexedArray(PHPType.Core.types.string).union,
     array_map: PHPType.Core.types.array,
-    array_values: new PHPType.IndexedArray(PHPType.Core.types.mixed).union,
+    array_values: new PHPType.IndexedArray(new PHPType.Mixed(null, "array_values").union).union,
     ceil: PHPType.Core.types.float,
     count: PHPType.Core.types.int,
     floor: PHPType.Core.types.float,
@@ -94,7 +94,7 @@ export default class Context {
             )
             Object.keys(PHPFunctions).forEach(
                 name => this._superGlobals[name] = new PHPType.Function(
-                    PHPFunctions[name].pbr.map(arg => PHPType.Core.types.mixed),
+                    PHPFunctions[name].pbr.map(arg => new PHPType.Mixed(null, name).union),
                     PHPFunctionReturnType[name] || new PHPType.Mixed(null, name).union,
                     PHPFunctions[name].pbr
                 ).union

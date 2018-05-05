@@ -95,7 +95,7 @@ export default class Property extends Declaration {
             this.name,
             this.visibility,
             this.isStatic,
-            doc_type || practical_type || new PHPType.Mixed().union
+            doc_type || practical_type || new PHPType.Mixed(context.classContext.name, this.name).union
         )
         return ContextTypes.empty
     }
