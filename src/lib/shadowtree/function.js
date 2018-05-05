@@ -155,9 +155,16 @@ export default class _Function extends Declaration {
                 default:
             }
         }
-        let types = function_type.returnType.isMixed ?
-            (doc_function_type || function_type).union :
-            function_type.union
+        let types
+        if(
+            doc_function_type &&
+            function_type.returnType.isMixed &&
+            !doc_function_type.returnType.isMixed
+        ) {
+            types = doc_function_type.union
+        } else {
+            types = function_type.union
+        }
         if(this.constructor === _Function) {
             context.addName(this.name, types)
         }
