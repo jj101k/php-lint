@@ -12,7 +12,7 @@ export default class _IndexedArray extends _Any {
      */
     constructor(member_type) {
         super()
-        this.memberType = member_type
+        this.memberType = member_type.copy()
     }
     /**
      * @type {string} A string representation of the type, as meaningful for type

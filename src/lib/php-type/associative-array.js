@@ -11,7 +11,7 @@ export default class _AssociativeArray extends _Any {
      */
     constructor(member_type = null) {
         super()
-        this.memberType = member_type
+        this.memberType = member_type ? member_type.copy() : null
     }
     /**
      * @type {string} A string representation of the type, as meaningful for type

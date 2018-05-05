@@ -98,8 +98,8 @@ export default class _Union {
         if(this.types.length == 0) {
             return union
         } else if(this.types.length == 1) {
-            let n = new _Union()
-            n.uniqueTypes = Object.assign({}, this.uniqueTypes, union.uniqueTypes)
+            let n = this.copy()
+            Object.assign(n.uniqueTypes, union.uniqueTypes)
             return n
         } else {
             Object.keys(union.uniqueTypes).forEach(
@@ -172,6 +172,16 @@ export default class _Union {
         )
     }
     /**
+     * Produces a copy of this union, to shadow a variable copy
+     *
+     * @returns {_Union}
+     */
+    copy() {
+        let n = new _Union()
+        Object.assign(n.uniqueTypes, this.uniqueTypes)
+        return n
+    }
+    /**
      * Returns a derived type union which may not be the original, without the
      * named type.
      *
@@ -180,8 +190,7 @@ export default class _Union {
      */
     excluding(type) {
         if(this.uniqueTypes[type]) {
-            let n = new _Union()
-            n.uniqueTypes = Object.assign({}, this.uniqueTypes)
+            let n = this.copy()
             delete n.uniqueTypes[type]
             return n
         } else {
