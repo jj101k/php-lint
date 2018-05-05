@@ -120,6 +120,8 @@ class NamedTypeToken extends TypeToken {
         let t
         if(this.name == "array") {
             t = new PHPType.AssociativeArray(new PHPType.Mixed(null, null, "doc").union).union
+        } else if(this.name == "mixed") {
+            t = new PHPType.Mixed(null, null, "doc").union
         } else {
             t = new PHPType.Simple(this.name).union
         }
