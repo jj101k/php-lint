@@ -25,8 +25,12 @@ export default class Bin extends Operation {
      */
     check(context, parser_state = new Set(), doc = null) {
         super.check(context, parser_state, doc)
-        let left_types = this.left.check(context, new Set(), null).expressionType
-        let right_types = this.right.check(context, new Set(), null).expressionType
+        let left_context = context.childContext(false)
+        left_context.importNamespaceFrom(context)
+        let left_types = this.left.check(left_context, new Set(), null).expressionType
+        let right_context = context.childContext(false)
+        right_context.importNamespaceFrom(context)
+        let right_types = this.right.check(right_context, new Set(), null).expressionType
         let types = PHPType.Union.empty
         switch(this.type) {
             case "||":
@@ -111,6 +115,8 @@ export default class Bin extends Operation {
                 types = types.addTypesFrom(left_types)
                 types = types.addTypesFrom(right_types)
         }
+        context.importNamespaceFrom(left_context)
+        context.importNamespaceFrom(right_context)
         return new ContextTypes(types)
     }
 }
