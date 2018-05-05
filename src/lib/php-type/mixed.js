@@ -40,10 +40,8 @@ export default class _Mixed extends _Any {
             return other_type
         } else if(!this.originSymbol) {
             return this
-        } else if(this.originClass == other_type.originClass && this.originSymbol == other_type.originSymbol) {
-            return this
         } else {
-            return new _Mixed()
+            return this
         }
     }
     /**

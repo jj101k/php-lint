@@ -66,7 +66,7 @@ export default class Bin extends Operation {
                             types = types.addTypesFrom(PHPType.Core.types.array)
                             break
                         case "mixed":
-                            types = types.addTypesFrom(new PHPType.Mixed().union)
+                            types = types.addTypesFrom(type.union)
                             break
                         default:
                             this.throw(
