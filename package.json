@@ -1,6 +1,6 @@
 {
   "name": "php-lint",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Utility for linting PHP scripts",
   "main": "index.js",
   "dependencies": {
