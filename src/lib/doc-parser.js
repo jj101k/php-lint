@@ -119,7 +119,7 @@ class NamedTypeToken extends TypeToken {
     get type() {
         let t
         if(this.name == "array") {
-            t = new PHPType.AssociativeArray(new PHPType.Mixed().union).union
+            t = new PHPType.AssociativeArray(new PHPType.Mixed(null, null, "doc").union).union
         } else {
             t = new PHPType.Simple(this.name).union
         }
@@ -198,7 +198,7 @@ class DocTypeNode extends DocNode {
             }
             this.typeStructure = current_token.type
         } else {
-            this.typeStructure = new PHPType.Mixed().union
+            this.typeStructure = new PHPType.Mixed(null, null, "doc").union
         }
     }
     /**

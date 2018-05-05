@@ -62,7 +62,7 @@ export default class Closure extends Statement {
             t => inner_context.addName(
                 '$' + t.name,
                 t.byref ?
-                    (context.findName('$' + t.name) || new PHPType.Mixed().union) :
+                    (context.findName('$' + t.name) || new PHPType.Mixed(null, null, "use").union) :
                     this.assertHasName(context, '$' + t.name)
             )
         )
@@ -88,7 +88,7 @@ export default class Closure extends Statement {
         } else if(signature_type) {
             return_type = signature_type
         } else {
-            return_type = new PHPType.Mixed().union
+            return_type = new PHPType.Mixed(null, null, "closure").union
         }
         let function_type = new PHPType.Function(
             arg_types,

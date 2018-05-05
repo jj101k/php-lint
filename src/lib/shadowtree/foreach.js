@@ -45,7 +45,7 @@ export default class Foreach extends Statement {
             } else if(t instanceof PHPType.IndexedArray) {
                 inner_types = inner_types.addTypesFrom(t.memberType)
             } else {
-                inner_types = inner_types.addType(new PHPType.Mixed())
+                inner_types = inner_types.addType(new PHPType.Mixed(null, null, "foreach"))
             }
         })
         assign_context.assigningType = inner_types

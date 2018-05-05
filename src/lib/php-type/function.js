@@ -12,8 +12,8 @@ export default class _Function extends _Any {
      */
     static get mixed() {
         return new _Function(
-            [new _Mixed().union],
-            new _Mixed().union
+            [new _Mixed(null, null, "~function").union],
+            new _Mixed(null, null, "~function").union
         )
     }
     /**

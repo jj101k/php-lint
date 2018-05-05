@@ -29,7 +29,7 @@ export default class New extends Statement {
             arg => arg.check(context, new Set(), null)
         )
         if(this.what instanceof Variable) {
-            return new ContextTypes(new PHPType.Mixed().union)
+            return new ContextTypes(new PHPType.Mixed(null, null, "new").union)
         } else if(
             (this.what instanceof Identifier) ||
             (this.what instanceof _Class) ||
@@ -50,7 +50,7 @@ export default class New extends Statement {
                 )
                 return new ContextTypes(type)
             } else {
-                return new ContextTypes(new PHPType.Mixed().union)
+                return new ContextTypes(new PHPType.Mixed(null, null, "new").union)
             }
         }
     }

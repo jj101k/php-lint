@@ -18,6 +18,6 @@ export default class Eval extends Statement {
         super.check(context, parser_state, doc)
         this.source.check(context, new Set(), null)
         // Since this executes a string, we can't know what it returns
-        return new ContextTypes(new PHPType.Mixed().union)
+        return new ContextTypes(new PHPType.Mixed(null, null, "eval").union)
     }
 }

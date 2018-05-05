@@ -7,14 +7,18 @@ import _Core from "./core";
 export default class _Mixed extends _Any {
     /**
      *
-     * @param {?string} [origin_class]
-     * @param {?string} [origin_symbol]
+     * @param {?string} [origin_class] eg. "\DateTime"
+     * @param {?string} [origin_symbol] eg. "modify"
+     * @param {?string} [origin_hint] eg. "call", usually only helpful where no
+     * symbol is known.
      */
-    constructor(origin_class = null, origin_symbol = null) {
+    constructor(origin_class = null, origin_symbol = null, origin_hint = null) {
         super()
         this.originClass = origin_class
+        this.originHint = origin_hint
         this.originSymbol = origin_symbol
     }
+
     /**
      * @type {string} A string representation of the type, as meaningful for type
      * checking.
@@ -53,6 +57,8 @@ export default class _Mixed extends _Any {
             } else {
                 return `${this.typeSignature}?${this.originSymbol}`
             }
+        } else if(this.originHint) {
+            return `${this.typeSignature}~${this.originHint}`
         } else {
             return this.typeSignature
         }

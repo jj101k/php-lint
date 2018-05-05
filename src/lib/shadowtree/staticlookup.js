@@ -27,7 +27,7 @@ export default class StaticLookup extends Lookup {
             this.what.check(context, new Set(), null)
             // $x::$y
             //this.offset.check(context)
-            return new ContextTypes(new PHPType.Mixed().union)
+            return new ContextTypes(new PHPType.Mixed(null, null, "staticlookup").union)
         } else if(
             this.what instanceof Identifier ||
             this.what instanceof ConstRef
@@ -85,9 +85,9 @@ export default class StaticLookup extends Lookup {
                         this.offset.name,
                         "public",
                         true,
-                        new PHPType.Mixed().union
+                        new PHPType.Mixed(null, null, "staticlookup").union
                     )
-                    return new ContextTypes(new PHPType.Mixed().union)
+                    return new ContextTypes(new PHPType.Mixed(null, null, "staticlookup").union)
                 } else if(types) {
                     return new ContextTypes(types)
                 } else {
@@ -96,7 +96,7 @@ export default class StaticLookup extends Lookup {
                         `No accessible static property ${resolved_name}::${this.offset.name} (from ${context_name})\n` +
                         `Accessible properties are: ${class_context.accessibleStaticIdentifiers.sort()}`
                     ), context)
-                    return new ContextTypes(new PHPType.Mixed().union)
+                    return new ContextTypes(new PHPType.Mixed(null, null, "staticlookup").union)
                 }
             }
         } else if(
@@ -106,7 +106,7 @@ export default class StaticLookup extends Lookup {
             // Bar::$FOO
             // TODO
             //this.offset.check(context)
-            return new ContextTypes(new PHPType.Mixed().union)
+            return new ContextTypes(new PHPType.Mixed(null, null, "staticlookup").union)
         } else {
             console.log(this.node)
             console.log("TODO don't know how to check this kind of lookup")

@@ -42,7 +42,7 @@ export default class ConstRef extends Expression {
         if(classContext) {
             return new ContextTypes(PHPType.Core.named(classContext.name))
         } else {
-            return new ContextTypes(new PHPType.Mixed().union)
+            return new ContextTypes(new PHPType.Mixed(null, null, "constref").union)
         }
     }
 }

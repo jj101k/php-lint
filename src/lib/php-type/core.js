@@ -58,7 +58,7 @@ export default class _Core {
                 type_name => types[type_name] = new _Simple(type_name).union
             )
             types.mixed = new _Mixed().union
-            types.array = new _AssociativeArray(new _Mixed().union).union
+            types.array = new _AssociativeArray(new _Mixed(null, null, "~array").union).union
             Object.defineProperty(types, "boolean", {
                 get() {
                     throw new WrongType("boolean", "bool")

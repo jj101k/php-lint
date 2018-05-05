@@ -15,7 +15,7 @@ export default class List extends Sys {
             this.arguments.forEach(
                 arg => {
                     let inner_context = context.childContext(true)
-                    inner_context.assigningType = new PHPType.Mixed().union
+                    inner_context.assigningType = new PHPType.Mixed(null, null, "list").union
                     arg.check(inner_context, new Set(), null)
                 }
             )
