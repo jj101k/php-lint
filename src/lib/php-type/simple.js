@@ -17,6 +17,76 @@ export default class _Simple extends _Any {
         this.polyValue = poly_value
     }
     /**
+     * @type {?this}
+     */
+    get asFalse() {
+        switch(this.typeName) {
+            case "bool":
+                if(this.values.some(v => v === false)) {
+                    return new _Simple(this.typeName, [false])
+                } else {
+                    return null
+                }
+            case "callable":
+            case "object":
+            case "self":
+                return null
+            case "float":
+            case "int":
+                if(this.polyValue || this.values.some(v => v === 0)) {
+                    return new _Simple(this.typeName, [0])
+                } else {
+                    return null
+                }
+            case "null":
+            case "void":
+                return this
+            case "string":
+                if(this.polyValue) {
+                    return new _Simple(this.typeName, ["", "0"])
+                } else if(this.values.some(v => v === "0" || v === "")) {
+                    return new _Simple(this.typeName, this.values.filter(v => v === "0" || v === ""))
+                } else {
+                    return null
+                }
+        }
+    }
+    /**
+     * @type {?this}
+     */
+    get asTrue() {
+        switch(this.typeName) {
+            case "bool":
+                if(this.values.some(v => v === true)) {
+                    return new _Simple(this.typeName, [true])
+                } else {
+                    return null
+                }
+            case "callable":
+            case "object":
+            case "self":
+                return this
+            case "float":
+            case "int":
+                if(this.polyValue || this.values.some(v => v !== 0)) {
+                    return new _Simple(this.typeName, this.values.filter(v => v !== 0), this.polyValue)
+                } else {
+                    return null
+                }
+            case "null":
+            case "void":
+                return null
+            case "string":
+                if(this.polyValue) {
+                    return new _Simple(this.typeName, this.values.filter(v => v !== "0" && v !== ""), true)
+                } else if(this.values.some(v => v !== "0" && v !== "")) {
+                    return new _Simple(this.typeName, this.values.filter(v => v !== "0" && v !== ""), this.polyValue)
+                } else {
+                    return null
+                }
+        }
+    }
+    /**
      * @type {string} A string representation of the type, as meaningful for type
      * checking.
      */

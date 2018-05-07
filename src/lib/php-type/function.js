@@ -36,6 +36,18 @@ export default class _Function extends _Any {
         this.returnType = return_type || _Core.types.void
     }
     /**
+     * @type {?this}
+     */
+    get asFalse() {
+        return null
+    }
+    /**
+     * @type {?this}
+     */
+    get asTrue() {
+        return this
+    }
+    /**
      * @type {string} A string representation of the type, as meaningful for type
      * checking.
      */

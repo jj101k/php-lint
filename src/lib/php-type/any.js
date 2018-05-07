@@ -4,6 +4,20 @@ import _Union from "./union"
  */
 export default class _Any {
     /**
+     * Any expression of this type which can be false
+     * @type {?this}
+     */
+    get asFalse() {
+        throw new Error("Not implemented")
+    }
+    /**
+     * Any expression of this type which can be false
+     * @type {?this}
+     */
+    get asTrue() {
+        throw new Error("Not implemented")
+    }
+    /**
      * @type {string} A string representation of the type as meaningful for type
      * checking, so that if the value matches between two objects you can take
      * it that they have the same type, even if they represent different values.

@@ -18,6 +18,18 @@ export default class _Mixed extends _Any {
         this.originHint = origin_hint
         this.originSymbol = origin_symbol
     }
+    /**
+     * @type {?this}
+     */
+    get asFalse() {
+        return this
+    }
+    /**
+     * @type {?this}
+     */
+    get asTrue() {
+        return this
+    }
 
     /**
      * @type {string} A string representation of the type, as meaningful for type

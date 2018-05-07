@@ -13,6 +13,31 @@ export default class _IndexedArray extends _Any {
     constructor(member_type) {
         super()
         this.memberType = member_type.copy()
+        this.isEmpty = null
+    }
+    /**
+     * @type {?this}
+     */
+    get asFalse() {
+        if(this.isEmpty !== true) {
+            let out = new _AssociativeArray()
+            out.isEmpty = true
+            return out
+        } else {
+            return null
+        }
+    }
+    /**
+     * @type {?this}
+     */
+    get asTrue() {
+        if(this.isEmpty !== false) {
+            let out = new _AssociativeArray(this.memberType)
+            out.isEmpty = true
+            return out
+        } else {
+            return null
+        }
     }
     /**
      * @type {string} A string representation of the type, as meaningful for type

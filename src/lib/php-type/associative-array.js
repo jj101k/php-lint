@@ -12,6 +12,31 @@ export default class _AssociativeArray extends _Any {
     constructor(member_type = null) {
         super()
         this.memberType = member_type ? member_type.copy() : null
+        this.isEmpty = null
+    }
+    /**
+     * @type {?this}
+     */
+    get asFalse() {
+        if(this.isEmpty !== true) {
+            let out = new _AssociativeArray()
+            out.isEmpty = true
+            return out
+        } else {
+            return null
+        }
+    }
+    /**
+     * @type {?this}
+     */
+    get asTrue() {
+        if(this.isEmpty !== false) {
+            let out = new _AssociativeArray(this.memberType)
+            out.isEmpty = true
+            return out
+        } else {
+            return null
+        }
     }
     /**
      * @type {string} A string representation of the type, as meaningful for type
