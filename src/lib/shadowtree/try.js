@@ -26,7 +26,12 @@ export default class Try extends Statement {
         super.check(context, parser_state, doc)
         this.body.check(context, new Set(), null)
         this.catches.forEach(
-            c => c.check(context, new Set(), null)
+            c => {
+                let c_context = context.childContext(false)
+                c_context.importNamespaceFrom(context)
+                c.check(c_context, new Set(), null)
+                context.importNamespaceFrom(c_context)
+            }
         )
         if(this.always) {
             this.always.check(context, new Set(), null)
