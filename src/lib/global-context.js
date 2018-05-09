@@ -178,10 +178,10 @@ export class GlobalContext {
                         false,
                         new PHPType.Union(
                             new PHPType.Function(
-                                [PHPType.Core.types.string.addTypesFrom(
+                                [PHPType.Core.types.string],
+                                PHPType.Core.named("\\" + name).addTypesFrom(
                                     PHPType.Core.types.bool.withValue(false)
-                                )],
-                                PHPType.Core.named("\\" + name)
+                                )
                             )
                         )
                     )
