@@ -51,7 +51,7 @@ export default class _Node extends AbstractNode {
     constructor(node) {
         super(node)
     }
-        /**
+    /**
      * Returns the types for the local name, or throws
      * @param {Context} context
      * @param {string} name
