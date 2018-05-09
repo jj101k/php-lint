@@ -39,7 +39,7 @@ export default class Variable extends Expression {
                 )
             )
         } else {
-            let types = this.assertHasName(context, '$' + this.name)
+            let types = this.assertHasName(context, '$' + this.name) || PHPType.Union.empty
             if(DEBUG) {
                 console.log(`$${this.name} == ${types} (${types})`)
             }
