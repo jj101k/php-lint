@@ -27,6 +27,7 @@ export default class ContextTypes {
     ) {
         this.expressionType = expression_type
         this.returnType = return_type
-        this.booleanState = boolean_state || new BooleanState()
+        this.booleanState = boolean_state ||
+            new BooleanState().withType(expression_type)
     }
 }

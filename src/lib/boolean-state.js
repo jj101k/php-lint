@@ -151,10 +151,10 @@ export default class BooleanState {
     /**
      *
      * @param {PHPType.Union} types
-     * @param {GeneralAssertion} assertion
+     * @param {GeneralAssertion} [assertion]
      * @param {GeneralAssertion} [inverse_assertion]
      */
-    withType(types, assertion, inverse_assertion = null) {
+    withType(types, assertion = null, inverse_assertion = null) {
         let false_type = PHPType.Union.empty
         let true_type = PHPType.Union.empty
         types.types.forEach(type => {
@@ -163,11 +163,16 @@ export default class BooleanState {
             let t = type.asTrue
             if(t) true_type.addType(t)
         })
-        this.trueStates.push(new ValueState(true_type, [assertion]))
-        this.falseStates.push(new ValueState(
-            false_type,
-            [inverse_assertion || assertion.negative]
-        ))
+        if(assertion) {
+            this.trueStates.push(new ValueState(true_type, [assertion]))
+            this.falseStates.push(new ValueState(
+                false_type,
+                [inverse_assertion || assertion.negative]
+            ))
+        } else {
+            this.trueStates.push(new ValueState(true_type, []))
+            this.falseStates.push(new ValueState(false_type, []))
+        }
         return this
     }
 }
