@@ -2,6 +2,7 @@ import Statement from "./statement"
 import * as PHPType from "../php-type"
 import Expression from "./expression"
 import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
+import BooleanState from "../boolean-state";
 export default class RetIf extends Statement {
     /** @type {Expression} */
     get test() {
@@ -24,14 +25,27 @@ export default class RetIf extends Statement {
      */
     check(context, parser_state = new Set(), doc = null) {
         super.check(context, parser_state, doc)
-        let test_type = this.test.check(context, new Set(), null).expressionType
+        let test = this.test.check(context, new Set(), null)
+        let test_type = test.expressionType
         let types = PHPType.Union.empty
         if(this.trueExpr) {
-            types = types.addTypesFrom(this.trueExpr.check(context, new Set(), null).expressionType)
+            test.booleanState.trueStates.forEach(s => {
+                let t_context = context.childContext(false)
+                t_context.importNamespaceFrom(context)
+                t_context.importAssertions(s.assertions)
+                types = types.addTypesFrom(this.trueExpr.check(t_context, new Set(), null).expressionType)
+            })
         } else {
-            types = types.addTypesFrom(test_type)
+            test.booleanState.trueStates.forEach(s => {
+                types = types.addTypesFrom(s.value)
+            })
         }
-        types = types.addTypesFrom(this.falseExpr.check(context, new Set(), null).expressionType)
+        test.booleanState.falseStates.forEach(s => {
+            let t_context = context.childContext(false)
+            t_context.importNamespaceFrom(context)
+            t_context.importAssertions(s.assertions)
+            types = types.addTypesFrom(this.falseExpr.check(t_context, new Set(), null).expressionType)
+        })
         return new ContextTypes(types)
     }
 }
