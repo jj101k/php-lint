@@ -4,6 +4,7 @@ import * as PHPError from "./php-error"
 import * as ClassContext from "./class-context"
 import {FileContext} from "./file-context"
 import {GlobalContext} from "./global-context"
+import {Assertion} from "./boolean-state"
 
 const fs = require("fs")
 const path = require("path")
@@ -328,6 +329,24 @@ export default class Context {
     forClass(class_context) {
         this.classContext = class_context
         return this
+    }
+
+    /**
+     *
+     * @param {Assertion[]} assertions
+     */
+    importAssertions(assertions) {
+        assertions.forEach(
+            a => {
+                if(this.ns[a.symbol]) {
+                    if(a.not) {
+                        this.ns[a.symbol] = this.ns[a.symbol].difference(a.type)
+                    } else {
+                        this.ns[a.symbol] = this.ns[a.symbol].intersection(a.type)
+                    }
+                }
+            }
+        )
     }
 
     /**

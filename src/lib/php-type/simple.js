@@ -22,7 +22,7 @@ export default class _Simple extends _Any {
     get asFalse() {
         switch(this.typeName) {
             case "bool":
-                if(this.values.some(v => v === false)) {
+                if(this.values.some(v => v === false) || !this.values.length) {
                     return new _Simple(this.typeName, [false])
                 } else {
                     return null
@@ -33,7 +33,7 @@ export default class _Simple extends _Any {
                 return null
             case "float":
             case "int":
-                if(this.polyValue || this.values.some(v => v === 0)) {
+                if(this.polyValue || !this.values.length || this.values.some(v => v === 0)) {
                     return new _Simple(this.typeName, [0])
                 } else {
                     return null
@@ -42,13 +42,15 @@ export default class _Simple extends _Any {
             case "void":
                 return this
             case "string":
-                if(this.polyValue) {
+                if(this.polyValue || !this.values.length) {
                     return new _Simple(this.typeName, ["", "0"])
                 } else if(this.values.some(v => v === "0" || v === "")) {
                     return new _Simple(this.typeName, this.values.filter(v => v === "0" || v === ""))
                 } else {
                     return null
                 }
+            default:
+                return false
         }
     }
     /**
@@ -57,7 +59,7 @@ export default class _Simple extends _Any {
     get asTrue() {
         switch(this.typeName) {
             case "bool":
-                if(this.values.some(v => v === true)) {
+                if(this.values.some(v => v === true) || !this.values.length) {
                     return new _Simple(this.typeName, [true])
                 } else {
                     return null
@@ -68,7 +70,7 @@ export default class _Simple extends _Any {
                 return this
             case "float":
             case "int":
-                if(this.polyValue || this.values.some(v => v !== 0)) {
+                if(this.polyValue || !this.values.length || this.values.some(v => v !== 0)) {
                     return new _Simple(this.typeName, this.values.filter(v => v !== 0), this.polyValue)
                 } else {
                     return null
@@ -77,13 +79,15 @@ export default class _Simple extends _Any {
             case "void":
                 return null
             case "string":
-                if(this.polyValue) {
+                if(this.polyValue || !this.values.length) {
                     return new _Simple(this.typeName, this.values.filter(v => v !== "0" && v !== ""), true)
                 } else if(this.values.some(v => v !== "0" && v !== "")) {
                     return new _Simple(this.typeName, this.values.filter(v => v !== "0" && v !== ""), this.polyValue)
                 } else {
                     return null
                 }
+            default:
+                return this
         }
     }
     /**
@@ -148,6 +152,44 @@ export default class _Simple extends _Any {
                 t => t.matches(other_type)
             )
         )
+    }
+    /**
+     *
+     * @param {this} t
+     * @returns {?this}
+     */
+    difference(t) {
+        if(this.polyValue && t.polyValue) {
+            return null
+        } else if(!this.values.length && !t.values.length) {
+            return null
+        } else {
+            let values = this.values.filter(v => !t.values.some(tv => tv === v))
+            if(values.length) {
+                return new _Simple(this.typeName, values)
+            } else {
+                return null
+            }
+        }
+    }
+    /**
+     *
+     * @param {this} t
+     * @returns {this}
+     */
+    intersection(t) {
+        if(this.polyValue && t.polyValue) {
+            return this
+        } else if(!this.values.length && !t.values.length) {
+            return this
+        } else {
+            let values = this.values.filter(v => t.values.some(tv => tv === v))
+            if(values.length) {
+                return new _Simple(this.typeName, values)
+            } else {
+                return null
+            }
+        }
     }
     /**
      * Returns all the types this one matches, including all ancestors and

@@ -21,6 +21,22 @@ export default class _Union {
             this.uniqueTypes["" + initial_type] = initial_type
         }
     }
+    get asFalse() {
+        let type = _Union.empty
+        this.types.forEach(v => {
+            let f = v.asFalse
+            if(f) type.addType(f)
+        })
+        return type
+    }
+    get asTrue() {
+        let type = _Union.empty
+        this.types.forEach(v => {
+            let t = v.asTrue
+            if(t) type.addType(t)
+        })
+        return type
+    }
     /**
      * @type {boolean}
      */
@@ -182,6 +198,27 @@ export default class _Union {
         return n
     }
     /**
+     *
+     * @param {_Union} union
+     * @returns {_Union}
+     */
+    difference(union) {
+        let n = new _Union()
+        Object.keys(this.uniqueTypes).forEach(
+            t => {
+                if(!union.uniqueTypes[t]) {
+                    n.addType(this.uniqueTypes[t])
+                } else {
+                    let tv = this.uniqueTypes[t].difference(union.uniqueTypes[t])
+                    if(tv) {
+                        n.addType(tv)
+                    }
+                }
+            }
+        )
+        return n
+    }
+    /**
      * Returns a derived type union which may not be the original, without the
      * named type.
      *
@@ -196,6 +233,25 @@ export default class _Union {
         } else {
             return this
         }
+    }
+    /**
+     *
+     * @param {_Union} union
+     * @returns {_Union}
+     */
+    intersection(union) {
+        let n = new _Union()
+        Object.keys(this.uniqueTypes).forEach(
+            t => {
+                if(union.uniqueTypes[t]) {
+                    let tv = this.uniqueTypes[t].intersection(union.uniqueTypes[t])
+                    if(tv) {
+                        n.addType(tv)
+                    }
+                }
+            }
+        )
+        return n
     }
     /**
      * @type {string} Represents best expression of the object, rather than

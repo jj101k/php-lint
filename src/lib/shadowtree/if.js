@@ -32,10 +32,13 @@ export default class If extends Statement {
      */
     check(context, parser_state = new Set(), doc = null) {
         super.check(context, parser_state, doc)
-        this.test.check(context, new Set(), null)
+        let test_state = this.test.check(context, new Set(), null).booleanState
 
         let body_context = context.childContext(false)
         body_context.importNamespaceFrom(context)
+        test_state.trueStates.forEach(
+            ts => body_context.importAssertions(ts.assertions)
+        )
         if(
             this.test instanceof Bin &&
             this.test.type == "instanceof" &&
@@ -52,6 +55,9 @@ export default class If extends Statement {
         if(this.alternate) {
             let alt_context = context.childContext(false)
             alt_context.importNamespaceFrom(context)
+            test_state.falseStates.forEach(
+                fs => alt_context.importAssertions(fs.assertions)
+            )
             type = type.addTypesFrom(this.alternate.check(alt_context, new Set(), null).returnType)
             context.importNamespaceFrom(alt_context)
         }

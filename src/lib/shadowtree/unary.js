@@ -21,13 +21,18 @@ export default class Unary extends Operation {
     check(context, parser_state = new Set(), doc = null) {
         super.check(context, parser_state, doc)
         if(this.type == "!") {
-            let etype = this.what.check(context, new Set(), null).expressionType
+            let e = this.what.check(context, new Set(), null)
+            let etype = e.expressionType
             let rtype = PHPType.Core.types.bool
             let coerced_values = etype.coercedValues("bool")
             if(coerced_values) {
                 coerced_values.forEach(cv => rtype = rtype.withValue(!cv))
             }
-            return new ContextTypes(rtype)
+            return new ContextTypes(
+                rtype,
+                PHPType.Union.empty,
+                e.booleanState.negative
+            )
         } else if(this.type == "-" || this.type == "+") {
             let etype = this.what.check(context, new Set(), null).expressionType
             let rtype = PHPType.Core.types.float

@@ -70,7 +70,22 @@ export default class _Any {
     compliesWith(other_type, resolver) {
         return this.matches(other_type)
     }
-
+    /**
+     *
+     * @param {this} t
+     * @returns {?this}
+     */
+    difference(t) {
+        return null
+    }
+    /**
+     *
+     * @param {this} t
+     * @returns {?this}
+     */
+    intersection(t) {
+        return this
+    }
     /**
      * Returns true if both have the same type.
      *

@@ -1,5 +1,7 @@
 import Expression from "./expression"
 import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
+import BooleanState, { Assertion } from "../boolean-state"
+import * as PHPType from "../php-type"
 
 const DEBUG = false
 export default class Variable extends Expression {
@@ -24,16 +26,32 @@ export default class Variable extends Expression {
             if(DEBUG) {
                 console.log(`$${this.name} = ${context.assigningType} (${context.assigningType})`)
             }
-            return new ContextTypes(context.setName(
-                '$' + this.name,
-                context.assigningType
-            ))
+            return new ContextTypes(
+                context.setName(
+                    '$' + this.name,
+                    context.assigningType
+                ),
+                PHPType.Union.empty,
+                new BooleanState().withType(
+                    context.assigningType,
+                    new Assertion(false, '$' + this.name, context.assigningType.asTrue),
+                    new Assertion(false, '$' + this.name, context.assigningType.asFalse)
+                )
+            )
         } else {
             let types = this.assertHasName(context, '$' + this.name)
             if(DEBUG) {
                 console.log(`$${this.name} == ${types} (${types})`)
             }
-            return new ContextTypes(types)
+            return new ContextTypes(
+                types,
+                PHPType.Union.empty,
+                new BooleanState().withType(
+                    types,
+                    new Assertion(false, '$' + this.name, types.asTrue),
+                    new Assertion(false, '$' + this.name, types.asFalse)
+                )
+            )
         }
     }
 }
