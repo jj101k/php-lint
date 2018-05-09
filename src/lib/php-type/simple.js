@@ -80,7 +80,7 @@ export default class _Simple extends _Any {
                 return null
             case "string":
                 if(this.polyValue || !this.values.length) {
-                    return new _Simple(this.typeName, this.values.filter(v => v !== "0" && v !== ""), true)
+                    return new _Simple(this.typeName, this.values.filter(v => v !== "0" && v !== ""), this.polyValue)
                 } else if(this.values.some(v => v !== "0" && v !== "")) {
                     return new _Simple(this.typeName, this.values.filter(v => v !== "0" && v !== ""), this.polyValue)
                 } else {
