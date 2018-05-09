@@ -171,8 +171,9 @@ export class GlobalContext {
         this.workingDirectory = null
         PHPClasses.forEach(
             name => {
+                let c = this.addUnknownClass("\\" + name)
                 if(name == "DateTime") {
-                    this.addUnknownClass("\\" + name).addIdentifier(
+                    c.addIdentifier(
                         "modify",
                         "public",
                         false,
@@ -185,8 +186,19 @@ export class GlobalContext {
                             )
                         )
                     )
-                } else {
-                    this.addUnknownClass("\\" + name)
+                    c.addIdentifier(
+                        "format",
+                        "public",
+                        false,
+                        new PHPType.Union(
+                            new PHPType.Function(
+                                [PHPType.Core.types.string],
+                                PHPType.Core.types.string.addTypesFrom(
+                                    PHPType.Core.types.bool.withValue(false)
+                                )
+                            )
+                        )
+                    )
                 }
             }
         )
