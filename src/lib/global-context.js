@@ -116,7 +116,7 @@ export class GlobalContext {
                 let classmap = composer_config.autoload["classmap"]
                 if(classmap) {
                     console.log(
-                        "WARNING, this project uses classmap autoload, this is extremely unwise and takes non-trivial time to parse"
+                        `WARNING, this project uses classmap autoload at ${filename}, this is extremely unwise and takes non-trivial time to parse`
                     )
                     classmap_paths = classmap.map(
                         // Directory paths may be garbage here, but won't know
