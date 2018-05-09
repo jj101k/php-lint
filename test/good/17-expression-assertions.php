@@ -54,3 +54,10 @@ function bez(): string {
         return $dt->format("c") ?: "";
     }
 }
+/**
+ * @return bool
+ */
+function buz(): bool {
+    $dt = (new \DateTime())->modify("+1 day");
+    return($dt and $dt->format("c"));
+}

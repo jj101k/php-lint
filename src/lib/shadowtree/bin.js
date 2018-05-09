@@ -27,22 +27,34 @@ export default class Bin extends Operation {
         super.check(context, parser_state, doc)
         let left_context = context.childContext(false)
         left_context.importNamespaceFrom(context)
-        let left_types = this.left.check(left_context, new Set(), null).expressionType
+        let left = this.left.check(left_context, new Set(), null)
+        let left_types = left.expressionType
         let right_context = context.childContext(false)
         right_context.importNamespaceFrom(context)
-        let right_types = this.right.check(right_context, new Set(), null).expressionType
         let types = PHPType.Union.empty
         switch(this.type) {
             case "||":
             case "|":
             case "or":
                 // Boolean (or)
+                left.booleanState.falseStates.forEach(s => {
+                    let right_context = context.childContext(false)
+                    right_context.importNamespaceFrom(context)
+                    right_context.importAssertions(s.assertions)
+                    this.right.check(right_context, new Set(), null)
+                })
                 types = types.addTypesFrom(PHPType.Core.types.bool)
                 break
             case "&":
             case "&&":
             case "and":
                 // Boolean (and)
+                left.booleanState.trueStates.forEach(s => {
+                    let right_context = context.childContext(false)
+                    right_context.importNamespaceFrom(context)
+                    right_context.importAssertions(s.assertions)
+                    this.right.check(right_context, new Set(), null)
+                })
                 types = types.addTypesFrom(PHPType.Core.types.bool)
                 break
             case "*":
@@ -54,10 +66,12 @@ export default class Bin extends Operation {
             case ">>":
             case "^":
                 // Numeric (1)
+                this.right.check(right_context, new Set(), null)
                 types = types.addTypesFrom(PHPType.Core.types.float)
                 break
             case "+":
                 // Numeric (2)
+                this.right.check(right_context, new Set(), null)
                 left_types.types.forEach(type => {
                     switch(type.typeSignature) {
                         case "null":
@@ -84,6 +98,7 @@ export default class Bin extends Operation {
                 break
             case ".":
                 // String
+                this.right.check(right_context, new Set(), null)
                 types = types.addTypesFrom(PHPType.Core.types.string)
                 break
             case "~":
@@ -101,19 +116,21 @@ export default class Bin extends Operation {
             case "===":
             case "instanceof":
                 // Comparison (boolean)
+                this.right.check(right_context, new Set(), null)
                 types = types.addTypesFrom(PHPType.Core.types.bool)
                 break
             case "??":
                 // Left (not null) or right
                 types = types.addTypesFrom(
                     left_types.excluding("null")
-                ).addTypesFrom(right_types)
+                ).addTypesFrom(
+                    this.right.check(right_context, new Set(), null).expressionType
+                )
                 break
             default:
                 console.log(this.node)
                 console.log(`Don't know how to parse operator type ${this.type}`)
                 types = types.addTypesFrom(left_types)
-                types = types.addTypesFrom(right_types)
         }
         context.importNamespaceFrom(left_context)
         context.importNamespaceFrom(right_context)
