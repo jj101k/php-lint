@@ -14,30 +14,54 @@ export default class Doc extends AbstractNode {
         return this.node.lines
     }
     /**
+     * Given a type union filled with unqualified names, returns the same with
+     * qualified names.
      *
      * @param {PHPType.Union} u
      * @param {Context} context
      * @param {Doc} doc
+     * @returns {PHPType.Union}
      */
     resolveAllDocNames(u, context, doc) {
-        let types = u.types
-        for(let i = 0; i < types.length; i++) {
-            let m = types[i]
-            if(m instanceof PHPType.AssociativeArray) {
-                types = types.concat(m.memberType.types)
-            } else if(m instanceof PHPType.IndexedArray) {
-                types = types.concat(m.memberType.types)
-            } else if(m instanceof PHPType.Simple) {
-                m.typeName = this.resolveDocName(m.typeName, context, doc)
-            } else if(m instanceof PHPType.Function) {
-                m.argTypes.forEach(atype => types = types.concat(atype.types))
-                types = types.concat(m.returnType.types)
-            } else if(m instanceof PHPType.Mixed) {
+        let n = PHPType.Union.empty
+        u.types.map(t => {
+            if(t instanceof PHPType.AssociativeArray) {
+                return new PHPType.AssociativeArray(
+                    this.resolveAllDocNames(t.memberType, context, doc)
+                )
+            } else if(t instanceof PHPType.IndexedArray) {
+                return new PHPType.IndexedArray(
+                    this.resolveAllDocNames(t.memberType, context, doc)
+                )
+            } else if(t instanceof PHPType.Simple) {
+                return new PHPType.Simple(
+                    this.resolveDocName(t.typeName, context, doc),
+                    t.values,
+                    t.polyValue
+                )
+            } else if(t instanceof PHPType.Function) {
+                let cbp = {}
+                Object.keys(t.callbackPositions).forEach(k => {
+                    cbp[k] = this.resolveAllDocNames(t.callbackPositions[k], context, doc)
+                })
+                return new PHPType.Function(
+                    t.argTypes.map(
+                        atype => this.resolveAllDocNames(atype, context, doc)
+                    ),
+                    this.resolveAllDocNames(t.returnType, context, doc),
+                    t.passByReferencePositions,
+                    cbp
+                )
+            } else if(t instanceof PHPType.Mixed) {
                 // Do nothing
+                return t
             } else {
-                throw new Error(`Don't know how to resolve doc names in type ${m}`)
+                throw new Error(`Don't know how to resolve doc names in type ${t}`)
             }
-        }
+        }).forEach(
+            t => n.addType(t)
+        )
+        return n
     }
     /**
      * @param {string} t

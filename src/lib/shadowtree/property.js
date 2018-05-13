@@ -43,18 +43,27 @@ export default class Property extends Declaration {
                                     context,
                                     doc.loc
                                 )
-                                doc_type = c.typeStructure
-                                doc.resolveAllDocNames(doc_type, context, doc)
+                                doc_type = doc.resolveAllDocNames(
+                                    c.typeStructure,
+                                    context,
+                                    doc
+                                )
                             },
                             "var": c => {
-                                doc_type = c.typeStructure
-                                doc.resolveAllDocNames(doc_type, context, doc)
+                                doc_type = doc.resolveAllDocNames(
+                                    c.typeStructure,
+                                    context,
+                                    doc
+                                )
                             },
                         } :
                         {
                             property: c => {
-                                doc_type = c.typeStructure
-                                doc.resolveAllDocNames(doc_type, context, doc)
+                                doc_type = doc.resolveAllDocNames(
+                                    c.typeStructure,
+                                    context,
+                                    doc
+                                )
                             },
                             "var": c => {
                                 this.throw(
@@ -62,8 +71,11 @@ export default class Property extends Declaration {
                                     context,
                                     doc.loc
                                 )
-                                doc_type = c.typeStructure
-                                doc.resolveAllDocNames(doc_type, context, doc)
+                                doc_type = doc.resolveAllDocNames(
+                                    doc_type,
+                                    context,
+                                    doc
+                                )
                             },
                         }
                     doc_structure.forEach(c => c.resolve(resolver))
