@@ -6,7 +6,7 @@ import _String from "./string"
 import Bin from "./bin"
 import Magic from "./magic"
 import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
-import {ConstRef, StaticLookup} from "../shadowtree"
+import {ConstRef, StaticLookup, PropertyLookup} from "../shadowtree"
 export default class Call extends Statement {
     /**
      * @type {Object[]}
@@ -15,7 +15,7 @@ export default class Call extends Statement {
         return this.cacheNodeArray("arguments")
     }
     /**
-     * @type {Identifier|Variable|null}
+     * @type {Identifier|Variable|PropertyLookup|null}
      */
     get what() {
         return this.cacheNode("what")
