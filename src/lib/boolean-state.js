@@ -151,8 +151,10 @@ export default class BooleanState {
     /**
      *
      * @param {PHPType.Union} types
-     * @param {GeneralAssertion} [assertion]
-     * @param {GeneralAssertion} [inverse_assertion]
+     * @param {GeneralAssertion} [assertion] If you exclude this, a null
+     * assertion will be used.
+     * @param {GeneralAssertion} [inverse_assertion] If you exclude this, it
+     * will be taken as the inverse of assertion.
      */
     withType(types, assertion = null, inverse_assertion = null) {
         let false_type = PHPType.Union.empty
@@ -177,3 +179,4 @@ export default class BooleanState {
     }
 }
 export {GeneralAssertion as Assertion}
+export {ValueState}
