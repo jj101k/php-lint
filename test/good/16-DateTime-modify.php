@@ -4,10 +4,15 @@
  */
 class Test16DateTimeModify {
     /**
-     * @return \DateTime
+     * @return \DateTime|null
      */
-    public function test(): \DateTime {
+    public function test(): ?\DateTime {
         $dt = new \DateTime();
-        return $dt->modify("+5 minutes");
+        $dt = $dt->modify("+5 minutes");
+        if($dt) {
+            return $dt;
+        } else {
+            return null;
+        }
     }
 }
