@@ -17,6 +17,9 @@ export default class _Any {
     get asTrue() {
         throw new Error("Not implemented")
     }
+    get isMixed() {
+        return false
+    }
     /**
      * @type {string} A string representation of the type as meaningful for type
      * checking, so that if the value matches between two objects you can take

@@ -73,26 +73,27 @@ export default class Bin extends Operation {
                 // Numeric (2)
                 this.right.check(right_context, new Set(), null)
                 left_types.types.forEach(type => {
-                    switch(type.typeSignature) {
-                        case "null":
-                            // Yes null casts to number.
-                        case "int":
-                        case "float":
-                            types = types.addTypesFrom(PHPType.Core.types.float)
-                            break
-                        case "array":
-                            types = types.addTypesFrom(PHPType.Core.types.array)
-                            break
-                        case "mixed":
-                            types = types.addTypesFrom(type.union)
-                            break
-                        default:
-                            this.throw(
-                                new PHPError.BadTypeCast(`Possibly bad cast from type ${type} for +`),
-                                context,
-                                this.loc
-                            )
-                            types = types.addTypesFrom(PHPType.Core.types.float)
+                    if(type instanceof PHPType.Mixed) {
+                        types = types.addTypesFrom(type.union)
+                    } else {
+                        switch(type.typeSignature) {
+                            case "null":
+                                // Yes null casts to number.
+                            case "int":
+                            case "float":
+                                types = types.addTypesFrom(PHPType.Core.types.float)
+                                break
+                            case "array":
+                                types = types.addTypesFrom(PHPType.Core.types.array)
+                                break
+                            default:
+                                this.throw(
+                                    new PHPError.BadTypeCast(`Possibly bad cast from type ${type} for +`),
+                                    context,
+                                    this.loc
+                                )
+                                types = types.addTypesFrom(PHPType.Core.types.float)
+                        }
                     }
                 })
                 break

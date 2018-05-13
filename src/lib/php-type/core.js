@@ -12,7 +12,6 @@ import _Union from "./union"
  * @property {_Union} array
  * @property {_Union} callable
  * @property {_Union} null
- * @property {_Union} mixed
  * @property {_Union} self
  * @property {_Union} object
  * @property {_Union} void

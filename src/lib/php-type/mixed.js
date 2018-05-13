@@ -1,6 +1,4 @@
 import _Any from "./any"
-import _Union from "./union"
-import _Core from "./core";
 /**
  * Unknown type
  */
@@ -30,7 +28,9 @@ export default class _Mixed extends _Any {
     get asTrue() {
         return this
     }
-
+    get isMixed() {
+        return true
+    }
     /**
      * @type {string} A string representation of the type, as meaningful for type
      * checking.
