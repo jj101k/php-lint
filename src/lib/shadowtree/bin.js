@@ -25,10 +25,9 @@ export default class Bin extends Operation {
      */
     check(context, parser_state = new Set(), doc = null) {
         super.check(context, parser_state, doc)
-        let left_context = context.childContext(false)
-        left_context.importNamespaceFrom(context)
-        let left = this.left.check(left_context, new Set(), null)
-        let left_types = left.expressionType
+
+        let left = this.left.check(context, new Set(), null)
+
         let right_context = context.childContext(false)
         right_context.importNamespaceFrom(context)
         let types = PHPType.Union.empty
@@ -38,10 +37,11 @@ export default class Bin extends Operation {
             case "or":
                 // Boolean (or)
                 left.booleanState.falseStates.forEach(s => {
-                    let right_context = context.childContext(false)
-                    right_context.importNamespaceFrom(context)
-                    right_context.importAssertions(s.assertions)
-                    this.right.check(right_context, new Set(), null)
+                    let c_right_context = right_context.childContext(false)
+                    c_right_context.importNamespaceFrom(right_context)
+                    c_right_context.importAssertions(s.assertions)
+                    this.right.check(c_right_context, new Set(), null)
+                    context.importNamespaceFrom(c_right_context)
                 })
                 types = types.addTypesFrom(PHPType.Core.types.bool)
                 break
@@ -50,10 +50,11 @@ export default class Bin extends Operation {
             case "and":
                 // Boolean (and)
                 left.booleanState.trueStates.forEach(s => {
-                    let right_context = context.childContext(false)
-                    right_context.importNamespaceFrom(context)
-                    right_context.importAssertions(s.assertions)
-                    this.right.check(right_context, new Set(), null)
+                    let c_right_context = right_context.childContext(false)
+                    c_right_context.importNamespaceFrom(right_context)
+                    c_right_context.importAssertions(s.assertions)
+                    this.right.check(c_right_context, new Set(), null)
+                    context.importNamespaceFrom(c_right_context)
                 })
                 types = types.addTypesFrom(PHPType.Core.types.bool)
                 break
@@ -67,12 +68,14 @@ export default class Bin extends Operation {
             case "^":
                 // Numeric (1)
                 this.right.check(right_context, new Set(), null)
+                context.importNamespaceFrom(right_context)
                 types = types.addTypesFrom(PHPType.Core.types.float)
                 break
             case "+":
                 // Numeric (2)
                 this.right.check(right_context, new Set(), null)
-                left_types.types.forEach(type => {
+                context.importNamespaceFrom(right_context)
+                left.expressionType.types.forEach(type => {
                     if(type instanceof PHPType.Mixed) {
                         types = types.addTypesFrom(type.union)
                     } else {
@@ -100,6 +103,7 @@ export default class Bin extends Operation {
             case ".":
                 // String
                 this.right.check(right_context, new Set(), null)
+                context.importNamespaceFrom(right_context)
                 types = types.addTypesFrom(PHPType.Core.types.string)
                 break
             case "~":
@@ -118,23 +122,25 @@ export default class Bin extends Operation {
             case "instanceof":
                 // Comparison (boolean)
                 this.right.check(right_context, new Set(), null)
+                context.importNamespaceFrom(right_context)
                 types = types.addTypesFrom(PHPType.Core.types.bool)
                 break
             case "??":
                 // Left (not null) or right
                 types = types.addTypesFrom(
-                    left_types.excluding("null")
+                    left.expressionType.excluding("null")
                 ).addTypesFrom(
                     this.right.check(right_context, new Set(), null).expressionType
                 )
+                context.importNamespaceFrom(right_context)
                 break
             default:
                 console.log(this.node)
                 console.log(`Don't know how to parse operator type ${this.type}`)
-                types = types.addTypesFrom(left_types)
+                this.right.check(right_context, new Set(), null)
+                context.importNamespaceFrom(right_context)
+                types = types.addTypesFrom(left.expressionType)
         }
-        context.importNamespaceFrom(left_context)
-        context.importNamespaceFrom(right_context)
         return new ContextTypes(types)
     }
 }
