@@ -18,7 +18,7 @@ export default class _Union {
         /** @type {{[x: string]: _Any}} */
         this.uniqueTypes = {}
         if(initial_type) {
-            this.uniqueTypes["" + initial_type] = initial_type
+            this.uniqueTypes[initial_type.typeSignature] = initial_type
         }
     }
     get asFalse() {
