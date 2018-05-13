@@ -254,7 +254,7 @@ export default class Context {
     }
 
     /**
-     * Returns the set of types that the given name complies with.
+     * Returns the set of types that the given name complies with (aside from itself)
      *
      * @param {string} name
      * @returns {string[]}
@@ -267,6 +267,7 @@ export default class Context {
             if(c) {
                 /** @type {string[]} */
                 let types = []
+                types = types.concat(c.interfaceNames)
                 while(c.superclass) {
                     c = c.superclass
                     types.push(c.name)
