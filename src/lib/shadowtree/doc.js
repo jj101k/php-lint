@@ -59,7 +59,7 @@ export default class Doc extends AbstractNode {
                 throw new Error(`Don't know how to resolve doc names in type ${t}`)
             }
         }).forEach(
-            t => n.addType(t)
+            t => n = n.addType(t)
         )
         return n
     }
