@@ -39,17 +39,6 @@ export default class If extends Statement {
         test_state.trueStates.forEach(
             ts => body_context.importAssertions(ts.assertions)
         )
-        if(
-            this.test instanceof Bin &&
-            this.test.type == "instanceof" &&
-            this.test.left instanceof Variable &&
-            this.test.right instanceof ConstRef
-        ) {
-            body_context.setName(
-                '$' + this.test.left.name,
-                PHPType.Core.named(context.resolveNodeName(this.test.right))
-            )
-        }
         let type = PHPType.Union.empty
         type = type.addTypesFrom(this.body.check(body_context, new Set(), null).returnType)
         if(this.alternate) {

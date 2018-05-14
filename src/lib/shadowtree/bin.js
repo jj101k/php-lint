@@ -1,8 +1,11 @@
+import ConstRef from "./constref"
 import Operation from "./operation"
 import Expression from "./expression"
 import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
+import Variable from "./variable"
 import * as PHPType from "../php-type"
 import * as PHPError from "../php-error"
+import BooleanState, { Assertion } from "../boolean-state";
 export default class Bin extends Operation {
     /** @type {string} */
     get type() {
@@ -27,6 +30,8 @@ export default class Bin extends Operation {
         super.check(context, parser_state, doc)
 
         let left = this.left.check(context, new Set(), null)
+
+        let boolean_state
 
         let right_context = context.childContext(false)
         right_context.importNamespaceFrom(context)
@@ -119,11 +124,29 @@ export default class Bin extends Operation {
             case "==":
             case "!==":
             case "===":
-            case "instanceof":
                 // Comparison (boolean)
                 this.right.check(right_context, new Set(), null)
                 context.importNamespaceFrom(right_context)
                 types = types.addTypesFrom(PHPType.Core.types.bool)
+                break
+            case "instanceof":
+                // Comparison (boolean) (instanceof)
+                this.right.check(right_context, new Set(), null)
+                context.importNamespaceFrom(right_context)
+                types = types.addTypesFrom(PHPType.Core.types.bool)
+                if(
+                    this.left instanceof Variable &&
+                    this.right instanceof ConstRef
+                ) {
+                    boolean_state = new BooleanState().withType(
+                        types,
+                        new Assertion(
+                            false,
+                            '$' + this.left.name,
+                            PHPType.Core.named(context.resolveNodeName(this.right))
+                        )
+                    )
+                }
                 break
             case "??":
                 // Left (not null) or right
@@ -141,6 +164,14 @@ export default class Bin extends Operation {
                 context.importNamespaceFrom(right_context)
                 types = types.addTypesFrom(left.expressionType)
         }
-        return new ContextTypes(types)
+        if(boolean_state) {
+            return new ContextTypes(
+                types,
+                PHPType.Union.empty,
+                boolean_state
+            )
+        } else {
+            return new ContextTypes(types)
+        }
     }
 }
