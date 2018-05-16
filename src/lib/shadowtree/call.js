@@ -7,6 +7,7 @@ import Bin from "./bin"
 import Magic from "./magic"
 import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
 import {ConstRef, StaticLookup, PropertyLookup} from "../shadowtree"
+import BooleanState, { Assertion } from "../boolean-state";
 export default class Call extends Statement {
     /**
      * @type {Object[]}
@@ -79,12 +80,15 @@ export default class Call extends Statement {
             pbr_positions = {}
             callback_positions = {}
         }
-        this.arguments.forEach((arg, i) => {
+        /**
+         * @type {ContextTypes[]}
+         */
+        let arg_types = this.arguments.map((arg, i) => {
             if(pbr_positions[i]) {
                 let inner_context = context.childContext(true)
                 inner_context.assigningType =
                     context.findName(arg.name) || new PHPType.Mixed(null, null, "call").union
-                arg.check(inner_context, new Set(), null)
+                return arg.check(inner_context, new Set(), null)
             } else if(callback_positions[i]) {
                 let inner_context = context.childContext(false)
                 inner_context.importNamespaceFrom(context)
@@ -95,9 +99,9 @@ export default class Call extends Statement {
                 } catch(e) {
                     this.handleException(e, context)
                 }
-                arg.check(inner_context, new Set(), null)
+                return arg.check(inner_context, new Set(), null)
             } else {
-                arg.check(context, new Set(), null)
+                return arg.check(context, new Set(), null)
             }
         })
         if(
@@ -126,6 +130,29 @@ export default class Call extends Statement {
                 types = types.addTypesFrom(new PHPType.Mixed(null, null, "call").union)
             }
         })
-        return new ContextTypes(types)
+        if(
+            this.what instanceof Identifier &&
+            this.what.name == "is_a" &&
+            this.arguments[0] instanceof Variable &&
+            arg_types[1].expressionType.coercedValues("string").length
+        ) {
+            let is_types = PHPType.Union.empty
+            arg_types[1].expressionType.coercedValues("string").forEach(
+                v => is_types = is_types.addType(
+                    new PHPType.Simple(v.match(/^\\/) ? v : "\\" + v)
+                )
+            )
+            let boolean_state = new BooleanState().withType(
+                types,
+                new Assertion(
+                    false,
+                    "$" + this.arguments[0].name,
+                    is_types
+                )
+            )
+            return new ContextTypes(types, PHPType.Union.empty, boolean_state)
+        } else {
+            return new ContextTypes(types)
+        }
     }
 }

@@ -5,3 +5,8 @@ if($dt instanceof \DateTime) {
 } else {
     echo $dt;
 }
+if(is_a($dt, "DateTime")) {
+    echo $dt->setDate(2000, 1, 2)->format("c");
+} else {
+    echo $dt;
+}
