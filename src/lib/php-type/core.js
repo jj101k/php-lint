@@ -67,6 +67,11 @@ export default class _Core {
                     throw new WrongType("integer", "int")
                 }
             })
+            Object.defineProperty(types, "this", {
+                get() {
+                    throw new WrongType("this", "self")
+                }
+            })
             Object.defineProperty(types, "$this", {
                 get() {
                     throw new WrongType("$this", "self")
