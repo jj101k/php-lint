@@ -86,11 +86,19 @@ export default class _Function extends Declaration {
         let pass_by_reference_positions = {}
         this.arguments.forEach(
             (node, index) => {
-                arg_types.push(node.check(
+                let type = node.check(
                     inner_context,
                     parser_state,
                     null
-                ).expressionType)
+                ).expressionType
+                if(type.isMixed) {
+                    type = new PHPType.Mixed(null, null, `parameter#${index}`).union
+                }
+                arg_types.push(type)
+                inner_context.setName(
+                    "$" + node.name,
+                    type
+                )
                 if(node.byref) {
                     pass_by_reference_positions[index] = true
                 }

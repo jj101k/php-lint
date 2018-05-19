@@ -54,10 +54,6 @@ export default class Parameter extends Declaration {
         ) {
             type = type.addTypesFrom(PHPType.Core.types.null)
         }
-        context.setName(
-            "$" + this.name,
-            type
-        )
         return new ContextTypes(type)
     }
 }
