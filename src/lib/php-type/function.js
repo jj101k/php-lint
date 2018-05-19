@@ -12,8 +12,8 @@ export default class _Function extends _Any {
      */
     static get mixed() {
         return new _Function(
-            [new _Mixed(null, null, "~function").union],
-            new _Mixed(null, null, "~function").union
+            [new _Mixed(null, null, "~function#in").union],
+            new _Mixed(null, null, "~function#out").union
         )
     }
     /**
@@ -82,13 +82,32 @@ export default class _Function extends _Any {
      */
     compliesWith(expected_type, resolver) {
         if(expected_type instanceof _Function) {
-            return (
-                this.argTypes.length >= expected_type.argTypes.length &&
-                expected_type.argTypes.every(
-                    (v, i) => v.compliesWith(this.argTypes[i], resolver)
-                ) &&
-                this.returnType.compliesWith(expected_type.returnType, resolver)
-            )
+            if(this.argTypes.length < expected_type.argTypes.length) return false
+            let generic_arg_types = {}
+            for(let i in expected_type.argTypes) {
+                let expected = expected_type.argTypes[i]
+                let arg = this.argTypes[i]
+                if(expected.compliesWith(arg, resolver)) {
+                    if(arg.isMixed && !expected.isMixed) {
+                        generic_arg_types["" + arg] = expected
+                    }
+                } else {
+                    return false
+                }
+            }
+            if(this.returnType.isMixed) {
+                let test_type = _Union.empty
+                this.returnType.types.forEach(t => {
+                    if(generic_arg_types["" + t]) {
+                        test_type = test_type.addTypesFrom(generic_arg_types["" + t])
+                    } else {
+                        test_type = test_type.addType(t)
+                    }
+                })
+                return test_type.compliesWith(expected_type.returnType, resolver)
+            } else {
+                return this.returnType.compliesWith(expected_type.returnType, resolver)
+            }
         } else {
             return false
         }
