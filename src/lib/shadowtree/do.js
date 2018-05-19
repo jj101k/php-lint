@@ -1,6 +1,7 @@
 import Statement from "./statement"
 import Expression from "./expression"
 import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
+import * as PHPType from "../php-type"
 export default class Do extends Statement {
     /** @type {Expression} */
     get test() {
@@ -19,8 +20,11 @@ export default class Do extends Statement {
      */
     check(context, parser_state = new Set(), doc = null) {
         super.check(context, parser_state, doc)
-        this.body.check(context, new Set(), null)
+        let body_return_type = this.body.check(context, new Set(), null).returnType
         this.test.check(context, new Set(), null)
-        return ContextTypes.empty
+        return new ContextTypes(
+            PHPType.Union.empty,
+            body_return_type
+        )
     }
 }
