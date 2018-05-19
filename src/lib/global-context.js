@@ -391,9 +391,10 @@ export class GlobalContext {
      * @param {string} name Fully qualified only
      * @param {FileContext} file_context
      * @param {number} [depth] The current load depth
+     * @param {boolean} [expecting_miss] True if you're expecting not to find it
      * @returns {?ClassContext.Class}
      */
-    findClass(name, file_context, depth = 0) {
+    findClass(name, file_context, depth = 0, expecting_miss = false) {
         if(name.match(/ -> /)) {
             return ClassContext.AnonymousFunction.inst
         }
@@ -437,7 +438,9 @@ export class GlobalContext {
                 console.log(this.autoloader)
                 throw new PHPError.ClassLoadFailed(`Could not autoload ${name}`)
             } else {
-                console.log(`Could not autoload ${name}`)
+                if(!expecting_miss) {
+                    console.log(`Could not autoload ${name}`)
+                }
                 return this.classes[name]
             }
         }
@@ -449,9 +452,10 @@ export class GlobalContext {
      * @param {string} name Fully qualified only
      * @param {FileContext} file_context
      * @param {number} [depth] The current load depth
+     * @param {boolean} [expecting_miss] True if you're expecting not to find it
      * @returns {?ClassContext.Trait}
      */
-    findTrait(name, file_context, depth = 0) {
+    findTrait(name, file_context, depth = 0, expecting_miss = false) {
         let load_depth = depth + 1
         let filename = file_context.filename
         if(this.traits.hasOwnProperty(name)) {
@@ -490,7 +494,9 @@ export class GlobalContext {
                 console.log(this.autoloader)
                 throw new PHPError.ClassLoadFailed(`Could not autoload ${name}`)
             } else {
-                console.log(`Could not autoload ${name}`)
+                if(!expecting_miss) {
+                    console.log(`Could not autoload ${name}`)
+                }
                 return this.traits[name]
             }
         }

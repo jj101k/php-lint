@@ -282,10 +282,12 @@ export default class Context {
 
     /**
      * Finds the class context with the given name
+     *
      * @param {string} name Fully qualified only
+     * @param {boolean} [expecting_miss] True if you're expecting not to find it
      * @returns {?ClassContext.Class}
      */
-    findClass(name) {
+    findClass(name, expecting_miss = false) {
         if(name == "self") {
             return this.classContext
         } else if(
@@ -295,7 +297,7 @@ export default class Context {
         ) {
             throw new PHPError.NotClass(`Attempt to access core type ${name} as class`)
         } else {
-            return this.globalContext.findClass(name, this.fileContext, this.depth)
+            return this.globalContext.findClass(name, this.fileContext, this.depth, expecting_miss)
         }
     }
 

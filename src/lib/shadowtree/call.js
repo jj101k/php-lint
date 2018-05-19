@@ -8,6 +8,7 @@ import Magic from "./magic"
 import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
 import {ConstRef, StaticLookup, PropertyLookup} from "../shadowtree"
 import BooleanState, { Assertion } from "../boolean-state";
+import { UnknownClass } from "../class-context";
 export default class Call extends Statement {
     /**
      * @type {Object[]}
@@ -151,6 +152,18 @@ export default class Call extends Statement {
                 )
             )
             return new ContextTypes(types, PHPType.Union.empty, boolean_state)
+        } else if(
+            this.what instanceof Identifier &&
+            this.what.name == "class_exists" &&
+            arg_types[0].expressionType.coercedValues("string") &&
+            arg_types[0].expressionType.coercedValues("string").length
+        ) {
+            // This can be immediately resolved
+            let matched = arg_types[0].expressionType.coercedValues("string").filter(
+                name => !(context.findClass(name, true) instanceof UnknownClass)
+            ).length
+            // @todo define "impossible" state
+            return new ContextTypes(types)
         } else {
             return new ContextTypes(types)
         }
