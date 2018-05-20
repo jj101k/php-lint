@@ -88,7 +88,7 @@ export default class Call extends Statement {
             if(pbr_positions[i]) {
                 let inner_context = context.childContext(true)
                 inner_context.assigningType =
-                    context.findName(arg.name) || new PHPType.Mixed(null, null, "call").union
+                    context.findName("$" + arg.name) || new PHPType.Mixed(null, null, "call").union
                 return arg.check(inner_context, new Set(), null)
             } else if(callback_positions[i]) {
                 let inner_context = context.childContext(false)
