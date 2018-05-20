@@ -61,16 +61,16 @@ export default class _Mixed extends _Any {
      * simply its type signature.
      */
     toString() {
+        let s = this.typeSignature
         if(this.originSymbol) {
-            if(this.originClass) {
-                return `${this.typeSignature}?${this.originClass}::${this.originSymbol}`
-            } else {
-                return `${this.typeSignature}?${this.originSymbol}`
-            }
-        } else if(this.originHint) {
-            return `${this.typeSignature}~${this.originHint}`
-        } else {
-            return this.typeSignature
+            let full_symbol = this.originClass ?
+                `${this.originClass}::${this.originSymbol}` :
+                this.originSymbol
+            s += "?" + full_symbol
         }
+        if(this.originHint) {
+            s += "~" + this.originHint
+        }
+        return s
     }
 }
