@@ -33,13 +33,22 @@ export default class Parameter extends Declaration {
      * @returns {?ContextTypes} The set of types applicable to this value
      */
     check(context, parser_state = new Set(), doc = null) {
+        /** @type {PHPType.Union} */
         let type
         if(this.type) {
             let type_name = context.resolveName(
                 this.type.name,
                 this.type.resolution
             )
-            type = PHPType.Core.named(type_name)
+            switch(type_name) {
+                case "array":
+                    type = new PHPType.AssociativeArray(
+                        new PHPType.Mixed(null, null, "parameter-array").union
+                    ).union
+                    break
+                default:
+                    type = PHPType.Core.named(type_name)
+            }
         } else {
             type = new PHPType.Mixed(null, null, "parameter").union
         }
