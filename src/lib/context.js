@@ -93,7 +93,6 @@ function arrayMemberType(union) {
         } else if(t instanceof PHPType.Mixed) {
             mt = mt.addType(t)
         } else {
-            console.log(t) // FIXME
             mt = mt.addType(new PHPType.Mixed(null, null, "array extract"))
         }
     })
