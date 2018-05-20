@@ -83,33 +83,54 @@ export default class _Function extends _Any {
     compliesWith(expected_type, resolver) {
         if(expected_type instanceof _Function) {
             if(this.argTypes.length < expected_type.argTypes.length) return false
-            let generic_arg_types = {}
             for(let i in expected_type.argTypes) {
-                let expected = expected_type.argTypes[i]
-                let arg = this.argTypes[i]
-                if(expected.compliesWith(arg, resolver)) {
-                    if(arg.isMixed && !expected.isMixed) {
-                        generic_arg_types["" + arg] = expected
-                    }
-                } else {
+                if(
+                    !expected_type.argTypes[i].compliesWith(
+                        this.argTypes[i],
+                        resolver
+                    )
+                ) {
                     return false
                 }
             }
-            if(this.returnType.isMixed) {
-                let test_type = _Union.empty
-                this.returnType.types.forEach(t => {
-                    if(generic_arg_types["" + t]) {
-                        test_type = test_type.addTypesFrom(generic_arg_types["" + t])
-                    } else {
-                        test_type = test_type.addType(t)
-                    }
-                })
-                return test_type.compliesWith(expected_type.returnType, resolver)
-            } else {
-                return this.returnType.compliesWith(expected_type.returnType, resolver)
-            }
+            return this.returnTypeGiven(expected_type.argTypes).compliesWith(
+                expected_type.returnType,
+                resolver
+            )
         } else {
             return false
+        }
+    }
+    /**
+     * Given the supplied arguments, provides the return type that would
+     * actually be used. This covers simple cases of "return mixed".
+     *
+     * If you provide nonsense it will presume the actual arg types.
+     *
+     * @param {_Union[]} supplied_args
+     * @return {_Union}
+     */
+    returnTypeGiven(supplied_args) {
+        if(this.returnType.isMixed) {
+            let generic_arg_types = {}
+            for(let i in supplied_args) {
+                let supplied = supplied_args[i]
+                let arg = this.argTypes[i]
+                if(arg && arg.isMixed && !supplied.isMixed) {
+                    generic_arg_types["" + arg] = supplied
+                }
+            }
+            let test_type = _Union.empty
+            this.returnType.types.forEach(t => {
+                if(generic_arg_types["" + t]) {
+                    test_type = test_type.addTypesFrom(generic_arg_types["" + t])
+                } else {
+                    test_type = test_type.addType(t)
+                }
+            })
+            return test_type
+        } else {
+            return this.returnType
         }
     }
 

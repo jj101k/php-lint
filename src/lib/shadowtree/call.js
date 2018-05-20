@@ -126,7 +126,7 @@ export default class Call extends Statement {
         let types = PHPType.Union.empty
         callable_types.types.forEach(t => {
             if(t instanceof PHPType.Function) {
-                types = types.addTypesFrom(t.returnType)
+                types = types.addTypesFrom(t.returnTypeGiven(arg_types.map(a => a.expressionType)))
             } else {
                 types = types.addTypesFrom(new PHPType.Mixed(null, null, "call").union)
             }
