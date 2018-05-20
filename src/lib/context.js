@@ -124,6 +124,7 @@ export default class Context {
         ns = null,
         depth = 0
     ) {
+        /** @type {?ClassContext.Class} The class, if any */
         this.classContext = class_context
         this.depth = depth
         this.globalContext = global_context
