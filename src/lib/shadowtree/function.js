@@ -92,7 +92,11 @@ export default class _Function extends Declaration {
                     null
                 ).expressionType
                 if(type.isMixed) {
-                    type = new PHPType.Mixed(null, null, `parameter#${index}`).union
+                    type = new PHPType.Mixed(
+                        context.classContext ? context.classContext.name : null,
+                        this.name,
+                        `parameter#${index}`
+                    ).union
                 }
                 arg_types.push(type)
                 inner_context.setName(
