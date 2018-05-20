@@ -22,7 +22,7 @@ export default class _Array extends Expression {
         super.check(context, parser_state, doc)
         /** @type {?PHPType.Union} */
         let types
-        if(this.items) {
+        if(this.items && this.items.length) {
             types = PHPType.Union.empty
             this.items.forEach(
                 item => {
@@ -30,10 +30,14 @@ export default class _Array extends Expression {
                     types = types.addTypesFrom(t.expressionType)
                 }
             )
-            if(this.items.length && !this.items.some(item => !!item.key)) {
+            if(this.items.some(item => !!item.key)) {
+                return new ContextTypes(new PHPType.AssociativeArray(types).union)
+            } else {
                 return new ContextTypes(new PHPType.IndexedArray(types).union)
             }
+        } else {
+            console.debug("Unable to determine array type in empty declaration")
+            return new ContextTypes(PHPType.Core.types.array)
         }
-        return new ContextTypes(PHPType.Core.types.array)
     }
 }
