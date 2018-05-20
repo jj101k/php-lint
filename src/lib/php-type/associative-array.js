@@ -76,6 +76,10 @@ export default class _AssociativeArray extends _Any {
      * simply its type signature.
      */
     toString() {
-        return this.typeSignature
+        if(this.memberType) {
+            return `array<${this.memberType}>`
+        } else {
+            return `array<mixed>`
+        }
     }
 }
