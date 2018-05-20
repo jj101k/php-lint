@@ -92,7 +92,7 @@ export default class Bin extends Operation {
                                 types = types.addTypesFrom(PHPType.Core.types.float)
                                 break
                             case "array":
-                                types = types.addTypesFrom(PHPType.Core.types.array)
+                                types = types.addType(type)
                                 break
                             default:
                                 this.throw(
