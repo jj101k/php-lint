@@ -22,18 +22,22 @@ export default class _Function extends _Any {
      * @param {?_Union} return_type
      * @param {{[x: number]: boolean}} [pass_by_reference_positions]
      * @param {{[x: number]: _Union}} [callback_positions]
+     * @param {?function(_Union[], _Function): _Union} [return_type_given] If supplied,
+     * this will replace the default returnTypeGiven
      */
     constructor(
         arg_types,
         return_type,
         pass_by_reference_positions = {},
-        callback_positions = {}
+        callback_positions = {},
+        return_type_given = null
     ) {
         super()
         this.argTypes = arg_types
         this.passByReferencePositions = pass_by_reference_positions
         this.callbackPositions = callback_positions
         this.returnType = return_type || _Core.types.void
+        this.returnTypeGivenOverride = return_type_given
     }
     /**
      * @type {?this}
@@ -111,7 +115,9 @@ export default class _Function extends _Any {
      * @return {_Union}
      */
     returnTypeGiven(supplied_args) {
-        if(this.returnType.isMixed) {
+        if(this.returnTypeGivenOverride) {
+            return this.returnTypeGivenOverride(supplied_args, this)
+        } else if(this.returnType.isMixed) {
             let generic_arg_types = {}
             for(let i in supplied_args) {
                 let supplied = supplied_args[i]

@@ -80,6 +80,69 @@ const PHPFunctionReturnType = {
 }
 
 /**
+ * @param {PHPType.Union} union
+ * @returns {PHPType.Union}
+ */
+function arrayMemberType(union) {
+    let mt = PHPType.Union.empty
+    union.types.forEach(t => {
+        if(t instanceof PHPType.AssociativeArray) {
+            mt = mt.addTypesFrom(t.memberType)
+        } else if(t instanceof PHPType.IndexedArray) {
+            mt = mt.addTypesFrom(t.memberType)
+        } else if(t instanceof PHPType.Mixed) {
+            mt = mt.addType(t)
+        } else {
+            console.log(t) // FIXME
+            mt = mt.addType(new PHPType.Mixed(null, null, "array extract"))
+        }
+    })
+    return mt
+}
+
+/**
+ * @type {{[x: string]: function(PHPType.Union[], PHPType.Function): PHPType.Union}}
+ */
+const PHPFunctionReturnTypeCallback = {
+    array_combine: function(args, ftype) {
+        return new PHPType.AssociativeArray(arrayMemberType(args[1])).union
+    },
+    array_filter: function(args, ftype) {
+        return new PHPType.AssociativeArray(arrayMemberType(args[0])).union
+    },
+    array_map: function(args, ftype) {
+        let t = PHPType.Union.empty
+        args[0].types.forEach(
+            ft => {
+                if(ft instanceof PHPType.Function) {
+                    t = t.addTypesFrom(
+                        ft.returnTypeGiven([
+                            arrayMemberType(args[1])
+                        ])
+                    )
+                } else {
+                    t = t.addType(new PHPType.Mixed(null, null, "array map"))
+                }
+            }
+        )
+        if(args[1].types.some(t => !(t instanceof PHPType.IndexedArray))) {
+            return new PHPType.AssociativeArray(t).union
+        } else {
+            return new PHPType.IndexedArray(t).union
+        }
+    },
+    array_pop: function(args, ftype) {
+        return arrayMemberType(args[0]).addTypesFrom(PHPType.Core.types.null)
+    },
+    array_shift: function(args, ftype) {
+        return arrayMemberType(args[0]).addTypesFrom(PHPType.Core.types.null)
+    },
+    array_values: function(args, ftype) {
+        return new PHPType.IndexedArray(arrayMemberType(args[0])).union
+    },
+}
+
+/**
  * This defines the entire context applying to the current node.
  */
 export default class Context {
@@ -98,7 +161,9 @@ export default class Context {
                 name => this._superGlobals[name] = new PHPType.Function(
                     PHPFunctions[name].pbr.map(arg => new PHPType.Mixed(null, name).union),
                     PHPFunctionReturnType[name] || new PHPType.Mixed(null, name).union,
-                    PHPFunctions[name].pbr
+                    PHPFunctions[name].pbr,
+                    [],
+                    PHPFunctionReturnTypeCallback[name]
                 ).union
             )
             PHPConstants.forEach(
