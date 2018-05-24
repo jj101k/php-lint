@@ -528,10 +528,11 @@ class InterfaceContext extends ClassContext {
      * Finds the named identifier
      * @param {string} name
      * @param {?ClassContext} from_class_context
+     * @param {Set<ParserStateOption.Base>} [parser_state]
      * @returns {?PHPType.Union}
      */
-    findInstanceIdentifier(name, from_class_context) {
-        return super.findInstanceIdentifier(name, from_class_context)
+    findInstanceIdentifier(name, from_class_context, parser_state = new Set()) {
+        return super.findInstanceIdentifier(name, from_class_context, parser_state)
     }
 
     /**
@@ -582,10 +583,11 @@ class TraitContext extends PartialClassContext {
      * Finds the named identifier
      * @param {string} name
      * @param {?ClassContext} from_class_context
+     * @param {Set<ParserStateOption.Base>} [parser_state]
      * @returns {?PHPType.Union}
      */
-    findInstanceIdentifier(name, from_class_context) {
-        return super.findInstanceIdentifier(name, from_class_context)
+    findInstanceIdentifier(name, from_class_context, parser_state = new Set()) {
+        return super.findInstanceIdentifier(name, from_class_context, parser_state)
     }
 
     /**
@@ -620,11 +622,19 @@ class AnonymousFunctionContext extends ClassContext {
      * Finds the named identifier
      * @param {string} name
      * @param {?ClassContext} from_class_context
+     * @param {Set<ParserStateOption.Base>} [parser_state]
      * @returns {?PHPType.Union}
      */
-    findInstanceIdentifier(name, from_class_context) {
+    findInstanceIdentifier(name, from_class_context, parser_state = new Set()) {
         // TODO: Limit to the actual methods.
-        return new PHPType.Mixed(this.name, name).union
+        if(parser_state.has(ParserStateOption.InCall)) {
+            return new PHPType.Function(
+                [new PHPType.Mixed(this.name, name, "~function#in").union],
+                new PHPType.Mixed(this.name, name, "~function#out").union
+            ).union
+        } else {
+            return new PHPType.Mixed(this.name, name).union
+        }
     }
 
     /**
@@ -654,16 +664,26 @@ class UnknownClassContext extends ClassContext {
      * Finds the named identifier
      * @param {string} name
      * @param {?ClassContext} from_class_context
+     * @param {Set<ParserStateOption.Base>} [parser_state]
      * @returns {?PHPType.Union}
      */
-    findInstanceIdentifier(name, from_class_context) {
+    findInstanceIdentifier(name, from_class_context, parser_state = new Set()) {
         if(!this.instanceIdentifiers[name]) {
+            let type
+            if(parser_state.has(ParserStateOption.InCall)) {
+                type = new PHPType.Function(
+                    [new PHPType.Mixed(this.name, name, "~function#in").union],
+                    new PHPType.Mixed(this.name, name, "~function#out").union
+                ).union
+            } else {
+                type = new PHPType.Mixed(this.name, name).union
+            }
             this.instanceIdentifiers[name] = {
                 scope: "public",
-                types: new PHPType.Mixed(this.name, name).union,
+                types: type,
             }
         }
-        return super.findInstanceIdentifier(name, from_class_context)
+        return super.findInstanceIdentifier(name, from_class_context, parser_state)
     }
 
     /**
@@ -708,16 +728,26 @@ class UnknownTraitContext extends TraitContext {
      * Finds the named identifier
      * @param {string} name
      * @param {?ClassContext} from_class_context
+     * @param {Set<ParserStateOption.Base>} [parser_state]
      * @returns {?PHPType.Union}
      */
-    findInstanceIdentifier(name, from_class_context) {
+    findInstanceIdentifier(name, from_class_context, parser_state = new Set()) {
         if(!this.instanceIdentifiers[name]) {
+            let type
+            if(parser_state.has(ParserStateOption.InCall)) {
+                type = new PHPType.Function(
+                    [new PHPType.Mixed(this.name, name, "~function#in").union],
+                    new PHPType.Mixed(this.name, name, "~function#out").union
+                ).union
+            } else {
+                type = new PHPType.Mixed(this.name, name).union
+            }
             this.instanceIdentifiers[name] = {
                 scope: "public",
-                types: new PHPType.Mixed(this.name, name).union,
+                types: type,
             }
         }
-        return super.findInstanceIdentifier(name, from_class_context)
+        return super.findInstanceIdentifier(name, from_class_context, parser_state)
     }
 
     /**
