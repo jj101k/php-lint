@@ -122,7 +122,7 @@ export default class _Function extends _Any {
             for(let i in supplied_args) {
                 let supplied = supplied_args[i]
                 let arg = this.argTypes[i]
-                if(arg && arg.isMixed && !supplied.isMixed) {
+                if(arg && arg.isMixed) {
                     generic_arg_types["" + arg] = supplied
                 }
             }
