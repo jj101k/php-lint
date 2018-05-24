@@ -23,24 +23,20 @@ export default class OffsetLookup extends Lookup {
             new Set(),
             null
         ).expressionType
-        if(this.offset instanceof Variable) {
-            return new ContextTypes(new PHPType.Mixed(null, null, "offsetlookup").union)
-        } else {
-            let types_out = PHPType.Union.empty
-            type_union.types.forEach(t => {
-                if(t instanceof PHPType.AssociativeArray) {
-                    types_out = types_out.addTypesFrom(t.memberType).addTypesFrom(
-                        PHPType.Core.types.null
-                    )
-                } else if(t instanceof PHPType.IndexedArray) {
-                    types_out = types_out.addTypesFrom(t.memberType).addTypesFrom(
-                        PHPType.Core.types.null
-                    )
-                } else {
-                    types_out = types_out.addType(new PHPType.Mixed(null, null, "offsetlookup"))
-                }
-            })
-            return new ContextTypes(types_out)
-        }
+        let types_out = PHPType.Union.empty
+        type_union.types.forEach(t => {
+            if(t instanceof PHPType.AssociativeArray) {
+                types_out = types_out.addTypesFrom(t.memberType).addTypesFrom(
+                    PHPType.Core.types.null
+                )
+            } else if(t instanceof PHPType.IndexedArray) {
+                types_out = types_out.addTypesFrom(t.memberType).addTypesFrom(
+                    PHPType.Core.types.null
+                )
+            } else {
+                types_out = types_out.addType(new PHPType.Mixed(null, null, "offsetlookup#not-array"))
+            }
+        })
+        return new ContextTypes(types_out)
     }
 }
