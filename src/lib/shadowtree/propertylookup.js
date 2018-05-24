@@ -32,18 +32,18 @@ export default class PropertyLookup extends Lookup {
         } else if(this.offset instanceof _String) {
             offset = this.offset.value
         } else if(this.offset instanceof Variable) {
-            return new ContextTypes(new PHPType.Mixed(null, null, "propertylookup").union)
+            return new ContextTypes(new PHPType.Mixed(null, null, "propertylookup#var-offset").union)
         } else {
             console.log(this.node)
             console.log("TODO don't know how to check this kind of lookup")
-            return new ContextTypes(new PHPType.Mixed(null, null, "propertylookup").union)
+            return new ContextTypes(new PHPType.Mixed(null, null, "propertylookup#unknown-offset").union)
         }
         let types_out = PHPType.Union.empty
         if(type_union.isEmpty) {
             this.throw(new PHPError.NotClass(
                 `Can't look up property "${offset}" on empty type`
             ), context)
-            return new ContextTypes(new PHPType.Mixed(null, null, "propertylookup").union)
+            return new ContextTypes(new PHPType.Mixed(null, null, "propertylookup#empty-type").union)
         }
         let seen_bad_type = false
         try {
@@ -101,14 +101,14 @@ export default class PropertyLookup extends Lookup {
                                 `No accessible instance property ${class_context.name}->${offset} (from ${context_name})\n` +
                                 `Accessible properties are: ${class_context.accessibleInstanceIdentifiers.sort()}`
                             ), context)
-                            types_out = types_out.addTypesFrom(new PHPType.Mixed(null, null, "propertylookup").union)
+                            types_out = types_out.addTypesFrom(new PHPType.Mixed(null, null, "propertylookup#inaccessible").union)
                         }
                     } else {
                         let context_name = context.classContext && context.classContext.name || "non-class code"
                         this.throw(new PHPError.NoProperty(
                             `No accessible instance property ${t.typeSignature}->${offset} (from ${context_name})`
                         ), context)
-                        types_out = types_out.addTypesFrom(new PHPType.Mixed(null, null, "propertylookup").union)
+                        types_out = types_out.addTypesFrom(new PHPType.Mixed(null, null, "propertylookup#inaccessible").union)
                     }
                 }
             })
@@ -116,11 +116,11 @@ export default class PropertyLookup extends Lookup {
                 this.throw(new PHPError.NotClass(
                     `Can't look up property "${offset}" on ${type_union}`
                 ), context)
-                return new ContextTypes(new PHPType.Mixed(null, null, "propertylookup").union)
+                return new ContextTypes(new PHPType.Mixed(null, null, "propertylookup#empty").union)
             }
         } catch(e) {
             this.handleException(e, context)
-            types_out = types_out.addTypesFrom(new PHPType.Mixed(null, null, "propertylookup").union)
+            types_out = types_out.addTypesFrom(new PHPType.Mixed(null, null, "propertylookup#exception").union)
         }
         return new ContextTypes(types_out)
     }
