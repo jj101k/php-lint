@@ -1,6 +1,7 @@
 import Statement from "./statement"
 import Expression from "./expression"
 import {Context, ContextTypes, Doc, ParserStateOption} from "./node"
+import * as PHPError from "../php-error"
 import * as PHPType from "../php-type"
 export default class Foreach extends Statement {
     /** @type {Expression} */
@@ -44,10 +45,20 @@ export default class Foreach extends Statement {
                 inner_types = inner_types.addTypesFrom(t.memberType)
             } else if(t instanceof PHPType.IndexedArray) {
                 inner_types = inner_types.addTypesFrom(t.memberType)
+            } else if(t.toString() == "null") {
+                this.throw(
+                    new PHPError.BadTypeCast(`Possibly bad cast from type ${t} for foreach`),
+                    context,
+                    this.loc
+                )
+                // Do not add a type
             } else {
                 inner_types = inner_types.addType(new PHPType.Mixed(null, null, "foreach"))
             }
         })
+        if(inner_types.isEmpty) {
+            inner_types = inner_types.addType(new PHPType.Mixed(null, null, "foreach#empty"))
+        }
         assign_context.assigningType = inner_types
         this.value.check(assign_context, new Set(), null)
         this.body.check(context, new Set(), null)
