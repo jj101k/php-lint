@@ -13,23 +13,45 @@ import ContextTypes from "./context-types"
 /**
  * Represents a value or function.
  */
-class Identifier {
+class AnyIdentifier {
+    /**
+     * @param {string} name
+     * @param {scope} scope
+     */
+    constructor(name, scope) {
+        this.name = name
+        this.scope = scope
+    }
+    /**
+     * @type {PHPType.Union}
+     */
+    get types() {
+        throw new Error("Not implemented")
+    }
+}
+
+/**
+ * Represents a value or function.
+ */
+class Identifier extends AnyIdentifier {
     /**
      * @param {string} name
      * @param {scope} scope
      * @param {PHPType.Union} types
      */
     constructor(name, scope, types) {
-        this.name = name
-        this.scope = scope
-        this.types = types
+        super(name, scope)
+        this._types = types
+    }
+    get types() {
+        return this._types
     }
 }
 
 /**
  * Represents a value or function (method) that's not yet compiled.
  */
-class TemporaryIdentifier {
+class TemporaryIdentifier extends AnyIdentifier {
     /**
      * @param {string} name
      * @param {scope} scope
@@ -37,6 +59,7 @@ class TemporaryIdentifier {
      * @param {function(): void} after_compile
      */
     constructor(name, scope, compile, after_compile) {
+        super(name, scope)
         this.afterCompile = after_compile
         this.compileInner = compile
         this.compileStarted = false
