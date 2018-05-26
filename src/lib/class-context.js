@@ -4,7 +4,27 @@ import {FileContext} from "./file-context"
 import * as ParserStateOption from "./parser-state-option"
 import * as ShadowTree from "./shadowtree"
 import Context from "./context"
-import ContextTypes from "./context-types";
+import ContextTypes from "./context-types"
+
+/**
+ * @typedef {"public" | "private" | "protected"} scope
+ */
+
+/**
+ * Represents a value or function.
+ */
+class Identifier {
+    /**
+     * @param {string} name
+     * @param {scope} scope
+     * @param {PHPType.Union} types
+     */
+    constructor(name, scope, types) {
+        this.name = name
+        this.scope = scope
+        this.types = types
+    }
+}
 
 /**
  * Represents a value or function (method) that's not yet compiled.
@@ -12,7 +32,7 @@ import ContextTypes from "./context-types";
 class TemporaryIdentifier {
     /**
      * @param {string} name
-     * @param {string} scope "public", "private" or "protected"
+     * @param {scope} scope
      * @param {(class_context: PartialClassContext) => ContextTypes} compile
      * @param {function(): void} after_compile
      */
@@ -56,16 +76,13 @@ class PartialClassContext {
         this.name = name
         this.fileContext = file_context
         /**
-         * @type {{[x: string]: {scope: string, types: PHPType.Union}}}
+         * @type {{[x: string]: Identifier}}
          */
         this.staticIdentifiers = {
-            class: {
-                scope: "public",
-                types: PHPType.Core.types.string,
-            }
+            class: new Identifier("class", "public", PHPType.Core.types.string),
         }
         /**
-         * @type {{[x: string]: {scope: string, types: PHPType.Union}}}
+         * @type {{[x: string]: Identifier}}
          */
         this.instanceIdentifiers = {}
         /**
@@ -115,21 +132,16 @@ class PartialClassContext {
     /**
      * Adds a known identifier
      * @param {string} name
-     * @param {string} scope "public", "private" or "protected"
+     * @param {scope} scope
      * @param {PHPType.Union} types
      * @param {boolean} is_static
      */
     addIdentifier(name, scope, is_static, types) {
         if(is_static) {
-            this.staticIdentifiers[name] = {
-                scope: scope,
-                types: types,
-            }
+            this.staticIdentifiers[name] = new Identifier(name, scope, types)
         } else {
-            this.instanceIdentifiers[name.replace(/^[$]/, "")] = {
-                scope: scope,
-                types: types,
-            }
+            this.instanceIdentifiers[name.replace(/^[$]/, "")] =
+                new Identifier(name, scope, types)
         }
     }
 
@@ -138,7 +150,7 @@ class PartialClassContext {
      * invoked immediately on access.
      *
      * @param {string} name
-     * @param {string} scope "public", "private" or "protected"
+     * @param {scope} scope
      * @param {boolean} is_static
      * @param {(class_context: PartialClassContext) => ContextTypes} compile
      */
@@ -706,10 +718,7 @@ class UnknownClassContext extends ClassContext {
             } else {
                 type = new PHPType.Mixed(this.name, name).union
             }
-            this.instanceIdentifiers[name] = {
-                scope: "public",
-                types: type,
-            }
+            this.instanceIdentifiers[name] = new Identifier(name, "public", type)
         }
         return super.findInstanceIdentifier(name, from_class_context, parser_state)
     }
@@ -722,10 +731,8 @@ class UnknownClassContext extends ClassContext {
      */
     findStaticIdentifier(name, from_class_context) {
         if(!this.staticIdentifiers[name]) {
-            this.staticIdentifiers[name] = {
-                scope: "public",
-                types: new PHPType.Mixed(this.name, name).union,
-            }
+            this.staticIdentifiers[name] =
+                new Identifier(name, "public", new PHPType.Mixed(this.name, name).union)
         }
         return super.findStaticIdentifier(name, from_class_context)
     }
@@ -770,10 +777,7 @@ class UnknownTraitContext extends TraitContext {
             } else {
                 type = new PHPType.Mixed(this.name, name).union
             }
-            this.instanceIdentifiers[name] = {
-                scope: "public",
-                types: type,
-            }
+            this.instanceIdentifiers[name] = new Identifier(name, "public", type)
         }
         return super.findInstanceIdentifier(name, from_class_context, parser_state)
     }
@@ -786,10 +790,8 @@ class UnknownTraitContext extends TraitContext {
      */
     findStaticIdentifier(name, from_class_context) {
         if(!this.staticIdentifiers[name]) {
-            this.staticIdentifiers[name] = {
-                scope: "public",
-                types: new PHPType.Mixed(this.name, name).union,
-            }
+            this.staticIdentifiers[name] =
+                new Identifier(name, "public", new PHPType.Mixed(this.name, name).union)
         }
         return super.findStaticIdentifier(name, from_class_context)
     }
