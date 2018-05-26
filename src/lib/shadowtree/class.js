@@ -146,10 +146,8 @@ export default class Class extends Declaration {
                 }
             }
         )
-        Object.keys(context.classContext.temporaryIdentifiers).forEach(name => {
-            if(context.classContext.temporaryIdentifiers[name]) {
-                context.classContext.temporaryIdentifiers[name].compile(context.classContext)
-            }
-        })
+        Object.values(context.classContext.temporaryIdentifiers).forEach(
+            ti => ti.compile(context.classContext)
+        )
     }
 }
