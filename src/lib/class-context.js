@@ -14,8 +14,10 @@ class TemporaryIdentifier {
      * @param {string} scope "public", "private" or "protected"
      * @param {boolean} is_static
      * @param {(class_context: PartialClassContext) => ContextTypes} compile
+     * @param {function(): void} after_compile
      */
-    constructor(scope, is_static, compile) {
+    constructor(scope, is_static, compile, after_compile) {
+        this.afterCompile = after_compile
         this.compileInner = compile
         this.compileStarted = false
         this.isStatic = is_static
@@ -29,7 +31,9 @@ class TemporaryIdentifier {
      */
     compile(class_context) {
         this.compileStarted = true
-        return this.compileInner(class_context).expressionType
+        let types = this.compileInner(class_context).expressionType
+        this.afterCompile()
+        return types
     }
 }
 
@@ -131,7 +135,12 @@ class PartialClassContext {
     addTemporaryIdentifier(name, scope, is_static, compile) {
         let canonical_name = is_static ? name : name.replace(/^[$]/, "")
         this.temporaryIdentifiers[canonical_name] =
-            new TemporaryIdentifier(scope, is_static, compile)
+            new TemporaryIdentifier(
+                scope,
+                is_static,
+                compile,
+                () => delete this.temporaryIdentifiers[canonical_name]
+            )
     }
 
     /**
@@ -231,7 +240,6 @@ class PartialClassContext {
             } else {
                 //console.log(`Compile ${this.name}#${name}`)
                 let types = ti.compile(this)
-                delete this.temporaryIdentifiers[name]
                 if(!types) {
                     throw new Error(`Compilation of temporary identifier ${this.name}#${name} failed`)
                 }
