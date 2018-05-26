@@ -15,10 +15,19 @@ class TemporaryIdentifier {
      * @param {(class_context: PartialClassContext) => void} compile
      */
     constructor(scope, is_static, compile) {
+        this.compileInner = compile
         this.compileStarted = false
-        this.compile = compile
         this.isStatic = is_static
         this.scope = scope
+    }
+    /**
+     * Triggers compilation
+     *
+     * @param {PartialClassContext} class_context
+     */
+    compile(class_context) {
+        this.compileStarted = true
+        this.compileInner(class_context)
     }
 }
 
@@ -218,7 +227,6 @@ class PartialClassContext {
             if(ti.compileStarted) {
                 return new PHPType.Mixed(this.name, name).union
             } else {
-                ti.compileStarted = true
                 //console.log(`Compile ${this.name}#${name}`)
                 ti.compile(this)
                 delete this.temporaryIdentifiers[name]
