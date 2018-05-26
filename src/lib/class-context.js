@@ -4,6 +4,7 @@ import {FileContext} from "./file-context"
 import * as ParserStateOption from "./parser-state-option"
 import * as ShadowTree from "./shadowtree"
 import Context from "./context"
+import ContextTypes from "./context-types";
 
 /**
  * Represents a value or function (method) that's not yet compiled.
@@ -12,7 +13,7 @@ class TemporaryIdentifier {
     /**
      * @param {string} scope "public", "private" or "protected"
      * @param {boolean} is_static
-     * @param {(class_context: PartialClassContext) => void} compile
+     * @param {(class_context: PartialClassContext) => ContextTypes} compile
      */
     constructor(scope, is_static, compile) {
         this.compileInner = compile
@@ -24,10 +25,11 @@ class TemporaryIdentifier {
      * Triggers compilation
      *
      * @param {PartialClassContext} class_context
+     * @returns {PHPType.Union}
      */
     compile(class_context) {
         this.compileStarted = true
-        this.compileInner(class_context)
+        return this.compileInner(class_context).expressionType
     }
 }
 
@@ -124,7 +126,7 @@ class PartialClassContext {
      * @param {string} name
      * @param {string} scope "public", "private" or "protected"
      * @param {boolean} is_static
-     * @param {(class_context: PartialClassContext) => void} compile
+     * @param {(class_context: PartialClassContext) => ContextTypes} compile
      */
     addTemporaryIdentifier(name, scope, is_static, compile) {
         let canonical_name = is_static ? name : name.replace(/^[$]/, "")
@@ -228,12 +230,12 @@ class PartialClassContext {
                 return new PHPType.Mixed(this.name, name).union
             } else {
                 //console.log(`Compile ${this.name}#${name}`)
-                ti.compile(this)
+                let types = ti.compile(this)
                 delete this.temporaryIdentifiers[name]
-                if(!this.instanceIdentifiers[name]) {
+                if(!types) {
                     throw new Error(`Compilation of temporary identifier ${this.name}#${name} failed`)
                 }
-                return this.instanceIdentifiers[name].types
+                return types
             }
         } else if(
             wrong_case = Object.keys(this.temporaryIdentifiers).find(
