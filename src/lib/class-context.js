@@ -13,15 +13,13 @@ class TemporaryIdentifier {
     /**
      * @param {string} name
      * @param {string} scope "public", "private" or "protected"
-     * @param {boolean} is_static
      * @param {(class_context: PartialClassContext) => ContextTypes} compile
      * @param {function(): void} after_compile
      */
-    constructor(name, scope, is_static, compile, after_compile) {
+    constructor(name, scope, compile, after_compile) {
         this.afterCompile = after_compile
         this.compileInner = compile
         this.compileStarted = false
-        this.isStatic = is_static
         this.name = name
         this.scope = scope
     }
@@ -73,7 +71,11 @@ class PartialClassContext {
         /**
          * @type {{[x: string]: TemporaryIdentifier}}
          */
-        this.temporaryIdentifiers = {}
+        this.temporaryInstanceIdentifiers = {}
+        /**
+         * @type {{[x: string]: TemporaryIdentifier}}
+         */
+        this.temporaryStaticIdentifiers = {}
         this.warmingFor = null
     }
 
@@ -142,14 +144,23 @@ class PartialClassContext {
      */
     addTemporaryIdentifier(name, scope, is_static, compile) {
         let canonical_name = is_static ? name : name.replace(/^[$]/, "")
-        this.temporaryIdentifiers[canonical_name] =
-            new TemporaryIdentifier(
-                name,
-                scope,
-                is_static,
-                compile,
-                () => delete this.temporaryIdentifiers[canonical_name]
-            )
+        if(is_static) {
+            this.temporaryStaticIdentifiers[canonical_name] =
+                new TemporaryIdentifier(
+                    name,
+                    scope,
+                    compile,
+                    () => delete this.temporaryStaticIdentifiers[canonical_name]
+                )
+        } else {
+            this.temporaryInstanceIdentifiers[canonical_name] =
+                new TemporaryIdentifier(
+                    name,
+                    scope,
+                    compile,
+                    () => delete this.temporaryInstanceIdentifiers[canonical_name]
+                )
+        }
     }
 
     /**
@@ -240,13 +251,12 @@ class PartialClassContext {
             }
             // TODO inheritance
         } else if(
-            this.temporaryIdentifiers[name] &&
-            !this.temporaryIdentifiers[name].isStatic
+            this.temporaryInstanceIdentifiers[name]
         ) {
-            return this.temporaryIdentifiers[name].compile(this)
+            return this.temporaryInstanceIdentifiers[name].compile(this)
         } else if(
-            wrong_case = Object.keys(this.temporaryIdentifiers).find(
-                n => n.toLowerCase() == name.toLowerCase() && !this.temporaryIdentifiers[n].isStatic
+            wrong_case = Object.keys(this.temporaryInstanceIdentifiers).find(
+                n => n.toLowerCase() == name.toLowerCase()
             )
         ) {
             console.log(
@@ -329,13 +339,12 @@ class PartialClassContext {
                 return m.types
             }
         } else if(
-            this.temporaryIdentifiers[name] &&
-            this.temporaryIdentifiers[name].isStatic
+            this.temporaryStaticIdentifiers[name]
         ) {
-            return this.temporaryIdentifiers[name].compile(this)
+            return this.temporaryStaticIdentifiers[name].compile(this)
         } else if(
-            wrong_case = Object.keys(this.temporaryIdentifiers).find(
-                n => n.toLowerCase() == name.toLowerCase() && this.temporaryIdentifiers[n].isStatic
+            wrong_case = Object.keys(this.temporaryStaticIdentifiers).find(
+                n => n.toLowerCase() == name.toLowerCase()
             )
         ) {
             console.log(
