@@ -100,10 +100,16 @@ export default class StaticLookup extends Lookup {
                 }
             }
         } else if(
-            this.offset instanceof OffsetLookup ||
+            class_context &&
             this.offset instanceof Variable
         ) {
             // Bar::$FOO
+            return new ContextTypes(class_context.findStaticIdentifier(this.offset.name, context.classContext))
+        } else if(
+            this.offset instanceof OffsetLookup ||
+            this.offset instanceof Variable
+        ) {
+            // Bar::$FOO?
             // TODO
             //this.offset.check(context)
             return new ContextTypes(new PHPType.Mixed(null, null, "staticlookup#Bar::$FOO").union)
