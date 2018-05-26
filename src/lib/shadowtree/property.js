@@ -103,12 +103,17 @@ export default class Property extends Declaration {
                 context
             )
         }
+        let types = (
+            doc_type ||
+            practical_type ||
+            new PHPType.Mixed(context.classContext.name, this.name).union
+        )
         context.classContext.addIdentifier(
             this.name,
             this.visibility,
             this.isStatic,
-            doc_type || practical_type || new PHPType.Mixed(context.classContext.name, this.name).union
+            types
         )
-        return ContextTypes.empty
+        return new ContextTypes(types)
     }
 }

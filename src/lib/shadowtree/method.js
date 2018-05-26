@@ -41,6 +41,6 @@ export default class Method extends _Function {
             method_type
         )
 
-        return ContextTypes.empty
+        return new ContextTypes(method_type)
     }
 }
