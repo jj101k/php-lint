@@ -147,11 +147,8 @@ export default class Class extends Declaration {
             }
         )
         Object.keys(context.classContext.temporaryIdentifiers).forEach(name => {
-            let ti = context.classContext.temporaryIdentifiers[name]
-            if(ti && !ti.compileStarted) {
-                ti.compileStarted = true
-                ti.compile(context.classContext)
-                delete context.classContext.temporaryIdentifiers[name]
+            if(context.classContext.temporaryIdentifiers[name]) {
+                context.classContext.temporaryIdentifiers[name].compile(context.classContext)
             }
         })
     }

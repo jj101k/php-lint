@@ -11,16 +11,18 @@ import ContextTypes from "./context-types";
  */
 class TemporaryIdentifier {
     /**
+     * @param {string} name
      * @param {string} scope "public", "private" or "protected"
      * @param {boolean} is_static
      * @param {(class_context: PartialClassContext) => ContextTypes} compile
      * @param {function(): void} after_compile
      */
-    constructor(scope, is_static, compile, after_compile) {
+    constructor(name, scope, is_static, compile, after_compile) {
         this.afterCompile = after_compile
         this.compileInner = compile
         this.compileStarted = false
         this.isStatic = is_static
+        this.name = name
         this.scope = scope
     }
     /**
@@ -30,10 +32,16 @@ class TemporaryIdentifier {
      * @returns {PHPType.Union}
      */
     compile(class_context) {
-        this.compileStarted = true
-        let types = this.compileInner(class_context).expressionType
-        this.afterCompile()
-        return types
+        if(this.compileStarted) {
+            //console.log(`Recursive compile of ${class_context.name}#${this.name}`)
+            return new PHPType.Mixed(class_context.name, this.name).union
+        } else {
+            //console.log(`Compile ${class_context.name}#${this.name}`)
+            this.compileStarted = true
+            let types = this.compileInner(class_context).expressionType
+            this.afterCompile()
+            return types
+        }
     }
 }
 
@@ -136,6 +144,7 @@ class PartialClassContext {
         let canonical_name = is_static ? name : name.replace(/^[$]/, "")
         this.temporaryIdentifiers[canonical_name] =
             new TemporaryIdentifier(
+                name,
                 scope,
                 is_static,
                 compile,
@@ -234,17 +243,7 @@ class PartialClassContext {
             this.temporaryIdentifiers[name] &&
             !this.temporaryIdentifiers[name].isStatic
         ) {
-            let ti = this.temporaryIdentifiers[name]
-            if(ti.compileStarted) {
-                return new PHPType.Mixed(this.name, name).union
-            } else {
-                //console.log(`Compile ${this.name}#${name}`)
-                let types = ti.compile(this)
-                if(!types) {
-                    throw new Error(`Compilation of temporary identifier ${this.name}#${name} failed`)
-                }
-                return types
-            }
+            return this.temporaryIdentifiers[name].compile(this)
         } else if(
             wrong_case = Object.keys(this.temporaryIdentifiers).find(
                 n => n.toLowerCase() == name.toLowerCase() && !this.temporaryIdentifiers[n].isStatic
@@ -333,18 +332,7 @@ class PartialClassContext {
             this.temporaryIdentifiers[name] &&
             this.temporaryIdentifiers[name].isStatic
         ) {
-            let ti = this.temporaryIdentifiers[name]
-            if(ti.compileStarted) {
-                return new PHPType.Mixed(this.name, name).union
-            } else {
-                ti.compileStarted = true
-                ti.compile(this)
-                delete this.temporaryIdentifiers[name]
-                if(!this.staticIdentifiers[name]) {
-                    throw new Error(`Compilation of temporary identifier ${this.name}#${name} failed`)
-                }
-                return this.staticIdentifiers[name].types
-            }
+            return this.temporaryIdentifiers[name].compile(this)
         } else if(
             wrong_case = Object.keys(this.temporaryIdentifiers).find(
                 n => n.toLowerCase() == name.toLowerCase() && this.temporaryIdentifiers[n].isStatic
