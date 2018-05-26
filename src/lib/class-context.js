@@ -6,6 +6,23 @@ import * as ShadowTree from "./shadowtree"
 import Context from "./context"
 
 /**
+ * Represents a value or function (method) that's not yet compiled.
+ */
+class TemporaryIdentifier {
+    /**
+     * @param {string} scope "public", "private" or "protected"
+     * @param {boolean} is_static
+     * @param {(class_context: PartialClassContext) => void} compile
+     */
+    constructor(scope, is_static, compile) {
+        this.compileStarted = false
+        this.compile = compile
+        this.isStatic = is_static
+        this.scope = scope
+    }
+}
+
+/**
  * Defines content in a specific class
  */
 class PartialClassContext {
@@ -31,7 +48,7 @@ class PartialClassContext {
          */
         this.instanceIdentifiers = {}
         /**
-         * @type {{[x: string]: {compile: (class_context: PartialClassContext) => void, compileStarted: boolean, isStatic: boolean, scope: string}}}
+         * @type {{[x: string]: TemporaryIdentifier}}
          */
         this.temporaryIdentifiers = {}
         this.warmingFor = null
@@ -102,12 +119,8 @@ class PartialClassContext {
      */
     addTemporaryIdentifier(name, scope, is_static, compile) {
         let canonical_name = is_static ? name : name.replace(/^[$]/, "")
-        this.temporaryIdentifiers[canonical_name] = {
-            compile: compile,
-            compileStarted: false,
-            isStatic: is_static,
-            scope: scope,
-        }
+        this.temporaryIdentifiers[canonical_name] =
+            new TemporaryIdentifier(scope, is_static, compile)
     }
 
     /**
