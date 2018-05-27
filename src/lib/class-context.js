@@ -98,16 +98,16 @@ class PartialClassContext {
     constructor(name, file_context = null) {
         this.name = name
         this.fileContext = file_context
+
         /**
-         * @type {{[x: string]: AnyIdentifier}}
+         * @type {{static: {[x: string]: AnyIdentifier}, instance: {[x: string]: AnyIdentifier}}}
          */
-        this.staticIdentifiers = {
-            class: new Identifier("class", "public", PHPType.Core.types.string),
+        this.identifiers = {
+            static: {
+                class: new Identifier("class", "public", PHPType.Core.types.string),
+            },
+            instance: {},
         }
-        /**
-         * @type {{[x: string]: AnyIdentifier}}
-         */
-        this.instanceIdentifiers = {}
         this.warmingFor = null
     }
 
@@ -153,9 +153,9 @@ class PartialClassContext {
      */
     addIdentifier(name, scope, is_static, types) {
         if(is_static) {
-            this.staticIdentifiers[name] = new Identifier(name, scope, types)
+            this.identifiers.static[name] = new Identifier(name, scope, types)
         } else {
-            this.instanceIdentifiers[name.replace(/^[$]/, "")] =
+            this.identifiers.instance[name.replace(/^[$]/, "")] =
                 new Identifier(name, scope, types)
         }
     }
@@ -172,7 +172,7 @@ class PartialClassContext {
     addTemporaryIdentifier(name, scope, is_static, compile) {
         let canonical_name = is_static ? name : name.replace(/^[$]/, "")
         if(is_static) {
-            this.staticIdentifiers[canonical_name] =
+            this.identifiers.static[canonical_name] =
                 new TemporaryIdentifier(
                     name,
                     scope,
@@ -180,7 +180,7 @@ class PartialClassContext {
                     this
                 )
         } else {
-            this.instanceIdentifiers[canonical_name] =
+            this.identifiers.instance[canonical_name] =
                 new TemporaryIdentifier(
                     name,
                     scope,
@@ -212,7 +212,7 @@ class PartialClassContext {
      * @returns {?PHPType.Union}
      */
     findInstanceIdentifier(name, from_class_context, parser_state = new Set()) {
-        let m = this.instanceIdentifiers[name]
+        let m = this.identifiers.instance[name]
         let wrong_case
         if(m) {
             if(
@@ -278,14 +278,14 @@ class PartialClassContext {
             }
             // TODO inheritance
         } else if(
-            wrong_case = Object.keys(this.instanceIdentifiers).find(
+            wrong_case = Object.keys(this.identifiers.instance).find(
                 n => n.toLowerCase() == name.toLowerCase()
             )
         ) {
             console.log(
                 `Wrong case for instance identifier, ${name} should be ${wrong_case}`
             )
-            this.instanceIdentifiers[name] = this.instanceIdentifiers[wrong_case]
+            this.identifiers.instance[name] = this.identifiers.instance[wrong_case]
             return this.findInstanceIdentifier(wrong_case, from_class_context)
         } else if(this.parentEntity) {
             let superclass_types = this.parentEntity.warm(this.warmingFor || this).findInstanceIdentifier(
@@ -338,7 +338,7 @@ class PartialClassContext {
      * @returns {?PHPType.Union}
      */
     findStaticIdentifier(name, from_class_context) {
-        let m = this.staticIdentifiers[name]
+        let m = this.identifiers.static[name]
         let wrong_case
         if(m) {
             if(
@@ -347,9 +347,9 @@ class PartialClassContext {
             ) {
                 return m.types
             }
-        } else if(wrong_case = Object.keys(this.staticIdentifiers).find(n => n.toLowerCase() == name.toLowerCase())) {
+        } else if(wrong_case = Object.keys(this.identifiers.static).find(n => n.toLowerCase() == name.toLowerCase())) {
             console.log(`Wrong case for static identifier, ${name} should be ${wrong_case}`)
-            this.staticIdentifiers[name] = this.staticIdentifiers[wrong_case]
+            this.identifiers.static[name] = this.identifiers.static[wrong_case]
             return this.findStaticIdentifier(wrong_case, from_class_context)
         } else if(this.parentEntity) {
             let superclass_types = this.parentEntity.warm(this.warmingFor || this).findStaticIdentifier(
@@ -372,19 +372,19 @@ class PartialClassContext {
      * @return {string[]}
      */
     instanceIdentifiersWithScope(scope = "private") {
-        return Object.keys(this.instanceIdentifiers).filter(identifier => {
+        return Object.keys(this.identifiers.instance).filter(identifier => {
             switch(scope) {
                 case "private":
-                    if(this.instanceIdentifiers[identifier].scope == "private") {
+                    if(this.identifiers.instance[identifier].scope == "private") {
                         return true
                     }
                     //
                 case "protected":
-                    if(this.instanceIdentifiers[identifier].scope == "protected") {
+                    if(this.identifiers.instance[identifier].scope == "protected") {
                         return true
                     }
                 case "public":
-                    if(this.instanceIdentifiers[identifier].scope == "public") {
+                    if(this.identifiers.instance[identifier].scope == "public") {
                         return true
                     }
                     //
@@ -451,19 +451,19 @@ class PartialClassContext {
      * @return {string[]}
      */
     staticIdentifiersWithScope(scope = "private") {
-        return Object.keys(this.staticIdentifiers).filter(identifier => {
+        return Object.keys(this.identifiers.static).filter(identifier => {
             switch(scope) {
                 case "private":
-                    if(this.staticIdentifiers[identifier].scope == "private") {
+                    if(this.identifiers.static[identifier].scope == "private") {
                         return true
                     }
                     //
                 case "protected":
-                    if(this.staticIdentifiers[identifier].scope == "protected") {
+                    if(this.identifiers.static[identifier].scope == "protected") {
                         return true
                     }
                 case "public":
-                    if(this.staticIdentifiers[identifier].scope == "public") {
+                    if(this.identifiers.static[identifier].scope == "public") {
                         return true
                     }
                     //
@@ -502,14 +502,14 @@ class ClassContext extends PartialClassContext {
      * Compiles all temporary entities
      */
     compile() {
-        Object.values(this.staticIdentifiers).forEach(
+        Object.values(this.identifiers.static).forEach(
             ti => {
                 if(ti instanceof TemporaryIdentifier) {
                     ti.compile()
                 }
             }
         )
-        Object.values(this.instanceIdentifiers).forEach(
+        Object.values(this.identifiers.instance).forEach(
             ti => {
                 if(ti instanceof TemporaryIdentifier) {
                     ti.compile()
@@ -707,7 +707,7 @@ class UnknownClassContext extends ClassContext {
      * @returns {?PHPType.Union}
      */
     findInstanceIdentifier(name, from_class_context, parser_state = new Set()) {
-        if(!this.instanceIdentifiers[name]) {
+        if(!this.identifiers.instance[name]) {
             let type
             if(parser_state.has(ParserStateOption.InCall)) {
                 type = new PHPType.Function(
@@ -717,7 +717,7 @@ class UnknownClassContext extends ClassContext {
             } else {
                 type = new PHPType.Mixed(this.name, name).union
             }
-            this.instanceIdentifiers[name] = new Identifier(name, "public", type)
+            this.identifiers.instance[name] = new Identifier(name, "public", type)
         }
         return super.findInstanceIdentifier(name, from_class_context, parser_state)
     }
@@ -729,8 +729,8 @@ class UnknownClassContext extends ClassContext {
      * @returns {?PHPType.Union}
      */
     findStaticIdentifier(name, from_class_context) {
-        if(!this.staticIdentifiers[name]) {
-            this.staticIdentifiers[name] =
+        if(!this.identifiers.static[name]) {
+            this.identifiers.static[name] =
                 new Identifier(name, "public", new PHPType.Mixed(this.name, name).union)
         }
         return super.findStaticIdentifier(name, from_class_context)
@@ -766,7 +766,7 @@ class UnknownTraitContext extends TraitContext {
      * @returns {?PHPType.Union}
      */
     findInstanceIdentifier(name, from_class_context, parser_state = new Set()) {
-        if(!this.instanceIdentifiers[name]) {
+        if(!this.identifiers.instance[name]) {
             let type
             if(parser_state.has(ParserStateOption.InCall)) {
                 type = new PHPType.Function(
@@ -776,7 +776,7 @@ class UnknownTraitContext extends TraitContext {
             } else {
                 type = new PHPType.Mixed(this.name, name).union
             }
-            this.instanceIdentifiers[name] = new Identifier(name, "public", type)
+            this.identifiers.instance[name] = new Identifier(name, "public", type)
         }
         return super.findInstanceIdentifier(name, from_class_context, parser_state)
     }
@@ -788,8 +788,8 @@ class UnknownTraitContext extends TraitContext {
      * @returns {?PHPType.Union}
      */
     findStaticIdentifier(name, from_class_context) {
-        if(!this.staticIdentifiers[name]) {
-            this.staticIdentifiers[name] =
+        if(!this.identifiers.static[name]) {
+            this.identifiers.static[name] =
                 new Identifier(name, "public", new PHPType.Mixed(this.name, name).union)
         }
         return super.findStaticIdentifier(name, from_class_context)
