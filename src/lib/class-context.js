@@ -68,6 +68,9 @@ class TemporaryIdentifier extends AnyIdentifier {
         this.name = name
         this.scope = scope
     }
+    get type() {
+        return this.compile()
+    }
     /**
      * Triggers compilation
      *
@@ -291,7 +294,7 @@ class PartialClassContext {
         } else if(
             this.temporaryInstanceIdentifiers[name]
         ) {
-            return this.temporaryInstanceIdentifiers[name].compile()
+            return this.temporaryInstanceIdentifiers[name].type
         } else if(
             wrong_case = Object.keys(this.temporaryInstanceIdentifiers).find(
                 n => n.toLowerCase() == name.toLowerCase()
@@ -379,7 +382,7 @@ class PartialClassContext {
         } else if(
             this.temporaryStaticIdentifiers[name]
         ) {
-            return this.temporaryStaticIdentifiers[name].compile()
+            return this.temporaryStaticIdentifiers[name].type
         } else if(
             wrong_case = Object.keys(this.temporaryStaticIdentifiers).find(
                 n => n.toLowerCase() == name.toLowerCase()
