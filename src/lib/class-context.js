@@ -153,28 +153,18 @@ class AnyIdentifierSet {
     /**
      * Finds the named identifier
      * @param {string} name
-     * @param {?ClassContext} from_class_context
+     * @param {scope} calling_scope
      * @param {Set<ParserStateOption.Base>} [parser_state]
      * @returns {?PHPType.Union}
      */
-    findIdentifier(name, from_class_context, parser_state = new Set()) {
+    findIdentifier(name, calling_scope, parser_state = new Set()) {
         let m = this.identifiers[name]
         let wrong_case
         if(m) {
             if(
+                calling_scope == "private" ||
                 m.scope == "public" ||
-                (
-                    m.scope == "protected" &&
-                    from_class_context &&
-                    (
-                        from_class_context.isSubclassOf(this.classContext) ||
-                        this.classContext.isSubclassOf(from_class_context)
-                    )
-                ) ||
-                (
-                    from_class_context &&
-                    from_class_context.name == this.classContext.name
-                )
+                m.scope == calling_scope
             ) {
                 return m.types
             } else if(this.isClassInstance) {
@@ -184,7 +174,7 @@ class AnyIdentifierSet {
                     )
                     return this.findIdentifier(
                         "__call",
-                        from_class_context,
+                        calling_scope,
                         new Set([ParserStateOption.InCall])
                     )
                 } else if(
@@ -194,7 +184,7 @@ class AnyIdentifierSet {
                 ) {
                     if(this.findIdentifier(
                         "__get",
-                        from_class_context,
+                        calling_scope,
                         new Set([ParserStateOption.InCall])
                     )) {
                         console.log(
@@ -209,7 +199,7 @@ class AnyIdentifierSet {
                 ) {
                     if(this.findIdentifier(
                         "__set",
-                        from_class_context,
+                        calling_scope,
                         new Set([ParserStateOption.InCall])
                     )) {
                         console.log(
@@ -219,7 +209,7 @@ class AnyIdentifierSet {
                     }
                 }
                 throw new PHPError.ScopeMiss(
-                    `Scope miss for name ${this.qualifiedName(name)} with scope ${m.scope} ($this instanceof ${from_class_context.name})`
+                    `Scope miss for name ${this.qualifiedName(name)} with scope ${m.scope} (calling scope is ${calling_scope})`
                 )
             }
             // TODO inheritance
@@ -232,13 +222,18 @@ class AnyIdentifierSet {
                 `Wrong case for instance identifier, ${name} should be ${wrong_case}`
             )
             this.identifiers[name] = this.identifiers[wrong_case]
-            return this.findIdentifier(wrong_case, from_class_context)
+            return this.findIdentifier(wrong_case, calling_scope, parser_state)
         } else if(this.classContext.parentEntity) {
-            let superclass_types = this.classContext.parentEntity.warm(
+            let warmed_superclass = this.classContext.parentEntity.warm(
                 this.classContext.warmingFor || this.classContext
-            ).findInstanceIdentifier(
+            )
+            let coll = (this.isClassInstance) ?
+                warmed_superclass.identifiers.instance :
+                warmed_superclass.identifiers.static
+            let superclass_types = coll.findIdentifier(
                 name,
-                from_class_context
+                (calling_scope == "private") ? "protected" : calling_scope,
+                parser_state
             )
             if(superclass_types) {
                 return superclass_types
@@ -248,7 +243,7 @@ class AnyIdentifierSet {
             if(parser_state.has(ParserStateOption.InCall) && name != "__call") {
                 return this.findIdentifier(
                     "__call",
-                    from_class_context,
+                    calling_scope,
                     new Set([ParserStateOption.InCall])
                 )
             } else if(
@@ -258,7 +253,7 @@ class AnyIdentifierSet {
             ) {
                 if(this.findIdentifier(
                     "__get",
-                    from_class_context,
+                    calling_scope,
                     new Set([ParserStateOption.InCall])
                 )) {
                     return new PHPType.Mixed(this.classContext.name, "__get").union
@@ -270,7 +265,7 @@ class AnyIdentifierSet {
             ) {
                 if(this.findIdentifier(
                     "__set",
-                    from_class_context,
+                    calling_scope,
                     new Set([ParserStateOption.InCall])
                 )) {
                     return new PHPType.Mixed(this.classContext.name, "__set").union
@@ -320,11 +315,11 @@ class UnknownIdentifierSet extends AnyIdentifierSet {
     /**
      * Finds the named identifier
      * @param {string} name
-     * @param {?ClassContext} from_class_context
+     * @param {scope} calling_scope
      * @param {Set<ParserStateOption.Base>} [parser_state]
      * @returns {?PHPType.Union}
      */
-    findIdentifier(name, from_class_context, parser_state = new Set()) {
+    findIdentifier(name, calling_scope, parser_state = new Set()) {
         if(!this.identifiers[name]) {
             if(this.isClassInstance) {
                 let type
@@ -342,7 +337,7 @@ class UnknownIdentifierSet extends AnyIdentifierSet {
                     new Identifier(name, "public", new PHPType.Mixed(this.classContext.name, name).union)
             }
         }
-        return super.findIdentifier(name, from_class_context, parser_state)
+        return super.findIdentifier(name, calling_scope, parser_state)
     }
 }
 
@@ -470,7 +465,24 @@ class PartialClassContext {
      * @returns {?PHPType.Union}
      */
     findInstanceIdentifier(name, from_class_context, parser_state = new Set()) {
-        return this.identifiers.instance.findIdentifier(name, from_class_context, parser_state)
+        /**
+         * @type {scope}
+         */
+        let calling_scope
+        if(from_class_context && from_class_context.name == this.name) {
+            calling_scope = "private"
+        } else if(
+            from_class_context &&
+            (
+                from_class_context.isSubclassOf(this) ||
+                this.isSubclassOf(from_class_context)
+            )
+        ) {
+            calling_scope = "protected"
+        } else {
+            calling_scope = "public"
+        }
+        return this.identifiers.instance.findIdentifier(name, calling_scope, parser_state)
     }
 
     /**
@@ -481,7 +493,24 @@ class PartialClassContext {
      * @returns {?PHPType.Union}
      */
     findStaticIdentifier(name, from_class_context) {
-        return this.identifiers.static.findIdentifier(name, from_class_context, new Set())
+        /**
+         * @type {scope}
+         */
+        let calling_scope
+        if(from_class_context && from_class_context.name == this.name) {
+            calling_scope = "private"
+        } else if(
+            from_class_context &&
+            (
+                from_class_context.isSubclassOf(this) ||
+                this.isSubclassOf(from_class_context)
+            )
+        ) {
+            calling_scope = "protected"
+        } else {
+            calling_scope = "public"
+        }
+        return this.identifiers.static.findIdentifier(name, calling_scope, new Set())
     }
 
     /**
