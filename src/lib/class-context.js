@@ -112,6 +112,241 @@ class TemporaryIdentifier extends AnyIdentifier {
 }
 
 /**
+ * A namespace of values.
+ */
+class AnyIdentifierSet {
+    /**
+     * Builds the object
+     * @param {PartialClassContext} class_context
+     * @param {boolean} is_class_instance True if this is the instance collection for a class
+     */
+    constructor(class_context, is_class_instance) {
+        this.classContext = class_context
+        this.identifiers = {}
+        this.isClassInstance = is_class_instance
+    }
+
+    /**
+     *
+     * @param {AnyIdentifier} identifier
+     */
+    add(identifier) {
+        let name = this.isClassInstance ?
+            identifier.name.replace(/^[$]/, "") :
+            identifier.name
+        this.identifiers[name] = identifier
+    }
+
+    /**
+     * Compiles any temporary identifiers
+     */
+    compile() {
+        Object.values(this.identifiers).forEach(
+            ti => {
+                if(ti instanceof TemporaryIdentifier) {
+                    ti.compile()
+                }
+            }
+        )
+    }
+
+    /**
+     * Finds the named identifier
+     * @param {string} name
+     * @param {?ClassContext} from_class_context
+     * @param {Set<ParserStateOption.Base>} [parser_state]
+     * @returns {?PHPType.Union}
+     */
+    findIdentifier(name, from_class_context, parser_state = new Set()) {
+        let m = this.identifiers[name]
+        let wrong_case
+        if(m) {
+            if(
+                m.scope == "public" ||
+                (
+                    m.scope == "protected" &&
+                    from_class_context &&
+                    (
+                        from_class_context.isSubclassOf(this.classContext) ||
+                        this.classContext.isSubclassOf(from_class_context)
+                    )
+                ) ||
+                (
+                    from_class_context &&
+                    from_class_context.name == this.classContext.name
+                )
+            ) {
+                return m.types
+            } else if(this.isClassInstance) {
+                if(parser_state.has(ParserStateOption.InCall) && name != "__call") {
+                    console.log(
+                        `Possible scope miss for name ${this.qualifiedName(name)} with scope ${m.scope}`
+                    )
+                    return this.findIdentifier(
+                        "__call",
+                        from_class_context,
+                        new Set([ParserStateOption.InCall])
+                    )
+                } else if(
+                    !parser_state.has(ParserStateOption.InCall) &&
+                    !parser_state.has(ParserStateOption.InAssignment) &&
+                    name != "__get"
+                ) {
+                    if(this.findIdentifier(
+                        "__get",
+                        from_class_context,
+                        new Set([ParserStateOption.InCall])
+                    )) {
+                        console.log(
+                            `Possible scope miss for name ${this.qualifiedName(name)} with scope ${m.scope}`
+                        )
+                        return new PHPType.Mixed(this.classContext.name, "__get").union
+                    }
+                } else if(
+                    !parser_state.has(ParserStateOption.InCall) &&
+                    parser_state.has(ParserStateOption.InAssignment) &&
+                    name != "__set"
+                ) {
+                    if(this.findIdentifier(
+                        "__set",
+                        from_class_context,
+                        new Set([ParserStateOption.InCall])
+                    )) {
+                        console.log(
+                            `Possible scope miss for name ${this.qualifiedName(name)} with scope ${m.scope}`
+                        )
+                        return new PHPType.Mixed(this.classContext.name, "__set").union
+                    }
+                }
+                throw new PHPError.ScopeMiss(
+                    `Scope miss for name ${this.qualifiedName(name)} with scope ${m.scope} ($this instanceof ${from_class_context.name})`
+                )
+            }
+            // TODO inheritance
+        } else if(
+            wrong_case = Object.keys(this.identifiers).find(
+                n => n.toLowerCase() == name.toLowerCase()
+            )
+        ) {
+            console.log(
+                `Wrong case for instance identifier, ${name} should be ${wrong_case}`
+            )
+            this.identifiers[name] = this.identifiers[wrong_case]
+            return this.findIdentifier(wrong_case, from_class_context)
+        } else if(this.classContext.parentEntity) {
+            let superclass_types = this.classContext.parentEntity.warm(
+                this.classContext.warmingFor || this.classContext
+            ).findInstanceIdentifier(
+                name,
+                from_class_context
+            )
+            if(superclass_types) {
+                return superclass_types
+            }
+        }
+        if(this.isClassInstance) {
+            if(parser_state.has(ParserStateOption.InCall) && name != "__call") {
+                return this.findIdentifier(
+                    "__call",
+                    from_class_context,
+                    new Set([ParserStateOption.InCall])
+                )
+            } else if(
+                !parser_state.has(ParserStateOption.InCall) &&
+                !parser_state.has(ParserStateOption.InAssignment) &&
+                name != "__get"
+            ) {
+                if(this.findIdentifier(
+                    "__get",
+                    from_class_context,
+                    new Set([ParserStateOption.InCall])
+                )) {
+                    return new PHPType.Mixed(this.classContext.name, "__get").union
+                }
+            } else if(
+                !parser_state.has(ParserStateOption.InCall) &&
+                parser_state.has(ParserStateOption.InAssignment) &&
+                name != "__set"
+            ) {
+                if(this.findIdentifier(
+                    "__set",
+                    from_class_context,
+                    new Set([ParserStateOption.InCall])
+                )) {
+                    return new PHPType.Mixed(this.classContext.name, "__set").union
+                }
+            }
+        }
+        return null
+    }
+
+    /**
+     *
+     * @param {scope} scope
+     * @return {string[]}
+     */
+    identifiersWithScope(scope = "private") {
+        let names = Object.values(this.identifiers).filter(
+            identifier => identifier.visibleInScope(scope)
+        ).map(identifier => identifier.name)
+        if(this.isClassInstance) {
+            return names.map(name => name.replace(/^[$]/, ""))
+        } else {
+            return names
+        }
+    }
+
+    /**
+     * Returns the given name as qualified for this colletion.
+     *
+     * @param {string} name
+     * @returns {string}
+     */
+    qualifiedName(name) {
+        if(this.classContext) {
+            if(this.isClassInstance) {
+                return `${this.classContext.name}#${name}`
+            } else {
+                return `${this.classContext.name}::${name}`
+            }
+        }
+    }
+}
+
+/**
+ * Identifier sets for unknown classes
+ */
+class UnknownIdentifierSet extends AnyIdentifierSet {
+        /**
+     * Finds the named identifier
+     * @param {string} name
+     * @param {?ClassContext} from_class_context
+     * @param {Set<ParserStateOption.Base>} [parser_state]
+     * @returns {?PHPType.Union}
+     */
+    findIdentifier(name, from_class_context, parser_state = new Set()) {
+        if(!this.identifiers[name]) {
+            if(this.isClassInstance) {
+                let type
+                if(parser_state.has(ParserStateOption.InCall)) {
+                    type = new PHPType.Function(
+                        [new PHPType.Mixed(this.classContext.name, name, "~function#in").union],
+                        new PHPType.Mixed(this.classContext.name, name, "~function#out").union
+                    ).union
+                } else {
+                    type = new PHPType.Mixed(this.classContext.name, name).union
+                }
+                this.identifiers[name] = new Identifier(name, "public", type)
+            } else {
+                this.identifiers[name] =
+                    new Identifier(name, "public", new PHPType.Mixed(this.classContext.name, name).union)
+            }
+        }
+        return super.findIdentifier(name, from_class_context, parser_state)
+    }
+}
+
+/**
  * Defines content in a specific class
  */
 class PartialClassContext {
@@ -125,14 +360,15 @@ class PartialClassContext {
         this.fileContext = file_context
 
         /**
-         * @type {{static: {[x: string]: AnyIdentifier}, instance: {[x: string]: AnyIdentifier}}}
+         * @type {{static: AnyIdentifierSet, instance: AnyIdentifierSet}}
          */
         this.identifiers = {
-            static: {
-                class: new Identifier("class", "public", PHPType.Core.types.string),
-            },
-            instance: {},
+            static: new AnyIdentifierSet(this, false),
+            instance: new AnyIdentifierSet(this, true),
         }
+        this.identifiers.static.add(
+            new Identifier("class", "public", PHPType.Core.types.string)
+        )
         this.warmingFor = null
     }
 
@@ -178,10 +414,9 @@ class PartialClassContext {
      */
     addIdentifier(name, scope, is_static, types) {
         if(is_static) {
-            this.identifiers.static[name] = new Identifier(name, scope, types)
+            this.identifiers.static.add(new Identifier(name, scope, types))
         } else {
-            this.identifiers.instance[name.replace(/^[$]/, "")] =
-                new Identifier(name, scope, types)
+            this.identifiers.instance.add(new Identifier(name, scope, types))
         }
     }
 
@@ -197,21 +432,19 @@ class PartialClassContext {
     addTemporaryIdentifier(name, scope, is_static, compile) {
         let canonical_name = is_static ? name : name.replace(/^[$]/, "")
         if(is_static) {
-            this.identifiers.static[canonical_name] =
-                new TemporaryIdentifier(
-                    name,
-                    scope,
-                    compile,
-                    this
-                )
+            this.identifiers.static.add(new TemporaryIdentifier(
+                name,
+                scope,
+                compile,
+                this
+            ))
         } else {
-            this.identifiers.instance[canonical_name] =
-                new TemporaryIdentifier(
-                    name,
-                    scope,
-                    compile,
-                    this
-                )
+            this.identifiers.instance.add(new TemporaryIdentifier(
+                name,
+                scope,
+                compile,
+                this
+            ))
         }
     }
 
@@ -237,122 +470,7 @@ class PartialClassContext {
      * @returns {?PHPType.Union}
      */
     findInstanceIdentifier(name, from_class_context, parser_state = new Set()) {
-        let m = this.identifiers.instance[name]
-        let wrong_case
-        if(m) {
-            if(
-                m.scope == "public" ||
-                (
-                    m.scope == "protected" &&
-                    from_class_context &&
-                    (
-                        from_class_context.isSubclassOf(this) ||
-                        this.isSubclassOf(from_class_context)
-                    )
-                ) ||
-                (
-                    from_class_context &&
-                    from_class_context.name == this.name
-                )
-            ) {
-                return m.types
-            } else {
-                if(parser_state.has(ParserStateOption.InCall) && name != "__call") {
-                    console.log(
-                        `Possible scope miss for name ${this.name}#${name} with scope ${m.scope}`
-                    )
-                    return this.findInstanceIdentifier(
-                        "__call",
-                        from_class_context,
-                        new Set([ParserStateOption.InCall])
-                    )
-                } else if(
-                    !parser_state.has(ParserStateOption.InCall) &&
-                    !parser_state.has(ParserStateOption.InAssignment) &&
-                    name != "__get"
-                ) {
-                    if(this.findInstanceIdentifier(
-                        "__get",
-                        from_class_context,
-                        new Set([ParserStateOption.InCall])
-                    )) {
-                        console.log(
-                            `Possible scope miss for name ${this.name}#${name} with scope ${m.scope}`
-                        )
-                        return new PHPType.Mixed(this.name, "__get").union
-                    }
-                } else if(
-                    !parser_state.has(ParserStateOption.InCall) &&
-                    parser_state.has(ParserStateOption.InAssignment) &&
-                    name != "__set"
-                ) {
-                    if(this.findInstanceIdentifier(
-                        "__set",
-                        from_class_context,
-                        new Set([ParserStateOption.InCall])
-                    )) {
-                        console.log(
-                            `Possible scope miss for name ${this.name}#${name} with scope ${m.scope}`
-                        )
-                        return new PHPType.Mixed(this.name, "__set").union
-                    }
-                }
-                throw new PHPError.ScopeMiss(
-                    `Scope miss for name ${this.name}#${name} with scope ${m.scope} ($this instanceof ${from_class_context.name})`
-                )
-            }
-            // TODO inheritance
-        } else if(
-            wrong_case = Object.keys(this.identifiers.instance).find(
-                n => n.toLowerCase() == name.toLowerCase()
-            )
-        ) {
-            console.log(
-                `Wrong case for instance identifier, ${name} should be ${wrong_case}`
-            )
-            this.identifiers.instance[name] = this.identifiers.instance[wrong_case]
-            return this.findInstanceIdentifier(wrong_case, from_class_context)
-        } else if(this.parentEntity) {
-            let superclass_types = this.parentEntity.warm(this.warmingFor || this).findInstanceIdentifier(
-                name,
-                from_class_context
-            )
-            if(superclass_types) {
-                return superclass_types
-            }
-        }
-        if(parser_state.has(ParserStateOption.InCall) && name != "__call") {
-            return this.findInstanceIdentifier(
-                "__call",
-                from_class_context,
-                new Set([ParserStateOption.InCall])
-            )
-        } else if(
-            !parser_state.has(ParserStateOption.InCall) &&
-            !parser_state.has(ParserStateOption.InAssignment) &&
-            name != "__get"
-        ) {
-            if(this.findInstanceIdentifier(
-                "__get",
-                from_class_context,
-                new Set([ParserStateOption.InCall])
-            )) {
-                return new PHPType.Mixed(this.name, "__get").union
-            }
-        } else if(
-            !parser_state.has(ParserStateOption.InCall) &&
-            parser_state.has(ParserStateOption.InAssignment) &&
-            name != "__set"
-        ) {
-            if(this.findInstanceIdentifier(
-                "__set",
-                from_class_context,
-                new Set([ParserStateOption.InCall])
-            )) {
-                return new PHPType.Mixed(this.name, "__set").union
-            }
-        }
-        return null
+        return this.identifiers.instance.findIdentifier(name, from_class_context, parser_state)
     }
 
     /**
@@ -363,30 +481,7 @@ class PartialClassContext {
      * @returns {?PHPType.Union}
      */
     findStaticIdentifier(name, from_class_context) {
-        let m = this.identifiers.static[name]
-        let wrong_case
-        if(m) {
-            if(
-                (from_class_context && from_class_context.name == this.name) ||
-                m.scope == "public"
-            ) {
-                return m.types
-            }
-        } else if(wrong_case = Object.keys(this.identifiers.static).find(n => n.toLowerCase() == name.toLowerCase())) {
-            console.log(`Wrong case for static identifier, ${name} should be ${wrong_case}`)
-            this.identifiers.static[name] = this.identifiers.static[wrong_case]
-            return this.findStaticIdentifier(wrong_case, from_class_context)
-        } else if(this.parentEntity) {
-            let superclass_types = this.parentEntity.warm(this.warmingFor || this).findStaticIdentifier(
-                name,
-                from_class_context
-            )
-            if(superclass_types) {
-                return superclass_types
-            }
-        } else {
-            return null
-        }
+        return this.identifiers.static.findIdentifier(name, from_class_context, new Set())
     }
 
     /**
@@ -397,9 +492,7 @@ class PartialClassContext {
      * @return {string[]}
      */
     instanceIdentifiersWithScope(scope = "private") {
-        return Object.values(this.identifiers.instance).filter(
-            identifier => identifier.visibleInScope(scope)
-        ).map(identifier => identifier.name.replace(/^[$]/, ""))
+        return this.identifiers.instance.identifiersWithScope(scope)
     }
 
     /**
@@ -459,9 +552,7 @@ class PartialClassContext {
      * @return {string[]}
      */
     staticIdentifiersWithScope(scope = "private") {
-        return Object.values(this.identifiers.instance).filter(
-            identifier => identifier.visibleInScope(scope)
-        ).map(identifier => identifier.name)
+        return this.identifiers.static.identifiersWithScope(scope)
     }
 }
 
@@ -493,15 +584,7 @@ class ClassContext extends PartialClassContext {
      * Compiles all temporary entities
      */
     compile() {
-        Object.values(this.identifiers).forEach(coll => {
-            Object.values(coll).forEach(
-                ti => {
-                    if(ti instanceof TemporaryIdentifier) {
-                        ti.compile()
-                    }
-                }
-            )
-        })
+        Object.values(this.identifiers).forEach(coll => coll.compile())
     }
 
     coldCopy() {
@@ -683,43 +766,11 @@ class UnknownClassContext extends ClassContext {
      */
     constructor(name, superclass = null) {
         super(name, superclass, null, null, [])
-    }
-
-    /**
-     * Finds the named identifier
-     * @param {string} name
-     * @param {?ClassContext} from_class_context
-     * @param {Set<ParserStateOption.Base>} [parser_state]
-     * @returns {?PHPType.Union}
-     */
-    findInstanceIdentifier(name, from_class_context, parser_state = new Set()) {
-        if(!this.identifiers.instance[name]) {
-            let type
-            if(parser_state.has(ParserStateOption.InCall)) {
-                type = new PHPType.Function(
-                    [new PHPType.Mixed(this.name, name, "~function#in").union],
-                    new PHPType.Mixed(this.name, name, "~function#out").union
-                ).union
-            } else {
-                type = new PHPType.Mixed(this.name, name).union
-            }
-            this.identifiers.instance[name] = new Identifier(name, "public", type)
-        }
-        return super.findInstanceIdentifier(name, from_class_context, parser_state)
-    }
-
-    /**
-     * Finds the named identifier
-     * @param {string} name
-     * @param {?ClassContext} from_class_context
-     * @returns {?PHPType.Union}
-     */
-    findStaticIdentifier(name, from_class_context) {
-        if(!this.identifiers.static[name]) {
-            this.identifiers.static[name] =
-                new Identifier(name, "public", new PHPType.Mixed(this.name, name).union)
-        }
-        return super.findStaticIdentifier(name, from_class_context)
+        this.identifiers.instance = new UnknownIdentifierSet(this, true)
+        this.identifiers.static = new UnknownIdentifierSet(this, false)
+        this.identifiers.static.add(
+            new Identifier("class", "public", PHPType.Core.types.string)
+        )
     }
 }
 
