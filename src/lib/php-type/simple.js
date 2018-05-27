@@ -12,6 +12,9 @@ export default class _Simple extends _Any {
      */
     constructor(type_name, values = [], poly_value = false) {
         super()
+        if(!type_name) {
+            throw new Error("Simple type with no name")
+        }
         this.typeName = type_name
         this.values = values
         this.polyValue = poly_value
