@@ -146,11 +146,6 @@ export default class Class extends Declaration {
                 }
             }
         )
-        Object.values(context.classContext.temporaryStaticIdentifiers).forEach(
-            ti => ti.compile()
-        )
-        Object.values(context.classContext.temporaryInstanceIdentifiers).forEach(
-            ti => ti.compile()
-        )
+        context.classContext.compile()
     }
 }

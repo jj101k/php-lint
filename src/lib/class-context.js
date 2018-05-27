@@ -56,19 +56,17 @@ class TemporaryIdentifier extends AnyIdentifier {
      * @param {string} name
      * @param {scope} scope
      * @param {(class_context: PartialClassContext) => ContextTypes} compile
-     * @param {function(): void} after_compile
      * @param {PartialClassContext} class_context
      */
-    constructor(name, scope, compile, after_compile, class_context) {
+    constructor(name, scope, compile, class_context) {
         super(name, scope)
-        this.afterCompile = after_compile
         this.classContext = class_context
         this.compileInner = compile
         this.compileStarted = false
         this.name = name
         this.scope = scope
     }
-    get type() {
+    get types() {
         return this.compile()
     }
     /**
@@ -83,9 +81,7 @@ class TemporaryIdentifier extends AnyIdentifier {
         } else {
             //console.log(`Compile ${class_context.name}#${this.name}`)
             this.compileStarted = true
-            let types = this.compileInner(this.classContext).expressionType
-            this.afterCompile()
-            return types
+            return this.compileInner(this.classContext).expressionType
         }
     }
 }
@@ -103,23 +99,15 @@ class PartialClassContext {
         this.name = name
         this.fileContext = file_context
         /**
-         * @type {{[x: string]: Identifier}}
+         * @type {{[x: string]: AnyIdentifier}}
          */
         this.staticIdentifiers = {
             class: new Identifier("class", "public", PHPType.Core.types.string),
         }
         /**
-         * @type {{[x: string]: Identifier}}
+         * @type {{[x: string]: AnyIdentifier}}
          */
         this.instanceIdentifiers = {}
-        /**
-         * @type {{[x: string]: TemporaryIdentifier}}
-         */
-        this.temporaryInstanceIdentifiers = {}
-        /**
-         * @type {{[x: string]: TemporaryIdentifier}}
-         */
-        this.temporaryStaticIdentifiers = {}
         this.warmingFor = null
     }
 
@@ -184,21 +172,19 @@ class PartialClassContext {
     addTemporaryIdentifier(name, scope, is_static, compile) {
         let canonical_name = is_static ? name : name.replace(/^[$]/, "")
         if(is_static) {
-            this.temporaryStaticIdentifiers[canonical_name] =
+            this.staticIdentifiers[canonical_name] =
                 new TemporaryIdentifier(
                     name,
                     scope,
                     compile,
-                    () => delete this.temporaryStaticIdentifiers[canonical_name],
                     this
                 )
         } else {
-            this.temporaryInstanceIdentifiers[canonical_name] =
+            this.instanceIdentifiers[canonical_name] =
                 new TemporaryIdentifier(
                     name,
                     scope,
                     compile,
-                    () => delete this.temporaryInstanceIdentifiers[canonical_name],
                     this
                 )
         }
@@ -292,24 +278,6 @@ class PartialClassContext {
             }
             // TODO inheritance
         } else if(
-            this.temporaryInstanceIdentifiers[name]
-        ) {
-            return this.temporaryInstanceIdentifiers[name].type
-        } else if(
-            wrong_case = Object.keys(this.temporaryInstanceIdentifiers).find(
-                n => n.toLowerCase() == name.toLowerCase()
-            )
-        ) {
-            console.log(
-                `Wrong case for instance identifier, ${name} should be ${wrong_case}`
-            )
-            let type = this.findInstanceIdentifier(wrong_case, from_class_context)
-            if(this.instanceIdentifiers[wrong_case]) {
-                this.instanceIdentifiers[name] =
-                    this.instanceIdentifiers[wrong_case]
-            }
-            return type
-        } else if(
             wrong_case = Object.keys(this.instanceIdentifiers).find(
                 n => n.toLowerCase() == name.toLowerCase()
             )
@@ -379,24 +347,6 @@ class PartialClassContext {
             ) {
                 return m.types
             }
-        } else if(
-            this.temporaryStaticIdentifiers[name]
-        ) {
-            return this.temporaryStaticIdentifiers[name].type
-        } else if(
-            wrong_case = Object.keys(this.temporaryStaticIdentifiers).find(
-                n => n.toLowerCase() == name.toLowerCase()
-            )
-        ) {
-            console.log(
-                `Wrong case for static identifier, ${name} should be ${wrong_case}`
-            )
-            let type = this.findStaticIdentifier(wrong_case, from_class_context)
-            if(this.staticIdentifiers[wrong_case]) {
-                this.staticIdentifiers[name] =
-                    this.staticIdentifiers[wrong_case]
-            }
-            return type
         } else if(wrong_case = Object.keys(this.staticIdentifiers).find(n => n.toLowerCase() == name.toLowerCase())) {
             console.log(`Wrong case for static identifier, ${name} should be ${wrong_case}`)
             this.staticIdentifiers[name] = this.staticIdentifiers[wrong_case]
@@ -546,6 +496,26 @@ class ClassContext extends PartialClassContext {
 
     get parentEntity() {
         return this.superclass
+    }
+
+    /**
+     * Compiles all temporary entities
+     */
+    compile() {
+        Object.values(this.staticIdentifiers).forEach(
+            ti => {
+                if(ti instanceof TemporaryIdentifier) {
+                    ti.compile()
+                }
+            }
+        )
+        Object.values(this.instanceIdentifiers).forEach(
+            ti => {
+                if(ti instanceof TemporaryIdentifier) {
+                    ti.compile()
+                }
+            }
+        )
     }
 
     coldCopy() {
