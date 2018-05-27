@@ -177,6 +177,7 @@ export class GlobalContext {
                         "modify",
                         "public",
                         false,
+                        true,
                         new PHPType.Union(
                             new PHPType.Function(
                                 [PHPType.Core.types.string],
@@ -190,6 +191,7 @@ export class GlobalContext {
                         "format",
                         "public",
                         false,
+                        true,
                         new PHPType.Union(
                             new PHPType.Function(
                                 [PHPType.Core.types.string],

@@ -14,7 +14,7 @@ export default class Method extends _Function {
     get isStatic() {
         return this.node.isStatic
     }
-    /** @type {string} */
+    /** @type {"public" | "protected" | "private"} */
     get visibility() {
         return this.node.visibility
     }
@@ -38,6 +38,7 @@ export default class Method extends _Function {
             this.name,
             this.visibility,
             this.isStatic,
+            true,
             method_type
         )
 

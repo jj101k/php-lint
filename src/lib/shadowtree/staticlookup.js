@@ -85,6 +85,7 @@ export default class StaticLookup extends Lookup {
                         this.offset.name,
                         "public",
                         true,
+                        false,
                         new PHPType.Mixed(null, null, "staticlookup#undeclared-static").union
                     )
                     return new ContextTypes(new PHPType.Mixed(null, null, "staticlookup#undeclared-static").union)

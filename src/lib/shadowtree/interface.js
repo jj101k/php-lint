@@ -41,6 +41,7 @@ export default class Interface extends Declaration {
                         b.name,
                         b.visibility,
                         b.isStatic,
+                        true,
                         PHPType.Function.mixed.union
                     )
                 }

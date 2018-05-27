@@ -179,9 +179,10 @@ class AnyIdentifierSet {
             let warmed_superclass = this.classContext.parentEntity.warm(
                 this.classContext.warmingFor || this.classContext
             )
-            let coll = (this.isClassInstance) ?
-                warmed_superclass.identifiers.instance :
-                warmed_superclass.identifiers.static
+            let ns = parser_state.has(ParserStateOption.InCall) ?
+                warmed_superclass.identifiers.method :
+                warmed_superclass.identifiers.property
+            let coll = (this.isClassInstance) ? ns.instance : ns.static
             let superclass_types = coll.findIdentifier(
                 name,
                 (calling_scope == "private") ? "protected" : calling_scope,

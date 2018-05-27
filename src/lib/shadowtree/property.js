@@ -13,7 +13,7 @@ export default class Property extends Declaration {
     get isStatic() {
         return this.node.isStatic
     }
-    /** @type {string} */
+    /** @type {"public" | "protected" | "private"} */
     get visibility() {
         return this.node.visibility
     }
@@ -112,6 +112,7 @@ export default class Property extends Declaration {
             this.name,
             this.visibility,
             this.isStatic,
+            false,
             types
         )
         return new ContextTypes(types)

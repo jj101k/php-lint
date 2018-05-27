@@ -104,6 +104,7 @@ export default class Class extends Declaration {
                         b.name,
                         b.visibility,
                         b.isStatic,
+                        true,
                         class_context => b.check(context.forClass(class_context), new Set(), doc)
                     )
                     last_doc = null
@@ -112,6 +113,7 @@ export default class Class extends Declaration {
                         b.name,
                         b.visibility,
                         b.isStatic,
+                        false,
                         class_context => b.check(context.forClass(class_context), new Set(), doc)
                     )
                     last_doc = null
@@ -120,6 +122,7 @@ export default class Class extends Declaration {
                         b.name,
                         "public",
                         true,
+                        false,
                         class_context => b.check(context.forClass(class_context), new Set(), doc)
                     )
                     last_doc = null

@@ -18,7 +18,7 @@ export default class Constant extends Declaration {
     check(context, parser_state = new Set(), doc = null) {
         super.check(context, parser_state, doc)
         let types = this.value.check(context, new Set(), doc).expressionType
-        context.classContext.addIdentifier(this.name, "public", true, types)
+        context.classContext.addIdentifier(this.name, "public", true, false, types)
         return ContextTypes.empty
     }
 }

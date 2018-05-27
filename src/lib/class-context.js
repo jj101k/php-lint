@@ -26,13 +26,19 @@ class PartialClassContext {
         this.fileContext = file_context
 
         /**
-         * @type {{static: AnyIdentifierSet, instance: AnyIdentifierSet}}
+         * @type {{method: {static: AnyIdentifierSet, instance: AnyIdentifierSet}, property: {static: AnyIdentifierSet, instance: AnyIdentifierSet}}
          */
         this.identifiers = {
-            static: new AnyIdentifierSet(this, false),
-            instance: new AnyInstanceIdentifierSet(this, true),
+            method: {
+                static: new AnyIdentifierSet(this, false),
+                instance: new AnyInstanceIdentifierSet(this, true),
+            },
+            property: {
+                static: new AnyIdentifierSet(this, false),
+                instance: new AnyInstanceIdentifierSet(this, true),
+            },
         }
-        this.identifiers.static.add(
+        this.identifiers.property.static.add(
             new Identifier("class", "public", PHPType.Core.types.string)
         )
         this.warmingFor = null
@@ -75,15 +81,14 @@ class PartialClassContext {
      * Adds a known identifier
      * @param {string} name
      * @param {scope} scope
-     * @param {PHPType.Union} types
      * @param {boolean} is_static
+     * @param {boolean} is_method
+     * @param {PHPType.Union} types
      */
-    addIdentifier(name, scope, is_static, types) {
-        if(is_static) {
-            this.identifiers.static.add(new Identifier(name, scope, types))
-        } else {
-            this.identifiers.instance.add(new Identifier(name, scope, types))
-        }
+    addIdentifier(name, scope, is_static, is_method, types) {
+        let ns = is_method ? this.identifiers.method : this.identifiers.property
+        let coll = is_static ? ns.static : ns.instance
+        coll.add(new Identifier(name, scope, types))
     }
 
     /**
@@ -93,25 +98,19 @@ class PartialClassContext {
      * @param {string} name
      * @param {scope} scope
      * @param {boolean} is_static
+     * @param {boolean} is_method
      * @param {(class_context: PartialClassContext) => ContextTypes} compile
      */
-    addTemporaryIdentifier(name, scope, is_static, compile) {
+    addTemporaryIdentifier(name, scope, is_static, is_method, compile) {
+        let ns = is_method ? this.identifiers.method : this.identifiers.property
+        let coll = is_static ? ns.static : ns.instance
         let canonical_name = is_static ? name : name.replace(/^[$]/, "")
-        if(is_static) {
-            this.identifiers.static.add(new TemporaryIdentifier(
-                name,
-                scope,
-                compile,
-                this
-            ))
-        } else {
-            this.identifiers.instance.add(new TemporaryIdentifier(
-                name,
-                scope,
-                compile,
-                this
-            ))
-        }
+        coll.add(new TemporaryIdentifier(
+            name,
+            scope,
+            compile,
+            this
+        ))
     }
 
     /**
@@ -153,7 +152,10 @@ class PartialClassContext {
         } else {
             calling_scope = "public"
         }
-        return this.identifiers.instance.findIdentifier(name, calling_scope, parser_state)
+        let ns = parser_state.has(ParserStateOption.InCall) ?
+            this.identifiers.method :
+            this.identifiers.property
+        return ns.instance.findIdentifier(name, calling_scope, parser_state)
     }
 
     /**
@@ -161,9 +163,10 @@ class PartialClassContext {
      *
      * @param {string} name
      * @param {?ClassContext} from_class_context
+     * @param {Set<ParserStateOption.Base>} [parser_state]
      * @returns {?PHPType.Union}
      */
-    findStaticIdentifier(name, from_class_context) {
+    findStaticIdentifier(name, from_class_context, parser_state = new Set()) {
         /**
          * @type {scope}
          */
@@ -181,7 +184,10 @@ class PartialClassContext {
         } else {
             calling_scope = "public"
         }
-        return this.identifiers.static.findIdentifier(name, calling_scope, new Set())
+        let ns = parser_state.has(ParserStateOption.InCall) ?
+            this.identifiers.method :
+            this.identifiers.property
+        return ns.static.findIdentifier(name, calling_scope, new Set())
     }
 
     /**
@@ -192,7 +198,9 @@ class PartialClassContext {
      * @return {string[]}
      */
     instanceIdentifiersWithScope(scope = "private") {
-        return this.identifiers.instance.identifiersWithScope(scope)
+        return this.identifiers.property.instance.identifiersWithScope(scope).concat(
+            this.identifiers.method.instance.identifiersWithScope(scope)
+        )
     }
 
     /**
@@ -252,7 +260,9 @@ class PartialClassContext {
      * @return {string[]}
      */
     staticIdentifiersWithScope(scope = "private") {
-        return this.identifiers.static.identifiersWithScope(scope)
+        return this.identifiers.property.static.identifiersWithScope(scope).concat(
+            this.identifiers.method.static.identifiersWithScope(scope)
+        )
     }
 }
 
@@ -284,7 +294,9 @@ class ClassContext extends PartialClassContext {
      * Compiles all temporary entities
      */
     compile() {
-        Object.values(this.identifiers).forEach(coll => coll.compile())
+        Object.values(this.identifiers).forEach(ns => {
+            Object.values(ns).forEach(coll => coll.compile())
+        })
     }
 
     coldCopy() {
@@ -424,11 +436,13 @@ class UnknownClassContext extends ClassContext {
      */
     constructor(name, superclass = null) {
         super(name, superclass, null, null, [])
-        this.identifiers.instance = new UnknownIdentifierSet(this, true)
-        this.identifiers.static = new UnknownIdentifierSet(this, false)
-        this.identifiers.static.add(
+        this.identifiers.property.instance = new UnknownIdentifierSet(this, true)
+        this.identifiers.property.static = new UnknownIdentifierSet(this, false)
+        this.identifiers.property.static.add(
             new Identifier("class", "public", PHPType.Core.types.string)
         )
+        this.identifiers.method.instance = new UnknownIdentifierSet(this, true)
+        this.identifiers.method.static = new UnknownIdentifierSet(this, false)
     }
 }
 
@@ -461,7 +475,10 @@ class UnknownTraitContext extends TraitContext {
      * @returns {?PHPType.Union}
      */
     findInstanceIdentifier(name, from_class_context, parser_state = new Set()) {
-        if(!this.identifiers.instance[name]) {
+        let ns = parser_state.has(ParserStateOption.InCall) ?
+            this.identifiers.method :
+            this.identifiers.property
+        if(!ns.instance[name]) {
             let type
             if(parser_state.has(ParserStateOption.InCall)) {
                 type = new PHPType.Function(
@@ -471,7 +488,7 @@ class UnknownTraitContext extends TraitContext {
             } else {
                 type = new PHPType.Mixed(this.name, name).union
             }
-            this.identifiers.instance[name] = new Identifier(name, "public", type)
+            ns.instance[name] = new Identifier(name, "public", type)
         }
         return super.findInstanceIdentifier(name, from_class_context, parser_state)
     }
@@ -480,11 +497,15 @@ class UnknownTraitContext extends TraitContext {
      * Finds the named identifier
      * @param {string} name
      * @param {?ClassContext} from_class_context
+     * @param {Set<ParserStateOption.Base>} [parser_state]
      * @returns {?PHPType.Union}
      */
-    findStaticIdentifier(name, from_class_context) {
-        if(!this.identifiers.static[name]) {
-            this.identifiers.static[name] =
+    findStaticIdentifier(name, from_class_context, parser_state = new Set()) {
+        let ns = parser_state.has(ParserStateOption.InCall) ?
+            this.identifiers.method :
+            this.identifiers.property
+        if(!ns.static[name]) {
+            ns.static[name] =
                 new Identifier(name, "public", new PHPType.Mixed(this.name, name).union)
         }
         return super.findStaticIdentifier(name, from_class_context)
