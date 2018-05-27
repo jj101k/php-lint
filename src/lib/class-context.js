@@ -131,10 +131,7 @@ class AnyIdentifierSet {
      * @param {AnyIdentifier} identifier
      */
     add(identifier) {
-        let name = this.isClassInstance ?
-            identifier.name.replace(/^[$]/, "") :
-            identifier.name
-        this.identifiers[name] = identifier
+        this.identifiers[identifier.name] = identifier
     }
 
     /**
@@ -167,50 +164,6 @@ class AnyIdentifierSet {
                 m.scope == calling_scope
             ) {
                 return m.types
-            } else if(this.isClassInstance) {
-                if(parser_state.has(ParserStateOption.InCall) && name != "__call") {
-                    console.log(
-                        `Possible scope miss for name ${this.qualifiedName(name)} with scope ${m.scope}`
-                    )
-                    return this.findIdentifier(
-                        "__call",
-                        calling_scope,
-                        new Set([ParserStateOption.InCall])
-                    )
-                } else if(
-                    !parser_state.has(ParserStateOption.InCall) &&
-                    !parser_state.has(ParserStateOption.InAssignment) &&
-                    name != "__get"
-                ) {
-                    if(this.findIdentifier(
-                        "__get",
-                        calling_scope,
-                        new Set([ParserStateOption.InCall])
-                    )) {
-                        console.log(
-                            `Possible scope miss for name ${this.qualifiedName(name)} with scope ${m.scope}`
-                        )
-                        return new PHPType.Mixed(this.classContext.name, "__get").union
-                    }
-                } else if(
-                    !parser_state.has(ParserStateOption.InCall) &&
-                    parser_state.has(ParserStateOption.InAssignment) &&
-                    name != "__set"
-                ) {
-                    if(this.findIdentifier(
-                        "__set",
-                        calling_scope,
-                        new Set([ParserStateOption.InCall])
-                    )) {
-                        console.log(
-                            `Possible scope miss for name ${this.qualifiedName(name)} with scope ${m.scope}`
-                        )
-                        return new PHPType.Mixed(this.classContext.name, "__set").union
-                    }
-                }
-                throw new PHPError.ScopeMiss(
-                    `Scope miss for name ${this.qualifiedName(name)} with scope ${m.scope} (calling scope is ${calling_scope})`
-                )
             }
             // TODO inheritance
         } else if(
@@ -239,39 +192,6 @@ class AnyIdentifierSet {
                 return superclass_types
             }
         }
-        if(this.isClassInstance) {
-            if(parser_state.has(ParserStateOption.InCall) && name != "__call") {
-                return this.findIdentifier(
-                    "__call",
-                    calling_scope,
-                    new Set([ParserStateOption.InCall])
-                )
-            } else if(
-                !parser_state.has(ParserStateOption.InCall) &&
-                !parser_state.has(ParserStateOption.InAssignment) &&
-                name != "__get"
-            ) {
-                if(this.findIdentifier(
-                    "__get",
-                    calling_scope,
-                    new Set([ParserStateOption.InCall])
-                )) {
-                    return new PHPType.Mixed(this.classContext.name, "__get").union
-                }
-            } else if(
-                !parser_state.has(ParserStateOption.InCall) &&
-                parser_state.has(ParserStateOption.InAssignment) &&
-                name != "__set"
-            ) {
-                if(this.findIdentifier(
-                    "__set",
-                    calling_scope,
-                    new Set([ParserStateOption.InCall])
-                )) {
-                    return new PHPType.Mixed(this.classContext.name, "__set").union
-                }
-            }
-        }
         return null
     }
 
@@ -281,14 +201,9 @@ class AnyIdentifierSet {
      * @return {string[]}
      */
     identifiersWithScope(scope = "private") {
-        let names = Object.values(this.identifiers).filter(
+        return Object.values(this.identifiers).filter(
             identifier => identifier.visibleInScope(scope)
         ).map(identifier => identifier.name)
-        if(this.isClassInstance) {
-            return names.map(name => name.replace(/^[$]/, ""))
-        } else {
-            return names
-        }
     }
 
     /**
@@ -305,6 +220,90 @@ class AnyIdentifierSet {
                 return `${this.classContext.name}::${name}`
             }
         }
+    }
+}
+
+
+/**
+ * A namespace of values.
+ */
+class AnyInstanceIdentifierSet extends AnyIdentifierSet {
+    /**
+     *
+     * @param {AnyIdentifier} identifier
+     */
+    add(identifier) {
+        let name = identifier.name.replace(/^[$]/, "")
+        this.identifiers[name] = identifier
+    }
+
+    /**
+     * Finds the named identifier
+     * @param {string} name
+     * @param {scope} calling_scope
+     * @param {Set<ParserStateOption.Base>} [parser_state]
+     * @returns {?PHPType.Union}
+     */
+    findIdentifier(name, calling_scope, parser_state = new Set()) {
+        let type = super.findIdentifier(name, calling_scope, parser_state)
+        if(type) {
+            return type
+        } else {
+            if(parser_state.has(ParserStateOption.InCall) && name != "__call") {
+                console.log(
+                    `Possible scope miss for name ${this.qualifiedName(name)} with calling scope ${calling_scope}`
+                )
+                return this.findIdentifier(
+                    "__call",
+                    calling_scope,
+                    new Set([ParserStateOption.InCall])
+                )
+            } else if(
+                !parser_state.has(ParserStateOption.InCall) &&
+                !parser_state.has(ParserStateOption.InAssignment) &&
+                name != "__get"
+            ) {
+                if(this.findIdentifier(
+                    "__get",
+                    calling_scope,
+                    new Set([ParserStateOption.InCall])
+                )) {
+                    console.log(
+                        `Possible scope miss for name ${this.qualifiedName(name)} with calling scope ${calling_scope}`
+                    )
+                    return new PHPType.Mixed(this.classContext.name, "__get").union
+                }
+            } else if(
+                !parser_state.has(ParserStateOption.InCall) &&
+                parser_state.has(ParserStateOption.InAssignment) &&
+                name != "__set"
+            ) {
+                if(this.findIdentifier(
+                    "__set",
+                    calling_scope,
+                    new Set([ParserStateOption.InCall])
+                )) {
+                    console.log(
+                        `Possible scope miss for name ${this.qualifiedName(name)} with calling scope ${calling_scope}`
+                    )
+                    return new PHPType.Mixed(this.classContext.name, "__set").union
+                }
+            }
+            throw new PHPError.ScopeMiss(
+                `Scope miss for name ${this.qualifiedName(name)} with calling scope ${calling_scope}`
+            )
+        }
+    }
+
+    /**
+     *
+     * @param {scope} scope
+     * @return {string[]}
+     */
+    identifiersWithScope(scope = "private") {
+        return super.identifiersWithScope(scope).map(
+            name => name.replace(/^[$]/, "")
+        )
     }
 }
 
@@ -359,7 +358,7 @@ class PartialClassContext {
          */
         this.identifiers = {
             static: new AnyIdentifierSet(this, false),
-            instance: new AnyIdentifierSet(this, true),
+            instance: new AnyInstanceIdentifierSet(this, true),
         }
         this.identifiers.static.add(
             new Identifier("class", "public", PHPType.Core.types.string)
