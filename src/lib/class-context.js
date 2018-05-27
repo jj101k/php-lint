@@ -28,6 +28,31 @@ class AnyIdentifier {
     get types() {
         throw new Error("Not implemented")
     }
+    /**
+     *
+     * @param {scope} scope
+     * @returns {boolean}
+     */
+    visibleInScope(scope) {
+        switch(scope) {
+            case "private":
+                if(this.scope == "private") {
+                    return true
+                }
+                //
+            case "protected":
+                if(this.scope == "protected") {
+                    return true
+                }
+            case "public":
+                if(this.scope == "public") {
+                    return true
+                }
+                //
+            default:
+                return false
+        }
+    }
 }
 
 /**
@@ -368,30 +393,13 @@ class PartialClassContext {
      * Returns all local instance identifier names accessible with the supplied
      * scope.
      *
-     * @param {string} scope
+     * @param {scope} scope
      * @return {string[]}
      */
     instanceIdentifiersWithScope(scope = "private") {
-        return Object.keys(this.identifiers.instance).filter(identifier => {
-            switch(scope) {
-                case "private":
-                    if(this.identifiers.instance[identifier].scope == "private") {
-                        return true
-                    }
-                    //
-                case "protected":
-                    if(this.identifiers.instance[identifier].scope == "protected") {
-                        return true
-                    }
-                case "public":
-                    if(this.identifiers.instance[identifier].scope == "public") {
-                        return true
-                    }
-                    //
-                default:
-                    return false
-            }
-        })
+        return Object.values(this.identifiers.instance).filter(
+            identifier => identifier.visibleInScope(scope)
+        ).map(identifier => identifier.name.replace(/^[$]/, ""))
     }
 
     /**
@@ -447,30 +455,13 @@ class PartialClassContext {
      * Returns all local static identifier names accessible with the supplied
      * scope.
      *
-     * @param {string} scope
+     * @param {scope} scope
      * @return {string[]}
      */
     staticIdentifiersWithScope(scope = "private") {
-        return Object.keys(this.identifiers.static).filter(identifier => {
-            switch(scope) {
-                case "private":
-                    if(this.identifiers.static[identifier].scope == "private") {
-                        return true
-                    }
-                    //
-                case "protected":
-                    if(this.identifiers.static[identifier].scope == "protected") {
-                        return true
-                    }
-                case "public":
-                    if(this.identifiers.static[identifier].scope == "public") {
-                        return true
-                    }
-                    //
-                default:
-                    return false
-            }
-        })
+        return Object.values(this.identifiers.instance).filter(
+            identifier => identifier.visibleInScope(scope)
+        ).map(identifier => identifier.name)
     }
 }
 
@@ -502,20 +493,15 @@ class ClassContext extends PartialClassContext {
      * Compiles all temporary entities
      */
     compile() {
-        Object.values(this.identifiers.static).forEach(
-            ti => {
-                if(ti instanceof TemporaryIdentifier) {
-                    ti.compile()
+        Object.values(this.identifiers).forEach(coll => {
+            Object.values(coll).forEach(
+                ti => {
+                    if(ti instanceof TemporaryIdentifier) {
+                        ti.compile()
+                    }
                 }
-            }
-        )
-        Object.values(this.identifiers.instance).forEach(
-            ti => {
-                if(ti instanceof TemporaryIdentifier) {
-                    ti.compile()
-                }
-            }
-        )
+            )
+        })
     }
 
     coldCopy() {
