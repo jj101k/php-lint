@@ -57,10 +57,12 @@ class TemporaryIdentifier extends AnyIdentifier {
      * @param {scope} scope
      * @param {(class_context: PartialClassContext) => ContextTypes} compile
      * @param {function(): void} after_compile
+     * @param {PartialClassContext} class_context
      */
-    constructor(name, scope, compile, after_compile) {
+    constructor(name, scope, compile, after_compile, class_context) {
         super(name, scope)
         this.afterCompile = after_compile
+        this.classContext = class_context
         this.compileInner = compile
         this.compileStarted = false
         this.name = name
@@ -69,17 +71,16 @@ class TemporaryIdentifier extends AnyIdentifier {
     /**
      * Triggers compilation
      *
-     * @param {PartialClassContext} class_context
      * @returns {PHPType.Union}
      */
-    compile(class_context) {
+    compile() {
         if(this.compileStarted) {
             //console.log(`Recursive compile of ${class_context.name}#${this.name}`)
-            return new PHPType.Mixed(class_context.name, this.name).union
+            return new PHPType.Mixed(this.classContext.name, this.name).union
         } else {
             //console.log(`Compile ${class_context.name}#${this.name}`)
             this.compileStarted = true
-            let types = this.compileInner(class_context).expressionType
+            let types = this.compileInner(this.classContext).expressionType
             this.afterCompile()
             return types
         }
@@ -185,7 +186,8 @@ class PartialClassContext {
                     name,
                     scope,
                     compile,
-                    () => delete this.temporaryStaticIdentifiers[canonical_name]
+                    () => delete this.temporaryStaticIdentifiers[canonical_name],
+                    this
                 )
         } else {
             this.temporaryInstanceIdentifiers[canonical_name] =
@@ -193,7 +195,8 @@ class PartialClassContext {
                     name,
                     scope,
                     compile,
-                    () => delete this.temporaryInstanceIdentifiers[canonical_name]
+                    () => delete this.temporaryInstanceIdentifiers[canonical_name],
+                    this
                 )
         }
     }
@@ -288,7 +291,7 @@ class PartialClassContext {
         } else if(
             this.temporaryInstanceIdentifiers[name]
         ) {
-            return this.temporaryInstanceIdentifiers[name].compile(this)
+            return this.temporaryInstanceIdentifiers[name].compile()
         } else if(
             wrong_case = Object.keys(this.temporaryInstanceIdentifiers).find(
                 n => n.toLowerCase() == name.toLowerCase()
@@ -376,7 +379,7 @@ class PartialClassContext {
         } else if(
             this.temporaryStaticIdentifiers[name]
         ) {
-            return this.temporaryStaticIdentifiers[name].compile(this)
+            return this.temporaryStaticIdentifiers[name].compile()
         } else if(
             wrong_case = Object.keys(this.temporaryStaticIdentifiers).find(
                 n => n.toLowerCase() == name.toLowerCase()
