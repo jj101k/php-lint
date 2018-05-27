@@ -317,7 +317,7 @@ class AnyIdentifierSet {
  * Identifier sets for unknown classes
  */
 class UnknownIdentifierSet extends AnyIdentifierSet {
-        /**
+    /**
      * Finds the named identifier
      * @param {string} name
      * @param {?ClassContext} from_class_context
