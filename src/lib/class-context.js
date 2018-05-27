@@ -631,27 +631,6 @@ class InterfaceContext extends ClassContext {
         this.superclass = superclass // Not cold copy
         this.isCold = false
     }
-
-    /**
-     * Finds the named identifier
-     * @param {string} name
-     * @param {?ClassContext} from_class_context
-     * @param {Set<ParserStateOption.Base>} [parser_state]
-     * @returns {?PHPType.Union}
-     */
-    findInstanceIdentifier(name, from_class_context, parser_state = new Set()) {
-        return super.findInstanceIdentifier(name, from_class_context, parser_state)
-    }
-
-    /**
-     * Finds the named identifier
-     * @param {string} name
-     * @param {?ClassContext} from_class_context
-     * @returns {?PHPType.Union}
-     */
-    findStaticIdentifier(name, from_class_context) {
-        return super.findStaticIdentifier(name, from_class_context)
-    }
 }
 
 /**
@@ -685,27 +664,6 @@ class TraitContext extends PartialClassContext {
         let inner_context = context.childContext(true)
         inner_context.fileContext = this.fileContext
         this.traitNode.checkInner(inner_context, new Set(), null)
-    }
-
-    /**
-     * Finds the named identifier
-     * @param {string} name
-     * @param {?ClassContext} from_class_context
-     * @param {Set<ParserStateOption.Base>} [parser_state]
-     * @returns {?PHPType.Union}
-     */
-    findInstanceIdentifier(name, from_class_context, parser_state = new Set()) {
-        return super.findInstanceIdentifier(name, from_class_context, parser_state)
-    }
-
-    /**
-     * Finds the named identifier
-     * @param {string} name
-     * @param {?ClassContext} from_class_context
-     * @returns {?PHPType.Union}
-     */
-    findStaticIdentifier(name, from_class_context) {
-        return super.findStaticIdentifier(name, from_class_context)
     }
 }
 
