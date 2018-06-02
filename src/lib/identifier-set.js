@@ -223,11 +223,10 @@ class AnyIdentifierSet {
     }
 }
 
-
 /**
  * A namespace of values.
  */
-class AnyInstanceIdentifierSet extends AnyIdentifierSet {
+class AnyInstancePropertySet extends AnyIdentifierSet {
     /**
      *
      * @param {AnyIdentifier} identifier
@@ -249,17 +248,7 @@ class AnyInstanceIdentifierSet extends AnyIdentifierSet {
         if(type) {
             return type
         } else {
-            if(parser_state.has(ParserStateOption.InCall) && name != "__call") {
-                console.log(
-                    `Possible scope miss for name ${this.qualifiedName(name)} with calling scope ${calling_scope}`
-                )
-                return this.findIdentifier(
-                    "__call",
-                    calling_scope,
-                    new Set([ParserStateOption.InCall])
-                )
-            } else if(
-                !parser_state.has(ParserStateOption.InCall) &&
+            if(
                 !parser_state.has(ParserStateOption.InAssignment) &&
                 name != "__get"
             ) {
@@ -274,7 +263,6 @@ class AnyInstanceIdentifierSet extends AnyIdentifierSet {
                     return new PHPType.Mixed(this.classContext.name, "__get").union
                 }
             } else if(
-                !parser_state.has(ParserStateOption.InCall) &&
                 parser_state.has(ParserStateOption.InAssignment) &&
                 name != "__set"
             ) {
@@ -290,7 +278,7 @@ class AnyInstanceIdentifierSet extends AnyIdentifierSet {
                 }
             }
             throw new PHPError.ScopeMiss(
-                `Scope miss for name ${this.qualifiedName(name)} with calling scope ${calling_scope}`
+                `Scope miss for property ${this.qualifiedName(name)} with calling scope ${calling_scope}`
             )
         }
     }
@@ -304,6 +292,47 @@ class AnyInstanceIdentifierSet extends AnyIdentifierSet {
         return super.identifiersWithScope(scope).map(
             name => name.replace(/^[$]/, "")
         )
+    }
+}
+
+/**
+ * A namespace of methods.
+ */
+class AnyInstanceMethodSet extends AnyIdentifierSet {
+    /**
+     *
+     * @param {AnyIdentifier} identifier
+     */
+    add(identifier) {
+        this.identifiers[identifier.name] = identifier
+    }
+
+    /**
+     * Finds the named identifier
+     * @param {string} name
+     * @param {scope} calling_scope
+     * @param {Set<ParserStateOption.Base>} [parser_state]
+     * @returns {?PHPType.Union}
+     */
+    findIdentifier(name, calling_scope, parser_state = new Set()) {
+        let type = super.findIdentifier(name, calling_scope, parser_state)
+        if(type) {
+            return type
+        } else {
+            if(name != "__call") {
+                console.log(
+                    `Possible scope miss for name ${this.qualifiedName(name)} with calling scope ${calling_scope}`
+                )
+                return this.findIdentifier(
+                    "__call",
+                    calling_scope,
+                    new Set([ParserStateOption.InCall])
+                )
+            }
+            throw new PHPError.ScopeMiss(
+                `Scope miss for method ${this.qualifiedName(name)} with calling scope ${calling_scope}`
+            )
+        }
     }
 }
 
@@ -340,4 +369,4 @@ class UnknownIdentifierSet extends AnyIdentifierSet {
     }
 }
 
-export {AnyIdentifierSet, AnyInstanceIdentifierSet, Identifier, TemporaryIdentifier, UnknownIdentifierSet}
+export {AnyIdentifierSet, AnyInstanceMethodSet, AnyInstancePropertySet, Identifier, TemporaryIdentifier, UnknownIdentifierSet}

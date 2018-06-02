@@ -6,7 +6,7 @@ import * as ShadowTree from "./shadowtree"
 import Context from "./context"
 import ContextTypes from "./context-types"
 
-import {AnyIdentifierSet, AnyInstanceIdentifierSet, Identifier, TemporaryIdentifier, UnknownIdentifierSet} from "./identifier-set"
+import {AnyIdentifierSet, AnyInstanceMethodSet, AnyInstancePropertySet, Identifier, TemporaryIdentifier, UnknownIdentifierSet} from "./identifier-set"
 
 /**
  * @typedef {"public" | "private" | "protected"} scope
@@ -26,16 +26,16 @@ class PartialClassContext {
         this.fileContext = file_context
 
         /**
-         * @type {{method: {static: AnyIdentifierSet, instance: AnyIdentifierSet}, property: {static: AnyIdentifierSet, instance: AnyIdentifierSet}}
+         * @type {{method: {static: AnyIdentifierSet, instance: AnyIdentifierSet}, property: {static: AnyIdentifierSet, instance: AnyIdentifierSet}}}}
          */
         this.identifiers = {
             method: {
                 static: new AnyIdentifierSet(this, false),
-                instance: new AnyInstanceIdentifierSet(this, true),
+                instance: new AnyInstanceMethodSet(this, true),
             },
             property: {
                 static: new AnyIdentifierSet(this, false),
-                instance: new AnyInstanceIdentifierSet(this, true),
+                instance: new AnyInstancePropertySet(this, true),
             },
         }
         this.identifiers.property.static.add(
