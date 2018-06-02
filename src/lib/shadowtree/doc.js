@@ -74,7 +74,11 @@ export default class Doc extends AbstractNode {
             if(t.match(/^\\/)) {
                 return t
             } else if(PHPType.Core.types.hasOwnProperty(t)) {
-                return context.resolveName(PHPType.Core.types[t].toString())
+                if(PHPType.Core.types[t].toString().match(/^\w+$/)) {
+                    return context.resolveName(PHPType.Core.types[t].toString())
+                } else {
+                    return t
+                }
             } else {
                 return(
                     context.fileContext.resolveAliasName(t) ||
