@@ -3,6 +3,7 @@ import _AssociativeArray from "./associative-array"
 import _Mixed from "./mixed"
 import _Simple from "./simple"
 import _Union from "./union"
+import _Function from "./function";
 /**
  * @typedef coreTypes
  * @property {_Union} string
@@ -47,8 +48,11 @@ export default class _Core {
     /** @type {coreTypes} */
     static get types() {
         if(!this._coreTypes) {
-            let known_types = ["string", "int", "float", "bool", "callable"]
+            let known_types = ["string", "int", "float", "bool"]
             let pseudo_types = ["null", "self", "object", "void"]
+            /**
+             * @type {{[x: string]: _Union}}
+             */
             let types = {}
             known_types.forEach(
                 type_name => types[type_name] = new _Simple(type_name).union
@@ -56,6 +60,10 @@ export default class _Core {
             pseudo_types.forEach(
                 type_name => types[type_name] = new _Simple(type_name).union
             )
+            types.callable = new _Function(
+                [],
+                new _Mixed(null, null, "~callable#out").union
+            ).union
             types.array = new _AssociativeArray(new _Mixed(null, null, "~array").union).union
             Object.defineProperty(types, "boolean", {
                 get() {

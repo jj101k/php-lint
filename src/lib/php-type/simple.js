@@ -30,7 +30,6 @@ export default class _Simple extends _Any {
                 } else {
                     return null
                 }
-            case "callable":
             case "object":
             case "self":
                 return null
@@ -67,7 +66,6 @@ export default class _Simple extends _Any {
                 } else {
                     return null
                 }
-            case "callable":
             case "object":
             case "self":
                 return this
