@@ -55,20 +55,23 @@ export default class StaticLookup extends Lookup {
                     types = class_context.findIdentifier(
                         "instance",
                         this.offset.name,
-                        context.classContext
+                        context.classContext,
+                        parser_state
                     )
                     if(!(types && !types.isMixed)) {
                         types = class_context.findIdentifier(
                             "static",
                             this.offset.name,
-                            context.classContext
+                            context.classContext,
+                            parser_state
                         )
                     }
                 } else {
                     types = class_context.findIdentifier(
                         "static",
                         this.offset.name,
-                        context.classContext
+                        context.classContext,
+                        parser_state
                     )
                 }
                 if(types && !types.isMixed) {
@@ -108,7 +111,12 @@ export default class StaticLookup extends Lookup {
             this.offset instanceof Variable
         ) {
             // Bar::$FOO
-            return new ContextTypes(class_context.findIdentifier("static", this.offset.name, context.classContext))
+            return new ContextTypes(class_context.findIdentifier(
+                "static",
+                this.offset.name,
+                context.classContext,
+                parser_state
+            ))
         } else if(
             this.offset instanceof OffsetLookup ||
             this.offset instanceof Variable

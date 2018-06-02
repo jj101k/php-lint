@@ -133,10 +133,10 @@ class PartialClassContext {
      * @param {"static"|"instance"} type
      * @param {string} name
      * @param {?ClassContext} from_class_context
-     * @param {Set<ParserStateOption.Base>} [parser_state]
+     * @param {Set<ParserStateOption.Base>} parser_state
      * @returns {?PHPType.Union}
      */
-    findIdentifier(type, name, from_class_context, parser_state = new Set()) {
+    findIdentifier(type, name, from_class_context, parser_state) {
         let ns = parser_state.has(ParserStateOption.InCall) ?
             this.identifiers.method :
             this.identifiers.property
@@ -385,10 +385,10 @@ class AnonymousFunctionContext extends ClassContext {
      * @param {"static"|"instance"} type
      * @param {string} name
      * @param {?ClassContext} from_class_context
-     * @param {Set<ParserStateOption.Base>} [parser_state]
+     * @param {Set<ParserStateOption.Base>} parser_state
      * @returns {?PHPType.Union}
      */
-    findIdentifier(type, name, from_class_context, parser_state = new Set()) {
+    findIdentifier(type, name, from_class_context, parser_state) {
         if(type == "instance") {
             // TODO: Limit to the actual methods.
             if(parser_state.has(ParserStateOption.InCall)) {
@@ -452,10 +452,10 @@ class UnknownTraitContext extends TraitContext {
      * @param {"static"|"instance"} type
      * @param {string} name
      * @param {?ClassContext} from_class_context
-     * @param {Set<ParserStateOption.Base>} [parser_state]
+     * @param {Set<ParserStateOption.Base>} parser_state
      * @returns {?PHPType.Union}
      */
-    findIdentifier(type, name, from_class_context, parser_state = new Set()) {
+    findIdentifier(type, name, from_class_context, parser_state) {
         if(type == "instance") {
             let ns = parser_state.has(ParserStateOption.InCall) ?
                 this.identifiers.method :
@@ -481,7 +481,7 @@ class UnknownTraitContext extends TraitContext {
                     new Identifier(name, "public", new PHPType.Mixed(this.name, name).union)
             }
         }
-        return super.findIdentifier(type, name, from_class_context)
+        return super.findIdentifier(type, name, from_class_context, parser_state)
     }
 }
 

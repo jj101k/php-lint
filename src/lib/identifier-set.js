@@ -150,10 +150,10 @@ class AnyIdentifierSet {
      * Finds the named identifier
      * @param {string} name
      * @param {scope} calling_scope
-     * @param {Set<ParserStateOption.Base>} [parser_state]
+     * @param {Set<ParserStateOption.Base>} parser_state
      * @returns {?PHPType.Union}
      */
-    findIdentifier(name, calling_scope, parser_state = new Set()) {
+    findIdentifier(name, calling_scope, parser_state) {
         let m = this.identifiers[name]
         let wrong_case
         if(m) {
@@ -240,10 +240,10 @@ class AnyInstancePropertySet extends AnyIdentifierSet {
      * Finds the named identifier
      * @param {string} name
      * @param {scope} calling_scope
-     * @param {Set<ParserStateOption.Base>} [parser_state]
+     * @param {Set<ParserStateOption.Base>} parser_state
      * @returns {?PHPType.Union}
      */
-    findIdentifier(name, calling_scope, parser_state = new Set()) {
+    findIdentifier(name, calling_scope, parser_state) {
         let type = super.findIdentifier(name, calling_scope, parser_state)
         if(type) {
             return type
@@ -311,10 +311,10 @@ class AnyInstanceMethodSet extends AnyIdentifierSet {
      * Finds the named identifier
      * @param {string} name
      * @param {scope} calling_scope
-     * @param {Set<ParserStateOption.Base>} [parser_state]
+     * @param {Set<ParserStateOption.Base>} parser_state
      * @returns {?PHPType.Union}
      */
-    findIdentifier(name, calling_scope, parser_state = new Set()) {
+    findIdentifier(name, calling_scope, parser_state) {
         let type = super.findIdentifier(name, calling_scope, parser_state)
         if(type) {
             return type
@@ -344,10 +344,10 @@ class UnknownIdentifierSet extends AnyIdentifierSet {
      * Finds the named identifier
      * @param {string} name
      * @param {scope} calling_scope
-     * @param {Set<ParserStateOption.Base>} [parser_state]
+     * @param {Set<ParserStateOption.Base>} parser_state
      * @returns {?PHPType.Union}
      */
-    findIdentifier(name, calling_scope, parser_state = new Set()) {
+    findIdentifier(name, calling_scope, parser_state) {
         if(!this.identifiers[name]) {
             if(this.isClassInstance) {
                 let type
