@@ -160,7 +160,7 @@ class PartialClassContext {
         return ns.static.findIdentifier(
             name,
             this.scopeFrom(from_class_context),
-            new Set()
+            parser_state
         )
     }
 
