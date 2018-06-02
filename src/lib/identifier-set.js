@@ -252,7 +252,7 @@ class AnyInstancePropertySet extends AnyIdentifierSet {
                 !parser_state.has(ParserStateOption.InAssignment) &&
                 name != "__get"
             ) {
-                if(this.findIdentifier(
+                if(this.classContext.identifiers.method.instance.findIdentifier(
                     "__get",
                     calling_scope,
                     new Set([ParserStateOption.InCall])
@@ -266,7 +266,7 @@ class AnyInstancePropertySet extends AnyIdentifierSet {
                 parser_state.has(ParserStateOption.InAssignment) &&
                 name != "__set"
             ) {
-                if(this.findIdentifier(
+                if(this.classContext.identifiers.method.instance.findIdentifier(
                     "__set",
                     calling_scope,
                     new Set([ParserStateOption.InCall])
