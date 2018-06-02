@@ -70,7 +70,8 @@ export default class PropertyLookup extends Lookup {
                         this.handleException(e, context)
                     }
                     if(class_context) {
-                        let identifier_types = class_context.findInstanceIdentifier(
+                        let identifier_types = class_context.findIdentifier(
+                            "instance",
                             offset,
                             context.classContext,
                             parser_state

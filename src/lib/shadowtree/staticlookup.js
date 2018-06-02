@@ -52,18 +52,21 @@ export default class StaticLookup extends Lookup {
                     context.findName("$this")
                 ) {
                     // TODO this doesn't distinguish between methods and constants
-                    types = class_context.findInstanceIdentifier(
+                    types = class_context.findIdentifier(
+                        "instance",
                         this.offset.name,
                         context.classContext
                     )
                     if(!(types && !types.isMixed)) {
-                        types = class_context.findStaticIdentifier(
+                        types = class_context.findIdentifier(
+                            "static",
                             this.offset.name,
                             context.classContext
                         )
                     }
                 } else {
-                    types = class_context.findStaticIdentifier(
+                    types = class_context.findIdentifier(
+                        "static",
                         this.offset.name,
                         context.classContext
                     )
@@ -105,7 +108,7 @@ export default class StaticLookup extends Lookup {
             this.offset instanceof Variable
         ) {
             // Bar::$FOO
-            return new ContextTypes(class_context.findStaticIdentifier(this.offset.name, context.classContext))
+            return new ContextTypes(class_context.findIdentifier("static", this.offset.name, context.classContext))
         } else if(
             this.offset instanceof OffsetLookup ||
             this.offset instanceof Variable

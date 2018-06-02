@@ -129,35 +129,19 @@ class PartialClassContext {
 
     /**
      * Finds the named identifier
-     * @param {string} name
-     * @param {?ClassContext} from_class_context
-     * @param {Set<ParserStateOption.Base>} [parser_state]
-     * @returns {?PHPType.Union}
-     */
-    findInstanceIdentifier(name, from_class_context, parser_state = new Set()) {
-        let ns = parser_state.has(ParserStateOption.InCall) ?
-            this.identifiers.method :
-            this.identifiers.property
-        return ns.instance.findIdentifier(
-            name,
-            this.scopeFrom(from_class_context),
-            parser_state
-        )
-    }
-
-    /**
-     * Finds the named identifier
      *
+     * @param {"static"|"instance"} type
      * @param {string} name
      * @param {?ClassContext} from_class_context
      * @param {Set<ParserStateOption.Base>} [parser_state]
      * @returns {?PHPType.Union}
      */
-    findStaticIdentifier(name, from_class_context, parser_state = new Set()) {
+    findIdentifier(type, name, from_class_context, parser_state = new Set()) {
         let ns = parser_state.has(ParserStateOption.InCall) ?
             this.identifiers.method :
             this.identifiers.property
-        return ns.static.findIdentifier(
+        let collection = (type == "static") ? ns.static : ns.instance
+        return collection.findIdentifier(
             name,
             this.scopeFrom(from_class_context),
             parser_state
@@ -397,31 +381,27 @@ class AnonymousFunctionContext extends ClassContext {
 
     /**
      * Finds the named identifier
+     *
+     * @param {"static"|"instance"} type
      * @param {string} name
      * @param {?ClassContext} from_class_context
      * @param {Set<ParserStateOption.Base>} [parser_state]
      * @returns {?PHPType.Union}
      */
-    findInstanceIdentifier(name, from_class_context, parser_state = new Set()) {
-        // TODO: Limit to the actual methods.
-        if(parser_state.has(ParserStateOption.InCall)) {
-            return new PHPType.Function(
-                [new PHPType.Mixed(this.name, name, "~function#in").union],
-                new PHPType.Mixed(this.name, name, "~function#out").union
-            ).union
+    findIdentifier(type, name, from_class_context, parser_state = new Set()) {
+        if(type == "instance") {
+            // TODO: Limit to the actual methods.
+            if(parser_state.has(ParserStateOption.InCall)) {
+                return new PHPType.Function(
+                    [new PHPType.Mixed(this.name, name, "~function#in").union],
+                    new PHPType.Mixed(this.name, name, "~function#out").union
+                ).union
+            } else {
+                return new PHPType.Mixed(this.name, name).union
+            }
         } else {
-            return new PHPType.Mixed(this.name, name).union
+            return null
         }
-    }
-
-    /**
-     * Finds the named identifier
-     * @param {string} name
-     * @param {?ClassContext} from_class_context
-     * @returns {?PHPType.Union}
-     */
-    findStaticIdentifier(name, from_class_context) {
-        return null
     }
 }
 
@@ -468,46 +448,40 @@ class UnknownTraitContext extends TraitContext {
 
     /**
      * Finds the named identifier
+     *
+     * @param {"static"|"instance"} type
      * @param {string} name
      * @param {?ClassContext} from_class_context
      * @param {Set<ParserStateOption.Base>} [parser_state]
      * @returns {?PHPType.Union}
      */
-    findInstanceIdentifier(name, from_class_context, parser_state = new Set()) {
-        let ns = parser_state.has(ParserStateOption.InCall) ?
-            this.identifiers.method :
-            this.identifiers.property
-        if(!ns.instance[name]) {
-            let type
-            if(parser_state.has(ParserStateOption.InCall)) {
-                type = new PHPType.Function(
-                    [new PHPType.Mixed(this.name, name, "~function#in").union],
-                    new PHPType.Mixed(this.name, name, "~function#out").union
-                ).union
-            } else {
-                type = new PHPType.Mixed(this.name, name).union
+    findIdentifier(type, name, from_class_context, parser_state = new Set()) {
+        if(type == "instance") {
+            let ns = parser_state.has(ParserStateOption.InCall) ?
+                this.identifiers.method :
+                this.identifiers.property
+            if(!ns.instance[name]) {
+                let type
+                if(parser_state.has(ParserStateOption.InCall)) {
+                    type = new PHPType.Function(
+                        [new PHPType.Mixed(this.name, name, "~function#in").union],
+                        new PHPType.Mixed(this.name, name, "~function#out").union
+                    ).union
+                } else {
+                    type = new PHPType.Mixed(this.name, name).union
+                }
+                ns.instance[name] = new Identifier(name, "public", type)
             }
-            ns.instance[name] = new Identifier(name, "public", type)
+        } else {
+            let ns = parser_state.has(ParserStateOption.InCall) ?
+                this.identifiers.method :
+                this.identifiers.property
+            if(!ns.static[name]) {
+                ns.static[name] =
+                    new Identifier(name, "public", new PHPType.Mixed(this.name, name).union)
+            }
         }
-        return super.findInstanceIdentifier(name, from_class_context, parser_state)
-    }
-
-    /**
-     * Finds the named identifier
-     * @param {string} name
-     * @param {?ClassContext} from_class_context
-     * @param {Set<ParserStateOption.Base>} [parser_state]
-     * @returns {?PHPType.Union}
-     */
-    findStaticIdentifier(name, from_class_context, parser_state = new Set()) {
-        let ns = parser_state.has(ParserStateOption.InCall) ?
-            this.identifiers.method :
-            this.identifiers.property
-        if(!ns.static[name]) {
-            ns.static[name] =
-                new Identifier(name, "public", new PHPType.Mixed(this.name, name).union)
-        }
-        return super.findStaticIdentifier(name, from_class_context)
+        return super.findIdentifier(type, name, from_class_context)
     }
 }
 
