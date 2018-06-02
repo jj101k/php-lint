@@ -284,7 +284,7 @@ class AnyInstancePropertySet extends AnyIdentifierSet {
                 }
             }
             throw new PHPError.ScopeMiss(
-                `Scope miss for property ${this.qualifiedName(name)} with calling scope ${calling_scope}`
+                `Property ${this.qualifiedName(name)} is not available/does not exist in scope ${calling_scope}`
             )
         }
     }
@@ -333,7 +333,7 @@ class AnyInstanceMethodSet extends AnyIdentifierSet {
                 )
             }
             throw new PHPError.ScopeMiss(
-                `Scope miss for method ${this.qualifiedName(name)} with calling scope ${calling_scope}`
+                `Method ${this.qualifiedName(name)} is not available/does not exist in scope ${calling_scope}`
             )
         }
     }
