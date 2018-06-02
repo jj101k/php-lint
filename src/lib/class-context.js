@@ -135,27 +135,14 @@ class PartialClassContext {
      * @returns {?PHPType.Union}
      */
     findInstanceIdentifier(name, from_class_context, parser_state = new Set()) {
-        /**
-         * @type {scope}
-         */
-        let calling_scope
-        if(from_class_context && from_class_context.name == this.name) {
-            calling_scope = "private"
-        } else if(
-            from_class_context &&
-            (
-                from_class_context.isSubclassOf(this) ||
-                this.isSubclassOf(from_class_context)
-            )
-        ) {
-            calling_scope = "protected"
-        } else {
-            calling_scope = "public"
-        }
         let ns = parser_state.has(ParserStateOption.InCall) ?
             this.identifiers.method :
             this.identifiers.property
-        return ns.instance.findIdentifier(name, calling_scope, parser_state)
+        return ns.instance.findIdentifier(
+            name,
+            this.scopeFrom(from_class_context),
+            parser_state
+        )
     }
 
     /**
@@ -167,27 +154,14 @@ class PartialClassContext {
      * @returns {?PHPType.Union}
      */
     findStaticIdentifier(name, from_class_context, parser_state = new Set()) {
-        /**
-         * @type {scope}
-         */
-        let calling_scope
-        if(from_class_context && from_class_context.name == this.name) {
-            calling_scope = "private"
-        } else if(
-            from_class_context &&
-            (
-                from_class_context.isSubclassOf(this) ||
-                this.isSubclassOf(from_class_context)
-            )
-        ) {
-            calling_scope = "protected"
-        } else {
-            calling_scope = "public"
-        }
         let ns = parser_state.has(ParserStateOption.InCall) ?
             this.identifiers.method :
             this.identifiers.property
-        return ns.static.findIdentifier(name, calling_scope, new Set())
+        return ns.static.findIdentifier(
+            name,
+            this.scopeFrom(from_class_context),
+            new Set()
+        )
     }
 
     /**
@@ -241,6 +215,31 @@ class PartialClassContext {
             return this.name
         } else {
             return null
+        }
+    }
+    /**
+     * Returns the best access scope available from the given class context.
+     *
+     * @param {?ClassContext} from_class_context
+     * @returns {scope}
+     */
+    scopeFrom(from_class_context) {
+        /**
+         * @type {scope}
+         */
+        let calling_scope
+        if(from_class_context && from_class_context.name == this.name) {
+            return "private"
+        } else if(
+            from_class_context &&
+            (
+                from_class_context.isSubclassOf(this) ||
+                this.isSubclassOf(from_class_context)
+            )
+        ) {
+            return "protected"
+        } else {
+            return "public"
         }
     }
     /**
