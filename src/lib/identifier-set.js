@@ -258,9 +258,6 @@ class AnyInstancePropertySet extends AnyIdentifierSet {
                         calling_scope,
                         new Set([ParserStateOption.InCall])
                     )) {
-                        console.log(
-                            `Possible scope miss for name ${this.qualifiedName(name)} with calling scope ${calling_scope}`
-                        )
                         return new PHPType.Mixed(this.classContext.name, "__get").union
                     }
                 } catch(e) {
@@ -278,9 +275,6 @@ class AnyInstancePropertySet extends AnyIdentifierSet {
                         calling_scope,
                         new Set([ParserStateOption.InCall])
                     )) {
-                        console.log(
-                            `Possible scope miss for name ${this.qualifiedName(name)} with calling scope ${calling_scope}`
-                        )
                         return new PHPType.Mixed(this.classContext.name, "__set").union
                     }
                 } catch(e) {
@@ -332,9 +326,6 @@ class AnyInstanceMethodSet extends AnyIdentifierSet {
             return type
         } else {
             if(name != "__call") {
-                console.log(
-                    `Possible scope miss for name ${this.qualifiedName(name)} with calling scope ${calling_scope}`
-                )
                 return this.findIdentifier(
                     "__call",
                     calling_scope,
