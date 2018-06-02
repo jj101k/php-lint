@@ -53,6 +53,7 @@ export default class Foreach extends Statement {
                 )
                 // Do not add a type
             } else {
+                console.log(`Unsuitable type for foreach: ${t}`)
                 inner_types = inner_types.addType(new PHPType.Mixed(null, null, "foreach"))
             }
         })

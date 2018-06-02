@@ -34,6 +34,7 @@ export default class OffsetLookup extends Lookup {
                     PHPType.Core.types.null
                 )
             } else {
+                console.log(`Unsuitable type for offset lookup: ${t}`)
                 types_out = types_out.addType(new PHPType.Mixed(null, null, "offsetlookup#not-array"))
             }
         })

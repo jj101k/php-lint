@@ -129,6 +129,7 @@ export default class Call extends Statement {
             if(t instanceof PHPType.Function) {
                 types = types.addTypesFrom(t.returnTypeGiven(arg_types.map(a => a.expressionType)))
             } else {
+                console.log(`Unsuitable type for call: ${t}`)
                 types = types.addTypesFrom(new PHPType.Mixed(null, null, "call#type").union)
             }
         })
