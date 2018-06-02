@@ -252,29 +252,41 @@ class AnyInstancePropertySet extends AnyIdentifierSet {
                 !parser_state.has(ParserStateOption.InAssignment) &&
                 name != "__get"
             ) {
-                if(this.classContext.identifiers.method.instance.findIdentifier(
-                    "__get",
-                    calling_scope,
-                    new Set([ParserStateOption.InCall])
-                )) {
-                    console.log(
-                        `Possible scope miss for name ${this.qualifiedName(name)} with calling scope ${calling_scope}`
-                    )
-                    return new PHPType.Mixed(this.classContext.name, "__get").union
+                try {
+                    if(this.classContext.identifiers.method.instance.findIdentifier(
+                        "__get",
+                        calling_scope,
+                        new Set([ParserStateOption.InCall])
+                    )) {
+                        console.log(
+                            `Possible scope miss for name ${this.qualifiedName(name)} with calling scope ${calling_scope}`
+                        )
+                        return new PHPType.Mixed(this.classContext.name, "__get").union
+                    }
+                } catch(e) {
+                    if(!(e instanceof PHPError.ScopeMiss)) {
+                        throw e
+                    }
                 }
             } else if(
                 parser_state.has(ParserStateOption.InAssignment) &&
                 name != "__set"
             ) {
-                if(this.classContext.identifiers.method.instance.findIdentifier(
-                    "__set",
-                    calling_scope,
-                    new Set([ParserStateOption.InCall])
-                )) {
-                    console.log(
-                        `Possible scope miss for name ${this.qualifiedName(name)} with calling scope ${calling_scope}`
-                    )
-                    return new PHPType.Mixed(this.classContext.name, "__set").union
+                try {
+                    if(this.classContext.identifiers.method.instance.findIdentifier(
+                        "__set",
+                        calling_scope,
+                        new Set([ParserStateOption.InCall])
+                    )) {
+                        console.log(
+                            `Possible scope miss for name ${this.qualifiedName(name)} with calling scope ${calling_scope}`
+                        )
+                        return new PHPType.Mixed(this.classContext.name, "__set").union
+                    }
+                } catch(e) {
+                    if(!(e instanceof PHPError.ScopeMiss)) {
+                        throw e
+                    }
                 }
             }
             throw new PHPError.ScopeMiss(
