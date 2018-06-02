@@ -122,6 +122,8 @@ class NamedTypeToken extends TypeToken {
             t = new PHPType.AssociativeArray(new PHPType.Mixed(null, null, "doc").union).union
         } else if(this.name == "mixed") {
             t = new PHPType.Mixed(null, null, "doc").union
+        } else if(this.name == "callable") {
+            t = PHPType.Core.types.callable
         } else {
             t = new PHPType.Simple(this.name).union
         }
