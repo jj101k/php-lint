@@ -52,6 +52,10 @@ foreach($classes as $class) {
             \ReflectionProperty::IS_PROTECTED
         )
     );
+    $info["interfaces"] = array_keys($reflection->getInterfaces());
+    $info["parentClass"] = $reflection->getParentClass() ?
+        $reflection->getParentClass()->getName() :
+        null;
     $out[$class] = $info;
 }
 print json_encode($out, JSON_PRETTY_PRINT);

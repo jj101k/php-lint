@@ -35,7 +35,7 @@ const DEBUG_AUTOLOAD = false
 const MAX_DEPTH = Infinity
 
 /**
- * @type {{[name: string]: {constants: {name: string, isPublic: boolean, value: *}[], methods: {name: string, isAbstract: boolean, isPublic: boolean, isStatic: boolean, arguments: {type: ?string}[], returnType: ?string}[], properties: {name: string, isPublic: boolean, isStatic: boolean}[]}}} From ./php-bin/php-classes | gzip > data/php-classes.json.gz
+ * @type {{[name: string]: {constants: {name: string, isPublic: boolean, value: *}[], methods: {name: string, isAbstract: boolean, isPublic: boolean, isStatic: boolean, arguments: {type: ?string}[], returnType: ?string}[], properties: {name: string, isPublic: boolean, isStatic: boolean}[], parentClass: ?string, interfaces: string[]}}} From ./php-bin/php-classes | gzip > data/php-classes.json.gz
  */
 const PHPClasses = readPHPInfo("php-classes.json.gz")
 
@@ -173,12 +173,19 @@ export class GlobalContext {
         /**
          *
          * @param {string} name
-         * @param {{constants: {name: string, isPublic: boolean, value: *}[], methods: {name: string, isAbstract: boolean, isPublic: boolean, isStatic: boolean, arguments: {type: ?string}[], returnType: ?string}[], properties: {name: string, isPublic: boolean, isStatic: boolean}[]]}} class_info
+         * @param {{constants: {name: string, isPublic: boolean, value: *}[], methods: {name: string, isAbstract: boolean, isPublic: boolean, isStatic: boolean, arguments: {type: ?string}[], returnType: ?string}[], properties: {name: string, isPublic: boolean, isStatic: boolean}[], parentClass: ?string, interfaces: string[]}} class_info
          * @returns {ClassContext.Class}
          */
         const add_class_from_spec = (name, class_info) => {
+            let superclass = class_info.parentClass ?
+                add_class_from_spec(class_info.parentClass, PHPClasses[class_info.parentClass]) :
+                null
             let c = this.addClass(
-                "\\" + name
+                "\\" + name,
+                superclass,
+                null,
+                null,
+                class_info.interfaces
             )
             class_info.properties.forEach(
                 p => c.addIdentifier(
