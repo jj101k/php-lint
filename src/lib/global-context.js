@@ -35,9 +35,9 @@ const DEBUG_AUTOLOAD = false
 const MAX_DEPTH = Infinity
 
 /**
- * @type {string[]} From ./php-bin/php-classes | gzip > data/php-classes.json.gz
+ * @type {{[name: string]: {constants: {name: string, isPublic: boolean, value: *}[], methods: {name: string, isAbstract: boolean, isPublic: boolean, isStatic: boolean, arguments: {type: ?string}[], returnType: ?string}[], properties: {name: string, isPublic: boolean, isStatic: boolean}[]}}} From ./php-bin/php-classes | gzip > data/php-classes.json.gz
  */
-const PHPClasses = Object.keys(readPHPInfo("php-classes.json.gz"))
+const PHPClasses = readPHPInfo("php-classes.json.gz")
 
 /**
  * @type {string[]} From ./php-bin/php-interfaces | gzip > data/php-interfaces.json.gz
@@ -169,40 +169,101 @@ export class GlobalContext {
 
         /** @type {?string} */
         this.workingDirectory = null
-        PHPClasses.forEach(
-            name => {
-                let c = this.addUnknownClass("\\" + name)
-                if(name == "DateTime") {
-                    c.addIdentifier(
-                        "modify",
-                        "public",
-                        false,
-                        true,
-                        new PHPType.Union(
-                            new PHPType.Function(
-                                [PHPType.Core.types.string],
-                                PHPType.Core.named("\\" + name).addTypesFrom(
-                                    PHPType.Core.types.bool.withValue(false)
-                                )
+
+        /**
+         *
+         * @param {string} name
+         * @param {{constants: {name: string, isPublic: boolean, value: *}[], methods: {name: string, isAbstract: boolean, isPublic: boolean, isStatic: boolean, arguments: {type: ?string}[], returnType: ?string}[], properties: {name: string, isPublic: boolean, isStatic: boolean}[]]}} class_info
+         * @returns {ClassContext.Class}
+         */
+        const add_class_from_spec = (name, class_info) => {
+            let c = this.addClass(
+                "\\" + name
+            )
+            class_info.properties.forEach(
+                p => c.addIdentifier(
+                    p.name,
+                    p.isPublic ? "public" : "protected",
+                    p.isStatic,
+                    false,
+                    new PHPType.Mixed(
+                        "\\" + name,
+                        p.name
+                    ).union
+                )
+            )
+            class_info.methods.forEach(
+                m => c.addIdentifier(
+                    m.name,
+                    m.isPublic ? "public" : "protected",
+                    m.isStatic,
+                    true,
+                    new PHPType.Function(
+                        m.arguments.map(
+                            a => a.type ?
+                                PHPType.Core.named(a.type) :
+                                new PHPType.Mixed(
+                                    "\\" + name,
+                                    m.name,
+                                    "argument"
+                                ).union
+                        ),
+                        m.returnType ?
+                            PHPType.Core.named(m.returnType) :
+                            new PHPType.Mixed(
+                                "\\" + name,
+                                m.name,
+                                "return"
+                            ).union
+                    ).union
+                )
+            )
+            class_info.constants.forEach(
+                co => c.addIdentifier(
+                    co.name,
+                    co.isPublic ? "public" : "protected",
+                    true,
+                    false,
+                    new PHPType.Mixed(
+                        "\\" + name,
+                        co.name
+                    ).union
+                )
+            )
+            if(name == "DateTime") {
+                c.addIdentifier(
+                    "modify",
+                    "public",
+                    false,
+                    true,
+                    new PHPType.Union(
+                        new PHPType.Function(
+                            [PHPType.Core.types.string],
+                            PHPType.Core.named("\\" + name).addTypesFrom(
+                                PHPType.Core.types.bool.withValue(false)
                             )
                         )
                     )
-                    c.addIdentifier(
-                        "format",
-                        "public",
-                        false,
-                        true,
-                        new PHPType.Union(
-                            new PHPType.Function(
-                                [PHPType.Core.types.string],
-                                PHPType.Core.types.string.addTypesFrom(
-                                    PHPType.Core.types.bool.withValue(false)
-                                )
+                )
+                c.addIdentifier(
+                    "format",
+                    "public",
+                    false,
+                    true,
+                    new PHPType.Union(
+                        new PHPType.Function(
+                            [PHPType.Core.types.string],
+                            PHPType.Core.types.string.addTypesFrom(
+                                PHPType.Core.types.bool.withValue(false)
                             )
                         )
                     )
-                }
+                )
             }
+            return c
+        }
+        Object.keys(PHPClasses).forEach(
+            name => add_class_from_spec(name, PHPClasses[name])
         )
         PHPInterfaces.forEach(
             name => this.addUnknownClass("\\" + name)
