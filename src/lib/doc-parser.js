@@ -90,7 +90,7 @@ class OptTypeToken extends TypeToken {
      */
     get type() {
         let t = PHPType.Union.empty
-        this.tokens.forEach(token => t = t.addTypesFrom(token.type))
+        this.tokens.forEach(token => t = PHPType.Union.combine(t, token.type))
         if(this.isArray) {
             return new PHPType.IndexedArray(t).union
         } else {

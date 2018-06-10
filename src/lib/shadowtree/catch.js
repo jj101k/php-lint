@@ -27,7 +27,7 @@ export default class Catch extends Statement {
         super.check(context, parser_state, doc)
         let types = PHPType.Union.empty
         this.what.forEach(
-            w => types = types.addTypesFrom(PHPType.Core.named(context.resolveName(w.name)))
+            w => types = PHPType.Union.combine(types, PHPType.Core.named(context.resolveName(w.name)))
         )
         let inner_context = context.childContext(true)
         inner_context.assigningType = types

@@ -33,18 +33,18 @@ export default class RetIf extends Statement {
                 let t_context = context.childContext(false)
                 t_context.importNamespaceFrom(context)
                 t_context.importAssertions(s.assertions)
-                types = types.addTypesFrom(this.trueExpr.check(t_context, new Set(), null).expressionType)
+                types = PHPType.Union.combine(types, this.trueExpr.check(t_context, new Set(), null).expressionType)
             })
         } else {
             test.booleanState.trueStates.forEach(s => {
-                types = types.addTypesFrom(s.value)
+                types = PHPType.Union.combine(types, s.value)
             })
         }
         test.booleanState.falseStates.forEach(s => {
             let t_context = context.childContext(false)
             t_context.importNamespaceFrom(context)
             t_context.importAssertions(s.assertions)
-            types = types.addTypesFrom(this.falseExpr.check(t_context, new Set(), null).expressionType)
+            types = PHPType.Union.combine(types, this.falseExpr.check(t_context, new Set(), null).expressionType)
         })
         return new ContextTypes(types)
     }

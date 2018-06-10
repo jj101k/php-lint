@@ -61,7 +61,7 @@ export default class Parameter extends Declaration {
                 this.value.name.name.toLowerCase() == "null"
             )
         ) {
-            type = type.addTypesFrom(PHPType.Core.types.null)
+            type = PHPType.Union.combine(type, PHPType.Core.types.null)
         }
         return new ContextTypes(type)
     }

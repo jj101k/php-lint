@@ -48,7 +48,7 @@ export default class Bin extends Operation {
                     this.right.check(c_right_context, new Set(), null)
                     context.importNamespaceFrom(c_right_context)
                 })
-                types = types.addTypesFrom(PHPType.Core.types.bool)
+                types = PHPType.Union.combine(types, PHPType.Core.types.bool)
                 break
             case "&":
             case "&&":
@@ -61,7 +61,7 @@ export default class Bin extends Operation {
                     this.right.check(c_right_context, new Set(), null)
                     context.importNamespaceFrom(c_right_context)
                 })
-                types = types.addTypesFrom(PHPType.Core.types.bool)
+                types = PHPType.Union.combine(types, PHPType.Core.types.bool)
                 break
             case "*":
             case "/":
@@ -74,7 +74,7 @@ export default class Bin extends Operation {
                 // Numeric (1)
                 this.right.check(right_context, new Set(), null)
                 context.importNamespaceFrom(right_context)
-                types = types.addTypesFrom(PHPType.Core.types.float)
+                types = PHPType.Union.combine(types, PHPType.Core.types.float)
                 break
             case "+":
                 // Numeric (2)
@@ -82,14 +82,14 @@ export default class Bin extends Operation {
                 context.importNamespaceFrom(right_context)
                 left.expressionType.types.forEach(type => {
                     if(type instanceof PHPType.Mixed) {
-                        types = types.addTypesFrom(type.union)
+                        types = PHPType.Union.combine(types, type.union)
                     } else {
                         switch(type.typeSignature) {
                             case "null":
                                 // Yes null casts to number.
                             case "int":
                             case "float":
-                                types = types.addTypesFrom(PHPType.Core.types.float)
+                                types = PHPType.Union.combine(types, PHPType.Core.types.float)
                                 break
                             case "array":
                                 types = types.addType(type)
@@ -100,7 +100,7 @@ export default class Bin extends Operation {
                                     context,
                                     this.loc
                                 )
-                                types = types.addTypesFrom(PHPType.Core.types.float)
+                                types = PHPType.Union.combine(types, PHPType.Core.types.float)
                         }
                     }
                 })
@@ -109,7 +109,7 @@ export default class Bin extends Operation {
                 // String
                 this.right.check(right_context, new Set(), null)
                 context.importNamespaceFrom(right_context)
-                types = types.addTypesFrom(PHPType.Core.types.string)
+                types = PHPType.Union.combine(types, PHPType.Core.types.string)
                 break
             case "~":
             case "!~":
@@ -127,13 +127,13 @@ export default class Bin extends Operation {
                 // Comparison (boolean)
                 this.right.check(right_context, new Set(), null)
                 context.importNamespaceFrom(right_context)
-                types = types.addTypesFrom(PHPType.Core.types.bool)
+                types = PHPType.Union.combine(types, PHPType.Core.types.bool)
                 break
             case "instanceof":
                 // Comparison (boolean) (instanceof)
                 this.right.check(right_context, new Set(), null)
                 context.importNamespaceFrom(right_context)
-                types = types.addTypesFrom(PHPType.Core.types.bool)
+                types = PHPType.Union.combine(types, PHPType.Core.types.bool)
                 if(
                     this.left instanceof Variable &&
                     this.right instanceof ConstRef
@@ -150,9 +150,9 @@ export default class Bin extends Operation {
                 break
             case "??":
                 // Left (not null) or right
-                types = types.addTypesFrom(
-                    left.expressionType.excluding("null")
-                ).addTypesFrom(
+                types = PHPType.Union.combine(
+                    types,
+                    left.expressionType.excluding("null"),
                     this.right.check(right_context, new Set(), null).expressionType
                 )
                 context.importNamespaceFrom(right_context)
@@ -162,7 +162,7 @@ export default class Bin extends Operation {
                 console.log(`Don't know how to parse operator type ${this.type}`)
                 this.right.check(right_context, new Set(), null)
                 context.importNamespaceFrom(right_context)
-                types = types.addTypesFrom(left.expressionType)
+                types = PHPType.Union.combine(types, left.expressionType)
         }
         if(boolean_state) {
             return new ContextTypes(

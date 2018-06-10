@@ -5,6 +5,47 @@ import _Set from "./set"
  */
 export default class _Union extends _Set {
     /**
+     * Adds types. Returns a derived type union which may not be either
+     * original. Both sets should be considered mutable for this purpose.
+     *
+     * @param {_Union[]} sets
+     * @returns {?_Union}
+     */
+    static combine(...sets) {
+        let non_empty = sets.filter(
+            s => s.types.length > 0
+        )
+        if(non_empty.length <= 1) {
+            return non_empty[0] || sets[0]
+        } else if(non_empty[0].types.length == 1) {
+            let n = non_empty[0].copy()
+            non_empty.slice(1).forEach(
+                s => Object.assign(n.uniqueTypes, s.uniqueTypes)
+            )
+            return n
+        } else {
+            let n = non_empty[0]
+            non_empty.slice(1).forEach(s => {
+                Object.keys(s.uniqueTypes).forEach(
+                    k => {
+                        if(n.uniqueTypes[k]) {
+                            let merge_type = n.uniqueTypes[k].combineWith(
+                                s.uniqueTypes[k]
+                            )
+                            if(merge_type !== n.uniqueTypes[k]) {
+                                n.uniqueTypes[k] = merge_type
+                            }
+                        } else {
+                            n.uniqueTypes[k] = s.uniqueTypes[k]
+                        }
+                    }
+                )
+            })
+            return non_empty[0]
+        }
+    }
+
+    /**
      * An empty type union
      * @type {_Union}
      */
@@ -63,37 +104,6 @@ export default class _Union extends _Set {
             return "void"
         } else {
             return this.types.map(t => t.typeSignature).join(" | ")
-        }
-    }
-
-    /**
-     * Adds types. Returns a derived type union which may not be the original.
-     * @param {_Union} union
-     * @returns {_Union}
-     */
-    addTypesFrom(union) {
-        if(this.types.length == 0) {
-            return union
-        } else if(this.types.length == 1) {
-            let n = this.copy()
-            Object.assign(n.uniqueTypes, union.uniqueTypes)
-            return n
-        } else {
-            Object.keys(union.uniqueTypes).forEach(
-                k => {
-                    if(this.uniqueTypes[k]) {
-                        let merge_type = this.uniqueTypes[k].combineWith(
-                            union.uniqueTypes[k]
-                        )
-                        if(merge_type !== this.uniqueTypes[k]) {
-                            this.uniqueTypes[k] = merge_type
-                        }
-                    } else {
-                        this.uniqueTypes[k] = union.uniqueTypes[k]
-                    }
-                }
-            )
-            return this
         }
     }
 

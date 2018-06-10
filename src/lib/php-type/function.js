@@ -129,7 +129,7 @@ export default class _Function extends _Any {
             let test_type = _Union.empty
             this.returnType.types.forEach(t => {
                 if(generic_arg_types["" + t]) {
-                    test_type = test_type.addTypesFrom(generic_arg_types["" + t])
+                    test_type = _Union.combine(test_type, generic_arg_types["" + t])
                 } else {
                     test_type = test_type.addType(t)
                 }

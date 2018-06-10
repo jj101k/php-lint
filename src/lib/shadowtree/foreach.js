@@ -42,9 +42,9 @@ export default class Foreach extends Statement {
         let inner_types = PHPType.Union.empty
         source_type.types.forEach(t => {
             if(t instanceof PHPType.AssociativeArray) {
-                inner_types = inner_types.addTypesFrom(t.memberType)
+                inner_types = PHPType.Union.combine(inner_types, t.memberType)
             } else if(t instanceof PHPType.IndexedArray) {
-                inner_types = inner_types.addTypesFrom(t.memberType)
+                inner_types = PHPType.Union.combine(inner_types, t.memberType)
             } else if(t.toString() == "null") {
                 this.throw(
                     new PHPError.BadTypeCast(`Possibly bad cast from type ${t} for foreach`),

@@ -26,11 +26,15 @@ export default class OffsetLookup extends Lookup {
         let types_out = PHPType.Union.empty
         type_union.types.forEach(t => {
             if(t instanceof PHPType.AssociativeArray) {
-                types_out = types_out.addTypesFrom(t.memberType).addTypesFrom(
+                types_out = PHPType.Union.combine(
+                    types_out,
+                    t.memberType,
                     PHPType.Core.types.null
                 )
             } else if(t instanceof PHPType.IndexedArray) {
-                types_out = types_out.addTypesFrom(t.memberType).addTypesFrom(
+                types_out = PHPType.Union.combine(
+                    types_out,
+                    t.memberType,
                     PHPType.Core.types.null
                 )
             } else {

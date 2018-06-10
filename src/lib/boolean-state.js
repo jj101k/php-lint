@@ -33,7 +33,7 @@ class ValueState {
      */
     static combine(a, b, value) {
         return new ValueState(
-            a.value.addTypesFrom(b.value),
+            PHPType.Union.combine(a.value, b.value),
             a.assertions.concat(b.assertions)
         )
     }

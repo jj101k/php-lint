@@ -40,14 +40,14 @@ export default class If extends Statement {
             ts => body_context.importAssertions(ts.assertions)
         )
         let type = PHPType.Union.empty
-        type = type.addTypesFrom(this.body.check(body_context, new Set(), null).returnType)
+        type = PHPType.Union.combine(type, this.body.check(body_context, new Set(), null).returnType)
         if(this.alternate) {
             let alt_context = context.childContext(false)
             alt_context.importNamespaceFrom(context)
             test_state.falseStates.forEach(
                 fs => alt_context.importAssertions(fs.assertions)
             )
-            type = type.addTypesFrom(this.alternate.check(alt_context, new Set(), null).returnType)
+            type = PHPType.Union.combine(type, this.alternate.check(alt_context, new Set(), null).returnType)
             context.importNamespaceFrom(alt_context)
         }
         context.importNamespaceFrom(body_context)

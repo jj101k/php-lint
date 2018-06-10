@@ -67,12 +67,12 @@ const PHPFunctionReturnType = {
     ceil: PHPType.Core.types.float,
     count: PHPType.Core.types.int,
     floor: PHPType.Core.types.float,
-    openssl_decrypt: PHPType.Core.types.string.addTypesFrom(PHPType.Core.types.bool.withValue(false)),
-    openssl_encrypt: PHPType.Core.types.string.addTypesFrom(PHPType.Core.types.bool.withValue(false)),
+    openssl_decrypt: PHPType.Union.combine(PHPType.Core.types.string, PHPType.Core.types.bool.withValue(false)),
+    openssl_encrypt: PHPType.Union.combine(PHPType.Core.types.string, PHPType.Core.types.bool.withValue(false)),
     preg_replace: PHPType.Core.types.string,
     strcmp: PHPType.Core.types.int,
-    stripos: PHPType.Core.types.int.addTypesFrom(PHPType.Core.types.bool.withValue(false)),
-    strrpos: PHPType.Core.types.int.addTypesFrom(PHPType.Core.types.bool.withValue(false)),
+    stripos: PHPType.Union.combine(PHPType.Core.types.int, PHPType.Core.types.bool.withValue(false)),
+    strrpos: PHPType.Union.combine(PHPType.Core.types.int, PHPType.Core.types.bool.withValue(false)),
     strtolower: PHPType.Core.types.string,
     strtoupper: PHPType.Core.types.string,
     substr: PHPType.Core.types.string,
@@ -87,9 +87,9 @@ function arrayMemberType(union) {
     let mt = PHPType.Union.empty
     union.types.forEach(t => {
         if(t instanceof PHPType.AssociativeArray) {
-            mt = mt.addTypesFrom(t.memberType)
+            mt = PHPType.Union.combine(mt, t.memberType)
         } else if(t instanceof PHPType.IndexedArray) {
-            mt = mt.addTypesFrom(t.memberType)
+            mt = PHPType.Union.combine(mt, t.memberType)
         } else if(t instanceof PHPType.Mixed) {
             mt = mt.addType(t)
         } else {
@@ -114,7 +114,8 @@ const PHPFunctionReturnTypeCallback = {
         args[0].types.forEach(
             ft => {
                 if(ft instanceof PHPType.Function) {
-                    t = t.addTypesFrom(
+                    t = PHPType.Union.combine(
+                        t,
                         ft.returnTypeGiven([
                             arrayMemberType(args[1])
                         ])
@@ -131,10 +132,10 @@ const PHPFunctionReturnTypeCallback = {
         }
     },
     array_pop: function(args, ftype) {
-        return arrayMemberType(args[0]).addTypesFrom(PHPType.Core.types.null)
+        return PHPType.Union.combine(arrayMemberType(args[0]), PHPType.Core.types.null)
     },
     array_shift: function(args, ftype) {
-        return arrayMemberType(args[0]).addTypesFrom(PHPType.Core.types.null)
+        return PHPType.Union.combine(arrayMemberType(args[0]), PHPType.Core.types.null)
     },
     array_values: function(args, ftype) {
         return new PHPType.IndexedArray(arrayMemberType(args[0])).union
@@ -253,7 +254,7 @@ export default class Context {
         if(!this.ns[name]) {
             this.ns[name] = Context.superGlobals[name] || PHPType.Union.empty
         }
-        this.ns[name] = this.ns[name].addTypesFrom(types)
+        this.ns[name] = PHPType.Union.combine(this.ns[name], types)
         if(DEBUG_TYPES) {
             console.log(`Types for ${name} are: ${this.ns[name]}`)
         }
@@ -429,7 +430,7 @@ export default class Context {
         Object.keys(context.ns).forEach(
             name => {
                 if(this.ns[name]) {
-                    this.ns[name] = this.ns[name].addTypesFrom(context.ns[name])
+                    this.ns[name] = PHPType.Union.combine(this.ns[name], context.ns[name])
                 } else {
                     this.ns[name] = context.ns[name]
                 }

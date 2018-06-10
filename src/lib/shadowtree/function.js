@@ -118,7 +118,8 @@ export default class _Function extends Declaration {
                 context.resolveName(this.type.name, this.type.resolution)
             )
             if(this.nullable) {
-                signature_type = signature_type.addTypesFrom(
+                signature_type = PHPType.Union.combine(
+                    signature_type,
                     PHPType.Core.types.null
                 )
             }

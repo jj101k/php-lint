@@ -23,7 +23,7 @@ export default class Block extends Statement {
             if(node instanceof Doc) {
                 last_doc = node
             } else {
-                types = types.addTypesFrom(node.check(context, new Set(), last_doc).returnType)
+                types = PHPType.Union.combine(types, node.check(context, new Set(), last_doc).returnType)
                 last_doc = null
             }
         })

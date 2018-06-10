@@ -32,7 +32,7 @@ export default class Switch extends Statement {
             c => { // FIXME fallthrough
                 let case_context = context.childContext(false)
                 case_context.importNamespaceFrom(context)
-                type = type.addTypesFrom(c.check(case_context, new Set(), null).returnType)
+                type = PHPType.Union.combine(type, c.check(case_context, new Set(), null).returnType)
                 child_contexts.push(case_context)
             }
         )

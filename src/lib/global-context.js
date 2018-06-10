@@ -246,7 +246,8 @@ export class GlobalContext {
                     new PHPType.Union(
                         new PHPType.Function(
                             [PHPType.Core.types.string],
-                            PHPType.Core.named("\\" + name).addTypesFrom(
+                            PHPType.Union.combine(
+                                PHPType.Core.named("\\" + name),
                                 PHPType.Core.types.bool.withValue(false)
                             )
                         )
@@ -260,7 +261,8 @@ export class GlobalContext {
                     new PHPType.Union(
                         new PHPType.Function(
                             [PHPType.Core.types.string],
-                            PHPType.Core.types.string.addTypesFrom(
+                            PHPType.Union.combine(
+                                PHPType.Core.types.string,
                                 PHPType.Core.types.bool.withValue(false)
                             )
                         )

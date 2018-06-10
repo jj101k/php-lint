@@ -27,7 +27,7 @@ export default class _Array extends Expression {
             this.items.forEach(
                 item => {
                     let t = item.check(context, new Set(), null)
-                    types = types.addTypesFrom(t.expressionType)
+                    types = PHPType.Union.combine(types, t.expressionType)
                 }
             )
             if(this.items.some(item => !!item.key)) {

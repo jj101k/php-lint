@@ -46,7 +46,7 @@ export default class New extends Statement {
             if(values) {
                 let type = PHPType.Union.empty
                 values.forEach(
-                    v => type = type.addTypesFrom(PHPType.Core.named(v))
+                    v => type = PHPType.Union.combine(type, PHPType.Core.named(v))
                 )
                 return new ContextTypes(type)
             } else {
