@@ -68,7 +68,7 @@ class TypeToken {
         this.isArray = false
     }
     /**
-     * @type {PHPType.Union}
+     * @type {PHPType.Set}
      */
     get type() {
         throw new Error("Not implemented")
@@ -86,7 +86,7 @@ class OptTypeToken extends TypeToken {
         this.tokens = []
     }
     /**
-     * @type {PHPType.Union}
+     * @type {PHPType.Set}
      */
     get type() {
         let t = PHPType.Union.empty
@@ -114,7 +114,7 @@ class NamedTypeToken extends TypeToken {
         this.name = name
     }
     /**
-     * @type {PHPType.Union}
+     * @type {PHPType.Set}
      */
     get type() {
         let t

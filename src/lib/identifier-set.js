@@ -22,7 +22,7 @@ class AnyIdentifier {
         this.scope = scope
     }
     /**
-     * @type {PHPType.Union}
+     * @type {PHPType.Set}
      */
     get types() {
         throw new Error("Not implemented")
@@ -61,7 +61,7 @@ class Identifier extends AnyIdentifier {
     /**
      * @param {string} name
      * @param {scope} scope
-     * @param {PHPType.Union} types
+     * @param {PHPType.Set} types
      */
     constructor(name, scope, types) {
         super(name, scope)
@@ -96,7 +96,7 @@ class TemporaryIdentifier extends AnyIdentifier {
     /**
      * Triggers compilation
      *
-     * @returns {PHPType.Union}
+     * @returns {PHPType.Set}
      */
     compile() {
         if(this.compileStarted) {
@@ -151,7 +151,7 @@ class AnyIdentifierSet {
      * @param {string} name
      * @param {scope} calling_scope
      * @param {Set<ParserStateOption.Base>} parser_state
-     * @returns {?PHPType.Union}
+     * @returns {?PHPType.Set}
      */
     findIdentifier(name, calling_scope, parser_state) {
         let m = this.identifiers[name]
@@ -241,7 +241,7 @@ class AnyInstancePropertySet extends AnyIdentifierSet {
      * @param {string} name
      * @param {scope} calling_scope
      * @param {Set<ParserStateOption.Base>} parser_state
-     * @returns {?PHPType.Union}
+     * @returns {?PHPType.Set}
      */
     findIdentifier(name, calling_scope, parser_state) {
         let type = super.findIdentifier(name, calling_scope, parser_state)
@@ -318,7 +318,7 @@ class AnyInstanceMethodSet extends AnyIdentifierSet {
      * @param {string} name
      * @param {scope} calling_scope
      * @param {Set<ParserStateOption.Base>} parser_state
-     * @returns {?PHPType.Union}
+     * @returns {?PHPType.Set}
      */
     findIdentifier(name, calling_scope, parser_state) {
         let type = super.findIdentifier(name, calling_scope, parser_state)
@@ -348,7 +348,7 @@ class UnknownIdentifierSet extends AnyIdentifierSet {
      * @param {string} name
      * @param {scope} calling_scope
      * @param {Set<ParserStateOption.Base>} parser_state
-     * @returns {?PHPType.Union}
+     * @returns {?PHPType.Set}
      */
     findIdentifier(name, calling_scope, parser_state) {
         if(!this.identifiers[name]) {

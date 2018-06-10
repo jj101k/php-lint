@@ -17,10 +17,10 @@ export default class Doc extends AbstractNode {
      * Given a type union filled with unqualified names, returns the same with
      * qualified names.
      *
-     * @param {PHPType.Union} u
+     * @param {PHPType.Set} u
      * @param {Context} context
      * @param {Doc} doc
-     * @returns {PHPType.Union}
+     * @returns {PHPType.Set}
      */
     resolveAllDocNames(u, context, doc) {
         let n = PHPType.Union.empty

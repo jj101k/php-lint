@@ -7,7 +7,7 @@ class GeneralAssertion {
      *
      * @param {boolean} not
      * @param {string} symbol
-     * @param {PHPType.Union} type
+     * @param {PHPType.Set} type
      */
     constructor(not, symbol, type) {
         this.not = not
@@ -39,7 +39,7 @@ class ValueState {
     }
     /**
      * Builds the object
-     * @param {PHPType.Union} value
+     * @param {PHPType.Set} value
      * @param {GeneralAssertion[]} assertions
      */
     constructor(value, assertions) {
@@ -150,7 +150,7 @@ export default class BooleanState {
     }
     /**
      *
-     * @param {PHPType.Union} types
+     * @param {PHPType.Set} types
      * @param {GeneralAssertion} [assertion] If you exclude this, a null
      * assertion will be used.
      * @param {GeneralAssertion} [inverse_assertion] If you exclude this, it

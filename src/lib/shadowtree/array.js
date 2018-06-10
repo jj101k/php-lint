@@ -20,7 +20,7 @@ export default class _Array extends Expression {
      */
     check(context, parser_state = new Set(), doc = null) {
         super.check(context, parser_state, doc)
-        /** @type {?PHPType.Union} */
+        /** @type {?PHPType.Set} */
         let types
         if(this.items && this.items.length) {
             types = PHPType.Union.empty

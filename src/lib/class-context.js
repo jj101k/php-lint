@@ -83,7 +83,7 @@ class PartialClassContext {
      * @param {scope} scope
      * @param {boolean} is_static
      * @param {boolean} is_method
-     * @param {PHPType.Union} types
+     * @param {PHPType.Set} types
      */
     addIdentifier(name, scope, is_static, is_method, types) {
         let ns = is_method ? this.identifiers.method : this.identifiers.property
@@ -134,7 +134,7 @@ class PartialClassContext {
      * @param {string} name
      * @param {?ClassContext} from_class_context
      * @param {Set<ParserStateOption.Base>} parser_state
-     * @returns {?PHPType.Union}
+     * @returns {?PHPType.Set}
      */
     findIdentifier(type, name, from_class_context, parser_state) {
         let ns = parser_state.has(ParserStateOption.InCall) ?
@@ -386,7 +386,7 @@ class AnonymousFunctionContext extends ClassContext {
      * @param {string} name
      * @param {?ClassContext} from_class_context
      * @param {Set<ParserStateOption.Base>} parser_state
-     * @returns {?PHPType.Union}
+     * @returns {?PHPType.Set}
      */
     findIdentifier(type, name, from_class_context, parser_state) {
         if(type == "instance") {
@@ -453,7 +453,7 @@ class UnknownTraitContext extends TraitContext {
      * @param {string} name
      * @param {?ClassContext} from_class_context
      * @param {Set<ParserStateOption.Base>} parser_state
-     * @returns {?PHPType.Union}
+     * @returns {?PHPType.Set}
      */
     findIdentifier(type, name, from_class_context, parser_state) {
         if(type == "instance") {

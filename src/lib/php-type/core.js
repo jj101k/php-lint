@@ -2,20 +2,20 @@ import _Any from "./any"
 import _AssociativeArray from "./associative-array"
 import _Mixed from "./mixed"
 import _Simple from "./simple"
-import _Union from "./union"
+import _Set from "./set"
 import _Function from "./function";
 /**
  * @typedef coreTypes
- * @property {_Union} string
- * @property {_Union} int
- * @property {_Union} float
- * @property {_Union} bool
- * @property {_Union} array
- * @property {_Union} callable
- * @property {_Union} null
- * @property {_Union} self
- * @property {_Union} object
- * @property {_Union} void
+ * @property {_Set} string
+ * @property {_Set} int
+ * @property {_Set} float
+ * @property {_Set} bool
+ * @property {_Set} array
+ * @property {_Set} callable
+ * @property {_Set} null
+ * @property {_Set} self
+ * @property {_Set} object
+ * @property {_Set} void
  */
 
 /**
@@ -38,7 +38,7 @@ class WrongType extends Error {
  * A simple type expression (eg string, int)
  */
 export default class _Core {
-    /** @type {{[x: string]: _Union}} */
+    /** @type {{[x: string]: _Set}} */
     static get namedTypes() {
         if(!this._namedTypes) {
             this._namedTypes = {}
@@ -51,7 +51,7 @@ export default class _Core {
             let known_types = ["string", "int", "float", "bool"]
             let pseudo_types = ["null", "self", "object", "void"]
             /**
-             * @type {{[x: string]: _Union}}
+             * @type {{[x: string]: _Set}}
              */
             let types = {}
             known_types.forEach(
@@ -94,7 +94,7 @@ export default class _Core {
      * Returns a cached type by name
      *
      * @param {string} type_name A fully qualified canonical name
-     * @returns {_Union}
+     * @returns {_Set}
      */
     static named(type_name) {
         if(this.types[type_name]) {

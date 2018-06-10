@@ -1,6 +1,7 @@
 import _Any from "./any"
 import _Core from "./core"
 import _Mixed from "./mixed"
+import _Set from "./set"
 import _Union from "./union"
 /**
  * A function/closure
@@ -18,11 +19,11 @@ export default class _Function extends _Any {
     }
     /**
      *
-     * @param {_Union[]} arg_types
-     * @param {?_Union} return_type
+     * @param {_Set[]} arg_types
+     * @param {?_Set} return_type
      * @param {{[x: number]: boolean}} [pass_by_reference_positions]
-     * @param {{[x: number]: _Union}} [callback_positions]
-     * @param {?function(_Union[], _Function): _Union} [return_type_given] If supplied,
+     * @param {{[x: number]: _Set}} [callback_positions]
+     * @param {?function(_Set[], _Function): _Set} [return_type_given] If supplied,
      * this will replace the default returnTypeGiven
      */
     constructor(
@@ -111,8 +112,8 @@ export default class _Function extends _Any {
      *
      * If you provide nonsense it will presume the actual arg types.
      *
-     * @param {_Union[]} supplied_args
-     * @return {_Union}
+     * @param {_Set[]} supplied_args
+     * @return {_Set}
      */
     returnTypeGiven(supplied_args) {
         if(this.returnTypeGivenOverride) {

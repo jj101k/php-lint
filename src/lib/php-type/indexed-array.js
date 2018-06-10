@@ -1,14 +1,14 @@
 import _Any from "./any"
 import _AssociativeArray from "./associative-array"
 import _Core from "./core"
-import _Union from "./union"
+import _Set from "./set"
 /**
  * An array of some types.
  */
 export default class _IndexedArray extends _Any {
     /**
      *
-     * @param {_Union} member_type
+     * @param {_Set} member_type
      */
     constructor(member_type) {
         super()

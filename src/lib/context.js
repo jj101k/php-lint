@@ -80,8 +80,8 @@ const PHPFunctionReturnType = {
 }
 
 /**
- * @param {PHPType.Union} union
- * @returns {PHPType.Union}
+ * @param {PHPType.Set} union
+ * @returns {PHPType.Set}
  */
 function arrayMemberType(union) {
     let mt = PHPType.Union.empty
@@ -100,7 +100,7 @@ function arrayMemberType(union) {
 }
 
 /**
- * @type {{[x: string]: function(PHPType.Union[], PHPType.Function): PHPType.Union}}
+ * @type {{[x: string]: function(PHPType.Set[], PHPType.Function): PHPType.Set}}
  */
 const PHPFunctionReturnTypeCallback = {
     array_combine: function(args, ftype) {
@@ -147,7 +147,7 @@ const PHPFunctionReturnTypeCallback = {
  */
 export default class Context {
     /**
-     * @type {{[x: string]: PHPType.Union}} A map of names to types for the
+     * @type {{[x: string]: PHPType.Set}} A map of names to types for the
      * "always global" core PHP variables and functions.
      */
     static get superGlobals() {
@@ -179,7 +179,7 @@ export default class Context {
      * @param {FileContext} file_context
      * @param {GlobalContext} global_context
      * @param {?ClassContext.Class} [class_context]
-     * @param {?{[x: string]: PHPType.Union}} [ns]
+     * @param {?{[x: string]: PHPType.Set}} [ns]
      * @param {number} [depth]
      */
     constructor(
@@ -194,7 +194,7 @@ export default class Context {
         this.depth = depth
         this.globalContext = global_context
         this.fileContext = file_context
-        /** @type {?PHPType.Union} */
+        /** @type {?PHPType.Set} */
         this.assigningType = null
         this.ns = ns || {}
     }
@@ -247,8 +247,8 @@ export default class Context {
     /**
      * Adds a name to the namespace list.
      * @param {string} name eg. "$foo"
-     * @param {PHPType.Union} types
-     * @returns {PHPType.Union} The original types
+     * @param {PHPType.Set} types
+     * @returns {PHPType.Set} The original types
      */
     addName(name, types) {
         if(!this.ns[name]) {
@@ -372,7 +372,7 @@ export default class Context {
      * finds variables and functions.
      *
      * @param {string} name eg "$bar"
-     * @returns {PHPType.Union}
+     * @returns {PHPType.Set}
      */
     findName(name) {
         var types = this.ns[name] || Context.superGlobals[name]
@@ -518,8 +518,8 @@ export default class Context {
      * Sets the type(s) for a name. This overwrites any types already assigned
      * to the name.
      * @param {string} name
-     * @param {PHPType.Union} types
-     * @returns {PHPType.Union}
+     * @param {PHPType.Set} types
+     * @returns {PHPType.Set}
      */
     setName(name, types) {
         this.ns[name] = types
@@ -529,8 +529,8 @@ export default class Context {
     /**
      * Sets $this in the scope.
      *
-     * @param {?PHPType.Union} [type]
-     * @returns {PHPType.Union}
+     * @param {?PHPType.Set} [type]
+     * @returns {PHPType.Set}
      */
     setThis(type = null) {
         if(this.classContext && !(this.classContext instanceof ClassContext.Trait)) {

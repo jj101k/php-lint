@@ -55,7 +55,7 @@ export default class _Node extends AbstractNode {
      * Returns the types for the local name, or throws
      * @param {Context} context
      * @param {string} name
-     * @returns {?PHPType.Union}
+     * @returns {?PHPType.Set}
      */
     assertHasName(context, name) {
         var types = context.findName(name)

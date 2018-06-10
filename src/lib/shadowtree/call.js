@@ -34,7 +34,7 @@ export default class Call extends Statement {
     check(context, parser_state = new Set(), doc = null) {
         super.check(context, parser_state, doc)
         let pbr_positions
-        /** @type {{[x: number]: PHPType.Union}} */
+        /** @type {{[x: number]: PHPType.Set}} */
         let callback_positions
         let callable_types = this.what.check(
             context,

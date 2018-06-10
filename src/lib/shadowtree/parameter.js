@@ -33,7 +33,7 @@ export default class Parameter extends Declaration {
      * @returns {?ContextTypes} The set of types applicable to this value
      */
     check(context, parser_state = new Set(), doc = null) {
-        /** @type {PHPType.Union} */
+        /** @type {PHPType.Set} */
         let type
         if(this.type) {
             let type_name = context.resolveName(

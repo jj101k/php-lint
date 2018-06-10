@@ -12,9 +12,9 @@ export default class ContextTypes {
     }
     /**
      * Builds the object
-     * @param {PHPType.Union} expression_type This is the type that you'd get on
+     * @param {PHPType.Set} expression_type This is the type that you'd get on
      * assignment to this node.
-     * @param {PHPType.Union} [return_type]  This is the type that you'd get in
+     * @param {PHPType.Set} [return_type]  This is the type that you'd get in
      * code which calls the function which wraps this node. Only a handful of
      * node types should set this: blocks ({}, foreach, if, switch, while) and
      * the return statement itelf.
