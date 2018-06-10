@@ -185,7 +185,7 @@ export class GlobalContext {
                 superclass,
                 null,
                 null,
-                class_info.interfaces
+                class_info.interfaces.map(n => "\\" + n)
             )
             class_info.properties.forEach(
                 p => c.addIdentifier(
