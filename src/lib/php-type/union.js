@@ -1,8 +1,9 @@
-import _Any from "./any"
+import _Set from "./set"
+
 /**
- * A set of possible types
+ * A set of optional types
  */
-export default class _Union {
+export default class _Union extends _Set {
     /**
      * An empty type union
      * @type {_Union}
@@ -12,37 +13,36 @@ export default class _Union {
     }
 
     /**
-     * @param {?_Any} [initial_type]
+     * @type {_Union} The same set, assuming that the value evaluates to false.
      */
-    constructor(initial_type = null) {
-        /** @type {{[x: string]: _Any}} */
-        this.uniqueTypes = {}
-        if(initial_type) {
-            this.uniqueTypes[initial_type.typeSignature] = initial_type
-        }
-    }
     get asFalse() {
-        let type = _Union.empty
+        let type = this.emptyCopy
         this.types.forEach(v => {
             let f = v.asFalse
             if(f) type.addType(f)
         })
         return type
     }
+
+    /**
+     * @type {_Union} The same set, assuming that the value evaluates to true.
+     */
     get asTrue() {
-        let type = _Union.empty
+        let type = this.emptyCopy
         this.types.forEach(v => {
             let t = v.asTrue
             if(t) type.addType(t)
         })
         return type
     }
+
     /**
-     * @type {boolean}
+     * @returns {_Union} The same object, but empty. Used for rebuilding the set.
      */
-    get isEmpty() {
-        return !this.types.length
+    get emptyCopy() {
+        return new _Union()
     }
+
     /**
      * @type {boolean} True if this is a "mixed" type
      */
@@ -53,12 +53,7 @@ export default class _Union {
             )
         )
     }
-    /**
-     * @type {_Any[]}
-     */
-    get types() {
-        return Object.values(this.uniqueTypes)
-    }
+
     /**
      * @type {string} A string representation of the types, as meaningful for type
      * checking.
@@ -70,41 +65,7 @@ export default class _Union {
             return this.types.map(t => t.typeSignature).join(" | ")
         }
     }
-    /**
-     * @type {string} As typeSignature but bracketed if needed.
-     */
-    get typeSignatureToken() {
-        if(this.types.length > 1) {
-            return `(${this.typeSignature})`
-        } else {
-            return this.typeSignature
-        }
-    }
-    /**
-     * Adds a type. Returns a derived type union which may not be the original.
-     * @param {_Any} type
-     * @returns {_Union}
-     */
-    addType(type) {
-        let merge_type = this.uniqueTypes[type.typeSignature]
-        let new_type = merge_type ? merge_type.combineWith(type) : type
-        if(merge_type && merge_type === new_type) {
-            return this
-        }
-        if(this.types.length == 1) {
-            let n = new _Union()
-            n.uniqueTypes = Object.assign(
-                {
-                    [type.typeSignature]: new_type,
-                },
-                this.uniqueTypes
-            )
-            return n
-        } else {
-            this.uniqueTypes[type.typeSignature] = new_type
-            return this
-        }
-    }
+
     /**
      * Adds types. Returns a derived type union which may not be the original.
      * @param {_Union} union
@@ -137,34 +98,6 @@ export default class _Union {
     }
 
     /**
-     * Returns all the known values coerced into the given type. If the values
-     * are not all known, this will be null.
-     *
-     * @param {string} type eg "bool"
-     * @returns {?Object[]} All values should be distinct.
-     */
-    coercedValues(type) {
-        if(this.isEmpty) return null
-        if(this.types.some(t => !(t.values && t.values.length))) return null
-        let out = {}
-        switch(type) {
-            case "bool":
-                this.types.forEach(t => t.values.forEach(v => {
-                    out[+!!v] = !!v
-                }))
-                return Object.values(out)
-            case "string":
-                this.types.forEach(t => t.values.forEach(v => {
-                    out["" + v] = "" + v
-                }))
-                return Object.values(out)
-            default:
-                console.log(`Coercion to ${type} not yet implemented`)
-                return null
-        }
-    }
-
-    /**
      * Returns true if this set of types does not violate behaviour defined by
      * the supplied set of types. In other words, every type here must be
      * compliant with at least one type on the supplied union.
@@ -187,16 +120,18 @@ export default class _Union {
             )
         )
     }
+
     /**
      * Produces a copy of this union, to shadow a variable copy
      *
      * @returns {_Union}
      */
     copy() {
-        let n = new _Union()
+        let n = this.emptyCopy
         Object.assign(n.uniqueTypes, this.uniqueTypes)
         return n
     }
+
     /**
      *
      * @param {_Union} union
@@ -218,6 +153,7 @@ export default class _Union {
         )
         return n
     }
+
     /**
      * Returns a derived type union which may not be the original, without the
      * named type.
@@ -234,25 +170,47 @@ export default class _Union {
             return this
         }
     }
+
     /**
+     * Returns the intersection of two unions - which is to say, a union for
+     * which every type is compatible with at least one type on each side.
+     *
+     * Under normal circumstances (one type on each side) this means that you
+     * get whichever is the subtype, or nothing.
      *
      * @param {_Union} union
+     * @param {(name: string) => string[]} resolver
      * @returns {_Union}
      */
-    intersection(union) {
+    intersection(union, resolver) {
         let n = new _Union()
-        Object.keys(this.uniqueTypes).forEach(
-            t => {
-                if(union.uniqueTypes[t]) {
-                    let tv = this.uniqueTypes[t].intersection(union.uniqueTypes[t])
+        Object.values(this.uniqueTypes).forEach(
+            v => Object.values(union.uniqueTypes).filter(
+                uv => !!uv.compliesWith(v, resolver)
+            ).forEach(
+                uv => {
+                    let tv = v.intersection(uv)
                     if(tv) {
                         n.addType(tv)
                     }
                 }
-            }
+            )
+        )
+        Object.values(union.uniqueTypes).forEach(
+            v => Object.values(this.uniqueTypes).filter(
+                uv => !!uv.compliesWith(v, resolver)
+            ).forEach(
+                uv => {
+                    let tv = v.intersection(uv)
+                    if(tv) {
+                        n.addType(tv)
+                    }
+                }
+            )
         )
         return n
     }
+
     /**
      * @type {string} Represents best expression of the object, rather than
      * simply its type signature.
@@ -264,6 +222,7 @@ export default class _Union {
             return this.types.join(" | ")
         }
     }
+
     /**
      * Adds a known value
      *
