@@ -410,7 +410,10 @@ export default class Context {
                     if(a.not) {
                         this.ns[a.symbol] = this.ns[a.symbol].difference(a.type)
                     } else {
-                        this.ns[a.symbol] = this.ns[a.symbol].intersection(a.type)
+                        this.ns[a.symbol] = this.ns[a.symbol].intersection(
+                            a.type,
+                            name => this.compliantNames(name)
+                        )
                     }
                 }
             }

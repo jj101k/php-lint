@@ -133,7 +133,7 @@ export default class _Union extends _Set {
     }
 
     /**
-     *
+     * Returns this & ~union
      * @param {_Union} union
      * @returns {_Union}
      */
