@@ -1,4 +1,4 @@
-import _Union from "./union"
+import {_Union} from "./set"
 /**
  * A representation of any type
  */

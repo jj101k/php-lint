@@ -2,7 +2,7 @@ import _Any from "./any"
 import _Core from "./core"
 import _Mixed from "./mixed"
 import _Set from "./set"
-import _Union from "./union"
+import {_Union} from "./set"
 /**
  * A function/closure
  */
