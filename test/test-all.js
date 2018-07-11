@@ -1,4 +1,4 @@
-var phpLint = require("../src/index");
+var phpLint = require("../dist/index").default;
 var glob = require("glob");
 
 var good_code = "<?php $foo = '1234'; echo $foo;";

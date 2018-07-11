@@ -1,21 +1,26 @@
 {
   "name": "php-lint",
-  "version": "0.3.2",
+  "version": "0.4.0",
   "description": "Utility for linting PHP scripts",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "dependencies": {
     "eximport": "git+https://github.com/jj101k/eximport.git",
-    "glob": "^7.1.1",
     "node-getopt": "^0.2.3",
     "php-parser": "^2.2.0",
-    "test": "^0.6.0"
+    "php-parser": "^3.0.0-alpha2"
   },
   "bin": {
     "php-lint": "src/bin.js"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "glob": "^7.1.2",
+    "test": "^0.6.0",
+    "typescript": "^2.9.2"
+  },
   "scripts": {
-    "test": "node test/test-all.js"
+    "test": "node test/test-all.js",
+    "build": "tsc"
   },
   "repository": {
     "type": "git",
