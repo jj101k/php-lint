@@ -1,53 +1,100 @@
+import * as phpParser from "php-parser"
+import * as fs from "fs"
+
+import Lint from "./lint"
+const parser = new phpParser.default({
+    parser: {
+        debug: false,
+        extractDoc: true,
+    },
+    ast: {
+        withPositions: true,
+    },
+})
 /**
  * The top-level lint support
  */
 export default class PHPLint {
+    private _lint: Lint|null = null
+
+    get lint(): Lint {
+        if(!this._lint) {
+            this._lint = new Lint()
+        }
+        return this._lint
+    }
+
     /**
      * Checks the file
+     *
+     * @param depth How far recursion has gone. Very deep code may be skipped.
      */
-    static checkFile(
+    checkFile(
         filename: string,
         depth: number = 0,
         working_directory: string|null = null
     ): Promise<boolean|null> {
-        return new Promise(resolve => resolve(null))
+        return new Promise((resolve, reject) => {
+            fs.readFile(filename, "utf8", (err, data) => {
+                if(err) {
+                    reject(err)
+                } else {
+                    try {
+                        const tree = parser.parseCode(data)
+                        resolve(this.lint.checkTree(tree))
+                    } catch(e) {
+                        reject(e)
+                    }
+                }
+            })
+        })
     }
     /**
      * Checks the file and maybe throws (or warns)
+     *
+     * @param depth How far recursion has gone. Very deep code may be skipped.
      * @throws
      */
-    static checkFileSync(
+    checkFileSync(
         filename: string,
         throw_on_error: boolean = true,
         depth: number = 0,
-        working_directory: boolean|null = null
+        working_directory: string|null = null
     ): boolean|null {
-        return null
+        const data = fs.readFileSync(filename, "utf8")
+        const tree = parser.parseCode(data)
+        return this.lint.checkTree(tree)
     }
     /**
      * Checks the code
+     *
+     * @param depth How far recursion has gone. Very deep code may be skipped.
      */
-    static checkSourceCode(
+    checkSourceCode(
         code: string,
         depth: number = 0
     ): Promise<boolean|null> {
-        return new Promise(resolve => resolve(null))
+        return new Promise((resolve, reject) => {
+            try {
+                const tree = parser.parseCode(code)
+                resolve(this.lint.checkTree(tree))
+            } catch(e) {
+                reject(e)
+            }
+        })
     }
     /**
      * Checks the code and maybe throws (or warns)
+     *
+     * @param depth How far recursion has gone. Very deep code may be skipped.
      * @throws
      */
-    static checkSourceCodeSync(
+    checkSourceCodeSync(
         code: string,
         throw_on_error: boolean = true,
         depth: number = 0
     ): boolean|null {
-        return null
-    }
-    /**
-     * Resets any global state, eg. if you're checking multiple different projects
-     */
-    static resetGlobalState(): PHPLint {
-        return this
+        const tree = parser.parseCode(code)
+        return this.lint.checkTree(tree)
     }
 }
