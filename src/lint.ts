@@ -1,6 +1,8 @@
-import * as phpParser from "php-parser"
+import { NodeTypes } from "./content/ast";
+import { forNode } from "./content/considered";
 export default class Lint {
-    checkTree(tree: phpParser.Program): boolean {
+    checkTree(tree: NodeTypes.Program): boolean {
+        forNode(tree).check()
         return true
     }
 }

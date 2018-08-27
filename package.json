@@ -5,8 +5,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "dependencies": {
-    "eximport": "git+https://github.com/jj101k/eximport.git",
-    "node-getopt": "^0.2.3",
+    "fast-sha256": "^1.1.0",
     "php-parser": "^3.0.0-alpha2"
   },
   "bin": {
@@ -19,7 +18,6 @@
     "typescript": "^2.9.2"
   },
   "scripts": {
-    "test": "node test/test-all.js",
     "build": "tsc"
   },
   "repository": {

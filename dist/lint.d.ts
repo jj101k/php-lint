@@ -1,4 +1,4 @@
-import * as phpParser from "php-parser";
+import { NodeTypes } from "./content/ast";
 export default class Lint {
-    checkTree(tree: phpParser.Program): boolean;
+    checkTree(tree: NodeTypes.Program): boolean;
 }

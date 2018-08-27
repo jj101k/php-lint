@@ -40,7 +40,7 @@ export default class PHPLint {
                     reject(err)
                 } else {
                     try {
-                        const tree = parser.parseCode(data)
+                        const tree: any = parser.parseCode(data)
                         resolve(this.lint.checkTree(tree))
                     } catch(e) {
                         reject(e)
@@ -62,7 +62,7 @@ export default class PHPLint {
         working_directory: string|null = null
     ): boolean|null {
         const data = fs.readFileSync(filename, "utf8")
-        const tree = parser.parseCode(data)
+        const tree: any = parser.parseCode(data)
         return this.lint.checkTree(tree)
     }
     /**
@@ -76,7 +76,7 @@ export default class PHPLint {
     ): Promise<boolean|null> {
         return new Promise((resolve, reject) => {
             try {
-                const tree = parser.parseCode(code)
+                const tree: any = parser.parseCode(code)
                 resolve(this.lint.checkTree(tree))
             } catch(e) {
                 reject(e)
@@ -94,7 +94,7 @@ export default class PHPLint {
         throw_on_error: boolean = true,
         depth: number = 0
     ): boolean|null {
-        const tree = parser.parseCode(code)
+        const tree: any = parser.parseCode(code)
         return this.lint.checkTree(tree)
     }
 }

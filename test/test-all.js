@@ -1,4 +1,4 @@
-var phpLint = require("../dist/index").default;
+const PHPLint = require("../dist/index").default;
 var glob = require("glob");
 
 var good_code = "<?php $foo = '1234'; echo $foo;";
@@ -13,26 +13,26 @@ var bug_files = glob.sync('test/bug/*.php')
 exports["test async"] = (assert, done) => {
     return Promise.all(
         [
-            phpLint.resetGlobalState().checkSourceCode(good_code).then(
+            (new PHPLint()).checkSourceCode(good_code).then(
                 result => assert.ok(result, "Valid code looks ok")
             ),
-            phpLint.resetGlobalState().checkSourceCode(bad_code).catch(
+            (new PHPLint()).checkSourceCode(bad_code).catch(
                 error => assert.ok(error, "Invalid code looks bad")
             ),
         ].concat(
-            bad_files.map(bad_file => phpLint.resetGlobalState().checkFile(bad_file, 0, null).catch(
+            bad_files.map(bad_file => (new PHPLint()).checkFile(bad_file, 0, null).catch(
                 error => assert.ok(error, `Invalid file ${bad_file} looks bad`)
             ))
         ).concat(
-            skip_files.map(skip_file => phpLint.resetGlobalState().checkFile(skip_file, 0, null).catch(
+            skip_files.map(skip_file => (new PHPLint()).checkFile(skip_file, 0, null).catch(
                 error => assert.ok(error, `Skip ${skip_file}`)
             ))
         ).concat(
-            bug_files.map(file => phpLint.resetGlobalState().checkFile(file, 0, null).then(
+            bug_files.map(file => (new PHPLint()).checkFile(file, 0, null).then(
                 result => assert.ok(result, `Valid file ${file} looks ok`)
             ))
         ).concat(
-            good_files.map(good_file => phpLint.resetGlobalState().checkFile(good_file, 0, null).then(
+            good_files.map(good_file => (new PHPLint()).checkFile(good_file, 0, null).then(
                 result => assert.ok(result, `Valid file ${good_file} looks ok`)
             ))
         )
@@ -41,24 +41,24 @@ exports["test async"] = (assert, done) => {
     });
 };
 exports["test sync"] = (assert) => {
-    var result = phpLint.resetGlobalState().checkSourceCodeSync(good_code);
+    var result = (new PHPLint()).checkSourceCodeSync(good_code);
     assert.ok(result, "Valid code looks ok");
     good_files.forEach(good_file => assert.ok(
-        phpLint.resetGlobalState().checkFileSync(good_file),
+        (new PHPLint()).checkFileSync(good_file),
         `Valid file ${good_file} looks ok`
     ));
     bug_files.forEach(file => assert.ok(
-        phpLint.resetGlobalState().checkFileSync(file),
+        (new PHPLint()).checkFileSync(file),
         `Valid file ${file} looks ok`
     ));
     assert.throws(() => {
-        var result = phpLint.resetGlobalState().checkSourceCodeSync(bad_code);
+        var result = (new PHPLint()).checkSourceCodeSync(bad_code);
     }, "Invalid code looks bad");
     bad_files.forEach(bad_file => assert.throws(() => {
-        var result = phpLint.resetGlobalState().checkFileSync(bad_file);
+        var result = (new PHPLint()).checkFileSync(bad_file);
     }, `Invalid file ${bad_file} looks bad`));
     skip_files.forEach(skip_file => assert.throws(() => {
-        var result = phpLint.resetGlobalState().checkFileSync(skip_file);
+        var result = (new PHPLint()).checkFileSync(skip_file);
     }, `Skip ${skip_file}`));
 };
 
