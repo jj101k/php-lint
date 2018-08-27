@@ -29,15 +29,24 @@ export declare namespace NodeTypes {
         arguments: Node[];
     };
     type AnyExpression = AnyNode;
+    type AnyLiteral = AnyExpression & {
+        raw: string;
+        value: Node | string | number | boolean | null;
+    };
     type Error = {
         message: string;
         line: number;
         token: number | string;
-        expected: string | Array<any>;
+        expected: string | any[];
     };
     type Identifier = AnyNode & {
         name: string;
         resolution: string;
+    };
+    type Array = AnyExpression & {
+        kind: "array";
+        items: Entry | Expression | Variable;
+        shortForm: boolean;
     };
     type Assign = AnyStatement & {
         kind: "assign";
@@ -59,9 +68,24 @@ export declare namespace NodeTypes {
         isAbstract: boolean;
         isFinal: boolean;
     };
+    type Closure = AnyStatement & {
+        kind: "closure";
+        arguments: Parameter[];
+        uses: Variable[];
+        type: Identifier;
+        byref: boolean;
+        nullable: boolean;
+        body: Block | null;
+        isStatic: boolean;
+    };
     type Echo = AnySys & {
         kind: "echo";
         shortForm: boolean;
+    };
+    type Entry = AnyNode & {
+        kind: "entry";
+        key: Node | null;
+        value: Node;
     };
     type If = AnyStatement & {
         kind: "if";
@@ -89,6 +113,14 @@ export declare namespace NodeTypes {
         name: string;
         withBrackets: boolean;
     };
+    type New = AnyStatement & {
+        kind: "new";
+        what: Identifier | Variable | Class;
+        arguments: Expression[];
+    };
+    type Number = AnyLiteral & {
+        kind: "number";
+    };
     type Parameter = AnyDeclaration & {
         kind: "parameter";
         type: Identifier | null;
@@ -103,6 +135,11 @@ export declare namespace NodeTypes {
         comments: Comment[];
         tokens: string[];
     };
+    type String = AnyLiteral & {
+        kind: "string";
+        unicode: boolean;
+        isDoubleQuote: boolean;
+    };
     type Variable = AnyExpression & {
         kind: "variable";
         name: string | Node;
@@ -112,5 +149,5 @@ export declare namespace NodeTypes {
     type Declaration = Class | Function | Parameter;
     type Expression = Variable;
     type Block = Program | Namespace;
-    type Node = Block | Declaration | Expression | Assign | Echo | Include | If | Call;
+    type Node = Block | Declaration | Expression | Assign | Echo | Include | If | Call | String | Number | Closure | New | Array;
 }
