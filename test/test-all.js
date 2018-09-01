@@ -1,65 +1,77 @@
-const PHPLint = require("../dist/index").default;
-var glob = require("glob");
+const PHPLint = require("../dist/index").default
+const glob = require("glob")
 
-var good_code = "<?php $foo = '1234'; echo $foo;";
-var good_files = glob.sync('test/good/*.php');
-var bad_code = "<?php echo $foo;";
-var bad_files = glob.sync('test/bad/*.php');
+const good_code = "<?php $foo = '1234'; echo $foo;"
+const good_files = glob.sync("test/good/*.php")
+const bad_code = "<?php echo $foo;"
+const bad_files = glob.sync("test/bad/*.php")
 
-var skip_files = glob.sync('test/skip/*.php')
-var bug_files = glob.sync('test/bug/*.php')
+const skip_files = glob.sync("test/skip/*.php")
+const bug_files = glob.sync("test/bug/*.php")
 
 
 exports["test async"] = (assert, done) => {
     return Promise.all(
         [
-            (new PHPLint()).checkSourceCode(good_code).then(
+            new PHPLint().checkSourceCode(good_code).then(
                 result => assert.ok(result, "Valid code looks ok")
             ),
-            (new PHPLint()).checkSourceCode(bad_code).catch(
+            new PHPLint().checkSourceCode(bad_code).catch(
                 error => assert.ok(error, "Invalid code looks bad")
             ),
         ].concat(
-            bad_files.map(bad_file => (new PHPLint()).checkFile(bad_file, 0, null).catch(
-                error => assert.ok(error, `Invalid file ${bad_file} looks bad`)
-            ))
+            bad_files.map(
+                bad_file => new PHPLint().checkFile(bad_file, 0, null).catch(
+                    error => assert.ok(error, `Invalid file ${bad_file} looks bad`)
+                )
+            )
         ).concat(
-            skip_files.map(skip_file => (new PHPLint()).checkFile(skip_file, 0, null).catch(
-                error => assert.ok(error, `Skip ${skip_file}`)
-            ))
+            skip_files.map(
+                skip_file => new PHPLint().checkFile(skip_file, 0, null).catch(
+                    error => assert.ok(error, `Skip ${skip_file}`)
+                )
+            )
         ).concat(
-            bug_files.map(file => (new PHPLint()).checkFile(file, 0, null).then(
-                result => assert.ok(result, `Valid file ${file} looks ok`)
-            ))
+            bug_files.map(
+                file => new PHPLint().checkFile(file, 0, null).then(
+                    result => assert.ok(result, `Valid file ${file} looks ok`)
+                )
+            )
         ).concat(
-            good_files.map(good_file => (new PHPLint()).checkFile(good_file, 0, null).then(
-                result => assert.ok(result, `Valid file ${good_file} looks ok`)
-            ))
+            good_files.map(
+                good_file => new PHPLint().checkFile(good_file, 0, null).then(
+                    result => assert.ok(result, `Valid file ${good_file} looks ok`)
+                )
+            )
         )
-    ).then(() => {
-        done();
-    });
-};
-exports["test sync"] = (assert) => {
-    var result = (new PHPLint()).checkSourceCodeSync(good_code);
-    assert.ok(result, "Valid code looks ok");
-    good_files.forEach(good_file => assert.ok(
-        (new PHPLint()).checkFileSync(good_file),
-        `Valid file ${good_file} looks ok`
-    ));
-    bug_files.forEach(file => assert.ok(
-        (new PHPLint()).checkFileSync(file),
-        `Valid file ${file} looks ok`
-    ));
-    assert.throws(() => {
-        var result = (new PHPLint()).checkSourceCodeSync(bad_code);
-    }, "Invalid code looks bad");
-    bad_files.forEach(bad_file => assert.throws(() => {
-        var result = (new PHPLint()).checkFileSync(bad_file);
-    }, `Invalid file ${bad_file} looks bad`));
-    skip_files.forEach(skip_file => assert.throws(() => {
-        var result = (new PHPLint()).checkFileSync(skip_file);
-    }, `Skip ${skip_file}`));
-};
+    ).then(done)
+}
+exports["test sync"] = assert => {
+    const result = new PHPLint().checkSourceCodeSync(good_code)
+    assert.ok(result, "Valid code looks ok")
 
-if (module == require.main) require('test').run(exports)
+    good_files.forEach(good_file => assert.ok(
+        new PHPLint().checkFileSync(good_file),
+        `Valid file ${good_file} looks ok`
+    ))
+    bug_files.forEach(file => assert.ok(
+        new PHPLint().checkFileSync(file),
+        `Valid file ${file} looks ok`
+    ))
+    assert.throws(
+        () => new PHPLint().checkSourceCodeSync(bad_code),
+        "Invalid code looks bad"
+    )
+    bad_files.forEach(bad_file => assert.throws(
+        () => new PHPLint().checkFileSync(bad_file),
+        `Invalid file ${bad_file} looks bad`
+    ))
+    skip_files.forEach(skip_file => assert.throws(
+        () => new PHPLint().checkFileSync(skip_file),
+        `Skip ${skip_file}`
+    ))
+}
+
+if(module == require.main) {
+    require("test").run(exports)
+}
