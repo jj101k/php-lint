@@ -7,7 +7,11 @@ export class Base extends Known.Base {
         this.node = node
     }
     check(): boolean {
-        console.log(`No checking supported for ${this.node.kind}`)
+        if(this.constructor === Base) {
+            console.log(`No checking supported for unrecognised node type ${this.node.kind}`)
+        } else {
+            console.log(`No checking supported for ${this.node.kind}`)
+        }
         return true
     }
 }

@@ -1,9 +1,9 @@
 import { Base } from "./base";
 import { NodeTypes } from "../ast";
 import { forNode } from "../considered";
-export class Echo extends Base {
-    protected node: NodeTypes.Echo
-    constructor(node: NodeTypes.Echo) {
+export class Isset extends Base {
+    protected node: NodeTypes.Isset
+    constructor(node: NodeTypes.Isset) {
         super(node)
         this.node = node
     }
@@ -11,7 +11,6 @@ export class Echo extends Base {
         this.node.arguments.forEach(
             n => forNode(n).check()
         )
-        // this.node.shortForm
         return true
     }
 }
