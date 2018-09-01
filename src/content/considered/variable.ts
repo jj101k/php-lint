@@ -7,6 +7,9 @@ export class Variable extends Base {
         this.node = node
     }
     check(): boolean {
+        // this.node.byref
+        // this.node.curly
+        // this.node.name
         return true
     }
 }

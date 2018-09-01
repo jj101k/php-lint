@@ -7,6 +7,8 @@ export class Namespace extends Base {
         this.node = node
     }
     check(): boolean {
+        // this.node.name
+        // this.node.withBrackets
         return true
     }
 }

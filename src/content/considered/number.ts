@@ -7,6 +7,8 @@ export class Number extends Base {
         this.node = node
     }
     check(): boolean {
+        // this.node.raw
+        // this.node.value
         return true
     }
 }
