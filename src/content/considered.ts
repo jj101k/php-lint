@@ -15,6 +15,7 @@ import { Number } from "./considered/number";
 import { Closure } from "./considered/closure";
 import { New } from "./considered/new";
 import { Array } from "./considered/array";
+import { Method } from "./considered/method";
 export { Base, Program, Echo, Function, Include };
 const byKind: {[kind: string]: typeof Base} = {
     array: Array,
@@ -26,6 +27,7 @@ const byKind: {[kind: string]: typeof Base} = {
     function: Function,
     if: If,
     include: Include,
+    method: Method,
     namespace: Namespace,
     new: New,
     number: Number,

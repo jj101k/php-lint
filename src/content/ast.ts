@@ -23,6 +23,7 @@ export namespace NodeTypes {
     export type If = AnyStatement & {kind: "if", test: Expression, body: Block, alternate: Block | If | null, shortForm: boolean}
     export type Function = AnyDeclaration & {kind: "function", arguments: Parameter[], type: Identifier, byref: boolean, nullable: boolean, body: Block | null}
     export type Include = AnyStatement & {kind: "include", target: Node, once: boolean, require: boolean}
+    export type Method = Function & {kind: "method", isAbstract: boolean, isFinal: boolean, isStatic: boolean, visibility: string}
     export type Namespace = AnyBlock & {kind: "namespace", name: string, withBrackets: boolean}
     export type New = AnyStatement & {kind: "new", what: Identifier | Variable | Class, arguments: Expression[]}
     export type Number = AnyLiteral & {kind: "number"}
@@ -31,7 +32,7 @@ export namespace NodeTypes {
     export type String = AnyLiteral & {kind: "string", unicode: boolean, isDoubleQuote: boolean}
     export type Variable = AnyExpression & {kind: "variable", name: string | Node, byref: boolean, curly: boolean}
 
-    type Declaration = Class | Function | Parameter
+    type Declaration = Class | Function | Parameter | Method
     type Expression = Variable
     type Block = Program | Namespace
     export type Node = Block | Declaration | Expression | Assign | Echo | Include | If | Call | String | Number | Closure | New | Array | Entry | Identifier
