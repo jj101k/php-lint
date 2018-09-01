@@ -1,18 +1,19 @@
 import { Base } from "./base";
 import { NodeTypes } from "../ast";
 import { forNode } from "../considered";
+import { Context } from "../../context";
 export class Method extends Base {
     protected node: NodeTypes.Method
     constructor(node: NodeTypes.Method) {
         super(node)
         this.node = node
     }
-    check(): boolean {
+    check(context: Context): boolean {
         this.node.arguments.forEach(
-            a => forNode(a).check()
+            a => forNode(a).check(context)
         )
         if(this.node.body) {
-            forNode(this.node.body).check()
+            forNode(this.node.body).check(context)
         }
         // this.node.byref
         // this.node.nullable
