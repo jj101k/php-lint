@@ -19,6 +19,7 @@
   },
   "scripts": {
     "build": "tsc",
+    "prepublish": "npm run build",
     "test": "node test/test-all.js"
   },
   "repository": {
