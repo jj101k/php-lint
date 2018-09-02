@@ -1,5 +1,5 @@
 import { Base } from "./base";
-import { forNode } from "../considered";
+import { Considered } from "../considered";
 import { NodeTypes } from "../ast";
 import { Context } from "../../context";
 export class Block extends Base {
@@ -10,7 +10,7 @@ export class Block extends Base {
     }
     check(context: Context): boolean {
         this.node.children.forEach(
-            child => forNode(child).check(context)
+            child => Considered.forNode(child).check(context)
         )
         return true
     }

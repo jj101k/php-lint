@@ -33,7 +33,7 @@ import { Parenthesis } from "./considered/parenthesis";
 import { Isset } from "./considered/isset";
 import { Unary } from "./considered/unary";
 import { Foreach } from "./considered/foreach";
-export { Base, Program, Echo, Function, Include };
+
 const byKind: {[kind: string]: typeof Base} = {
     array: Array,
     assign: Assign,
@@ -69,9 +69,13 @@ const byKind: {[kind: string]: typeof Base} = {
     unary: Unary,
     variable: Variable,
 }
-export function forNode(node: NodeTypes.Node): Base {
-    if(byKind[node.kind]) {
-        return new byKind[node.kind](node)
-    }
-    return new Base(node)
+export const Considered = {
+    Base: Base,
+    Program: Program,
+    forNode(node: NodeTypes.Node): Base {
+        if(byKind[node.kind]) {
+            return new byKind[node.kind](node)
+        }
+        return new Base(node)
+    },
 }

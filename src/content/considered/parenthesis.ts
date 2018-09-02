@@ -1,6 +1,6 @@
 import { Base } from "./base";
 import { NodeTypes } from "../ast";
-import { forNode } from "../considered";
+import { Considered } from "../considered";
 import { Context } from "../../context";
 export class Parenthesis extends Base {
     protected node: NodeTypes.Parenthesis
@@ -9,7 +9,7 @@ export class Parenthesis extends Base {
         this.node = node
     }
     check(context: Context): boolean {
-        forNode(this.node.inner).check(context)
+        Considered.forNode(this.node.inner).check(context)
         return true
     }
 }

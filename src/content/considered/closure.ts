@@ -1,6 +1,6 @@
 import { Base } from "./base";
 import { NodeTypes } from "../ast";
-import { forNode } from "../considered";
+import { Considered } from "../considered";
 import { Context } from "../../context";
 export class Closure extends Base {
     protected node: NodeTypes.Closure
@@ -10,14 +10,14 @@ export class Closure extends Base {
     }
     check(context: Context): boolean {
         this.node.arguments.forEach(
-            a => forNode(a).check(context)
+            a => Considered.forNode(a).check(context)
         )
-        forNode(this.node.body).check(context)
+        Considered.forNode(this.node.body).check(context)
         // this.node.byref
         // this.node.isStatic
         // this.node.nullable
         this.node.uses.forEach(
-            u => forNode(u).check(context)
+            u => Considered.forNode(u).check(context)
         )
         return true
     }

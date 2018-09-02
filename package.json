@@ -18,7 +18,8 @@
     "typescript": "^2.9.2"
   },
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "test": "node test/test-all.js"
   },
   "repository": {
     "type": "git",

@@ -1,6 +1,6 @@
 import { Base } from "./base";
 import { NodeTypes } from "../ast";
-import { forNode } from "../considered";
+import { Considered } from "../considered";
 import { Context } from "../../context";
 export class Foreach extends Base {
     protected node: NodeTypes.Foreach
@@ -9,13 +9,13 @@ export class Foreach extends Base {
         this.node = node
     }
     check(context: Context): boolean {
-        forNode(this.node.body).check(context)
+        Considered.forNode(this.node.body).check(context)
         if(this.node.key) {
-            forNode(this.node.key).check(context)
+            Considered.forNode(this.node.key).check(context)
         }
         // this.node.shortForm
-        forNode(this.node.source).check(context)
-        forNode(this.node.value).check(context)
+        Considered.forNode(this.node.source).check(context)
+        Considered.forNode(this.node.value).check(context)
         return true
     }
 }

@@ -1,6 +1,6 @@
 import { Base } from "./base";
 import { NodeTypes } from "../ast";
-import { forNode } from "../considered";
+import { Considered } from "../considered";
 import { Context } from "../../context";
 export class Include extends Base {
     protected node: NodeTypes.Include
@@ -11,7 +11,7 @@ export class Include extends Base {
     check(context: Context): boolean {
         // this.node.once
         // this.node.require
-        forNode(this.node.target).check(context)
+        Considered.forNode(this.node.target).check(context)
         return true
     }
 }

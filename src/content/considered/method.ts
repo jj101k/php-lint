@@ -1,6 +1,6 @@
 import { Base } from "./base";
 import { NodeTypes } from "../ast";
-import { forNode } from "../considered";
+import { Considered } from "../considered";
 import { Context } from "../../context";
 export class Method extends Base {
     protected node: NodeTypes.Method
@@ -10,10 +10,10 @@ export class Method extends Base {
     }
     check(context: Context): boolean {
         this.node.arguments.forEach(
-            a => forNode(a).check(context)
+            a => Considered.forNode(a).check(context)
         )
         if(this.node.body) {
-            forNode(this.node.body).check(context)
+            Considered.forNode(this.node.body).check(context)
         }
         // this.node.byref
         // this.node.nullable
