@@ -1,7 +1,7 @@
-import { Base } from "./base";
 import { NodeTypes } from "../ast";
-import { Considered } from "../considered";
 import { Context } from "../../context";
+import { forNode } from "./for-node";
+import { Base } from "./base";
 export class StaticLookup extends Base {
     protected node: NodeTypes.StaticLookup
     constructor(node: NodeTypes.StaticLookup) {
@@ -9,8 +9,8 @@ export class StaticLookup extends Base {
         this.node = node
     }
     check(context: Context): boolean {
-        Considered.forNode(this.node.what).check(context)
-        Considered.forNode(this.node.offset).check(context)
+        forNode(this.node.what).check(context)
+        forNode(this.node.offset).check(context)
         return true
     }
 }

@@ -1,7 +1,7 @@
-import { Base } from "./base";
 import { NodeTypes } from "../ast";
-import { Considered } from "../considered";
 import { Context } from "../../context";
+import { forNode } from "./for-node";
+import { Base } from "./base";
 export class Bin extends Base {
     protected node: NodeTypes.Bin
     constructor(node: NodeTypes.Bin) {
@@ -10,8 +10,8 @@ export class Bin extends Base {
     }
     check(context: Context): boolean {
         // this.node.type
-        Considered.forNode(this.node.left).check(context)
-        Considered.forNode(this.node.right).check(context)
+        forNode(this.node.left).check(context)
+        forNode(this.node.right).check(context)
         return true
     }
 }

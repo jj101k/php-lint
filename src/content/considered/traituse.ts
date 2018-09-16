@@ -1,7 +1,7 @@
-import { Base } from "./base";
 import { NodeTypes } from "../ast";
-import { Considered } from "../considered";
 import { Context } from "../../context";
+import { forNode } from "./for-node";
+import { Base } from "./base";
 export class TraitUse extends Base {
     protected node: NodeTypes.TraitUse
     constructor(node: NodeTypes.TraitUse) {
@@ -11,11 +11,11 @@ export class TraitUse extends Base {
     check(context: Context): boolean {
         if(this.node.adaptations) {
             this.node.adaptations.forEach(
-                a => Considered.forNode(a).check(context)
+                a => forNode(a).check(context)
             )
         }
         this.node.traits.forEach(
-            t => Considered.forNode(t).check(context)
+            t => forNode(t).check(context)
         )
         return true
     }

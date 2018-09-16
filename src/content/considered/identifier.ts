@@ -1,7 +1,7 @@
-import { Base } from "./base";
 import { NodeTypes } from "../ast";
 import { Considered } from "../considered";
 import { Context } from "../../context";
+import { Base } from "./base";
 export class Identifier extends Base {
     protected node: NodeTypes.Identifier
     constructor(node: NodeTypes.Identifier) {

@@ -1,4 +1,3 @@
-import { NodeTypes } from "./ast";
 import { Array } from "./considered/array";
 import { Assign } from "./considered/assign";
 import { Base } from "./considered/base";
@@ -33,6 +32,7 @@ import { Parenthesis } from "./considered/parenthesis";
 import { Isset } from "./considered/isset";
 import { Unary } from "./considered/unary";
 import { Foreach } from "./considered/foreach";
+import { forNode } from "./considered/for-node";
 
 const byKind: {[kind: string]: typeof Base} = {
     array: Array,
@@ -70,12 +70,8 @@ const byKind: {[kind: string]: typeof Base} = {
     variable: Variable,
 }
 export const Considered = {
+    byKind: byKind,
+    forNode: forNode,
     Base: Base,
     Program: Program,
-    forNode(node: NodeTypes.Node): Base {
-        if(byKind[node.kind]) {
-            return new byKind[node.kind](node)
-        }
-        return new Base(node)
-    },
 }

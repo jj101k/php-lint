@@ -1,7 +1,8 @@
 import { Context } from "../../context";
 import { NodeTypes } from "../ast";
-import { Considered } from "../considered";
-export class Array extends Considered.Base {
+import { forNode } from "./for-node";
+import { Base } from "./base";
+export class Array extends Base {
     protected node: NodeTypes.Array
     constructor(node: NodeTypes.Array) {
         super(node)
@@ -9,7 +10,7 @@ export class Array extends Considered.Base {
     }
     check(context: Context): boolean {
         this.node.items.forEach(
-            i => Considered.forNode(i).check(context)
+            i => forNode(i).check(context)
         )
         return true
     }

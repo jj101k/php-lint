@@ -1,6 +1,6 @@
-import { Base } from "./base";
 import { NodeTypes } from "../ast";
 import { Context } from "../../context";
+import { Base } from "./base";
 export class Boolean extends Base {
     protected node: NodeTypes.Boolean
     constructor(node: NodeTypes.Boolean) {

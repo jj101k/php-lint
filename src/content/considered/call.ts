@@ -1,7 +1,7 @@
-import { Base } from "./base";
 import { NodeTypes } from "../ast";
-import { Considered } from "../considered";
 import { Context } from "../../context";
+import { forNode } from "./for-node";
+import { Base } from "./base";
 export class Call extends Base {
     protected node: NodeTypes.Call
     constructor(node: NodeTypes.Call) {
@@ -10,10 +10,10 @@ export class Call extends Base {
     }
     check(context: Context): boolean {
         if(this.node.what) {
-            Considered.forNode(this.node.what).check(context)
+            forNode(this.node.what).check(context)
         }
         this.node.arguments.forEach(
-            a => Considered.forNode(a).check(context)
+            a => forNode(a).check(context)
         )
         return true
     }

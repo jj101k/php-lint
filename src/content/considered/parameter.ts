@@ -1,7 +1,7 @@
-import { Base } from "./base";
 import { NodeTypes } from "../ast";
-import { Considered } from "../considered";
 import { Context } from "../../context";
+import { forNode } from "./for-node";
+import { Base } from "./base";
 export class Parameter extends Base {
     protected node: NodeTypes.Parameter
     constructor(node: NodeTypes.Parameter) {
@@ -13,10 +13,10 @@ export class Parameter extends Base {
         // this.node.name
         // this.node.nullable
         if(this.node.type) {
-            Considered.forNode(this.node.type).check(context)
+            forNode(this.node.type).check(context)
         }
         if(this.node.value) {
-            Considered.forNode(this.node.value).check(context)
+            forNode(this.node.value).check(context)
         }
         // this.node.variadic
         return true

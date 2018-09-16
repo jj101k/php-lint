@@ -1,7 +1,7 @@
-import { Base } from "./base";
 import { NodeTypes } from "../ast";
-import { Considered } from "../considered";
 import { Context } from "../../context";
+import { forNode } from "./for-node";
+import { Base } from "./base";
 export class Unary extends Base {
     protected node: NodeTypes.Unary
     constructor(node: NodeTypes.Unary) {
@@ -10,7 +10,7 @@ export class Unary extends Base {
     }
     check(context: Context): boolean {
         // this.node.type
-        Considered.forNode(this.node.what).check(context)
+        forNode(this.node.what).check(context)
         return true
     }
 }
