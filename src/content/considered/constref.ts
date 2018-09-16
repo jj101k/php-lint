@@ -1,7 +1,8 @@
 import { NodeTypes } from "../ast";
 import { Context } from "../../context";
 import { Base } from "./base";
-export class ConstRef extends Base {
+import { byKind } from "./for-node";
+class ConstRef extends Base {
     protected node: NodeTypes.ConstRef
     constructor(node: NodeTypes.ConstRef) {
         super(node)
@@ -12,3 +13,4 @@ export class ConstRef extends Base {
         return true
     }
 }
+byKind.constref = ConstRef

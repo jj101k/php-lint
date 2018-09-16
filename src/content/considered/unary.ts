@@ -1,8 +1,8 @@
 import { NodeTypes } from "../ast";
 import { Context } from "../../context";
-import { forNode } from "./for-node";
+import { forNode, byKind } from "./for-node";
 import { Base } from "./base";
-export class Unary extends Base {
+class Unary extends Base {
     protected node: NodeTypes.Unary
     constructor(node: NodeTypes.Unary) {
         super(node)
@@ -14,3 +14,4 @@ export class Unary extends Base {
         return true
     }
 }
+byKind.unary = Unary

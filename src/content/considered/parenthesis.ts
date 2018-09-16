@@ -1,8 +1,8 @@
 import { NodeTypes } from "../ast";
 import { Context } from "../../context";
-import { forNode } from "./for-node";
+import { forNode, byKind } from "./for-node";
 import { Base } from "./base";
-export class Parenthesis extends Base {
+class Parenthesis extends Base {
     protected node: NodeTypes.Parenthesis
     constructor(node: NodeTypes.Parenthesis) {
         super(node)
@@ -13,3 +13,4 @@ export class Parenthesis extends Base {
         return true
     }
 }
+byKind.parenthesis = Parenthesis

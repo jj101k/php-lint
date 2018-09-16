@@ -1,7 +1,8 @@
 import { NodeTypes } from "../ast";
 import { Context } from "../../context";
 import { Base } from "./base";
-export class Return extends Base {
+import { byKind } from "./for-node";
+class Return extends Base {
     protected node: NodeTypes.Return
     constructor(node: NodeTypes.Return) {
         super(node)
@@ -13,3 +14,4 @@ export class Return extends Base {
         return true
     }
 }
+byKind.return = Return

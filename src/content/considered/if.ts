@@ -1,7 +1,6 @@
 import { NodeTypes } from "../ast";
-import { Considered } from "../considered";
 import { Context } from "../../context";
-import { forNode } from "./for-node";
+import { forNode, byKind } from "./for-node";
 import { Base } from "./base";
 export class If extends Base {
     protected node: NodeTypes.If
@@ -19,3 +18,4 @@ export class If extends Base {
         return true
     }
 }
+byKind.if = If

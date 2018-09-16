@@ -1,8 +1,8 @@
 import { NodeTypes } from "../ast";
 import { Context } from "../../context";
-import { forNode } from "./for-node";
+import { forNode, byKind } from "./for-node";
 import { Base } from "./base";
-export class TraitUse extends Base {
+class TraitUse extends Base {
     protected node: NodeTypes.TraitUse
     constructor(node: NodeTypes.TraitUse) {
         super(node)
@@ -20,3 +20,4 @@ export class TraitUse extends Base {
         return true
     }
 }
+byKind.traituse = TraitUse

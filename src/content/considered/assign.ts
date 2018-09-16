@@ -1,8 +1,8 @@
 import { NodeTypes } from "../ast";
 import { Context } from "../../context";
-import { forNode } from "./for-node";
+import { forNode, byKind } from "./for-node";
 import { Base } from "./base";
-export class Assign extends Base {
+class Assign extends Base {
     protected node: NodeTypes.Assign
     constructor(node: NodeTypes.Assign) {
         super(node)
@@ -14,3 +14,4 @@ export class Assign extends Base {
         return true
     }
 }
+byKind.assign = Assign

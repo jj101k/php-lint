@@ -1,8 +1,8 @@
 import { NodeTypes } from "../ast";
 import { Context } from "../../context";
-import { forNode } from "./for-node";
+import { forNode, byKind } from "./for-node";
 import { Base } from "./base";
-export class Program extends Base {
+class Program extends Base {
     protected node: NodeTypes.Program
     constructor(node: NodeTypes.Program) {
         super(node)
@@ -15,3 +15,4 @@ export class Program extends Base {
         return true
     }
 }
+byKind.program = Program

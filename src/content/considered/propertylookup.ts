@@ -1,8 +1,8 @@
 import { NodeTypes } from "../ast";
 import { Context } from "../../context";
-import { forNode } from "./for-node";
+import { forNode, byKind } from "./for-node";
 import { Base } from "./base";
-export class PropertyLookup extends Base {
+class PropertyLookup extends Base {
     protected node: NodeTypes.PropertyLookup
     constructor(node: NodeTypes.PropertyLookup) {
         super(node)
@@ -14,3 +14,4 @@ export class PropertyLookup extends Base {
         return true
     }
 }
+byKind.propertylookup = PropertyLookup

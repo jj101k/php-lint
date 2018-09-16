@@ -1,7 +1,8 @@
 import { NodeTypes } from "../ast";
 import { Context } from "../../context";
 import { Base } from "./base";
-export class Namespace extends Base {
+import { byKind } from "./for-node";
+class Namespace extends Base {
     protected node: NodeTypes.Namespace
     constructor(node: NodeTypes.Namespace) {
         super(node)
@@ -13,3 +14,4 @@ export class Namespace extends Base {
         return true
     }
 }
+byKind.namespace = Namespace

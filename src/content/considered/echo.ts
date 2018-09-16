@@ -1,8 +1,8 @@
 import { NodeTypes } from "../ast";
 import { Context } from "../../context";
-import { forNode } from "./for-node";
+import { forNode, byKind } from "./for-node";
 import { Base } from "./base";
-export class Echo extends Base {
+class Echo extends Base {
     protected node: NodeTypes.Echo
     constructor(node: NodeTypes.Echo) {
         super(node)
@@ -16,3 +16,4 @@ export class Echo extends Base {
         return true
     }
 }
+byKind.echo = Echo

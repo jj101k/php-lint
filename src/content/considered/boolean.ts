@@ -1,7 +1,8 @@
 import { NodeTypes } from "../ast";
 import { Context } from "../../context";
 import { Base } from "./base";
-export class Boolean extends Base {
+import { byKind } from "./for-node";
+class Boolean extends Base {
     protected node: NodeTypes.Boolean
     constructor(node: NodeTypes.Boolean) {
         super(node)
@@ -13,3 +14,4 @@ export class Boolean extends Base {
         return true
     }
 }
+byKind.boolean = Boolean

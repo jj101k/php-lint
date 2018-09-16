@@ -1,8 +1,8 @@
 import { NodeTypes } from "../ast";
 import { Context } from "../../context";
-import { forNode } from "./for-node";
+import { forNode, byKind } from "./for-node";
 import { Base } from "./base";
-export class Foreach extends Base {
+class Foreach extends Base {
     protected node: NodeTypes.Foreach
     constructor(node: NodeTypes.Foreach) {
         super(node)
@@ -19,3 +19,4 @@ export class Foreach extends Base {
         return true
     }
 }
+byKind.foreach = Foreach

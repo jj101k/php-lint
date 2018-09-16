@@ -1,8 +1,8 @@
 import { NodeTypes } from "../ast";
 import { Context } from "../../context";
-import { forNode } from "./for-node";
+import { forNode, byKind } from "./for-node";
 import { Base } from "./base";
-export class Include extends Base {
+class Include extends Base {
     protected node: NodeTypes.Include
     constructor(node: NodeTypes.Include) {
         super(node)
@@ -15,3 +15,4 @@ export class Include extends Base {
         return true
     }
 }
+byKind.include = Include

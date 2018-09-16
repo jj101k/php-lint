@@ -1,8 +1,8 @@
 import { NodeTypes } from "../ast";
 import { Context } from "../../context";
-import { forNode } from "./for-node";
+import { forNode, byKind } from "./for-node";
 import { Base } from "./base";
-export class StaticLookup extends Base {
+class StaticLookup extends Base {
     protected node: NodeTypes.StaticLookup
     constructor(node: NodeTypes.StaticLookup) {
         super(node)
@@ -14,3 +14,4 @@ export class StaticLookup extends Base {
         return true
     }
 }
+byKind.staticlookup = StaticLookup

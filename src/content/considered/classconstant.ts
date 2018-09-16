@@ -1,8 +1,8 @@
 import { NodeTypes } from "../ast";
 import { Context } from "../../context";
-import { forNode } from "./for-node";
+import { forNode, byKind } from "./for-node";
 import { Base } from "./base";
-export class ClassConstant extends Base {
+class ClassConstant extends Base {
     protected node: NodeTypes.ClassConstant
     constructor(node: NodeTypes.ClassConstant) {
         super(node)
@@ -18,3 +18,4 @@ export class ClassConstant extends Base {
         return true
     }
 }
+byKind.classconstant = ClassConstant

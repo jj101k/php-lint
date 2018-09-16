@@ -1,8 +1,8 @@
 import { NodeTypes } from "../ast";
 import { Context } from "../../context";
-import { forNode } from "./for-node";
+import { forNode, byKind } from "./for-node";
 import { Base } from "./base";
-export class Isset extends Base {
+class Isset extends Base {
     protected node: NodeTypes.Isset
     constructor(node: NodeTypes.Isset) {
         super(node)
@@ -15,3 +15,4 @@ export class Isset extends Base {
         return true
     }
 }
+byKind.isset = Isset

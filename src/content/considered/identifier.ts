@@ -1,8 +1,8 @@
 import { NodeTypes } from "../ast";
-import { Considered } from "../considered";
 import { Context } from "../../context";
 import { Base } from "./base";
-export class Identifier extends Base {
+import { byKind } from "./for-node";
+class Identifier extends Base {
     protected node: NodeTypes.Identifier
     constructor(node: NodeTypes.Identifier) {
         super(node)
@@ -14,3 +14,4 @@ export class Identifier extends Base {
         return true
     }
 }
+byKind.identifier = Identifier

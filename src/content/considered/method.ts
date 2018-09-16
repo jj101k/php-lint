@@ -1,8 +1,8 @@
 import { NodeTypes } from "../ast";
 import { Context } from "../../context";
-import { forNode } from "./for-node";
+import { forNode, byKind } from "./for-node";
 import { Base } from "./base";
-export class Method extends Base {
+class Method extends Base {
     protected node: NodeTypes.Method
     constructor(node: NodeTypes.Method) {
         super(node)
@@ -24,3 +24,4 @@ export class Method extends Base {
         return true
     }
 }
+byKind.method = Method

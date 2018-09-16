@@ -1,8 +1,8 @@
 import { Context } from "../../context";
 import { NodeTypes } from "../ast";
-import { forNode } from "./for-node";
+import { forNode, byKind } from "./for-node";
 import { Base } from "./base";
-export class Array extends Base {
+class Array extends Base {
     protected node: NodeTypes.Array
     constructor(node: NodeTypes.Array) {
         super(node)
@@ -15,3 +15,4 @@ export class Array extends Base {
         return true
     }
 }
+byKind.array = Array

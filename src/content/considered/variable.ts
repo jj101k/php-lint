@@ -1,7 +1,8 @@
 import { NodeTypes } from "../ast";
 import { Context } from "../../context";
 import { Base } from "./base";
-export class Variable extends Base {
+import { byKind } from "./for-node";
+class Variable extends Base {
     protected node: NodeTypes.Variable
     constructor(node: NodeTypes.Variable) {
         super(node)
@@ -14,3 +15,4 @@ export class Variable extends Base {
         return true
     }
 }
+byKind.variable = Variable
