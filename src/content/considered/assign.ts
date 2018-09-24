@@ -9,8 +9,11 @@ class Assign extends Base {
         this.node = node
     }
     check(context: Context): boolean {
+        const was_assigning = context.assigning
+        context.assigning = true
         forNode(this.node.left).check(context)
         forNode(this.node.right).check(context)
+        context.assigning = was_assigning
         return true
     }
 }
