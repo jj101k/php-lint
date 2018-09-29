@@ -20,12 +20,14 @@ export class Variable extends Base {
         }
     }
     check(context: Context): boolean {
-        // this.node.byref
         // this.node.curly
         if(this.name) {
             if(context.assigning) {
                 context.set(this.name, new Known())
             } else {
+                if(this.node.byref && !context.has(this.name)) {
+                    context.set(this.name, new Known())
+                }
                 context.assert(
                     context.has(this.name),
                     `Unassigned variable ${this.name}`
