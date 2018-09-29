@@ -2,12 +2,12 @@ const PHPLint = require("../dist/index").default
 const glob = require("glob")
 
 const good_code = "<?php $foo = '1234'; echo $foo;"
-const good_files = glob.sync("test/good/*.php")
+const good_files = glob.sync("test/good/*.php").sort()
 const bad_code = "<?php echo $foo;"
-const bad_files = glob.sync("test/bad/*.php")
+const bad_files = glob.sync("test/bad/*.php").sort()
 
-const skip_files = glob.sync("test/skip/*.php")
-const bug_files = glob.sync("test/bug/*.php")
+const skip_files = glob.sync("test/skip/*.php").sort()
+const bug_files = glob.sync("test/bug/*.php").sort()
 
 
 exports["test async"] = (assert, done) => {
