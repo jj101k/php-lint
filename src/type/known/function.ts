@@ -1,5 +1,8 @@
 import { Known } from "../known";
 
+/**
+ * An argument
+ */
 export class Argument {
     public byRef: boolean
     public type: Known | null
@@ -9,6 +12,9 @@ export class Argument {
     }
 }
 
+/**
+ * A function
+ */
 export class Function extends Known {
     public args: Array<Argument>
     public returnType: Known | null
