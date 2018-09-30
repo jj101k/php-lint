@@ -9,16 +9,19 @@ class Closure extends Base {
         this.node = node
     }
     check(context: Context): boolean {
+        const inner_context = new Context()
         this.node.arguments.forEach(
-            a => forNode(a).check(context)
+            a => forNode(a).check(inner_context)
         )
-        forNode(this.node.body).check(context)
         // this.node.byref
         // this.node.isStatic
         // this.node.nullable
+        inner_context.assigning = true
         this.node.uses.forEach(
-            u => forNode(u).check(context)
+            u => forNode(u).check(inner_context)
         )
+        inner_context.assigning = false
+        forNode(this.node.body).check(inner_context)
         return true
     }
 }

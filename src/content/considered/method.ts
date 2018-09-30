@@ -9,11 +9,12 @@ class Method extends Base {
         this.node = node
     }
     check(context: Context): boolean {
+        const inner_context = new Context()
         this.node.arguments.forEach(
-            a => forNode(a).check(context)
+            a => forNode(a).check(inner_context)
         )
         if(this.node.body) {
-            forNode(this.node.body).check(context)
+            forNode(this.node.body).check(inner_context)
         }
         // this.node.byref
         // this.node.nullable
