@@ -9,6 +9,11 @@ export class Context {
             this.globalNamespace = from_context.globalNamespace
         } else {
             this.globalNamespace = new Map()
+            this.globalNamespace.set("preg_match", new Function([
+                new Argument(new Known(), false),
+                new Argument(new Known(), false),
+                new Argument(new Known(), true),
+            ], new Known()))
         }
     }
     /**
