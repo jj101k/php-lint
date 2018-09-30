@@ -15,15 +15,15 @@ class Foo {
     }
 }
 /** test
-  * @param Foo $foo
+  * @param Foo $test_fat
   * @param array $bar
   * @param Foo|null $f
   * @param array|null $b
   */
-function foo(Foo $foo, array $bar, Foo $f = null, array $b = null) {
+function foo(Foo $test_fat, array $bar, Foo $f = null, array $b = null) {
     echo \Foo::f();
     echo Foo::f();
-    echo $foo->g();
+    echo $test_fat->g();
     echo $b;
 }
 foo();

@@ -2,14 +2,14 @@
 /** test */
 class Foo {
     /** test
-      * @param mixed $a
+      * @param mixed $test_md
       * @return mixed
       */
-    public function recurses($a) {
-        if($a > 1) {
-            return $a * $this->recurses($a - 1);
+    public function recurses($test_md) {
+        if($test_md > 1) {
+            return $test_md * $this->recurses($test_md - 1);
         } else {
-            return $a;
+            return $test_md;
         }
     }
     /** test

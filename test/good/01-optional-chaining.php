@@ -3,11 +3,11 @@
 require_once "lib/foo.php";
 require_once "lib/bar.php";
 
-$foo = new Foo();
+$test_oc = new Foo();
 
 if(
-    $foo and
-    $bar = $foo->justFoo() and
+    $test_oc and
+    $bar = $test_oc->justFoo() and
     $bar->justBar()
 ) {
     echo 1;

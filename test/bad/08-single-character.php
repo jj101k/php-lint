@@ -2,4 +2,4 @@
 /** */
 class A {
 }
-$a = new A();
+$test_sc = new A();

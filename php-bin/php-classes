@@ -24,9 +24,9 @@ foreach($classes as $class) {
                 "isPublic" => $p->isPublic(),
                 "isStatic" => $p->isStatic(),
                 "arguments" => array_map(
-                    function($a) {
+                    function($arg) {
                         return [
-                            "type" => $a->getType() ? "" . $a->getType() : null,
+                            "type" => $arg->getType() ? "" . $arg->getType() : null,
                         ];
                     },
                     $p->getParameters()

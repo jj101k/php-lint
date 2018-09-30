@@ -1,6 +1,6 @@
 <?php
-$foo = 123;
+$test_fum = 123;
 /** test */
-$bar = function() use ($foo) {
+$bar = function() use ($test_fum) {
   echo 234;
 };

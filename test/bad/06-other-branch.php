@@ -1,6 +1,6 @@
 <?php
 if(false) {
-    $a = 1;
+    $test_ob = 1;
 } else {
-    echo $a;
+    echo $test_ob;
 }
