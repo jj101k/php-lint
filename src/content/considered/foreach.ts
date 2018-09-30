@@ -11,11 +11,15 @@ class Foreach extends Base {
     check(context: Context): boolean {
         forNode(this.node.body).check(context)
         if(this.node.key) {
+            context.assigning = true
             forNode(this.node.key).check(context)
+            context.assigning = false
         }
         // this.node.shortForm
         forNode(this.node.source).check(context)
+        context.assigning = true
         forNode(this.node.value).check(context)
+        context.assigning = false
         return true
     }
 }
