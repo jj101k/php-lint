@@ -1,4 +1,5 @@
 import { Known } from "./type/known";
+import { Function, Argument } from "./type/known/function";
 
 export class Context {
     private globalNamespace: Map<string, Known>
@@ -21,6 +22,9 @@ export class Context {
         if(!test) {
             throw new Error(message)
         }
+    }
+    get(name: string): Known | undefined {
+        return this.globalNamespace.get(name)
     }
     /**
      * Returns true if the current (global) namespace has the given name.
