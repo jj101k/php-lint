@@ -1,6 +1,2 @@
-/**
- * A type which you can be certain about
- */
-export class Known {
-
-}
+export { Base } from "./known/base"
+export { Function } from "./known/function"

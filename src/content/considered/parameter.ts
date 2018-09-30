@@ -2,7 +2,7 @@ import { NodeTypes } from "../ast";
 import { Context } from "../../context";
 import { forNode, byKind } from "./for-node";
 import { Base } from "./base";
-import { Known } from "../../type/known";
+import * as Known from "../../type/known";
 class Parameter extends Base {
     protected node: NodeTypes.Parameter
     constructor(node: NodeTypes.Parameter) {
@@ -19,7 +19,7 @@ class Parameter extends Base {
             forNode(this.node.value).check(context)
         }
         // this.node.variadic
-        context.set("$" + this.node.name, new Known())
+        context.set("$" + this.node.name, new Known.Base())
         return true
     }
 }

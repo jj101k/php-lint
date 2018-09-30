@@ -1,12 +1,12 @@
-import { Known } from "../known";
+import { Base } from "./base";
 
 /**
  * An argument
  */
 export class Argument {
     public byRef: boolean
-    public type: Known | null
-    constructor(type: Known | null, by_ref = false) {
+    public type: Base | null
+    constructor(type: Base | null, by_ref = false) {
         this.byRef = by_ref
         this.type = type
     }
@@ -15,10 +15,10 @@ export class Argument {
 /**
  * A function
  */
-export class Function extends Known {
+export class Function extends Base {
     public args: Array<Argument>
-    public returnType: Known | null
-    constructor(args: Array<Argument>, returnType: Known | null = null) {
+    public returnType: Base | null
+    constructor(args: Array<Argument>, returnType: Base | null = null) {
         super()
         this.args = args
         this.returnType = returnType

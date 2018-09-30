@@ -1,8 +1,8 @@
-import { Known } from "./type/known";
+import * as Known from "./type/known";
 import { Function, Argument } from "./type/known/function";
 
 export class Context {
-    private globalNamespace: Map<string, Known>
+    private globalNamespace: Map<string, Known.Base>
     public assigning: boolean = false
     constructor(from_context?: Context) {
         if(from_context) {
@@ -10,10 +10,10 @@ export class Context {
         } else {
             this.globalNamespace = new Map()
             this.globalNamespace.set("preg_match", new Function([
-                new Argument(new Known(), false),
-                new Argument(new Known(), false),
-                new Argument(new Known(), true),
-            ], new Known()))
+                new Argument(new Known.Base(), false),
+                new Argument(new Known.Base(), false),
+                new Argument(new Known.Base(), true),
+            ], new Known.Base()))
         }
     }
     /**
@@ -28,7 +28,7 @@ export class Context {
             throw new Error(message)
         }
     }
-    get(name: string): Known | undefined {
+    get(name: string): Known.Base | undefined {
         return this.globalNamespace.get(name)
     }
     /**
@@ -45,7 +45,7 @@ export class Context {
      * @param name eg. "$foo"
      * @param value
      */
-    set(name: string, value: Known) {
+    set(name: string, value: Known.Base) {
         this.globalNamespace.set(name, value)
     }
 }

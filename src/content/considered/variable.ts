@@ -2,7 +2,7 @@ import { NodeTypes } from "../ast";
 import { Context } from "../../context";
 import { Base } from "./base";
 import { byKind } from "./for-node";
-import { Known } from "../../type/known";
+import * as Known from "../../type/known";
 export class Variable extends Base {
     protected node: NodeTypes.Variable
     constructor(node: NodeTypes.Variable) {
@@ -23,10 +23,10 @@ export class Variable extends Base {
         // this.node.curly
         if(this.name) {
             if(context.assigning) {
-                context.set(this.name, new Known())
+                context.set(this.name, new Known.Base())
             } else {
                 if(this.node.byref && !context.has(this.name)) {
-                    context.set(this.name, new Known())
+                    context.set(this.name, new Known.Base())
                 }
                 context.assert(
                     context.has(this.name),

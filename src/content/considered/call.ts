@@ -2,8 +2,7 @@ import { NodeTypes } from "../ast";
 import { Context } from "../../context";
 import { forNode, byKind } from "./for-node";
 import { Base } from "./base";
-import { Function } from "../../type/known/function";
-import { Known } from "../../type/known";
+import * as Known from "../../type/known";
 class Call extends Base {
     protected node: NodeTypes.Call
     constructor(node: NodeTypes.Call) {
@@ -11,12 +10,12 @@ class Call extends Base {
         this.node = node
     }
     check(context: Context): boolean {
-        let function_type: Function
+        let function_type: Known.Function
         if(this.node.what) {
             forNode(this.node.what).check(context)
             if(typeof this.node.what.name == "string") {
                 const type = context.get(this.node.what.name)
-                if(type instanceof Function) {
+                if(type instanceof Known.Function) {
                     function_type = type
                 }
             }
