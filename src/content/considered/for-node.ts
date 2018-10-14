@@ -68,9 +68,10 @@ export function checkForNode(context: Context, node: NodeTypes.Node): boolean {
         // node.byref
         // node.isStatic
         // node.nullable
-        node.uses.forEach(
-            u => inner_context.check(u, true)
-        )
+        node.uses.forEach(u => {
+            context.check(u)
+            inner_context.check(u, true)
+        })
         inner_context.check(node.body)
     } else if(node.kind == "constref") {
         // node.name
