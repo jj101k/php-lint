@@ -1,8 +1,7 @@
 import * as Known from "./type/known";
-import "./content/considered";
 import { Function, Argument } from "./type/known/function";
 import { NodeTypes } from "./content/ast";
-import { forNode } from "./content/considered/for-node";
+import { checkForNode } from "./content/considered/for-node";
 
 export class Context {
     private globalNamespace: Map<string, Known.Base>
@@ -26,15 +25,14 @@ export class Context {
      * @param assigning True if this starts an assignment
      */
     check(node: NodeTypes.Node, assigning: boolean | null = null): boolean {
-        const n = forNode(node)
         if(assigning !== null && assigning != this.assigning) {
             const was_assigning = this.assigning
             this.assigning = assigning
-            const r = n.check(this)
+            const r = checkForNode(this, node)
             this.assigning = was_assigning
             return r
         } else {
-            return n.check(this)
+            return checkForNode(this, node)
         }
     }
     /**

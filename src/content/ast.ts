@@ -4,7 +4,9 @@ export namespace NodeTypes {
     type Comment = {value: string}
     type AnyNode = {loc: Location | null, leadingComments: Comment[], trailingComments: Comment[], kind: string}
     type AnyStatement = AnyNode
+    type AnyBlock = AnyStatement & {children: Node[]}
     type AnyDeclaration = AnyStatement & {name: string}
+    type AnyFunction = AnyDeclaration & {arguments: Parameter[], type: Identifier, byref: boolean, nullable: boolean, body: Block | null}
     type AnySys = AnyStatement & {arguments: Node[]}
     type AnyExpression = AnyNode
     type AnyLiteral = AnyExpression & {raw: string, value: Node | string | number | boolean | null}
@@ -14,7 +16,7 @@ export namespace NodeTypes {
 
     type Error = {message: string, line: number, token: number | string, expected: string | any[]}
 
-    export type Block = AnyStatement & {kind: "block", children: Node[]}
+    export type Block = AnyBlock & {kind: "block"}
 
     export type Array = AnyExpression & {kind: "array", items: (Entry | Expression | Variable)[], shortForm: boolean}
     export type Assign = AnyStatement & {kind: "assign", left: Expression, right: Expression, operator: string}
@@ -31,15 +33,15 @@ export namespace NodeTypes {
     export type Identifier = AnyNode & {kind: "identifier", name: string, resolution: string}
     export type If = AnyStatement & {kind: "if", test: Expression, body: Block, alternate: Block | If | null, shortForm: boolean}
     export type Isset = AnySys & {kind: "isset"}
-    export type Function = AnyDeclaration & {kind: "function", arguments: Parameter[], type: Identifier, byref: boolean, nullable: boolean, body: Block | null}
+    export type Function = AnyFunction & {kind: "function"}
     export type Include = AnyStatement & {kind: "include", target: Node, once: boolean, require: boolean}
-    export type Method = Function & {kind: "method", isAbstract: boolean, isFinal: boolean, isStatic: boolean, visibility: string}
-    export type Namespace = Block & {kind: "namespace", name: string, withBrackets: boolean}
+    export type Method = AnyFunction & {kind: "method", isAbstract: boolean, isFinal: boolean, isStatic: boolean, visibility: string}
+    export type Namespace = AnyBlock & {kind: "namespace", name: string, withBrackets: boolean}
     export type New = AnyStatement & {kind: "new", what: Identifier | Variable | Class, arguments: Expression[]}
     export type Number = AnyLiteral & {kind: "number"}
     export type Parameter = AnyDeclaration & {kind: "parameter", type: Identifier | null, value: Node | null, byref: boolean, variadic: boolean, nullable: boolean}
     export type Parenthesis = AnyOperation & {kind: "parenthesis", inner: Expression}
-    export type Program = Block & {kind: "program", errors: Error[], comments: Comment[], tokens: string[]}
+    export type Program = AnyBlock & {kind: "program", errors: Error[], comments: Comment[], tokens: string[]}
     export type Property = AnyDeclaration & {kind: "property", isFinal: boolean, isStatic: boolean, visibility: string, value: Node | null}
     export type PropertyLookup = AnyLookup & {kind: "propertylookup"}
     export type Return = AnyNode & {kind: "return", expr: Expression | null}
@@ -51,9 +53,9 @@ export namespace NodeTypes {
 
     type AllBlock = Block | Namespace | Program
     type AllConstant = ClassConstant
+    type AllFunction = Function | Method
     type Declaration = Class | AllFunction | Parameter | Property | AllConstant
     type Expression = Array | ConstRef | Operation | Lookup | Variable
-    type AllFunction = Function | Method
     type Literal = String | Number | Boolean
     type Lookup = PropertyLookup | StaticLookup
     type Operation = Bin | Parenthesis | Unary
