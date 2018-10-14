@@ -22,9 +22,7 @@ class Call extends Base {
         }
         this.node.arguments.forEach((a, i) => {
             if(function_type && function_type.args[i] && function_type.args[i].byRef) {
-                context.assigning = true
-                context.check(a)
-                context.assigning = false
+                context.check(a, true)
             } else {
                 context.check(a)
             }

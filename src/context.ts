@@ -23,10 +23,19 @@ export class Context {
      * Checks a node, performing necessary state transitions
      *
      * @param node The node to check next
+     * @param assigning True if this starts an assignment
      */
-    check(node: NodeTypes.Node): boolean {
-        let n = forNode(node)
-        return n.check(this)
+    check(node: NodeTypes.Node, assigning: boolean | null = null): boolean {
+        const n = forNode(node)
+        if(assigning !== null && assigning != this.assigning) {
+            const was_assigning = this.assigning
+            this.assigning = assigning
+            const r = n.check(this)
+            this.assigning = was_assigning
+            return r
+        } else {
+            return n.check(this)
+        }
     }
     /**
      * Asserts that the test passed, or throws.

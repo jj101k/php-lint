@@ -16,11 +16,9 @@ class Closure extends Base {
         // this.node.byref
         // this.node.isStatic
         // this.node.nullable
-        inner_context.assigning = true
         this.node.uses.forEach(
-            u => inner_context.check(u)
+            u => inner_context.check(u, true)
         )
-        inner_context.assigning = false
         inner_context.check(this.node.body)
         return true
     }
