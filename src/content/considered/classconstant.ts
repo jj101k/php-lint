@@ -1,7 +1,7 @@
-import { NodeTypes } from "../ast";
 import { Context } from "../../context";
-import { forNode, byKind } from "./for-node";
+import { NodeTypes } from "../ast";
 import { Base } from "./base";
+import { byKind } from "./for-node";
 class ClassConstant extends Base {
     protected node: NodeTypes.ClassConstant
     constructor(node: NodeTypes.ClassConstant) {
@@ -12,7 +12,7 @@ class ClassConstant extends Base {
         // this.node.isStatic
         // this.node.name
         if(this.node.value) {
-            forNode(this.node.value).check(context)
+            context.check(this.node.value)
         }
         // this.node.visibility
         return true

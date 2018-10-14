@@ -1,7 +1,7 @@
-import { NodeTypes } from "../ast";
 import { Context } from "../../context";
-import { forNode, byKind } from "./for-node";
+import { NodeTypes } from "../ast";
 import { Base } from "./base";
+import { byKind } from "./for-node";
 class Parenthesis extends Base {
     protected node: NodeTypes.Parenthesis
     constructor(node: NodeTypes.Parenthesis) {
@@ -9,7 +9,7 @@ class Parenthesis extends Base {
         this.node = node
     }
     check(context: Context): boolean {
-        forNode(this.node.inner).check(context)
+        context.check(this.node.inner)
         return true
     }
 }

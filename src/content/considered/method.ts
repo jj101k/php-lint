@@ -1,7 +1,7 @@
-import { NodeTypes } from "../ast";
 import { Context } from "../../context";
-import { forNode, byKind } from "./for-node";
+import { NodeTypes } from "../ast";
 import { Base } from "./base";
+import { byKind } from "./for-node";
 class Method extends Base {
     protected node: NodeTypes.Method
     constructor(node: NodeTypes.Method) {
@@ -11,10 +11,10 @@ class Method extends Base {
     check(context: Context): boolean {
         const inner_context = new Context()
         this.node.arguments.forEach(
-            a => forNode(a).check(inner_context)
+            a => inner_context.check(a)
         )
         if(this.node.body) {
-            forNode(this.node.body).check(inner_context)
+            inner_context.check(this.node.body)
         }
         // this.node.byref
         // this.node.nullable

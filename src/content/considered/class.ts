@@ -1,7 +1,7 @@
-import { NodeTypes } from "../ast";
 import { Context } from "../../context";
-import { forNode, byKind } from "./for-node";
+import { NodeTypes } from "../ast";
 import { Base } from "./base";
+import { byKind } from "./for-node";
 class Class extends Base {
     protected node: NodeTypes.Class
     constructor(node: NodeTypes.Class) {
@@ -10,7 +10,7 @@ class Class extends Base {
     }
     check(context: Context): boolean {
         this.node.body.forEach(
-            b => forNode(b).check(context)
+            b => context.check(b)
         )
         // this.node.extends
         // this.node.implements

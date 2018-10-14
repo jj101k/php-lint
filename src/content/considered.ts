@@ -1,3 +1,5 @@
+import { Base } from "./considered/base";
+
 import "./considered/array";
 import "./considered/assign";
 import "./considered/bin";
@@ -31,12 +33,3 @@ import "./considered/string";
 import "./considered/traituse";
 import "./considered/unary";
 import "./considered/variable";
-
-import { Base } from "./considered/base";
-import { byKind, forNode } from "./considered/for-node";
-
-export const Considered = {
-    forNode: forNode,
-    Base: Base,
-    Program: byKind.program,
-}

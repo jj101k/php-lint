@@ -1,5 +1,8 @@
 import * as Known from "./type/known";
+import "./content/considered";
 import { Function, Argument } from "./type/known/function";
+import { NodeTypes } from "./content/ast";
+import { forNode } from "./content/considered/for-node";
 
 export class Context {
     private globalNamespace: Map<string, Known.Base>
@@ -15,6 +18,15 @@ export class Context {
                 new Argument(new Known.Base(), true),
             ], new Known.Base()))
         }
+    }
+    /**
+     * Checks a node, performing necessary state transitions
+     *
+     * @param node The node to check next
+     */
+    check(node: NodeTypes.Node): boolean {
+        let n = forNode(node)
+        return n.check(this)
     }
     /**
      * Asserts that the test passed, or throws.

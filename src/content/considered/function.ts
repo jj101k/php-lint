@@ -1,9 +1,9 @@
-import { NodeTypes } from "../ast";
 import { Context } from "../../context";
-import { forNode, byKind } from "./for-node";
-import { Base } from "./base";
 import * as Known from "../../type/known";
-import { Argument, Function as KFunction } from "../../type/known/function";
+import { Argument } from "../../type/known/function";
+import { NodeTypes } from "../ast";
+import { Base } from "./base";
+import { byKind } from "./for-node";
 class Function extends Base {
     protected node: NodeTypes.Function
     constructor(node: NodeTypes.Function) {
@@ -13,10 +13,10 @@ class Function extends Base {
     check(context: Context): boolean {
         const inner_context = new Context()
         this.node.arguments.forEach(
-            a => forNode(a).check(inner_context)
+            a => inner_context.check(a)
         )
         if(this.node.body) {
-            forNode(this.node.body).check(inner_context)
+            inner_context.check(this.node.body)
         }
         context.set(this.node.name, new Known.Function(
             this.node.arguments.map(a => new Argument(new Known.Base(), a.byref)),

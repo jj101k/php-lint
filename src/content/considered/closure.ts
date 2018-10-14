@@ -1,7 +1,7 @@
-import { NodeTypes } from "../ast";
 import { Context } from "../../context";
-import { forNode, byKind } from "./for-node";
+import { NodeTypes } from "../ast";
 import { Base } from "./base";
+import { byKind } from "./for-node";
 class Closure extends Base {
     protected node: NodeTypes.Closure
     constructor(node: NodeTypes.Closure) {
@@ -11,17 +11,17 @@ class Closure extends Base {
     check(context: Context): boolean {
         const inner_context = new Context()
         this.node.arguments.forEach(
-            a => forNode(a).check(inner_context)
+            a => inner_context.check(a)
         )
         // this.node.byref
         // this.node.isStatic
         // this.node.nullable
         inner_context.assigning = true
         this.node.uses.forEach(
-            u => forNode(u).check(inner_context)
+            u => inner_context.check(u)
         )
         inner_context.assigning = false
-        forNode(this.node.body).check(inner_context)
+        inner_context.check(this.node.body)
         return true
     }
 }

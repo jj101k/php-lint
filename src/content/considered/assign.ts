@@ -1,7 +1,7 @@
-import { NodeTypes } from "../ast";
 import { Context } from "../../context";
-import { forNode, byKind } from "./for-node";
+import { NodeTypes } from "../ast";
 import { Base } from "./base";
+import { byKind } from "./for-node";
 class Assign extends Base {
     protected node: NodeTypes.Assign
     constructor(node: NodeTypes.Assign) {
@@ -11,8 +11,8 @@ class Assign extends Base {
     check(context: Context): boolean {
         const was_assigning = context.assigning
         context.assigning = true
-        forNode(this.node.left).check(context)
-        forNode(this.node.right).check(context)
+        context.check(this.node.left)
+        context.check(this.node.right)
         context.assigning = was_assigning
         return true
     }

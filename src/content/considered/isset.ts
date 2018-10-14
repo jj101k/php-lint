@@ -1,7 +1,7 @@
-import { NodeTypes } from "../ast";
 import { Context } from "../../context";
-import { forNode, byKind } from "./for-node";
+import { NodeTypes } from "../ast";
 import { Base } from "./base";
+import { byKind } from "./for-node";
 class Isset extends Base {
     protected node: NodeTypes.Isset
     constructor(node: NodeTypes.Isset) {
@@ -10,7 +10,7 @@ class Isset extends Base {
     }
     check(context: Context): boolean {
         this.node.arguments.forEach(
-            n => forNode(n).check(context)
+            n => context.check(n)
         )
         return true
     }

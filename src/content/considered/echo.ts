@@ -1,7 +1,7 @@
-import { NodeTypes } from "../ast";
 import { Context } from "../../context";
-import { forNode, byKind } from "./for-node";
+import { NodeTypes } from "../ast";
 import { Base } from "./base";
+import { byKind } from "./for-node";
 class Echo extends Base {
     protected node: NodeTypes.Echo
     constructor(node: NodeTypes.Echo) {
@@ -10,7 +10,7 @@ class Echo extends Base {
     }
     check(context: Context): boolean {
         this.node.arguments.forEach(
-            n => forNode(n).check(context)
+            n => context.check(n)
         )
         // this.node.shortForm
         return true

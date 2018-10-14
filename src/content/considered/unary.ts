@@ -1,7 +1,7 @@
-import { NodeTypes } from "../ast";
 import { Context } from "../../context";
-import { forNode, byKind } from "./for-node";
+import { NodeTypes } from "../ast";
 import { Base } from "./base";
+import { byKind } from "./for-node";
 class Unary extends Base {
     protected node: NodeTypes.Unary
     constructor(node: NodeTypes.Unary) {
@@ -10,7 +10,7 @@ class Unary extends Base {
     }
     check(context: Context): boolean {
         // this.node.type
-        forNode(this.node.what).check(context)
+        context.check(this.node.what)
         return true
     }
 }

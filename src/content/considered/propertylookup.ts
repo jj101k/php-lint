@@ -1,7 +1,7 @@
-import { NodeTypes } from "../ast";
 import { Context } from "../../context";
-import { forNode, byKind } from "./for-node";
+import { NodeTypes } from "../ast";
 import { Base } from "./base";
+import { byKind } from "./for-node";
 class PropertyLookup extends Base {
     protected node: NodeTypes.PropertyLookup
     constructor(node: NodeTypes.PropertyLookup) {
@@ -9,8 +9,8 @@ class PropertyLookup extends Base {
         this.node = node
     }
     check(context: Context): boolean {
-        forNode(this.node.what).check(context)
-        forNode(this.node.offset).check(context)
+        context.check(this.node.what)
+        context.check(this.node.offset)
         return true
     }
 }

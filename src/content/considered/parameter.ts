@@ -1,8 +1,8 @@
-import { NodeTypes } from "../ast";
 import { Context } from "../../context";
-import { forNode, byKind } from "./for-node";
-import { Base } from "./base";
 import * as Known from "../../type/known";
+import { NodeTypes } from "../ast";
+import { Base } from "./base";
+import { byKind } from "./for-node";
 class Parameter extends Base {
     protected node: NodeTypes.Parameter
     constructor(node: NodeTypes.Parameter) {
@@ -13,10 +13,10 @@ class Parameter extends Base {
         // this.node.byref
         // this.node.nullable
         if(this.node.type) {
-            forNode(this.node.type).check(context)
+            context.check(this.node.type)
         }
         if(this.node.value) {
-            forNode(this.node.value).check(context)
+            context.check(this.node.value)
         }
         // this.node.variadic
         context.set("$" + this.node.name, new Known.Base())
