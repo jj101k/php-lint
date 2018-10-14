@@ -3,6 +3,11 @@ import { Context } from "../../context"
 import * as Known from "../../type/known";
 import { Argument } from "../../type/known/function";
 
+/**
+ *
+ * @param context The effective PHP state machine context
+ * @param node The node to examine
+ */
 export function checkForNode(context: Context, node: NodeTypes.Node): boolean {
     if(node.kind == "array") {
         node.items.forEach(i => context.check(i))
