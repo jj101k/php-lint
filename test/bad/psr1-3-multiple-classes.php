@@ -3,5 +3,5 @@
 class Foo {
 }
 /** */
-class Bar {
+class Bar { /// @assert one class per file
 }
