@@ -228,14 +228,9 @@ export function checkForNode(context: Context, node: NodeTypes.Node): boolean {
         // node.type
         context.check(node.what)
     } else if(node.kind == "variable") {
-        let name: string | null
-        if(typeof node.name == "string") {
-            name = "$" + node.name
-        } else {
-            name = null
-        }
         // this.node.curly
-        if(name) {
+        if(typeof node.name == "string") {
+            const name = "$" + node.name
             if(context.assigning) {
                 context.set(name, new Known.Base())
             } else {
