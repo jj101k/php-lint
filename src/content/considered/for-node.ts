@@ -13,7 +13,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Know
         node.items.forEach(i => context.check(i))
     } else if(node.kind == "assign") {
         context.check(node.left, true)
-        context.check(node.right)
+        return context.check(node.right)
     } else if(node.kind == "bin") {
         // node.type
         context.check(node.left)
