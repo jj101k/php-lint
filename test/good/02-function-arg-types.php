@@ -26,4 +26,4 @@ function foo(Foo $test_fat, array $bar, Foo $f = null, array $b = null) {
     echo $test_fat->g();
     echo $b;
 }
-foo();
+foo(new Foo(), []);
