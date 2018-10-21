@@ -1,4 +1,9 @@
 export namespace NodeTypes {
+    type binary_operand =
+        "|" | "&" | "^" | "." | "+" | "-" | "*" | "/" | "%" | "**" | "<<" | ">>" |
+        "||" | "or" | "&&" | "and" | "xor" | "===" | "!==" | "==" | "!=" | "<" | ">" |
+        "<=" | ">=" | "<=>" | "instanceof" | "??"
+
     type Position = {line: number, column: number, offset: number}
     type Location = {source: string | null, start: Position, end: Position}
     type Comment = {value: string}
@@ -20,7 +25,7 @@ export namespace NodeTypes {
 
     export type Array = AnyExpression & {kind: "array", items: (Entry | Expression | Variable)[], shortForm: boolean}
     export type Assign = AnyStatement & {kind: "assign", left: Expression, right: Expression, operator: string}
-    export type Bin = AnyOperation & {kind: "bin", type: string, left: Expression, right: Expression}
+    export type Bin = AnyOperation & {kind: "bin", type: binary_operand, left: Expression, right: Expression}
     export type Boolean = AnyLiteral & {kind: "boolean"}
     export type Call = AnyStatement & {kind: "call", what: Identifier | Variable | null, arguments: Expression[]}
     export type Class = AnyDeclaration & {kind: "class", extends: Identifier | null, implements: Identifier[], body: Declaration[], isAnonymous: boolean, isAbstract: boolean, isFinal: boolean}

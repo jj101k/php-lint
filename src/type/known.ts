@@ -1,2 +1,6 @@
 export { Base } from "./known/base"
+export { Bool } from "./known/bool"
+export { Float } from "./known/float"
 export { Function } from "./known/function"
+export { Int } from "./known/int"
+export { String } from "./known/string"

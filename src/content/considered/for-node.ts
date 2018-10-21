@@ -8,7 +8,7 @@ import { Argument } from "../../type/known/function";
  * @param context The effective PHP state machine context
  * @param node The node to examine
  */
-export function checkForNode(context: Context, node: NodeTypes.Node): boolean {
+export function checkForNode(context: Context, node: NodeTypes.Node): Array<Known.Base> | null {
     if(node.kind == "array") {
         node.items.forEach(i => context.check(i))
     } else if(node.kind == "assign") {
@@ -17,7 +17,57 @@ export function checkForNode(context: Context, node: NodeTypes.Node): boolean {
     } else if(node.kind == "bin") {
         // node.type
         context.check(node.left)
-        context.check(node.right)
+        const rtypes = context.check(node.right)
+        switch(node.type) {
+            case "!=":
+            case "!==":
+            case "&&":
+            case "<":
+            case "<=":
+            case "==":
+            case "===":
+            case ">":
+            case ">=":
+            case "and":
+            case "instanceof":
+            case "or":
+            case "xor":
+            case "||":
+                return [
+                    new Known.Bool(true),
+                    new Known.Bool(false)
+                ];
+            case "<=>":
+                return [
+                    new Known.Int(-1),
+                    new Known.Int(0),
+                    new Known.Int(1)
+                ];
+            case "%":
+            case "&":
+            case "<<":
+            case ">>":
+            case "^":
+            case "|":
+                return [
+                    new Known.Int()
+                ]
+            case "*":
+            case "**":
+            case "+":
+            case "-":
+            case "/":
+                // TODO recognise float promotion
+                return [
+                    new Known.Float()
+                ]
+            case ".":
+                return [
+                    new Known.String()
+                ]
+            case "??":
+                return rtypes
+        }
     } else if(node.kind == "block") {
         node.children.forEach(
             child => context.check(child)
@@ -244,5 +294,5 @@ export function checkForNode(context: Context, node: NodeTypes.Node): boolean {
             }
         }
     }
-    return true
+    return null
 }

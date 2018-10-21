@@ -24,7 +24,7 @@ export class Context {
      * @param node The node to check next
      * @param assigning True if this starts an assignment
      */
-    check(node: NodeTypes.Node, assigning: boolean | null = null): boolean {
+    check(node: NodeTypes.Node, assigning: boolean | null = null): Known.Base[] | null {
         if(assigning !== null && assigning != this.assigning) {
             const was_assigning = this.assigning
             this.assigning = assigning
