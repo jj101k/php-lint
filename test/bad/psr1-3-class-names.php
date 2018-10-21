@@ -1,4 +1,4 @@
 <?php
 /** */
-class foo {
+class foo { /// @assert class names must be in camel case
 }

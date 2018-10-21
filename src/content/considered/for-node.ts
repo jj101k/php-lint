@@ -71,6 +71,8 @@ export function checkForNode(context: Context, node: NodeTypes.Node): boolean {
         // node.isFinal
         if(node.name.length <= 1) {
             throw new Error("Single-character class names are too likely to conflict")
+        } else if(!node.name.match(/^([A-Z0-9][a-z0-9]*)+$/)) {
+            throw new Error("PSR1 3: class names must be in camel case")
         }
     } else if(node.kind == "classconstant") {
         // node.isStatic
