@@ -73,8 +73,9 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Know
             child => context.check(child)
         )
     } else if(node.kind == "boolean") {
-        // node.raw
-        // node.value
+        return [
+            new Known.Bool(node.value)
+        ]
     } else if(node.kind == "call") {
         let function_type: Known.Function | null = null
         if(node.what) {
