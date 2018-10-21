@@ -69,7 +69,9 @@ export function checkForNode(context: Context, node: NodeTypes.Node): boolean {
         // node.isAbstract
         // node.isAnonymous
         // node.isFinal
-        // node.name
+        if(node.name.length <= 1) {
+            throw new Error("Single-character class names are too likely to conflict")
+        }
     } else if(node.kind == "classconstant") {
         // node.isStatic
         // node.name
