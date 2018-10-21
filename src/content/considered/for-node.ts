@@ -164,6 +164,9 @@ export function checkForNode(context: Context, node: NodeTypes.Node): boolean {
         // node.isFinal
         // node.isStatic
         // node.visibility
+        if(!node.name.match(/^[a-z]+([A-Z0-9][a-z0-9]*)*$/)) {
+            throw new Error("PSR1 4.3: method names must be in camel case (lower)")
+        }
     } else if(node.kind == "namespace") {
         // node.name
         // node.withBrackets
