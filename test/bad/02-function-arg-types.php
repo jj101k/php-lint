@@ -14,6 +14,6 @@ class Foo {
 function foo(Foo $foo, array $bar, Foo $f = null, array $b = null) {
     echo \Foo::g();
     echo $foo->g();
-    echo $b;
+    echo $b; /// @assert wrong type for echo
 }
-foo();
+foo(); /// @assert (secondary) Missing $foo and $bar arguments

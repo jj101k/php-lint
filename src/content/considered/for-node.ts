@@ -26,7 +26,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): boolean {
         // node.raw
         // node.value
     } else if(node.kind == "call") {
-        let function_type: Known.Function
+        let function_type: Known.Function | null = null
         if(node.what) {
             context.check(node.what)
             if(typeof node.what.name == "string") {
@@ -36,13 +36,30 @@ export function checkForNode(context: Context, node: NodeTypes.Node): boolean {
                 }
             }
         }
-        node.arguments.forEach((a, i) => {
-            if(function_type && function_type.args[i] && function_type.args[i].byRef) {
-                context.check(a, true)
-            } else {
-                context.check(a)
+        if(function_type) {
+            for(const [i, a] of Object.entries(function_type.args)) {
+                if(!a.hasDefaultValue) {
+                    if(node.arguments.length < +i + 1) { // TODO not clear why this is a string
+                        throw new Error("Not enough arguments for call")
+                    }
+                }
             }
-        })
+            node.arguments.forEach((a, i) => {
+                if(function_type && function_type.args[i] && function_type.args[i].byRef) {
+                    context.check(a, true)
+                } else {
+                    context.check(a)
+                }
+            })
+        } else {
+            node.arguments.forEach((a, i) => {
+                if(function_type && function_type.args[i] && function_type.args[i].byRef) {
+                    context.check(a, true)
+                } else {
+                    context.check(a)
+                }
+            })
+        }
     } else if(node.kind == "class") {
         node.body.forEach(
             b => context.check(b)
@@ -102,7 +119,11 @@ export function checkForNode(context: Context, node: NodeTypes.Node): boolean {
             inner_context.check(node.body)
         }
         context.set(node.name, new Known.Function(
-            node.arguments.map(a => new Argument(new Known.Base(), a.byref)),
+            node.arguments.map(a => new Argument(
+                new Known.Base(),
+                a.byref,
+                !!a.value
+            )),
             // FIXME return
         ))
         // node.byref

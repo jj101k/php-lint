@@ -5,9 +5,11 @@ import { Base } from "./base";
  */
 export class Argument {
     public byRef: boolean
+    public hasDefaultValue: boolean
     public type: Base | null
-    constructor(type: Base | null, by_ref = false) {
+    constructor(type: Base | null, by_ref: boolean = false, has_default_value: boolean = false) {
         this.byRef = by_ref
+        this.hasDefaultValue = has_default_value
         this.type = type
     }
 }
