@@ -278,10 +278,10 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Know
     } else if(node.kind == "number") {
         // node.raw
         // node.value
-        if(node.raw.match(/^\d+$/)) {
-            return [new Known.Int(+node.raw)]
+        if(Math.floor(node.value) == node.value) {
+            return [new Known.Int(node.value)]
         } else {
-            return [new Known.Float(+node.raw)]
+            return [new Known.Float(node.value)]
         }
     } else if(node.kind == "parameter") {
         // node.byref

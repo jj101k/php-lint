@@ -43,7 +43,7 @@ export namespace NodeTypes {
     export type Method = AnyFunction & {kind: "method", isAbstract: boolean, isFinal: boolean, isStatic: boolean, visibility: string}
     export type Namespace = AnyBlock & {kind: "namespace", name: string, withBrackets: boolean}
     export type New = AnyStatement & {kind: "new", what: Identifier | Variable | Class, arguments: Expression[]}
-    export type Number = AnyLiteral & {kind: "number"}
+    export type Number = AnyLiteral & {kind: "number", value: number}
     export type Parameter = AnyDeclaration & {kind: "parameter", type: Identifier | null, value: Node | null, byref: boolean, variadic: boolean, nullable: boolean}
     export type Parenthesis = AnyOperation & {kind: "parenthesis", inner: Expression}
     export type Program = AnyBlock & {kind: "program", errors: Error[], comments: Comment[], tokens: string[]}
