@@ -386,4 +386,5 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Know
         }
         return [new Known.Base()] // FIXME
     }
+    throw new Error(`Unknown type: ${node.kind}`)
 }
