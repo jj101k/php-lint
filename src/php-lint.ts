@@ -49,7 +49,11 @@ export default class PHPLint {
             })
         }).catch(
             e => {
-                console.log(new Error(`${filename}: ${e.message}`))
+                if(e.message.match(/^Line/)) { // FIXME
+                    console.log(new Error(`${filename}: ${e.message}`))
+                } else {
+                    console.log(e)
+                }
                 return null
             }
         )
@@ -71,7 +75,11 @@ export default class PHPLint {
             const tree: any = parser.parseCode(data)
             return this.lint.checkTree(tree)
         } catch(e) {
-            throw new Error(`${filename}: ${e.message}`)
+            if(e.message.match(/^Line/)) { // FIXME
+                throw new Error(`${filename}: ${e.message}`)
+            } else {
+                throw e
+            }
         }
     }
     /**
