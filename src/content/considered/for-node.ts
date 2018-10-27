@@ -192,13 +192,13 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Know
         }
         return context.check(node.value)
     } else if(node.kind == "foreach") {
-        context.check(node.body)
         if(node.key) {
             context.check(node.key, true)
         }
+        context.check(node.value, true)
+        context.check(node.body)
         // node.shortForm
         context.check(node.source)
-        context.check(node.value, true)
         return []
     } else if(node.kind == "function") {
         const inner_context = new Context()
