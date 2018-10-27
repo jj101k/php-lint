@@ -249,6 +249,9 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Know
         ]
     } else if(node.kind == "method") {
         const inner_context = new Context()
+        if(!node.isStatic) {
+            inner_context.set("$this", new Known.Base()) // FIXME
+        }
         node.arguments.forEach(
             a => inner_context.check(a)
         )
@@ -259,7 +262,6 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Know
         // node.nullable
         // node.isAbstract
         // node.isFinal
-        // node.isStatic
         // node.visibility
         if(!node.name.match(/^[a-z]+([A-Z0-9][a-z0-9]*)*$/)) {
             throw new Error("PSR1 4.3: method names must be in camel case (lower)")
