@@ -38,13 +38,20 @@ export class Context {
     /**
      * Asserts that the test passed, or throws.
      *
+     * @param node The current examining node
      * @param test A simple true/false value
      * @param message Optional message to describe what assertion failure means
      * @throws {Error} Invalid syntax
      */
-    assert(test: boolean, message: string = "Invalid syntax"): void {
+    assert(node: NodeTypes.Node, test: boolean, message: string = "Invalid syntax"): void {
         if(!test) {
-            throw new Error(message)
+            if(node.loc) {
+                throw new Error(
+                    `Line ${node.loc.start.line} column ${node.loc.start.column}: ${message}`
+                )
+            } else {
+                throw new Error(message)
+            }
         }
     }
     get(name: string): Known.Base | undefined {

@@ -34,7 +34,7 @@ export default class PHPLint {
         depth: number = 0,
         working_directory: string|null = null
     ): Promise<boolean|null> {
-        return new Promise((resolve, reject) => {
+        return new Promise<boolean|null>((resolve, reject) => {
             fs.readFile(filename, "utf8", (err, data) => {
                 if(err) {
                     reject(err)
@@ -47,7 +47,12 @@ export default class PHPLint {
                     }
                 }
             })
-        })
+        }).catch(
+            e => {
+                console.log(new Error(`${filename}: ${e.message}`))
+                return null
+            }
+        )
     }
     /**
      * Checks the file and maybe throws (or warns)
@@ -62,8 +67,12 @@ export default class PHPLint {
         working_directory: string|null = null
     ): boolean|null {
         const data = fs.readFileSync(filename, "utf8")
-        const tree: any = parser.parseCode(data)
-        return this.lint.checkTree(tree)
+        try {
+            const tree: any = parser.parseCode(data)
+            return this.lint.checkTree(tree)
+        } catch(e) {
+            throw new Error(`${filename}: ${e.message}`)
+        }
     }
     /**
      * Checks the code

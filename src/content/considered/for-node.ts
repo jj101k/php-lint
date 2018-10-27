@@ -362,6 +362,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Know
                     context.set(name, new Known.Base())
                 }
                 context.assert(
+                    node,
                     context.has(name),
                     `Unassigned variable ${name}`
                 )
