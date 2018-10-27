@@ -145,7 +145,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Know
         } else if(!node.name.match(/^([A-Z0-9][a-z0-9]*)+$/)) {
             throw new Error("PSR1 3: class names must be in camel case")
         }
-        return []
+        return [new Known.Class()]
     } else if(node.kind == "classconstant") {
         // node.isStatic
         // node.name
@@ -222,7 +222,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Know
     } else if(node.kind == "identifier") {
         // node.name
         // node.resolution
-        return [new Known.Base()] // FIXME
+        return [new Known.Class()] // FIXME
     } else if(node.kind == "if") {
         if(node.alternate) {
             context.check(node.alternate)
@@ -272,11 +272,15 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Know
         // node.withBrackets
         return []
     } else if(node.kind == "new") {
-        context.check(node.what)
+        const types = context.check(node.what)
         node.arguments.forEach(
             a => context.check(a)
         )
-        return [new Known.Base()] // FIXME
+        return types.filter(
+            t => t instanceof Known.Class
+        ).map(
+            t => new Known.ClassInstance(t)
+        )
     } else if(node.kind == "number") {
         // node.raw
         // node.value

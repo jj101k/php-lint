@@ -1,6 +1,8 @@
 export { AssociativeArray, BaseArray, IndexedArray } from "./known/array"
 export { Base } from "./known/base"
 export { Bool } from "./known/bool"
+export { Class } from "./known/class"
+export { ClassInstance } from "./known/class-instance"
 export { Float } from "./known/float"
 export { Function } from "./known/function"
 export { Int } from "./known/int"
