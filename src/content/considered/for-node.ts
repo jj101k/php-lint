@@ -285,6 +285,12 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Know
         } else {
             return [new Known.Float(node.value)]
         }
+    } else if(node.kind == "offsetlookup") {
+        context.check(node.what)
+        context.check(node.offset)
+        return [
+            new Known.Base()
+        ] // FIXME
     } else if(node.kind == "parameter") {
         // node.byref
         // node.nullable
@@ -319,6 +325,10 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Know
         return [
             new Known.Base()
         ] // FIXME
+    } else if(node.kind == "retif") {
+        const test = context.check(node.test)
+        const true_branch = node.trueExpr ? context.check(node.trueExpr) : test
+        return true_branch.concat(context.check(node.falseExpr))
     } else if(node.kind == "return") {
         if(node.expr) {
             return context.check(node.expr)

@@ -44,11 +44,13 @@ export namespace NodeTypes {
     export type Namespace = AnyBlock & {kind: "namespace", name: string, withBrackets: boolean}
     export type New = AnyStatement & {kind: "new", what: Identifier | Variable | Class, arguments: Expression[]}
     export type Number = AnyLiteral & {kind: "number", value: number}
+    export type OffsetLookup = AnyLookup & {kind: "offsetlookup"}
     export type Parameter = AnyDeclaration & {kind: "parameter", type: Identifier | null, value: Node | null, byref: boolean, variadic: boolean, nullable: boolean}
     export type Parenthesis = AnyOperation & {kind: "parenthesis", inner: Expression}
     export type Program = AnyBlock & {kind: "program", errors: Error[], comments: Comment[], tokens: string[]}
     export type Property = AnyDeclaration & {kind: "property", isFinal: boolean, isStatic: boolean, visibility: string, value: Node | null}
     export type PropertyLookup = AnyLookup & {kind: "propertylookup"}
+    export type RetIf = AnyStatement & {kind: "retif", test: Expression, trueExpr: Expression | null, falseExpr: Expression}
     export type Return = AnyNode & {kind: "return", expr: Expression | null}
     export type StaticLookup = AnyLookup & {kind: "staticlookup"}
     export type String = AnyLiteral & {kind: "string", unicode: boolean, isDoubleQuote: boolean}
@@ -62,9 +64,9 @@ export namespace NodeTypes {
     type Declaration = Class | AllFunction | Parameter | Property | AllConstant
     type Expression = Array | ConstRef | Operation | Lookup | Variable
     type Literal = String | Number | Boolean
-    type Lookup = PropertyLookup | StaticLookup
+    type Lookup = PropertyLookup | StaticLookup | OffsetLookup
     type Operation = Bin | Parenthesis | Unary
-    type Statement = Array | Assign | Call | Closure | Foreach | If | Include | New
+    type Statement = Array | Assign | Call | Closure | Foreach | If | Include | New | RetIf
     type Sys = Echo | Isset
     export type Node =
         AllBlock |
