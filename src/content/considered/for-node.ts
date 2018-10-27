@@ -7,10 +7,23 @@ import { Argument } from "../../type/known/function";
  *
  * @param context The effective PHP state machine context
  * @param node The node to examine
+ * @returns A set of possible different expression types. If an unknown thing
+ * would be returned, this should be just [Known.Base]; if no thing would be
+ * returned, this should be []. Anything which cannot be to the right of "="
+ * should be [].
  */
-export function checkForNode(context: Context, node: NodeTypes.Node): Array<Known.Base> | null {
+export function checkForNode(context: Context, node: NodeTypes.Node): Array<Known.Base> {
     if(node.kind == "array") {
-        node.items.forEach(i => context.check(i))
+        let out: Known.BaseArray = new Known.IndexedArray()
+        for(const i of node.items) {
+            let key = null
+            if(i.kind == "entry" && i.key) {
+                key = context.check(i.key)
+            }
+            const v = context.check(i)
+            out = out.set(key, v)
+        }
+        return [out]
     } else if(node.kind == "assign") {
         context.check(node.left, true)
         return context.check(node.right)
@@ -72,6 +85,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Know
         node.children.forEach(
             child => context.check(child)
         )
+        return []
     } else if(node.kind == "boolean") {
         return [
             new Known.Bool(node.value)
@@ -102,6 +116,11 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Know
                     context.check(a)
                 }
             })
+            if(function_type.returnType) {
+                return [function_type.returnType]
+            } else {
+                return []
+            }
         } else {
             node.arguments.forEach((a, i) => {
                 if(function_type && function_type.args[i] && function_type.args[i].byRef) {
@@ -110,6 +129,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Know
                     context.check(a)
                 }
             })
+            return [new Known.Base()]
         }
     } else if(node.kind == "class") {
         node.body.forEach(
@@ -125,6 +145,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Know
         } else if(!node.name.match(/^([A-Z0-9][a-z0-9]*)+$/)) {
             throw new Error("PSR1 3: class names must be in camel case")
         }
+        return []
     } else if(node.kind == "classconstant") {
         // node.isStatic
         // node.name
@@ -132,6 +153,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Know
             context.check(node.value)
         }
         // node.visibility
+        return []
     } else if(node.kind == "closure") {
         const inner_context = new Context()
         node.arguments.forEach(
@@ -145,18 +167,30 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Know
             inner_context.check(u, true)
         })
         inner_context.check(node.body)
+        return [
+            new Known.Function(
+                node.arguments.map(a => new Argument(
+                    new Known.Base(),
+                    a.byref,
+                    !!a.value
+                )),
+                // FIXME return
+            )
+        ]
     } else if(node.kind == "constref") {
         // node.name
+        return [new Known.Base()] // FIXME
     } else if(node.kind == "echo") {
         node.arguments.forEach(
             n => context.check(n)
         )
         // node.shortForm
+        return []
     } else if(node.kind == "entry") {
         if(node.key) {
             context.check(node.key)
         }
-        context.check(node.value)
+        return context.check(node.value)
     } else if(node.kind == "foreach") {
         context.check(node.body)
         if(node.key) {
@@ -165,6 +199,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Know
         // node.shortForm
         context.check(node.source)
         context.check(node.value, true)
+        return []
     } else if(node.kind == "function") {
         const inner_context = new Context()
         node.arguments.forEach(
@@ -183,9 +218,11 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Know
         ))
         // node.byref
         // node.nullable
+        return []
     } else if(node.kind == "identifier") {
         // node.name
         // node.resolution
+        return [new Known.Base()] // FIXME
     } else if(node.kind == "if") {
         if(node.alternate) {
             context.check(node.alternate)
@@ -193,14 +230,23 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Know
         context.check(node.body)
         context.check(node.test)
         // node.shortForm
+        return []
     } else if(node.kind == "include") {
         // node.once
         // node.require
         context.check(node.target)
+        return [
+            new Known.Bool(true),
+            new Known.Bool(false)
+        ]
     } else if(node.kind == "isset") {
         node.arguments.forEach(
             n => context.check(n)
         )
+        return [
+            new Known.Bool(true),
+            new Known.Bool(false)
+        ]
     } else if(node.kind == "method") {
         const inner_context = new Context()
         node.arguments.forEach(
@@ -218,17 +264,25 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Know
         if(!node.name.match(/^[a-z]+([A-Z0-9][a-z0-9]*)*$/)) {
             throw new Error("PSR1 4.3: method names must be in camel case (lower)")
         }
+        return []
     } else if(node.kind == "namespace") {
         // node.name
         // node.withBrackets
+        return []
     } else if(node.kind == "new") {
         context.check(node.what)
         node.arguments.forEach(
             a => context.check(a)
         )
+        return [new Known.Base()] // FIXME
     } else if(node.kind == "number") {
         // node.raw
         // node.value
+        if(node.raw.match(/^\d+$/)) {
+            return [new Known.Int(+node.raw)]
+        } else {
+            return [new Known.Float(+node.raw)]
+        }
     } else if(node.kind == "parameter") {
         // node.byref
         // node.nullable
@@ -240,12 +294,14 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Know
         }
         // node.variadic
         context.set("$" + node.name, new Known.Base())
+        return []
     } else if(node.kind == "parenthesis") {
-        context.check(node.inner)
+        return context.check(node.inner)
     } else if(node.kind == "program") {
         node.children.forEach(
             child => context.check(child)
         )
+        return []
     } else if(node.kind == "property") {
         // node.isFinal
         // node.isStatic
@@ -254,18 +310,31 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Know
             context.check(node.value)
         }
         // node.visibility
+        return []
     } else if(node.kind == "propertylookup") {
         context.check(node.what)
         context.check(node.offset)
+        return [
+            new Known.Base()
+        ] // FIXME
     } else if(node.kind == "return") {
-        // node.raw
-        // node.value
+        if(node.expr) {
+            return context.check(node.expr)
+        } else {
+            return []
+        }
     } else if(node.kind == "staticlookup") {
         context.check(node.what)
         context.check(node.offset)
+        return [
+            new Known.Base()
+        ] // FIXME
     } else if(node.kind == "string") {
         // node.raw
         // node.value
+        return [
+            new Known.String(node.raw)
+        ]
     } else if(node.kind == "traituse") {
         if(node.adaptations) {
             node.adaptations.forEach(
@@ -275,9 +344,13 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Know
         node.traits.forEach(
             t => context.check(t)
         )
+        return []
     } else if(node.kind == "unary") {
         // node.type
         context.check(node.what)
+        return [
+            new Known.Base()
+        ] // FIXME
     } else if(node.kind == "variable") {
         // this.node.curly
         if(typeof node.name == "string") {
@@ -294,6 +367,6 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Know
                 )
             }
         }
+        return [new Known.Base()] // FIXME
     }
-    return null
 }

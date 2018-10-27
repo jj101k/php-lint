@@ -1,3 +1,4 @@
+export { AssociativeArray, BaseArray, IndexedArray } from "./known/array"
 export { Base } from "./known/base"
 export { Bool } from "./known/bool"
 export { Float } from "./known/float"
