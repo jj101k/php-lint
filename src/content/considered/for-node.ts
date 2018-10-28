@@ -112,13 +112,13 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
                     )
                 }
             }
-            node.arguments.forEach((a, i) => {
-                if(function_type && function_type.args[i] && function_type.args[i].byRef) {
+            for(const [i, a] of Object.entries(node.arguments)) {
+                if(function_type.args[+i] && function_type.args[+i].byRef) {
                     context.check(a, true)
                 } else {
                     context.check(a)
                 }
-            })
+            }
             if(function_type.returnType) {
                 return [function_type.returnType]
             } else {
@@ -126,11 +126,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
             }
         } else {
             node.arguments.forEach((a, i) => {
-                if(function_type && function_type.args[i] && function_type.args[i].byRef) {
-                    context.check(a, true)
-                } else {
-                    context.check(a)
-                }
+                context.check(a)
             })
             return [new Known.Base()]
         }
