@@ -1,5 +1,6 @@
 import { NodeTypes } from "../ast";
 import { Context } from "../../context"
+import * as Inferred from "../../type/inferred";
 import * as Known from "../../type/known";
 import * as Type from "../../type"
 import { Argument } from "../../type/known/function";
@@ -320,7 +321,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
             if(known_info) {
                 type = known_info
             } else {
-                type = new Known.Base()
+                type = new Inferred.ClassInstance(node.type.name)
             }
         } else {
             type = new Known.Base()
