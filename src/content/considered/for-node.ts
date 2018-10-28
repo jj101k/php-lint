@@ -208,18 +208,19 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
         return []
     } else if(node.kind == "function") {
         const inner_context = new Context()
+        const args: Argument[] = []
         node.arguments.forEach(
-            a => inner_context.check(a)
+            a => {inner_context.check(a); args.push(new Argument(
+                new Known.Base(),
+                a.byref,
+                !!a.value,
+            ))} // FIXME
         )
         if(node.body) {
             inner_context.check(node.body)
         }
         context.set(node.name, new Known.Function(
-            node.arguments.map(a => new Argument(
-                new Known.Base(),
-                a.byref,
-                !!a.value
-            )),
+            args,
             // FIXME return
         ))
         // node.byref
@@ -258,8 +259,13 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
         if(!node.isStatic) {
             inner_context.set("$this", new Known.Base()) // FIXME
         }
+        const args: Argument[] = []
         node.arguments.forEach(
-            a => inner_context.check(a)
+            a => {inner_context.check(a); args.push(new Argument(
+                new Known.Base(),
+                a.byref,
+                !!a.value,
+            ))} // FIXME
         )
         if(node.body) {
             inner_context.check(node.body)
