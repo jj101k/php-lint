@@ -149,7 +149,9 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
             !!node.name.match(/^([A-Z0-9][a-z0-9]*)+$/),
             "PSR1 3: class names must be in camel case"
         )
-        return [new Known.Class()]
+        const class_structure = new Known.Class()
+        context.set(node.name, class_structure)
+        return [class_structure]
     } else if(node.kind == "classconstant") {
         // node.isStatic
         // node.name
