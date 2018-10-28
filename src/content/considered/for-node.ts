@@ -210,11 +210,11 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
         const inner_context = new Context()
         const args: Argument[] = []
         node.arguments.forEach(
-            a => {inner_context.check(a); args.push(new Argument(
-                new Known.Base(),
+            a => args.push(new Argument(
+                inner_context.check(a)[0], // FIXME
                 a.byref,
                 !!a.value,
-            ))} // FIXME
+            )) // FIXME
         )
         if(node.body) {
             inner_context.check(node.body)
@@ -261,11 +261,11 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
         }
         const args: Argument[] = []
         node.arguments.forEach(
-            a => {inner_context.check(a); args.push(new Argument(
-                new Known.Base(),
+            a => args.push(new Argument(
+                inner_context.check(a)[0], // FIXME
                 a.byref,
                 !!a.value,
-            ))} // FIXME
+            )) // FIXME
         )
         if(node.body) {
             inner_context.check(node.body)
@@ -312,15 +312,25 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
     } else if(node.kind == "parameter") {
         // node.byref
         // node.nullable
+
+        let type: Type.Base
         if(node.type) {
             context.check(node.type)
+            const known_info = context.get(node.type.name)
+            if(known_info) {
+                type = known_info
+            } else {
+                type = new Known.Base()
+            }
+        } else {
+            type = new Known.Base()
         }
         if(node.value) {
             context.check(node.value)
         }
         // node.variadic
-        context.set("$" + node.name, new Known.Base())
-        return []
+        context.set("$" + node.name, type)
+        return [type]
     } else if(node.kind == "parenthesis") {
         return context.check(node.inner)
     } else if(node.kind == "program") {
