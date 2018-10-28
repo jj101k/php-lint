@@ -1,6 +1,7 @@
 import { NodeTypes } from "../ast";
 import { Context } from "../../context"
 import * as Known from "../../type/known";
+import * as Type from "../../type"
 import { Argument } from "../../type/known/function";
 
 /**
@@ -12,7 +13,7 @@ import { Argument } from "../../type/known/function";
  * returned, this should be []. Anything which cannot be to the right of "="
  * should be [].
  */
-export function checkForNode(context: Context, node: NodeTypes.Node): Array<Known.Base> {
+export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type.Base> {
     if(node.kind == "array") {
         let out: Known.BaseArray = new Known.IndexedArray()
         for(const i of node.items) {

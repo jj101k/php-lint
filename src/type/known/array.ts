@@ -1,4 +1,5 @@
 import { isNumber } from "util";
+=import * as Type from "../../type"
 import { Base } from "./base";
 import { Int } from "./int";
 
@@ -6,7 +7,7 @@ import { Int } from "./int";
  * A general PHP array
  */
 export abstract class BaseArray extends Base {
-    abstract set(key: Base[] | null, value: Base[]): BaseArray
+    abstract set(key: Array<Type.Base> | null, value: Array<Type.Base>): BaseArray
 }
 
 /**
@@ -14,13 +15,13 @@ export abstract class BaseArray extends Base {
  */
 export class AssociativeArray extends BaseArray {
     public cursor: number = 0
-    public content: Map<string, Base[]> | null
-    public otherValues: Base[] = []
+    public content: Map<string, Array<Type.Base>> | null
+    public otherValues: Array<Type.Base> = []
     constructor(from: AssociativeArray | IndexedArray | null = null) {
         super()
         if(from instanceof IndexedArray) {
             if(from.content) {
-                const m: Map<string, Base[]> = new Map()
+                const m: Map<string, Array<Type.Base>> = new Map()
                 for(const [i, v] of Object.entries(from.content)) {
                     m.set(i, v)
                 }
@@ -35,7 +36,7 @@ export class AssociativeArray extends BaseArray {
             this.content = null
         }
     }
-    set(key: Base[] | null, value: Base[]): BaseArray {
+    set(key: Array<Type.Base> | null, value: Array<Type.Base>): BaseArray {
         if(key) {
             if(key.length == 1) {
                 const single_key = key[0]
@@ -60,15 +61,15 @@ export class AssociativeArray extends BaseArray {
  * An array of things
  */
 export class IndexedArray extends BaseArray {
-    public content: Base[][] | null
-    constructor(content: Base[][] | null = null) {
+    public content: Array<Type.Base>[] | null
+    constructor(content: Array<Type.Base>[] | null = null) {
         super()
         this.content = content
     }
     get cursor() {
         return this.content ? this.content.length : 0
     }
-    set(key: Base[] | null, value: Base[]): BaseArray {
+    set(key: Array<Type.Base> | null, value: Array<Type.Base>): BaseArray {
         if(key) {
             let single_key
             if(

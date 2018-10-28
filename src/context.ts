@@ -1,10 +1,11 @@
 import * as Known from "./type/known";
+import * as Type from "./type"
 import { Function, Argument } from "./type/known/function";
 import { NodeTypes } from "./content/ast";
 import { checkForNode } from "./content/considered/for-node";
 
 export class Context {
-    private globalNamespace: Map<string, Known.Base>
+    private globalNamespace: Map<string, Type.Base>
     public assigning: boolean = false
     constructor(from_context?: Context) {
         if(from_context) {
@@ -24,7 +25,7 @@ export class Context {
      * @param node The node to check next
      * @param assigning True if this starts an assignment
      */
-    check(node: NodeTypes.Node, assigning: boolean | null = null): Known.Base[] {
+    check(node: NodeTypes.Node, assigning: boolean | null = null): Array<Type.Base> {
         if(assigning !== null && assigning != this.assigning) {
             const was_assigning = this.assigning
             this.assigning = assigning
@@ -54,7 +55,7 @@ export class Context {
             }
         }
     }
-    get(name: string): Known.Base | undefined {
+    get(name: string): Type.Base | undefined {
         return this.globalNamespace.get(name)
     }
     /**
@@ -71,7 +72,7 @@ export class Context {
      * @param name eg. "$foo"
      * @param value
      */
-    set(name: string, value: Known.Base) {
+    set(name: string, value: Type.Base) {
         this.globalNamespace.set(name, value)
     }
 }
