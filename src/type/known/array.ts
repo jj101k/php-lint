@@ -1,5 +1,5 @@
 import { isNumber } from "util";
-=import * as Type from "../../type"
+import * as Type from "../../type"
 import { Base } from "./base";
 import { Int } from "./int";
 
