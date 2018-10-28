@@ -104,9 +104,11 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Know
         if(function_type) {
             for(const [i, a] of Object.entries(function_type.args)) {
                 if(!a.hasDefaultValue) {
-                    if(node.arguments.length < +i + 1) { // TODO not clear why this is a string
-                        throw new Error("Not enough arguments for call")
-                    }
+                    context.assert(
+                        node,
+                        node.arguments.length >= +i + 1, // TODO not clear why this is a string
+                        "Not enough arguments for call"
+                    )
                 }
             }
             node.arguments.forEach((a, i) => {
@@ -140,11 +142,16 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Know
         // node.isAbstract
         // node.isAnonymous
         // node.isFinal
-        if(node.name.length <= 1) {
-            throw new Error("Single-character class names are too likely to conflict")
-        } else if(!node.name.match(/^([A-Z0-9][a-z0-9]*)+$/)) {
-            throw new Error("PSR1 3: class names must be in camel case")
-        }
+        context.assert(
+            node,
+            node.name.length > 1,
+            "Single-character class names are too likely to conflict"
+        )
+        context.assert(
+            node,
+            !!node.name.match(/^([A-Z0-9][a-z0-9]*)+$/),
+            "PSR1 3: class names must be in camel case"
+        )
         return [new Known.Class()]
     } else if(node.kind == "classconstant") {
         // node.isStatic
@@ -263,9 +270,11 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Know
         // node.isAbstract
         // node.isFinal
         // node.visibility
-        if(!node.name.match(/^[a-z]+([A-Z0-9][a-z0-9]*)*$/)) {
-            throw new Error("PSR1 4.3: method names must be in camel case (lower)")
-        }
+        context.assert(
+            node,
+            !!node.name.match(/^[a-z]+([A-Z0-9][a-z0-9]*)*$/),
+            "PSR1 4.3: method names must be in camel case (lower)"
+        )
         return []
     } else if(node.kind == "namespace") {
         // node.name
