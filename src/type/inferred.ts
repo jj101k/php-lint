@@ -3,6 +3,13 @@ import * as Type from "../type"
  * A type which you assume exists
  */
 export abstract class Base extends Type.Base {
+    matches(type: Base): boolean {
+        if(type instanceof Mixed) {
+            return true
+        } else {
+            return super.matches(type)
+        }
+    }
 }
 
 /**
