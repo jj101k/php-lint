@@ -228,9 +228,13 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
         // node.nullable
         return []
     } else if(node.kind == "identifier") {
+        /**
+         * This represents a _name_ which may be aliased or use an implicit
+         * namespace. It doesn't have an actual type.
+         */
         // node.name
         // node.resolution
-        return [new Known.Class()] // FIXME
+        return []
     } else if(node.kind == "if") {
         if(node.alternate) {
             context.check(node.alternate)
@@ -317,11 +321,33 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
         let type: Type.Base
         if(node.type) {
             context.check(node.type)
-            const known_info = context.get(node.type.name)
-            if(known_info) {
-                type = known_info
-            } else {
-                type = new Inferred.ClassInstance(node.type.name)
+            // Identifiers don't have a type, but now that we're here we know
+            // that there is one.
+            switch(node.type.name) {
+                case "\\array":
+                    type = new Known.IndexedArray()
+                    break
+                case "\\bool":
+                    type = new Known.Bool()
+                    break
+                case "\\callable":
+                    type = new Known.Function([]) // FIXME
+                    break
+                case "\\float":
+                    type = new Known.Float()
+                    break
+                case "\\int":
+                    type = new Known.Int()
+                    break
+                case "\\iterable":
+                case "\\object":
+                    type = new Known.Base() // FIXME
+                    break
+                case "\\string":
+                    type = new Known.String()
+                    break
+                default:
+                    type = new Known.ClassInstance()
             }
         } else {
             type = new Known.Base()
