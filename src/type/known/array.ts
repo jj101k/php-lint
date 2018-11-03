@@ -69,6 +69,20 @@ export class IndexedArray extends BaseArray {
     get cursor() {
         return this.content ? this.content.length : 0
     }
+    get memberType() {
+        return null // FIXME
+    }
+    matches(type: Type.Base): boolean {
+        if(type instanceof IndexedArray) {
+            return !(
+                this.memberType &&
+                type.memberType &&
+                !this.memberType.matches(type.memberType)
+            )
+        } else {
+            return super.matches(type)
+        }
+    }
     set(key: Array<Type.Base> | null, value: Array<Type.Base>): BaseArray {
         if(key) {
             let single_key
