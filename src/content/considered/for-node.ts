@@ -368,7 +368,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
                     type = new Known.String()
                     break
                 default:
-                    type = new Known.ClassInstance(Known.Class.classRef(node.type.name))
+                    type = new Known.ClassInstance(Inferred.ClassInstance.classRef(node.type.name))
             }
         } else {
             type = new Inferred.Mixed()

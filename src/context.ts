@@ -1,4 +1,4 @@
-import * as Known from "./type/known";
+import * as Inferred from "./type/inferred";
 import * as Type from "./type"
 import { Function, Argument } from "./type/known/function";
 import { NodeTypes } from "./content/ast";
