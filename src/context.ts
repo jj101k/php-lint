@@ -1,4 +1,5 @@
 import * as Inferred from "./type/inferred";
+import * as Known from "./type/known";
 import * as Type from "./type"
 import { Function, Argument } from "./type/known/function";
 import { NodeTypes } from "./content/ast";
@@ -66,6 +67,40 @@ export class Context {
     has(name: string): boolean {
         return this.globalNamespace.has(name)
     }
+
+    /**
+     *
+     * @param name
+     * @param resolution
+     */
+    namedType(name: string, resolution: "fqn" | "qn" | "uqn" | "rn"): Type.Base {
+        let qualified_type_name: string
+        if(resolution == "fqn") {
+            qualified_type_name = name
+        } else {
+            qualified_type_name = "\\" + name
+        }
+        switch(qualified_type_name) {
+            case "\\array":
+                return new Known.IndexedArray()
+            case "\\bool":
+                return new Known.Bool()
+            case "\\callable":
+                return new Known.Function([]) // FIXME
+            case "\\float":
+                return new Known.Float()
+            case "\\int":
+                return new Known.Int()
+            case "\\iterable":
+            case "\\object":
+                return new Inferred.Mixed() // FIXME
+            case "\\string":
+                return new Known.String()
+            default:
+                return new Known.ClassInstance(Inferred.ClassInstance.classRef(qualified_type_name))
+        }
+    }
+
     /**
      * Sets an entry in the current (global) namespace.
      *

@@ -338,38 +338,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
             context.check(node.type)
             // Identifiers don't have a type, but now that we're here we know
             // that there is one.
-            let qualified_type_name: string
-            if(node.type.resolution == "fqn") {
-                qualified_type_name = node.type.name
-            } else {
-                qualified_type_name = "\\" + node.type.name
-            }
-            switch(qualified_type_name) {
-                case "\\array":
-                    type = new Known.IndexedArray()
-                    break
-                case "\\bool":
-                    type = new Known.Bool()
-                    break
-                case "\\callable":
-                    type = new Known.Function([]) // FIXME
-                    break
-                case "\\float":
-                    type = new Known.Float()
-                    break
-                case "\\int":
-                    type = new Known.Int()
-                    break
-                case "\\iterable":
-                case "\\object":
-                    type = new Inferred.Mixed() // FIXME
-                    break
-                case "\\string":
-                    type = new Known.String()
-                    break
-                default:
-                    type = new Known.ClassInstance(Inferred.ClassInstance.classRef(node.type.name))
-            }
+            type = context.namedType(node.type.name, node.type.resolution)
         } else {
             type = new Inferred.Mixed()
         }
