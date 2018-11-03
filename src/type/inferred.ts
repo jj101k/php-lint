@@ -2,7 +2,7 @@ import * as Type from "../type"
 /**
  * A type which you assume exists
  */
-export class Base extends Type.Base {
+export abstract class Base extends Type.Base {
 }
 
 /**
@@ -14,4 +14,7 @@ export class ClassInstance extends Base {
         super()
         this.classRef = class_ref
     }
+}
+
+export class Mixed extends Base {
 }

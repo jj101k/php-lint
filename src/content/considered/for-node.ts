@@ -143,7 +143,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
             node.arguments.forEach((a, i) => {
                 context.check(a)
             })
-            return [new Known.Base()]
+            return [new Inferred.Mixed()]
         }
     } else if(node.kind == "class") {
         node.body.forEach(
@@ -191,7 +191,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
         return [
             new Known.Function(
                 node.arguments.map(a => new Argument(
-                    new Known.Base(),
+                    new Inferred.Mixed(),
                     a.byref,
                     !!a.value
                 )),
@@ -275,7 +275,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
     } else if(node.kind == "method") {
         const inner_context = new Context()
         if(!node.isStatic) {
-            inner_context.set("$this", new Known.Base()) // FIXME
+            inner_context.set("$this", new Inferred.Mixed()) // FIXME
         }
         const args: Argument[] = []
         node.arguments.forEach(
@@ -327,7 +327,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
         context.check(node.what)
         context.check(node.offset)
         return [
-            new Known.Base()
+            new Inferred.Mixed()
         ] // FIXME
     } else if(node.kind == "parameter") {
         // node.byref
@@ -362,7 +362,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
                     break
                 case "\\iterable":
                 case "\\object":
-                    type = new Known.Base() // FIXME
+                    type = new Inferred.Mixed() // FIXME
                     break
                 case "\\string":
                     type = new Known.String()
@@ -371,7 +371,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
                     type = new Known.ClassInstance(Known.Class.classRef(node.type.name))
             }
         } else {
-            type = new Known.Base()
+            type = new Inferred.Mixed()
         }
         if(node.value) {
             context.check(node.value)
@@ -399,7 +399,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
         context.check(node.what)
         context.check(node.offset)
         return [
-            new Known.Base()
+            new Inferred.Mixed()
         ] // FIXME
     } else if(node.kind == "retif") {
         const test = context.check(node.test)
@@ -415,7 +415,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
         context.check(node.what)
         context.check(node.offset)
         return [
-            new Known.Base()
+            new Inferred.Mixed()
         ] // FIXME
     } else if(node.kind == "string") {
         // node.raw
@@ -437,17 +437,17 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
         // node.type
         context.check(node.what)
         return [
-            new Known.Base()
+            new Inferred.Mixed()
         ] // FIXME
     } else if(node.kind == "variable") {
         // this.node.curly
         if(typeof node.name == "string") {
             const name = "$" + node.name
             if(context.assigning) {
-                context.set(name, new Known.Base())
+                context.set(name, new Inferred.Mixed())
             } else {
                 if(node.byref && !context.has(name)) {
-                    context.set(name, new Known.Base())
+                    context.set(name, new Inferred.Mixed())
                 }
                 context.assert(
                     node,
@@ -456,7 +456,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
                 )
             }
         }
-        return [new Known.Base()] // FIXME
+        return [new Inferred.Mixed()] // FIXME
     }
     throw new Error(`Unknown type: ${node.kind}`)
 }

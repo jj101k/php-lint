@@ -13,10 +13,10 @@ export class Context {
         } else {
             this.globalNamespace = new Map()
             this.globalNamespace.set("preg_match", new Function([
-                new Argument(new Known.Base(), false),
-                new Argument(new Known.Base(), false),
-                new Argument(new Known.Base(), true),
-            ], new Known.Base()))
+                new Argument(new Inferred.Mixed(), false),
+                new Argument(new Inferred.Mixed(), false),
+                new Argument(new Inferred.Mixed(), true),
+            ], new Inferred.Mixed()))
         }
     }
     /**
