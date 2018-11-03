@@ -7,6 +7,9 @@ import { Int } from "./int";
  * A general PHP array
  */
 export abstract class BaseArray extends Base {
+    get shortType() {
+        return "array"
+    }
     abstract set(key: Array<Type.Base> | null, value: Array<Type.Base>): BaseArray
 }
 

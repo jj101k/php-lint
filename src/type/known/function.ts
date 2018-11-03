@@ -18,6 +18,9 @@ export class Argument {
  * A function
  */
 export class Function extends Base {
+    get shortType() {
+        return "callable"
+    }
     public args: Array<Argument>
     public returnType: Base | null
     constructor(args: Array<Argument>, returnType: Base | null = null) {

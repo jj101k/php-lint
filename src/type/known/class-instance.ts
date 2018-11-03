@@ -7,6 +7,9 @@ import * as Inferred from "../../type/inferred"
  * A class or similar.
  */
 export class ClassInstance extends Base {
+    get shortType() {
+        return Inferred.ClassInstance.className(this.classRef)
+    }
     private classRef: number
     constructor(class_ref: number) {
         super()
