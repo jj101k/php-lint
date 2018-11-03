@@ -5,9 +5,9 @@ import { Class as _Class } from "./class"
  * A class or similar.
  */
 export class ClassInstance extends Base {
-    private of: _Class
-    constructor(of: _Class) {
+    private classRef: number
+    constructor(class_ref: number) {
         super()
-        this.of = of
+        this.classRef = class_ref
     }
 }

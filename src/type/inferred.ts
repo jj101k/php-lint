@@ -9,9 +9,9 @@ export class Base extends Type.Base {
  * A class or similar.
  */
 export class ClassInstance extends Base {
-    public name: string
-    constructor(name: string) {
+    public classRef: number
+    constructor(class_ref: number) {
         super()
-        this.name = name
+        this.classRef = class_ref
     }
 }

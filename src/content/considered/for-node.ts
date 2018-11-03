@@ -150,7 +150,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
             !!node.name.match(/^([A-Z0-9][a-z0-9]*)+$/),
             "PSR1 3: class names must be in camel case"
         )
-        const class_structure = new Known.Class()
+        const class_structure = new Known.Class(node.name)
         context.set(node.name, class_structure)
         return [class_structure]
     } else if(node.kind == "classconstant") {
@@ -295,11 +295,13 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
         node.arguments.forEach(
             a => context.check(a)
         )
-        return types.filter(
-            t => t instanceof Known.Class
-        ).map(
-            t => new Known.ClassInstance(t)
-        )
+        const out: Array<Known.ClassInstance> = []
+        for(const t of types) {
+            if(t instanceof Known.Class) {
+                out.push(new Known.ClassInstance(t.ref))
+            }
+        }
+        return out
     } else if(node.kind == "number") {
         // node.raw
         // node.value
@@ -347,7 +349,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
                     type = new Known.String()
                     break
                 default:
-                    type = new Known.ClassInstance()
+                    type = new Known.ClassInstance(Known.Class.classRef(node.type.name))
             }
         } else {
             type = new Known.Base()
