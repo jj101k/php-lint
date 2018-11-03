@@ -127,7 +127,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
                         context.assert(
                             a,
                             arg_possibilities.every(arg => arg.matches(type)),
-                            `Wrong type for argument ${i}`
+                            `Wrong type for argument ${i}: ${arg_possibilities.map(arg => arg.shortType).join(", ")} should be ${type.shortType}`
                         )
                     }
                 } else {
