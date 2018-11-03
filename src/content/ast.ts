@@ -35,7 +35,7 @@ export namespace NodeTypes {
     export type Echo = AnySys & {kind: "echo", shortForm: boolean}
     export type Entry = AnyNode & {kind: "entry", key: Node | null, value: Node}
     export type Foreach = AnyStatement & {kind: "foreach", source: Expression, key: Expression | null, value: Expression, body: Statement, shortForm: boolean}
-    export type Identifier = AnyNode & {kind: "identifier", name: string, resolution: string}
+    export type Identifier = AnyNode & {kind: "identifier", name: string, resolution: "uqn" | "qn" | "fqn" | "rn"}
     export type If = AnyStatement & {kind: "if", test: Expression, body: Block, alternate: Block | If | null, shortForm: boolean}
     export type Isset = AnySys & {kind: "isset"}
     export type Function = AnyFunction & {kind: "function"}

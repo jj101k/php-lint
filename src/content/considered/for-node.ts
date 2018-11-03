@@ -338,7 +338,13 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
             context.check(node.type)
             // Identifiers don't have a type, but now that we're here we know
             // that there is one.
-            switch(node.type.name) {
+            let qualified_type_name: string
+            if(node.type.resolution == "fqn") {
+                qualified_type_name = node.type.name
+            } else {
+                qualified_type_name = "\\" + node.type.name
+            }
+            switch(qualified_type_name) {
                 case "\\array":
                     type = new Known.IndexedArray()
                     break
