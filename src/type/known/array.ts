@@ -73,7 +73,11 @@ export class IndexedArray extends BaseArray {
         return this.content ? this.content.length : 0
     }
     get memberType() {
-        return null // FIXME
+        if(this.content && this.content.length && this.content[0].length) {
+            return this.content[0][0] // FIXME
+        } else {
+            return null
+        }
     }
     matches(type: Type.Base): boolean {
         if(type instanceof IndexedArray) {
