@@ -1,4 +1,5 @@
 import { Base } from "./base";
+import * as Type from "../../type"
 
 /**
  * An argument
@@ -27,5 +28,12 @@ export class Function extends Base {
         super()
         this.args = args
         this.returnType = returnType
+    }
+    matches(type: Type.Base): boolean {
+        if(type instanceof Function) {
+            return true
+        } else {
+            return super.matches(type)
+        }
     }
 }
