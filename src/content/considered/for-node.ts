@@ -199,8 +199,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
             )
         ]
     } else if(node.kind == "constref") {
-        // node.name
-        return [new Known.Base()] // FIXME
+        return []
     } else if(node.kind == "echo") {
         node.arguments.forEach(
             n => context.check(n)
