@@ -114,8 +114,22 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
                 }
             }
             for(const [i, a] of Object.entries(node.arguments)) {
-                if(function_type.args[+i] && function_type.args[+i].byRef) {
-                    context.check(a, true)
+                if(function_type.args[+i]) {
+                    let arg_possibilities: Type.Base[]
+                    if(function_type.args[+i].byRef) {
+                        arg_possibilities = context.check(a, true)
+                    } else {
+                        arg_possibilities = context.check(a)
+                    }
+                    const expected_type = function_type.args[+i].type
+                    if(expected_type) {
+                        const type = expected_type
+                        context.assert(
+                            a,
+                            arg_possibilities.every(arg => arg.matches(type)),
+                            `Wrong type for argument ${i}`
+                        )
+                    }
                 } else {
                     context.check(a)
                 }
