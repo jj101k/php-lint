@@ -18,7 +18,7 @@ export class Argument {
 /**
  * A function
  */
-export class Function extends Base {
+class _Function extends Base {
     get shortType() {
         return "callable"
     }
@@ -30,10 +30,12 @@ export class Function extends Base {
         this.returnType = returnType
     }
     matches(type: Type.Base): boolean {
-        if(type instanceof Function) {
+        if(type instanceof _Function) {
             return true
         } else {
             return super.matches(type)
         }
     }
 }
+
+export {_Function as Function}
