@@ -8,6 +8,7 @@ import { checkForNode } from "./content/considered/for-node";
 export class Context {
     private globalNamespace: Map<string, Type.Base>
     public assigning: boolean = false
+    public returnType: Type.Base | null = null
     constructor(from_context?: Context) {
         if(from_context) {
             this.globalNamespace = from_context.globalNamespace

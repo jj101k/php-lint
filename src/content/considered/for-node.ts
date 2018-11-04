@@ -230,12 +230,15 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
                 !!a.value,
             )) // FIXME
         )
+        inner_context.returnType = node.type ?
+            context.namedType(node.type.name, node.type.resolution) :
+            null
         if(node.body) {
             inner_context.check(node.body)
         }
         context.set(node.name, new Known.Function(
             args,
-            // FIXME return
+            inner_context.returnType,
         ))
         // node.byref
         // node.nullable
@@ -375,11 +378,16 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
         const true_branch = node.trueExpr ? context.check(node.trueExpr) : test
         return true_branch.concat(context.check(node.falseExpr))
     } else if(node.kind == "return") {
-        if(node.expr) {
-            return context.check(node.expr)
-        } else {
-            return []
+        const types = node.expr ? context.check(node.expr) : []
+        const expected_type = context.returnType
+        if(expected_type) {
+            context.assert(
+                node,
+                types.every(t => t.matches(expected_type)),
+                `Wrong type for return: ${types.map(t => t.shortType).join(", ")} should be ${expected_type.shortType}`
+            )
         }
+        return types
     } else if(node.kind == "staticlookup") {
         context.check(node.what)
         context.check(node.offset)

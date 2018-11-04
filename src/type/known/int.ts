@@ -1,4 +1,5 @@
 import { Base } from "./base";
+import * as Type from "../../type"
 
 /**
  * An integer
@@ -11,5 +12,12 @@ export class Int extends Base {
     constructor(value: number | null = null) {
         super()
         this.value = value
+    }
+    matches(type: Type.Base): boolean {
+        if(type instanceof Int) {
+            return true
+        } else {
+            return super.matches(type)
+        }
     }
 }

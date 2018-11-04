@@ -1,4 +1,5 @@
 import { Base } from "./base";
+import * as Type from "../../type"
 
 /**
  * A string of text
@@ -11,5 +12,12 @@ export class String extends Base {
     constructor(value: string | null = null) {
         super()
         this.value = value
+    }
+    matches(type: Type.Base): boolean {
+        if(type instanceof String) {
+            return true
+        } else {
+            return super.matches(type)
+        }
     }
 }
