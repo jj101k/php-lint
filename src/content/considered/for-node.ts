@@ -212,10 +212,29 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
         }
         return context.check(node.value)
     } else if(node.kind == "foreach") {
+        const source_types = context.check(node.source)
         if(node.key) {
             context.check(node.key, new Known.String())
         }
-        context.check(node.value, new Inferred.Mixed())
+        if(source_types.length == 1) {
+            const source_type = source_types[0]
+            if(source_type instanceof Known.IndexedArray && source_type.memberType) {
+                context.check(
+                    node.value,
+                    source_type.memberType
+                )
+            } else {
+                context.check(
+                    node.value,
+                    new Inferred.Mixed()
+                )
+            }
+        } else {
+            context.check(
+                node.value,
+                new Inferred.Mixed()
+            )
+        }
 
         context.check(node.body)
         // node.shortForm
