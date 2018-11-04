@@ -7,7 +7,7 @@ import { checkForNode } from "./content/considered/for-node";
 
 export class Context {
     private globalNamespace: Map<string, Type.Base>
-    public assigning: boolean = false
+    public assigning: Type.Base | null = null
     public returnType: Type.Base | null = null
     constructor(from_context?: Context) {
         if(from_context) {
@@ -25,9 +25,9 @@ export class Context {
      * Checks a node, performing necessary state transitions
      *
      * @param node The node to check next
-     * @param assigning True if this starts an assignment
+     * @param assigning A type, if this starts an assignment
      */
-    check(node: NodeTypes.Node, assigning: boolean | null = null): Array<Type.Base> {
+    check(node: NodeTypes.Node, assigning: Type.Base | null = null): Array<Type.Base> {
         if(assigning !== null && assigning != this.assigning) {
             const was_assigning = this.assigning
             this.assigning = assigning

@@ -27,8 +27,9 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
         }
         return [out]
     } else if(node.kind == "assign") {
-        context.check(node.left, true)
-        return context.check(node.right)
+        const types = context.check(node.right)
+        context.check(node.left, types[0] || new Inferred.Mixed())
+        return types
     } else if(node.kind == "bin") {
         // node.type
         context.check(node.left)
@@ -116,12 +117,12 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
             for(const [i, a] of Object.entries(node.arguments)) {
                 if(function_type.args[+i]) {
                     let arg_possibilities: Type.Base[]
+                    const expected_type = function_type.args[+i].type
                     if(function_type.args[+i].byRef) {
-                        arg_possibilities = context.check(a, true)
+                        arg_possibilities = context.check(a, expected_type || new Inferred.Mixed())
                     } else {
                         arg_possibilities = context.check(a)
                     }
-                    const expected_type = function_type.args[+i].type
                     if(expected_type) {
                         const type = expected_type
                         context.assert(
@@ -184,8 +185,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
         // node.isStatic
         // node.nullable
         node.uses.forEach(u => {
-            context.check(u)
-            inner_context.check(u, true)
+            inner_context.check(u, context.check(u)[0] || new Inferred.Mixed())
         })
         inner_context.check(node.body)
         return [
@@ -213,9 +213,10 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
         return context.check(node.value)
     } else if(node.kind == "foreach") {
         if(node.key) {
-            context.check(node.key, true)
+            context.check(node.key, new Known.String())
         }
-        context.check(node.value, true)
+        context.check(node.value, new Inferred.Mixed())
+
         context.check(node.body)
         // node.shortForm
         context.check(node.source)
@@ -421,7 +422,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
         if(typeof node.name == "string") {
             const name = "$" + node.name
             if(context.assigning) {
-                context.set(name, new Inferred.Mixed())
+                context.set(name, context.assigning)
             } else {
                 if(node.byref && !context.has(name)) {
                     context.set(name, new Inferred.Mixed())
