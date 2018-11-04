@@ -253,12 +253,13 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
         inner_context.returnType = node.type ?
             context.namedType(node.type.name, node.type.resolution) :
             null
+        inner_context.realReturnTypes = []
         if(node.body) {
             inner_context.check(node.body)
         }
         context.set(node.name, new Known.Function(
             args,
-            inner_context.returnType,
+            inner_context.realReturnTypes[0], // FIXME
         ))
         // node.byref
         // node.nullable
@@ -407,6 +408,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
                 `Wrong type for return: ${types.map(t => t.shortType).join(", ")} should be ${expected_type.shortType}`
             )
         }
+        context.realReturnTypes.push(...types)
         return types
     } else if(node.kind == "staticlookup") {
         context.check(node.what)
