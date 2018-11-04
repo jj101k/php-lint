@@ -457,8 +457,10 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
                     `Unassigned variable ${name}`
                 )
             }
+            return [context.get(name)!]
+        } else {
+            return [new Inferred.Mixed()] // FIXME
         }
-        return [new Inferred.Mixed()] // FIXME
     }
     throw new Error(`Unknown type: ${node.kind}`)
 }
