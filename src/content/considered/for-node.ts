@@ -177,7 +177,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
         // node.visibility
         return []
     } else if(node.kind == "closure") {
-        const inner_context = new Context()
+        const inner_context = new Context(context)
         node.arguments.forEach(
             a => inner_context.check(a)
         )
@@ -222,7 +222,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
         context.check(node.source)
         return []
     } else if(node.kind == "function") {
-        const inner_context = new Context()
+        const inner_context = new Context(context)
         const args: Argument[] = []
         node.arguments.forEach(
             a => args.push(new Argument(
@@ -277,7 +277,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
             new Known.Bool(false)
         ]
     } else if(node.kind == "method") {
-        const inner_context = new Context()
+        const inner_context = new Context(context)
         if(!node.isStatic) {
             inner_context.set("$this", new Inferred.Mixed()) // FIXME
         }
