@@ -348,11 +348,14 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
             return [new Known.Float(node.value)]
         }
     } else if(node.kind == "offsetlookup") {
-        context.check(node.what)
+        const types = context.check(node.what)
         context.check(node.offset)
-        return [
-            new Inferred.Mixed()
-        ] // FIXME
+        if(types.length == 1) {
+            const type = types[0]
+            return [type instanceof Known.IndexedArray && type.memberType || new Inferred.Mixed()]
+        } else {
+            return [new Inferred.Mixed()] // FIXME
+        }
     } else if(node.kind == "parameter") {
         // node.byref
         // node.nullable
