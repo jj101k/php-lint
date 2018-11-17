@@ -6,16 +6,29 @@ import { NodeTypes } from "./content/ast";
 import { checkForNode } from "./content/considered/for-node";
 
 export class Context {
+    /**
+     * This is where functions go, as well as explicit constants. These get
+     * inherited everywhere.
+     */
+    private constantNamespace: Map<string, Type.Base>
     private globalNamespace: Map<string, Type.Base>
+    /**
+     * Stuff that has been defined here, ie variables
+     */
+    private localNamespace: Map<string, Type.Base>
+
     public assigning: Type.Base | null = null
     public realReturnTypes: Type.Base[] = []
     public returnType: Type.Base | null = null
     constructor(from_context?: Context) {
+        this.localNamespace = new Map()
         if(from_context) {
+            this.constantNamespace = from_context.constantNamespace
             this.globalNamespace = from_context.globalNamespace
         } else {
             this.globalNamespace = new Map()
-            this.globalNamespace.set("preg_match", new Function([
+            this.constantNamespace = new Map()
+            this.constantNamespace.set("preg_match", new Function([
                 new Argument(new Inferred.Mixed(), false),
                 new Argument(new Inferred.Mixed(), false),
                 new Argument(new Inferred.Mixed(), true),
@@ -59,7 +72,7 @@ export class Context {
         }
     }
     get(name: string): Type.Base | undefined {
-        return this.globalNamespace.get(name)
+        return this.constantNamespace.get(name) || this.localNamespace.get(name)
     }
     /**
      * Returns true if the current (global) namespace has the given name.
@@ -67,7 +80,7 @@ export class Context {
      * @param name eg. "$foo"
      */
     has(name: string): boolean {
-        return this.globalNamespace.has(name)
+        return this.constantNamespace.has(name) || this.localNamespace.has(name)
     }
 
     /**
@@ -104,12 +117,22 @@ export class Context {
     }
 
     /**
-     * Sets an entry in the current (global) namespace.
+     * Sets an entry in the current namespace.
      *
      * @param name eg. "$foo"
      * @param value
      */
     set(name: string, value: Type.Base) {
-        this.globalNamespace.set(name, value)
+        this.localNamespace.set(name, value)
+    }
+
+    /**
+     * Sets an entry in the global namespace.
+     *
+     * @param name eg. "$foo"
+     * @param value
+     */
+    setConstant(name: string, value: Type.Base) {
+        this.constantNamespace.set(name, value)
     }
 }

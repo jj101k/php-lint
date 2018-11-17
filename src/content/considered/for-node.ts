@@ -166,7 +166,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
             "PSR1 3: class names must be in camel case"
         )
         const class_structure = new Known.Class(node.name)
-        context.set(node.name, class_structure)
+        context.setConstant(node.name, class_structure)
         return [class_structure]
     } else if(node.kind == "classconstant") {
         // node.isStatic
@@ -257,7 +257,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
         if(node.body) {
             inner_context.check(node.body)
         }
-        context.set(node.name, new Known.Function(
+        context.setConstant(node.name, new Known.Function(
             args,
             inner_context.realReturnTypes[0], // FIXME
         ))
