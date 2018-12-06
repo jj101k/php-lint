@@ -3,7 +3,7 @@
  * @return string
  */
 function foo(): string {
-    $plaintext = openssl_decrypt("abc");
+    $plaintext = openssl_decrypt("abc", "def", "ghi");
     if($plaintext) {
         return $plaintext;
     } else {
@@ -14,7 +14,7 @@ function foo(): string {
  * @return string
  */
 function bar(): string {
-    $plaintext = openssl_decrypt("abc");
+    $plaintext = openssl_decrypt("abc", "def", "ghi");
     if(!$plaintext) {
         return "NOOOO";
     } else {
