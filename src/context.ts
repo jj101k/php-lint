@@ -28,11 +28,7 @@ export class Context {
         } else {
             this.globalNamespace = new Map()
             this.constantNamespace = new Map()
-            this.constantNamespace.set("preg_match", new Function([
-                new Argument(new Inferred.Mixed(), false),
-                new Argument(new Inferred.Mixed(), false),
-                new Argument(new Inferred.Mixed(), true),
-            ], new Inferred.Mixed()))
+            this.buildGlobalSymbols()
         }
     }
     /**
@@ -54,6 +50,18 @@ export class Context {
             }
         }
     }
+
+    /**
+     * Adds all known global symbols to the constant namespace
+     */
+    buildGlobalSymbols(): void {
+        this.constantNamespace.set("preg_match", new Function([
+            new Argument(new Inferred.Mixed(), false),
+            new Argument(new Inferred.Mixed(), false),
+            new Argument(new Inferred.Mixed(), true),
+        ], new Inferred.Mixed()))
+    }
+
     /**
      * Checks a node, performing necessary state transitions
      *
