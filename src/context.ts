@@ -36,23 +36,6 @@ export class Context {
         }
     }
     /**
-     * Checks a node, performing necessary state transitions
-     *
-     * @param node The node to check next
-     * @param assigning A type, if this starts an assignment
-     */
-    check(node: NodeTypes.Node, assigning: Type.Base | null = null): Array<Type.Base> {
-        if(assigning !== null && assigning != this.assigning) {
-            const was_assigning = this.assigning
-            this.assigning = assigning
-            const r = checkForNode(this, node)
-            this.assigning = was_assigning
-            return r
-        } else {
-            return checkForNode(this, node)
-        }
-    }
-    /**
      * Asserts that the test passed, or throws.
      *
      * @param node The current examining node
@@ -69,6 +52,23 @@ export class Context {
             } else {
                 throw new Error(message)
             }
+        }
+    }
+    /**
+     * Checks a node, performing necessary state transitions
+     *
+     * @param node The node to check next
+     * @param assigning A type, if this starts an assignment
+     */
+    check(node: NodeTypes.Node, assigning: Type.Base | null = null): Array<Type.Base> {
+        if(assigning !== null && assigning != this.assigning) {
+            const was_assigning = this.assigning
+            this.assigning = assigning
+            const r = checkForNode(this, node)
+            this.assigning = was_assigning
+            return r
+        } else {
+            return checkForNode(this, node)
         }
     }
     get(name: string): Type.Base | undefined {
