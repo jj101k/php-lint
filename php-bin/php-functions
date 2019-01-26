@@ -7,8 +7,12 @@ print json_encode(array_combine(
     array_map(function($n) {
         $rf = new ReflectionFunction($n);
         return [
-            "pbr" => array_map(
-                function($p) {return $p->isPassedByReference();},
+            "arguments" => array_map(
+                function($p) {
+                    return [
+                        "pbr" => $p->isPassedByReference(),
+                    ];
+                },
                 $rf->getParameters()
             ),
         ];
