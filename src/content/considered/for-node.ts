@@ -110,7 +110,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
                     context.assert(
                         node,
                         node.arguments.length >= +i + 1, // TODO not clear why this is a string
-                        "Not enough arguments for call"
+                        `Not enough arguments for call: ${node.arguments.length} < ${+i + 1}`
                     )
                 }
             }
