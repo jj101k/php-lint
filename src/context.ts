@@ -59,7 +59,7 @@ export class Context {
             new Argument(new Inferred.Mixed(), false),
             new Argument(new Inferred.Mixed(), false),
             new Argument(new Inferred.Mixed(), true),
-        ], new Inferred.Mixed()))
+        ], [new Inferred.Mixed()]))
     }
 
     /**

@@ -36,18 +36,18 @@ class _Function extends Base {
         return "callable"
     }
     public args: Array<Argument>
-    public returnType: Base | null
+    public returnTypes: Array<Base> | null
     /**
      *
      * @param args The arguments supported
-     * @param returnType The return type, if there is one. Null here isn't for
-     * non-returning functions but rather for functions with a completely
-     * undetermined return type.
+     * @param returnTypes The return types, if there are any. Empty array for
+     * non-returning functions, null for functions with a completely
+     * indeterminate (mixed) return.
      */
-    constructor(args: Array<Argument>, returnType: Base | null = null) {
+    constructor(args: Array<Argument>, returnTypes: Array<Base> | null = null) {
         super()
         this.args = args
-        this.returnType = returnType
+        this.returnTypes = returnTypes
     }
     matches(type: Type.Base): boolean {
         if(type instanceof _Function) {

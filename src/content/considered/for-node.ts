@@ -135,8 +135,8 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
                     context.check(a)
                 }
             }
-            if(function_type.returnType) {
-                return [function_type.returnType]
+            if(function_type.returnTypes) {
+                return function_type.returnTypes
             } else {
                 return []
             }
@@ -259,7 +259,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
         }
         context.setConstant(node.name, new Known.Function(
             args,
-            inner_context.realReturnTypes[0], // FIXME
+            inner_context.realReturnTypes,
         ))
         // node.byref
         // node.nullable
