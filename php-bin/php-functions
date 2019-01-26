@@ -10,6 +10,7 @@ print json_encode(array_combine(
             "arguments" => array_map(
                 function($p) {
                     return [
+                        "optional" => $p->isOptional(),
                         "pbr" => $p->isPassedByReference(),
                     ];
                 },
