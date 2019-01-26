@@ -109,7 +109,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
                 if(!a.hasDefaultValue) {
                     context.assert(
                         node,
-                        node.arguments.length >= +i + 1, // TODO not clear why this is a string
+                        node.arguments.length >= +i + 1, // (Object.entries emits string keys)
                         `Not enough arguments for call: ${node.arguments.length} < ${+i + 1}`
                     )
                 }
