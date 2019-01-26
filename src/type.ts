@@ -2,7 +2,11 @@
  * Some kind of type
  */
 export abstract class Base {
+    /**
+     * The type signature usable in PHP function declarations
+     */
     abstract get shortType(): string
+
     /**
      * Returns true if this matches the supplied type, ie if every possible
      * value of this is covered by at least one possible value of type.
