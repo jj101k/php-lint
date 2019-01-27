@@ -7,15 +7,20 @@ function parse_method_structure(method_structure: string): {modifier: string | n
 	const modifier = /(?:\s*<span class="modifier">(?:[\w\s]+)<\/span>)*/
 	const type_expr = /(?:([\w|\\?]+)|<span class="type [^"]+">([^<]+)<\/span>|<a[^>]*>(\w+)<\/a>)/
 	const method_name = /<span class="methodname">(?:<span[^>]*>([\w:\\-]+)<\/span>|<strong>([\w:\\-]+)<\/strong>|<a[^>]*>([\w:\\-]+)<\/a>)<\/span>/
-	const all = new RegExp(`^(${modifier.source})?\\s*(?:<span class="type">${type_expr.source}<\/span>)?\\s*${method_name.source}`)
+	const args = /\(([^)]*)\)/
+	const all = new RegExp(`^(${modifier.source})?\\s*(?:<span class="type">${type_expr.source}<\/span>)?\\s*${method_name.source}\\s*${args.source}`)
 	let md
 	if(md = method_structure.match(all)) {
+		const arg_xml = md[8]
+		const modifier_xml = md[1]
+		const name = md[5] || md[6] || md[7]
+		const type = md[2] || md[3] || md[4]
 		return {
-			modifier: md[1] ?
-				md[1].replace(/<[^>]*>/g, "").replace(/^\s+/, "").replace(/\s+$/, '"') :
+			modifier: modifier_xml ?
+				modifier_xml.replace(/<[^>]*>/g, "").replace(/^\s+/, "").replace(/\s+$/, '"') :
 				null,
-			type: md[2] || md[3] || md[4],
-			name: md[5] || md[6] || md[7],
+			type: type,
+			name: name,
 		}
 	} else {
 		throw new Error(`Cannot parse: ${method_structure}`)
