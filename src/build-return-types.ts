@@ -43,7 +43,7 @@ function parse_return_info(return_info: string, name: string): {orNull: boolean 
 		orNull: or_null,
 	}
 }
-const return_types: {[name: string]: string[]} = {}
+const function_types: {[name: string]: {returnTypes: string[]}} = {}
 for(const part of parts) {
 	let md
 	if(md = part.match(/<div class="methodsynopsis[^>]*>([^]*?)<\/div>/)) {
@@ -58,12 +58,14 @@ for(const part of parts) {
 				types.push("null")
 			}
 			if(types.length > 1) {
-				return_types[structure.name] = types
+				function_types[structure.name] = {
+					returnTypes: types,
+				}
 			}
 		}
 	}
 }
 fs.writeFileSync(
-    "data/php-return-types.json.gz",
-    zlib.gzipSync(JSON.stringify(return_types), "utf8")
+    "data/php-function-types.json.gz",
+    zlib.gzipSync(JSON.stringify(function_types), "utf8")
 )
