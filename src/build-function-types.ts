@@ -69,8 +69,9 @@ function parse_method_structure(method_structure: htmlparserElement): {args: arg
 			}
 			if(name) {
 				args_out.push({
+					byReference: name.classNames.includes("reference"),
 					defaultValue: initialiser_value,
-					name: name.text!,
+					name: name.text!.replace(/^[&]/, ""),
 					optionalDepth: optional_depth,
 					type: type ? type.text! : null,
 				})
