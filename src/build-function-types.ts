@@ -73,4 +73,6 @@ for(const part of parts) {
 fs.writeFileSync(
     "data/php-function-types.json.gz",
     zlib.gzipSync(JSON.stringify(function_types), "utf8")
+    "data/php-function-types.json",
+    JSON.stringify(function_types)
 )
