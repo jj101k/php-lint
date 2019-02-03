@@ -1,5 +1,4 @@
 const fs = require("fs")
-const zlib = require("zlib")
 const htmlparser = require("node-html-parser")
 const data = fs.readFileSync("data-in/php-bigxhtml.html", "utf8")
 
