@@ -1,6 +1,7 @@
 const fs = require("fs")
 const htmlparser = require("node-html-parser")
 const data = fs.readFileSync("data-in/php-bigxhtml.html", "utf8")
+import {FunctionTypeInfo} from "./build"
 
 type htmlparserNode = {
 	text: string,
@@ -20,10 +21,9 @@ type htmlparserDocument = htmlparserElement & {
 
 const dom: htmlparserDocument = htmlparser.parse(data)
 
-type arg_out = {defaultValue: string | null, name: string, optionalDepth: number, type: string | null}
 
-function parse_method_structure(method_structure: htmlparserElement): {args: arg_out[], modifier: string | null, type: string | null, name: string} {
-	const args_out: arg_out[] = []
+function parse_method_structure(method_structure: htmlparserElement): {args: FunctionTypeInfo["args"], modifier: string | null, type: string | null, name: string} {
+	const args_out: FunctionTypeInfo["args"] = []
 	let optional_depth = 0
 	for(const mc of method_structure.childNodes) {
 		if("classNames" in mc && mc.classNames.includes("methodparam")) {
@@ -121,7 +121,7 @@ function parse_return_info(return_info: htmlparserElement, name: string): {orNul
 		orNull: or_null,
 	}
 }
-const function_types: {[name: string]: {args: arg_out[], returnTypes: string[]}} = {}
+const function_types: {[name: string]: FunctionTypeInfo} = {}
 for(const part of dom.querySelectorAll(".refentry")) {
 	const synopsis = part.querySelector(".methodsynopsis")
 	if(synopsis) {

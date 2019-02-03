@@ -4,6 +4,7 @@ import * as Type from "./type"
 import { Function, Argument } from "./type/known/function";
 import { NodeTypes } from "./content/ast";
 import { checkForNode } from "./content/considered/for-node";
+import {FunctionTypeInfo} from "./build"
 
 export class Context {
     /**
