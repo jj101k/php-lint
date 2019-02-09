@@ -5,4 +5,8 @@ type arg_out = {
     optionalDepth: number,
     type: string | null
 }
-export type FunctionTypeInfo = {args: arg_out[], returnTypes: string[]}
+export type FunctionTypeInfo = {
+    args: arg_out[],
+    static: boolean,
+    returnTypes: string[]
+}

@@ -22,7 +22,7 @@ type htmlparserDocument = htmlparserElement & {
 const dom: htmlparserDocument = htmlparser.parse(data)
 
 
-function parse_method_structure(method_structure: htmlparserElement): {args: FunctionTypeInfo["args"], modifier: string | null, type: string | null, name: string} {
+function parse_method_structure(method_structure: htmlparserElement): {args: FunctionTypeInfo["args"], static: boolean | null, type: string | null, name: string} {
 	const args_out: FunctionTypeInfo["args"] = []
 	let optional_depth = 0
 	for(const mc of method_structure.childNodes) {
@@ -80,11 +80,11 @@ function parse_method_structure(method_structure: htmlparserElement): {args: Fun
 			optional_depth -= mc.text.replace(/[^\]]/g, "").length
 		}
 	}
-	const modifier = method_structure.querySelector(".modifier")
+	const modifiers = method_structure.querySelectorAll(".modifier")
 	const type = method_structure.querySelector(".type")
 	return {
 		args: args_out,
-		modifier: modifier ? modifier.text : null,
+		static: modifiers && modifiers.some(m => m.text == "static"),
 		type: type ? type.text! : null,
 		name: method_structure.querySelector(".methodname")!.text!,
 	}
@@ -139,11 +139,13 @@ for(const part of dom.querySelectorAll(".refentry")) {
 			function_types[structure.name] = {
 				args: structure.args,
 				returnTypes: types,
+				static: !!structure.static,
 			}
 		} else {
 			function_types[structure.name] = {
 				args: structure.args,
 				returnTypes: structure.type ? [structure.type] : [],
+				static: !!structure.static,
 			}
 		}
 	}
