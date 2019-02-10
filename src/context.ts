@@ -56,11 +56,37 @@ export class Context {
      * Adds all known global symbols to the constant namespace
      */
     buildGlobalSymbols(): void {
-        this.constantNamespace.set("preg_match", new Function([
-            new Argument(new Inferred.Mixed(), false),
-            new Argument(new Inferred.Mixed(), false),
-            new Argument(new Inferred.Mixed(), true),
-        ], [new Inferred.Mixed()]))
+        const fs = require("fs")
+        const function_info: {[name: string]: {arguments: {optional: boolean, pbr: boolean}[]}} = JSON.parse(
+            fs.readFileSync(__dirname + "/../data/php-functions.json")
+        )
+        const function_type_info: {[name: string]: FunctionTypeInfo} = JSON.parse(
+            fs.readFileSync(__dirname + "/../data/php-function-types.json")
+        )
+        for(const [name, info] of Object.entries(function_info)) {
+            const documented_info = function_type_info[name]
+            if(documented_info) {
+                this.constantNamespace.set(name, new Function(
+                    documented_info.args.map(
+                        a => new Argument(
+                            a.type == "mixed" ? new Inferred.Mixed() : this.namedType(a.type!, "qn"),
+                            a.byReference,
+                            !!a.optionalDepth
+                        )
+                    ),
+                    documented_info.returnTypes.map(
+                        t => t == "mixed" ? new Inferred.Mixed() : this.namedType(t, "qn")
+                    )
+                ))
+            } else {
+                this.constantNamespace.set(name, new Function(
+                    info.arguments.map(
+                        a => new Argument(new Known.String(), a.pbr, a.optional)
+                    ),
+                    [new Known.String()]
+                ))
+            }
+        }
     }
 
     /**
