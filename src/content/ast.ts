@@ -27,7 +27,7 @@ export namespace NodeTypes {
     export type Assign = AnyStatement & {kind: "assign", left: Expression, right: Expression, operator: string}
     export type Bin = AnyOperation & {kind: "bin", type: binary_operand, left: Expression, right: Expression}
     export type Boolean = AnyLiteral & {kind: "boolean", value: boolean}
-    export type Call = AnyStatement & {kind: "call", what: Identifier | Variable | null, arguments: Expression[]}
+    export type Call = AnyStatement & {kind: "call", what: Identifier | PropertyLookup | Variable | null, arguments: Expression[]}
     export type Class = AnyDeclaration & {kind: "class", extends: Identifier | null, implements: Identifier[], body: Declaration[], isAnonymous: boolean, isAbstract: boolean, isFinal: boolean}
     export type ClassConstant = AnyConstant & {kind: "classconstant", isStatic: boolean, visibility: string}
     export type Closure = AnyStatement & {kind: "closure", arguments: Parameter[], uses: Variable[], type: Identifier, byref: boolean, nullable: boolean, body: Block, isStatic: boolean}
