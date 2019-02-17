@@ -119,13 +119,18 @@ export class Context {
     }
 
     /**
+     * Given a supplied actual type name, returns the counterpart type object.
      *
-     * @param name
+     * Here, "fully qualified names" are ones which start with a "\\",
+     * overriding the namespace context; the others (qualified, unqualified,
+     * relative) refer in various ways to everything else.
+     *
+     * @param name eg. "\\Foo" (fqn), "Foo" (other)
      * @param resolution
      */
     namedType(name: string, resolution: "fqn" | "qn" | "uqn" | "rn"): Type.Base {
         let qualified_type_name: string
-        if(resolution == "fqn") {
+        if(resolution == "fqn" || name.match(/^[\\]/)) {
             qualified_type_name = name
         } else {
             qualified_type_name = "\\" + name
