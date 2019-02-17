@@ -58,11 +58,16 @@ export class Context {
      * @param message Optional message to describe what assertion failure means
      * @throws {Error} Invalid syntax
      */
-    assert(node: NodeTypes.Node, test: boolean, message: string = "Invalid syntax"): void {
+    assert(
+        node: NodeTypes.Node,
+        test: boolean,
+        message: string = "Invalid syntax",
+    ): void {
         if(!test) {
             if(node.loc) {
                 throw new Error(
-                    `Line ${node.loc.start.line} column ${node.loc.start.column}: ${message}`
+                    `Line ${node.loc.start.line} column ${node.loc.start.column}: ` +
+                        message
                 )
             } else {
                 throw new Error(message)
@@ -75,7 +80,9 @@ export class Context {
      */
     buildGlobalSymbols(): void {
         const fs = require("fs")
-        const function_info: {[name: string]: {arguments: {optional: boolean, pbr: boolean}[]}} = JSON.parse(
+        const function_info: {
+            [name: string]: {arguments: {optional: boolean, pbr: boolean}[]}
+        } = JSON.parse(
             fs.readFileSync(__dirname + "/../data/php-functions.json")
         )
         const class_info: {
@@ -89,7 +96,8 @@ export class Context {
                     arguments: {type: string|null}[],
                     returnType: string | null,
                 }[],
-                properties: {name: string, isPublic: boolean, isStatic: boolean}[], interfaces: string[],
+                properties: {name: string, isPublic: boolean, isStatic: boolean}[],
+                interfaces: string[],
                 parentClass: string | null,
             }
         } = JSON.parse(
@@ -249,7 +257,9 @@ export class Context {
             case "\\string":
                 return new Known.String()
             default:
-                return new Known.ClassInstance(Inferred.ClassInstance.classRef(qualified_type_name))
+                return new Known.ClassInstance(
+                    Inferred.ClassInstance.classRef(qualified_type_name)
+                )
         }
     }
 
