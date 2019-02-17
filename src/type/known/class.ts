@@ -1,6 +1,8 @@
 import { Base } from "./base";
 import { ClassInstance } from "../inferred";
 
+import {Function as _Function} from "./function"
+
 /**
  * A class or similar.
  */
@@ -8,6 +10,7 @@ class _Class extends Base {
     get shortType() {
         return ClassInstance.className(this.ref)
     }
+    public methods: Map<string, _Function> = new Map()
     public ref: number
     constructor(name: string) {
         super()
