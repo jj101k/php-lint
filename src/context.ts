@@ -23,6 +23,7 @@ export class Context {
             return "\\" + name
         }
     }
+    private aliases: Map<string, string> = new Map()
     /**
      * This is where functions go, as well as explicit constants. These get
      * inherited everywhere.
@@ -35,6 +36,7 @@ export class Context {
     private localNamespace: Map<string, Type.Base>
 
     public assigning: Type.Base | null = null
+    public namespacePrefix: string | null = null
     public realReturnTypes: Type.Base[] = []
     public returnType: Type.Base | null = null
     constructor(from_context?: Context) {
@@ -210,6 +212,19 @@ export class Context {
     }
 
     /**
+     * Adds a given alias.
+     *
+     * @param name eg "Foo\\Bar". No leading slash needed.
+     * @param alias
+     */
+    importName(name: string, alias: string | null): void {
+        this.aliases.set(
+            alias || name.replace(/.*\\/, ""),
+            Context.pseudoQualify(name)
+        )
+    }
+
+    /**
      * Given a supplied actual type name, returns the counterpart type object.
      *
      * @param name eg. "\\Foo" (fqn), "Foo" (other)
@@ -252,8 +267,12 @@ export class Context {
     qualifyName(name: string, resolution: "fqn" | "qn" | "uqn" | "rn"): string {
         if(resolution == "fqn" || name.match(/^[\\]/)) {
             return name
+        } else if(this.aliases.has(name)) {
+            return this.aliases.get(name)!
+        } else if(this.namespacePrefix) {
+            return "\\" + this.namespacePrefix + "\\" + name
         } else {
-            return "\\" + name
+            return Context.pseudoQualify(name)
         }
     }
 

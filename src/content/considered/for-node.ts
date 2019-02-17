@@ -326,6 +326,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
     } else if(node.kind == "namespace") {
         // node.name
         // node.withBrackets
+        context.namespacePrefix = name
         return []
     } else if(node.kind == "new") {
         const types = context.check(node.what)
@@ -441,6 +442,21 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
         return [
             new Inferred.Mixed()
         ] // FIXME
+    } else if(node.kind == "usegroup") {
+        // type
+        if(node.name) {
+            for(const u of node.item) {
+                context.importName(node.name + u.name, u.alias)
+            }
+        } else {
+            for(const u of node.item) {
+                context.importName(u.name, u.alias)
+            }
+        }
+        return []
+    } else if(node.kind == "useitem") {
+        context.importName(node.name, node.alias)
+        return []
     } else if(node.kind == "variable") {
         // this.node.curly
         if(typeof node.name == "string") {

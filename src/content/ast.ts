@@ -56,6 +56,8 @@ export namespace NodeTypes {
     export type String = AnyLiteral & {kind: "string", unicode: boolean, isDoubleQuote: boolean}
     export type TraitUse = AnyNode & {kind: "traituse", traits: Identifier[], adaptations: Node[] | null}
     export type Unary = AnyOperation & {kind: "unary", type: string, what: Expression}
+    export type UseGroup = AnyStatement & {kind: "usegroup", name: string | null, type: string | null, item: UseItem[]}
+    export type UseItem = AnyStatement & {kind: "useitem", name: string, type: string | null, alias: string | null}
     export type Variable = AnyExpression & {kind: "variable", name: string | Node, byref: boolean, curly: boolean}
 
     type AllBlock = Block | Namespace | Program
@@ -66,7 +68,7 @@ export namespace NodeTypes {
     type Literal = String | Number | Boolean
     type Lookup = PropertyLookup | StaticLookup | OffsetLookup
     type Operation = Bin | Parenthesis | Unary
-    type Statement = Array | Assign | Call | Closure | Foreach | If | Include | New | RetIf
+    type Statement = Array | Assign | Call | Closure | Foreach | If | Include | New | RetIf | UseGroup | UseItem
     type Sys = Echo | Isset
     export type Node =
         AllBlock |
