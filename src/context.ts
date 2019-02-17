@@ -212,20 +212,11 @@ export class Context {
     /**
      * Given a supplied actual type name, returns the counterpart type object.
      *
-     * Here, "fully qualified names" are ones which start with a "\\",
-     * overriding the namespace context; the others (qualified, unqualified,
-     * relative) refer in various ways to everything else.
-     *
      * @param name eg. "\\Foo" (fqn), "Foo" (other)
      * @param resolution
      */
     namedType(name: string, resolution: "fqn" | "qn" | "uqn" | "rn"): Type.Base {
-        let qualified_type_name: string
-        if(resolution == "fqn" || name.match(/^[\\]/)) {
-            qualified_type_name = name
-        } else {
-            qualified_type_name = "\\" + name
-        }
+        const qualified_type_name = this.qualifyName(name, resolution)
         switch(qualified_type_name) {
             case "\\array":
                 return new Known.IndexedArray()
@@ -244,6 +235,25 @@ export class Context {
                 return new Known.String()
             default:
                 return new Known.ClassInstance(Inferred.ClassInstance.classRef(qualified_type_name))
+        }
+    }
+
+    /**
+     * Given a supplied actual type name, returns the fully qualified name.
+     *
+     * Here, "fully qualified names" are ones which start with a "\\",
+     * overriding the namespace context; the others (qualified, unqualified,
+     * relative) refer in various ways to everything else.
+     *
+     * @param name eg. "\\Foo" (fqn), "Foo" (other)
+     * @param resolution
+     * @returns eg "\\Foo"
+     */
+    qualifyName(name: string, resolution: "fqn" | "qn" | "uqn" | "rn"): string {
+        if(resolution == "fqn" || name.match(/^[\\]/)) {
+            return name
+        } else {
+            return "\\" + name
         }
     }
 
