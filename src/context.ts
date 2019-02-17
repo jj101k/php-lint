@@ -69,13 +69,13 @@ export class Context {
                 this.constantNamespace.set(name, new Function(
                     documented_info.args.map(
                         a => new Argument(
-                            a.type == "mixed" ? new Inferred.Mixed() : this.namedType(a.type!, "qn"),
+                            this.documentedType(a.type, "qn"),
                             a.byReference,
                             !!a.optionalDepth
                         )
                     ),
                     documented_info.returnTypes.map(
-                        t => t == "mixed" ? new Inferred.Mixed() : this.namedType(t, "qn")
+                        t => this.documentedType(t, "qn")
                     )
                 ))
             } else {
@@ -104,6 +104,25 @@ export class Context {
             return r
         } else {
             return checkForNode(this, node)
+        }
+    }
+    /**
+     * Given a supplied documented type name, returns the counterpart type object.
+     *
+     * This does slightly more than namedType in that it supports fake types
+     * like "mixed" and missing types.
+     *
+     * @param name eg. "\\Foo" (fqn), "Foo" (other)
+     * @param resolution
+     */
+    documentedType(
+        name: string | null,
+        resolution: "fqn" | "qn" | "uqn" | "rn"
+    ): Type.Base {
+        if(!name || name == "mixed" || name == "\\mixed") {
+            return new Inferred.Mixed()
+        } else {
+            return this.namedType(name, resolution)
         }
     }
     get(name: string): Type.Base | undefined {
