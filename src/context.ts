@@ -8,6 +8,22 @@ import {FunctionTypeInfo} from "./build"
 
 export class Context {
     /**
+     * If you have a name which does not begin with a slash, it sticks a slash there.
+     *
+     * Used for contexts where you know the name is fully qualified but may not
+     * begin with a "\\".
+     *
+     * @param name eg. "\\Foo" or "Foo"
+     * @returns eg "\\Foo"
+     */
+    static pseudoQualify(name: string): string {
+        if(name[0] == "\\") {
+            return name
+        } else {
+            return "\\" + name
+        }
+    }
+    /**
      * This is where functions go, as well as explicit constants. These get
      * inherited everywhere.
      */
@@ -60,6 +76,23 @@ export class Context {
         const function_info: {[name: string]: {arguments: {optional: boolean, pbr: boolean}[]}} = JSON.parse(
             fs.readFileSync(__dirname + "/../data/php-functions.json")
         )
+        const class_info: {
+            [name: string]: {
+                constants: {name: string, isPublic: boolean, value: any}[],
+                methods: {
+                    name: string,
+                    isAbstract: boolean,
+                    isPublic: boolean,
+                    isStatic: boolean,
+                    arguments: {type: string|null}[],
+                    returnType: string | null,
+                }[],
+                properties: {name: string, isPublic: boolean, isStatic: boolean}[], interfaces: string[],
+                parentClass: string | null,
+            }
+        } = JSON.parse(
+            fs.readFileSync(__dirname + "/../data/php-classes.json")
+        )
         const function_type_info: {[name: string]: FunctionTypeInfo} = JSON.parse(
             fs.readFileSync(__dirname + "/../data/php-function-types.json")
         )
@@ -86,6 +119,45 @@ export class Context {
                     [new Known.String()]
                 ))
             }
+        }
+        for(const [name, info] of Object.entries(class_info)) {
+            const c = new Known.Class(Context.pseudoQualify(name))
+            for(const method of info.methods) {
+                const documented_info = function_type_info[`${name}::${method.name}`]
+                if(documented_info) {
+                    c.methods.set(
+                        method.name,
+                        new Known.Function(
+                            documented_info.args.map(
+                                a => new Argument(
+                                    this.documentedType(a.type, "qn"),
+                                    a.byReference,
+                                    !!a.optionalDepth
+                                )
+                            ),
+                            documented_info.returnTypes.map(
+                                t => this.documentedType(t, "qn")
+                            )
+                        )
+                    )
+                } else {
+                    c.methods.set(
+                        method.name,
+                        new Known.Function(
+                            method.arguments.map(
+                                a => new Argument(
+                                    this.documentedType(a.type, "qn"),
+                                )
+                            ),
+                            [this.documentedType(method.returnType, "qn")]
+                        )
+                    )
+                }
+            }
+            // constants
+            // properties
+            // interfaces
+            // parentClass
         }
     }
 
