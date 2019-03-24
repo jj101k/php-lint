@@ -266,11 +266,11 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
         // node.resolution
         return new Type.Class(context.qualifyName(node.name, node.resolution))
     } else if(node.kind == "if") {
+        context.check(node.test)
+        context.check(node.body)
         if(node.alternate) {
             context.check(node.alternate)
         }
-        context.check(node.body)
-        context.check(node.test)
         // node.shortForm
         return new Type.Void()
     } else if(node.kind == "include") {
