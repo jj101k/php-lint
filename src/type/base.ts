@@ -39,7 +39,7 @@ export abstract class Base {
         } else if(this.matches(type)) {
             return type
         } else {
-            return new Mixed()
+            return this.combinedWithSpecific(type)
         }
     }
 
