@@ -1,3 +1,4 @@
 node_modules
 package-lock.json
 design-doc/*
+.DS_Store
