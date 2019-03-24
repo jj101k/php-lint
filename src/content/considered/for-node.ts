@@ -49,11 +49,11 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
             case "||":
                 return new Type.Bool()
             case "<=>":
-                return Context.combineTypes([
-                    new Type.Int(-1),
-                    new Type.Int(0),
+                return (new Type.Int(-1)).combinedWith(
+                    new Type.Int(0)
+                ).combinedWith(
                     new Type.Int(1)
-                ])
+                )
             case "%":
             case "&":
             case "<<":
@@ -392,10 +392,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
     } else if(node.kind == "retif") {
         const test = context.check(node.test)
         const true_branch = node.trueExpr ? context.check(node.trueExpr) : test
-        return Context.combineTypes([
-            true_branch,
-            context.check(node.falseExpr)
-        ])
+        return true_branch.combinedWith(context.check(node.falseExpr))
     } else if(node.kind == "return") {
         const type = node.expr ? context.check(node.expr) : new Type.Void()
         const expected_type = context.returnType
@@ -406,7 +403,9 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
                 `Wrong type for return: ${type!.shortType} should be ${expected_type.shortType}`
             )
         }
-        context.realReturnType = Context.combineTypes([type, context.realReturnType])
+        context.realReturnType = context.realReturnType ?
+            type.combinedWith(context.realReturnType) :
+            type
         return type
     } else if(node.kind == "staticlookup") {
         context.check(node.what)

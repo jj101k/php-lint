@@ -6,30 +6,6 @@ import {FunctionTypeInfo} from "./build"
 
 export class Context {
     /**
-     * Returns a single type given multiple.
-     *
-     * @param types
-     */
-    static combineTypes(types: Array<Type.Base | null>): Type.Base {
-        const defined_types: Array<Type.Base> = []
-        for(const t of types) {
-            if(t) {
-                defined_types.push(t)
-            }
-        }
-        if(defined_types.length == 1) {
-            return defined_types[0]
-        } else if(defined_types.length == 2) {
-            const alt_type = types[1]
-            if(alt_type instanceof Type.Bool && alt_type.value === false) {
-                return new Type.OptionalFalse(defined_types[0])
-            } else if(alt_type instanceof Type.Null) {
-                return new Type.OptionalNull(defined_types[0])
-            }
-        }
-        return new Type.Mixed()
-    }
-    /**
      * If you have a name which does not begin with a slash, it sticks a slash there.
      *
      * Used for contexts where you know the name is fully qualified but may not
@@ -139,9 +115,18 @@ export class Context {
                             !!a.optionalDepth
                         )
                     ),
-                    Context.combineTypes(documented_info.returnTypes.map(
-                        t => this.documentedType(t, "qn")
-                    ))
+                    documented_info.returnTypes.reduce(
+                        (carry: Type.Base | null, item): Type.Base => {
+                            if(carry) {
+                                return carry.combinedWith(
+                                    this.documentedType(item, "qn")
+                                )
+                            } else {
+                                return this.documentedType(item, "qn")
+                            }
+                        },
+                        null
+                    )
                 ))
             } else {
                 this.constantNamespace.set(name, new Function(
@@ -167,9 +152,18 @@ export class Context {
                                     !!a.optionalDepth
                                 )
                             ),
-                            Context.combineTypes(documented_info.returnTypes.map(
-                                t => this.documentedType(t, "qn")
-                            ))
+                            documented_info.returnTypes.reduce(
+                                (carry: Type.Base | null, item): Type.Base => {
+                                    if(carry) {
+                                        return carry.combinedWith(
+                                            this.documentedType(item, "qn")
+                                        )
+                                    } else {
+                                        return this.documentedType(item, "qn")
+                                    }
+                                },
+                                null
+                            )
                         )
                     )
                 } else {
