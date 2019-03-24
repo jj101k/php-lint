@@ -1,4 +1,4 @@
-import { Base, Mixed } from "./base";
+import { Base } from "./base";
 
 /**
  * A floating-point number
@@ -11,14 +11,5 @@ export class Float extends Base {
     constructor(value: number | null = null) {
         super()
         this.value = value
-    }
-    combinedWith(type: Base): Base {
-        if(type.matches(this)) {
-            return this
-        } else if(this.matches(type)) {
-            return type
-        } else {
-            return new Mixed()
-        }
     }
 }

@@ -1,5 +1,5 @@
-import { Base, Mixed } from "./base";
-import * as Type from "../type"
+import * as Type from "../type";
+import { Base } from "./base";
 
 /**
  * A string of text
@@ -12,15 +12,6 @@ export class String extends Base {
     constructor(value: string | null = null) {
         super()
         this.value = value
-    }
-    combinedWith(type: Base): Base {
-        if(type.matches(this)) {
-            return this
-        } else if(this.matches(type)) {
-            return type
-        } else {
-            return new Mixed()
-        }
     }
     matches(type: Type.Base): boolean {
         if(type instanceof String) {

@@ -12,7 +12,15 @@ export abstract class Base {
      *
      * @param type
      */
-    abstract combinedWith(type: Base): Base
+    combinedWith(type: Base): Base {
+        if(type.matches(this)) {
+            return this
+        } else if(this.matches(type)) {
+            return type
+        } else {
+            return new Mixed()
+        }
+    }
 
     matches(type: Base): boolean {
         if(type instanceof Mixed) {

@@ -1,7 +1,7 @@
-import { Base, Mixed } from "./base";
-
-import {Function as _Function} from "./function"
+import { Base } from "./base";
 import { ClassInstance } from "./class-instance";
+import { Function as _Function } from "./function";
+
 
 /**
  * A class or similar.
@@ -16,14 +16,5 @@ class _Class extends Base {
         super()
         this.ref = ClassInstance.classRef(name)
     }
-    combinedWith(type: Base): Base {
-        if(type.matches(this)) {
-            return this
-        } else if(this.matches(type)) {
-            return type
-        } else {
-            return new Mixed()
-        }
-    }
 }
-export {_Class as Class}
+export { _Class as Class };

@@ -1,6 +1,6 @@
-import { Base, Mixed } from "./base";
-import { Class as _Class } from "./class"
-import * as Type from "../type"
+import * as Type from "../type";
+import { Base } from "./base";
+import { Class as _Class } from "./class";
 
 /**
  * A class or similar.
@@ -43,15 +43,6 @@ export class ClassInstance extends Base {
     }
     get shortType() {
         return ClassInstance.className(this.classRef)
-    }
-    combinedWith(type: Base): Base {
-        if(type.matches(this)) {
-            return this
-        } else if(this.matches(type)) {
-            return type
-        } else {
-            return new Mixed()
-        }
     }
     matches(type: Type.Base): boolean {
         if(type instanceof ClassInstance) {

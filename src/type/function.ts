@@ -1,5 +1,5 @@
-import { Base, Mixed } from "./base";
-import * as Type from "../type"
+import * as Type from "../type";
+import { Base } from "./base";
 
 /**
  * An argument spec for a function.
@@ -49,15 +49,6 @@ class _Function extends Base {
         this.args = args
         this.returnType = returnType
     }
-    combinedWith(type: Base): Base {
-        if(type.matches(this)) {
-            return this
-        } else if(this.matches(type)) {
-            return type
-        } else {
-            return new Mixed()
-        }
-    }
     matches(type: Type.Base): boolean {
         if(type instanceof _Function) {
             return true
@@ -67,4 +58,4 @@ class _Function extends Base {
     }
 }
 
-export {_Function as Function}
+export { _Function as Function };

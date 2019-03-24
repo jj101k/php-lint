@@ -1,4 +1,4 @@
-import { Base, Mixed } from "./base";
+import { Base } from "./base";
 
 /**
  * No value
@@ -6,14 +6,5 @@ import { Base, Mixed } from "./base";
 export class Void extends Base {
     get shortType() {
         return "void"
-    }
-    combinedWith(type: Base): Base {
-        if(type.matches(this)) {
-            return this
-        } else if(this.matches(type)) {
-            return type
-        } else {
-            return new Mixed()
-        }
     }
 }

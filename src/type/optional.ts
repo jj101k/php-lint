@@ -1,5 +1,5 @@
-import * as Type from "../type"
-import { Base, Mixed } from "./base";
+import * as Type from "../type";
+import { Base } from "./base";
 
 /**
  * A general PHP optional value
@@ -16,28 +16,10 @@ export class OptionalFalse extends Optional {
     get shortType() {
         return this.content.shortType + " | false"
     }
-    combinedWith(type: Base): Base {
-        if(type.matches(this)) {
-            return this
-        } else if(this.matches(type)) {
-            return type
-        } else {
-            return new Mixed()
-        }
-    }
 }
 
 export class OptionalNull extends Optional {
     get shortType() {
         return this.content.shortType + " | null"
-    }
-    combinedWith(type: Base): Base {
-        if(type.matches(this)) {
-            return this
-        } else if(this.matches(type)) {
-            return type
-        } else {
-            return new Mixed()
-        }
     }
 }
