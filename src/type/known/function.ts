@@ -1,5 +1,6 @@
 import { Base } from "./base";
 import * as Type from "../../type"
+import { Mixed } from "../inferred";
 
 /**
  * An argument spec for a function.
@@ -36,7 +37,7 @@ class _Function extends Base {
         return "callable"
     }
     public args: Array<Argument>
-    public returnTypes: Array<Base> | null
+    public returnType: Base | null
     /**
      *
      * @param args The arguments supported
@@ -44,10 +45,19 @@ class _Function extends Base {
      * non-returning functions, null for functions with a completely
      * indeterminate (mixed) return.
      */
-    constructor(args: Array<Argument>, returnTypes: Array<Base> | null = null) {
+    constructor(args: Array<Argument>, returnType: Base | null = null) {
         super()
         this.args = args
-        this.returnTypes = returnTypes
+        this.returnType = returnType
+    }
+    combinedWith(type: Base): Base {
+        if(type.matches(this)) {
+            return this
+        } else if(this.matches(type)) {
+            return type
+        } else {
+            return new Mixed()
+        }
     }
     matches(type: Type.Base): boolean {
         if(type instanceof _Function) {

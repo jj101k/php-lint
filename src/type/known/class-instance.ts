@@ -15,6 +15,15 @@ export class ClassInstance extends Base {
     get shortType() {
         return Inferred.ClassInstance.className(this.classRef)
     }
+    combinedWith(type: Base): Base {
+        if(type.matches(this)) {
+            return this
+        } else if(this.matches(type)) {
+            return type
+        } else {
+            return new Inferred.Mixed()
+        }
+    }
     matches(type: Type.Base): boolean {
         if(type instanceof Inferred.ClassInstance) {
             return type.classRef == this.classRef

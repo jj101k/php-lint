@@ -2,16 +2,11 @@ import { Base } from "./base";
 import { Mixed } from "../inferred";
 
 /**
- * A floating-point number
+ * No value
  */
-export class Float extends Base {
+export class Void extends Base {
     get shortType() {
-        return "float"
-    }
-    public value: number | null
-    constructor(value: number | null = null) {
-        super()
-        this.value = value
+        return "void"
     }
     combinedWith(type: Base): Base {
         if(type.matches(this)) {

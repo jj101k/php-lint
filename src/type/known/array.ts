@@ -2,6 +2,7 @@ import { isNumber } from "util";
 import * as Type from "../../type"
 import { Base } from "./base";
 import { Int } from "./int";
+import { Mixed } from "../inferred";
 
 /**
  * A general PHP array
@@ -10,7 +11,7 @@ export abstract class BaseArray extends Base {
     get shortType() {
         return "array"
     }
-    abstract set(key: Array<Type.Base> | null, value: Array<Type.Base>): BaseArray
+    abstract set(key: Type.Base | null, value: Type.Base): BaseArray
 }
 
 /**
@@ -18,13 +19,13 @@ export abstract class BaseArray extends Base {
  */
 export class AssociativeArray extends BaseArray {
     public cursor: number = 0
-    public content: Map<string, Array<Type.Base>> | null
-    public otherValues: Array<Type.Base> = []
+    public content: Map<string, Type.Base> | null
+    public otherValue: Type.Base | null = null
     constructor(from: AssociativeArray | IndexedArray | null = null) {
         super()
         if(from instanceof IndexedArray) {
             if(from.content) {
-                const m: Map<string, Array<Type.Base>> = new Map()
+                const m: Map<string, Type.Base> = new Map()
                 for(const [i, v] of Object.entries(from.content)) {
                     m.set(i, v)
                 }
@@ -34,22 +35,32 @@ export class AssociativeArray extends BaseArray {
             }
         } else if(from) {
             this.content = from.content
-            this.otherValues = from.otherValues
+            this.otherValue = from.otherValue
         } else {
             this.content = null
         }
     }
-    set(key: Array<Type.Base> | null, value: Array<Type.Base>): BaseArray {
+    combinedWith(type: Base): Base {
+        if(type.matches(this)) {
+            return this
+        } else if(this.matches(type)) {
+            return type
+        } else {
+            return new Mixed()
+        }
+    }
+    set(key: Type.Base | null, value: Type.Base): BaseArray {
         if(key) {
-            if(key.length == 1) {
-                const single_key = key[0]
+            if(key) {
                 if(!this.content) this.content = new Map()
-                if(isNumber(single_key) && +single_key > this.cursor) {
-                    this.cursor = +single_key
+                if(isNumber(key) && +key > this.cursor) {
+                    this.cursor = +key
                 }
-                this.content.set("" + single_key, value)
+                this.content.set("" + key, value)
             } else {
-                this.otherValues = this.otherValues.concat(value)
+                this.otherValue = this.otherValue ?
+                    this.otherValue.combinedWith(value) :
+                    value
             }
         } else {
             if(!this.content) this.content = new Map()
@@ -64,8 +75,8 @@ export class AssociativeArray extends BaseArray {
  * An array of things
  */
 export class IndexedArray extends BaseArray {
-    public content: Array<Type.Base>[] | null
-    constructor(content: Array<Type.Base>[] | null = null) {
+    public content: Array<Type.Base> | null
+    constructor(content: Array<Type.Base> | null = null) {
         super()
         this.content = content
     }
@@ -73,10 +84,19 @@ export class IndexedArray extends BaseArray {
         return this.content ? this.content.length : 0
     }
     get memberType() {
-        if(this.content && this.content.length && this.content[0].length) {
-            return this.content[0][0] // FIXME
+        if(this.content && this.content.length) {
+            return this.content[0] // FIXME
         } else {
             return null
+        }
+    }
+    combinedWith(type: Base): Base {
+        if(type.matches(this)) {
+            return this
+        } else if(this.matches(type)) {
+            return type
+        } else {
+            return new Mixed()
         }
     }
     matches(type: Type.Base): boolean {
@@ -90,14 +110,11 @@ export class IndexedArray extends BaseArray {
             return super.matches(type)
         }
     }
-    set(key: Array<Type.Base> | null, value: Array<Type.Base>): BaseArray {
+    set(key: Type.Base | null, value: Type.Base): BaseArray {
         if(key) {
-            let single_key
             if(
-                key.length == 1 &&
-                (single_key = key[0]) &&
-                single_key instanceof Int &&
-                single_key.value !== null
+                key instanceof Int &&
+                key.value !== null
             ) {
                 if(!this.content) this.content = []
                 this.content[+key] = value

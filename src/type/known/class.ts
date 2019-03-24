@@ -1,5 +1,5 @@
 import { Base } from "./base";
-import { ClassInstance } from "../inferred";
+import { ClassInstance, Mixed } from "../inferred";
 
 import {Function as _Function} from "./function"
 
@@ -15,6 +15,15 @@ class _Class extends Base {
     constructor(name: string) {
         super()
         this.ref = ClassInstance.classRef(name)
+    }
+    combinedWith(type: Base): Base {
+        if(type.matches(this)) {
+            return this
+        } else if(this.matches(type)) {
+            return type
+        } else {
+            return new Mixed()
+        }
     }
 }
 export {_Class as Class}

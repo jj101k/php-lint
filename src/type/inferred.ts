@@ -53,10 +53,22 @@ export class ClassInstance extends Base {
         super()
         this.classRef = class_ref
     }
+    combinedWith(type: Base): Base {
+        if(type.matches(this)) {
+            return this
+        } else if(this.matches(type)) {
+            return type
+        } else {
+            return new Mixed()
+        }
+    }
 }
 
 export class Mixed extends Base {
     get shortType() {
         return "mixed"
+    }
+    combinedWith(type: Base): Base {
+        return this
     }
 }

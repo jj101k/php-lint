@@ -9,12 +9,12 @@ import { Argument } from "../../type/known/function";
  *
  * @param context The effective PHP state machine context
  * @param node The node to examine
- * @returns A set of possible different expression types. If an unknown thing
- * would be returned, this should be just [Known.Base]; if no thing would be
- * returned, this should be []. Anything which cannot be to the right of "="
- * should be [].
+ * @returns A single expression type. If an unknown thing would be returned,
+ * this should be just Known.Base; if no thing would be returned, this should be
+ * Known.Void. Anything which cannot be to the right of "=" should be
+ * Known.Void.
  */
-export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type.Base> {
+export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base {
     if(node.kind == "array") {
         let out: Known.BaseArray = new Known.IndexedArray()
         for(const i of node.items) {
@@ -25,15 +25,15 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
             const v = context.check(i)
             out = out.set(key, v)
         }
-        return [out]
+        return out
     } else if(node.kind == "assign") {
-        const types = context.check(node.right)
-        context.check(node.left, types[0] || new Inferred.Mixed())
-        return types
+        const type = context.check(node.right)
+        context.check(node.left, type || new Inferred.Mixed())
+        return type
     } else if(node.kind == "bin") {
         // node.type
         context.check(node.left)
-        const rtypes = context.check(node.right)
+        const rtype = context.check(node.right)
         switch(node.type) {
             case "!=":
             case "!==":
@@ -49,59 +49,56 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
             case "or":
             case "xor":
             case "||":
-                return [
-                    new Known.Bool(true),
-                    new Known.Bool(false)
-                ];
+                return new Known.Bool()
             case "<=>":
-                return [
+                return Context.combineTypes([
                     new Known.Int(-1),
                     new Known.Int(0),
                     new Known.Int(1)
-                ];
+                ])
             case "%":
             case "&":
             case "<<":
             case ">>":
             case "^":
             case "|":
-                return [
-                    new Known.Int()
-                ]
+                return new Known.Int()
             case "*":
             case "**":
             case "+":
             case "-":
             case "/":
                 // TODO recognise float promotion
-                return [
-                    new Known.Float()
-                ]
+                return new Known.Float()
             case ".":
-                return [
-                    new Known.String()
-                ]
+                return new Known.String()
             case "??":
-                return rtypes
+                return rtype
         }
     } else if(node.kind == "block") {
         node.children.forEach(
             child => context.check(child)
         )
-        return []
+        return new Known.Void()
     } else if(node.kind == "boolean") {
-        return [
-            new Known.Bool(node.value)
-        ]
+        return new Known.Bool(node.value)
     } else if(node.kind == "call") {
         let function_type: Known.Function | null = null
         if(node.what) {
-            context.check(node.what)
-            if(typeof node.what.name == "string") {
+            const what_type = context.check(node.what)
+            if(node.what.kind == "identifier") {
                 const type = context.get(node.what.name)
                 if(type instanceof Known.Function) {
                     function_type = type
                 }
+            } else if(node.what.kind == "propertylookup") {
+                if(what_type instanceof Known.Function) {
+                    function_type = what_type
+                } else {
+                    console.log(node.what)
+                }
+            } else {
+                console.log(node)
             }
         }
         if(function_type) {
@@ -116,35 +113,36 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
             }
             for(const [i, a] of Object.entries(node.arguments)) {
                 if(function_type.args[+i]) {
-                    let arg_possibilities: Type.Base[]
+                    let arg_possibility: Type.Base | null
                     const expected_type = function_type.args[+i].type
                     if(function_type.args[+i].byRef) {
-                        arg_possibilities = context.check(a, expected_type || new Inferred.Mixed())
+                        arg_possibility = context.check(a, expected_type || new Inferred.Mixed())
                     } else {
-                        arg_possibilities = context.check(a)
+                        arg_possibility = context.check(a)
                     }
                     if(expected_type) {
                         const type = expected_type
+                        console.log(arg_possibility, type)
                         context.assert(
                             a,
-                            arg_possibilities.every(arg => arg.matches(type)),
-                            `Wrong type for argument ${i}: ${arg_possibilities.map(arg => arg.shortType).join(", ")} should be ${type.shortType}`
+                            arg_possibility.matches(type),
+                            `Wrong type for argument ${i}: ${arg_possibility.shortType} should be ${type.shortType}`
                         )
                     }
                 } else {
                     context.check(a)
                 }
             }
-            if(function_type.returnTypes) {
-                return function_type.returnTypes
+            if(function_type.returnType) {
+                return function_type.returnType
             } else {
-                return []
+                return new Known.Void()
             }
         } else {
             node.arguments.forEach((a, i) => {
                 context.check(a)
             })
-            return [new Inferred.Mixed()]
+            return new Inferred.Mixed()
         }
     } else if(node.kind == "class") {
         node.body.forEach(
@@ -167,7 +165,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
         )
         const class_structure = new Known.Class(context.qualifyName(node.name, "qn"))
         context.setConstant(node.name, class_structure)
-        return [class_structure]
+        return class_structure
     } else if(node.kind == "classconstant") {
         // node.isStatic
         // node.name
@@ -175,7 +173,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
             context.check(node.value)
         }
         // node.visibility
-        return []
+        return new Known.Void()
     } else if(node.kind == "closure") {
         const inner_context = new Context(context)
         node.arguments.forEach(
@@ -185,39 +183,37 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
         // node.isStatic
         // node.nullable
         node.uses.forEach(u => {
-            inner_context.check(u, context.check(u)[0] || new Inferred.Mixed())
+            inner_context.check(u, context.check(u))
         })
         inner_context.check(node.body)
-        return [
-            new Known.Function(
-                node.arguments.map(a => new Argument(
-                    new Inferred.Mixed(),
-                    a.byref,
-                    !!a.value
-                )),
-                // FIXME return
-            )
-        ]
+        return new Known.Function(
+            node.arguments.map(a => new Argument(
+                new Inferred.Mixed(),
+                a.byref,
+                !!a.value
+            )),
+            // FIXME return
+        )
     } else if(node.kind == "constref") {
-        return []
+        // Stuff like method names
+        return new Known.String(node.name)
     } else if(node.kind == "echo") {
         node.arguments.forEach(
             n => context.check(n)
         )
         // node.shortForm
-        return []
+        return new Known.Void()
     } else if(node.kind == "entry") {
         if(node.key) {
             context.check(node.key)
         }
         return context.check(node.value)
     } else if(node.kind == "foreach") {
-        const source_types = context.check(node.source)
+        const source_type = context.check(node.source)
         if(node.key) {
             context.check(node.key, new Known.String())
         }
-        if(source_types.length == 1) {
-            const source_type = source_types[0]
+        if(source_type) {
             if(source_type instanceof Known.IndexedArray && source_type.memberType) {
                 context.check(
                     node.value,
@@ -239,13 +235,13 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
         context.check(node.body)
         // node.shortForm
         context.check(node.source)
-        return []
+        return new Known.Void()
     } else if(node.kind == "function") {
         const inner_context = new Context(context)
         const args: Argument[] = []
         node.arguments.forEach(
             a => args.push(new Argument(
-                inner_context.check(a)[0], // FIXME
+                inner_context.check(a), // FIXME
                 a.byref,
                 !!a.value,
             )) // FIXME
@@ -253,26 +249,24 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
         inner_context.returnType = node.type ?
             context.namedType(node.type.name, node.type.resolution) :
             null
-        inner_context.realReturnTypes = []
+        inner_context.realReturnType = null
         if(node.body) {
             inner_context.check(node.body)
         }
         context.setConstant(node.name, new Known.Function(
             args,
-            inner_context.realReturnTypes,
+            inner_context.realReturnType,
         ))
         // node.byref
         // node.nullable
-        return []
+        return new Known.Void()
     } else if(node.kind == "identifier") {
         /**
          * This represents a _name_ which may be aliased or use an implicit
          * namespace. It doesn't have an actual type.
          */
         // node.resolution
-        return [
-            new Known.Class(context.qualifyName(node.name, node.resolution))
-        ]
+        return new Known.Class(context.qualifyName(node.name, node.resolution))
     } else if(node.kind == "if") {
         if(node.alternate) {
             context.check(node.alternate)
@@ -280,23 +274,17 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
         context.check(node.body)
         context.check(node.test)
         // node.shortForm
-        return []
+        return new Known.Void()
     } else if(node.kind == "include") {
         // node.once
         // node.require
         context.check(node.target)
-        return [
-            new Known.Bool(true),
-            new Known.Bool(false)
-        ]
+        return new Known.Bool()
     } else if(node.kind == "isset") {
         node.arguments.forEach(
             n => context.check(n)
         )
-        return [
-            new Known.Bool(true),
-            new Known.Bool(false)
-        ]
+        return new Known.Bool()
     } else if(node.kind == "method") {
         const inner_context = new Context(context)
         if(!node.isStatic) {
@@ -305,7 +293,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
         const args: Argument[] = []
         node.arguments.forEach(
             a => args.push(new Argument(
-                inner_context.check(a)[0], // FIXME
+                inner_context.check(a), // FIXME
                 a.byref,
                 !!a.value,
             )) // FIXME
@@ -323,40 +311,39 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
             !!node.name.match(/^[a-z]+([A-Z0-9][a-z0-9]*)*$/),
             "PSR1 4.3: method names must be in camel case (lower)"
         )
-        return []
+        return new Known.Void()
     } else if(node.kind == "namespace") {
         // node.name
         // node.withBrackets
         context.namespacePrefix = name
-        return []
+        return new Known.Void()
     } else if(node.kind == "new") {
-        const types = context.check(node.what)
+        const type = context.check(node.what)
         node.arguments.forEach(
             a => context.check(a)
         )
-        const out: Array<Known.ClassInstance> = []
-        for(const t of types) {
-            if(t instanceof Known.Class) {
-                out.push(new Known.ClassInstance(t.ref))
-            }
+        if(type instanceof Known.Class) {
+            return new Known.ClassInstance(type.ref)
         }
-        return out
+        console.log(type)
+        return new Known.Void()
     } else if(node.kind == "number") {
         // node.raw
         // node.value
         if(Math.floor(node.value) == node.value) {
-            return [new Known.Int(node.value)]
+            return new Known.Int(node.value)
         } else {
-            return [new Known.Float(node.value)]
+            return new Known.Float(node.value)
         }
     } else if(node.kind == "offsetlookup") {
-        const types = context.check(node.what)
+        const type = context.check(node.what)
         context.check(node.offset)
-        if(types.length == 1) {
-            const type = types[0]
-            return [type instanceof Known.IndexedArray && type.memberType || new Inferred.Mixed()]
+        if(type) {
+            return(
+                type instanceof Known.IndexedArray && type.memberType || new Inferred.Mixed()
+            )
         } else {
-            return [new Inferred.Mixed()] // FIXME
+            return new Inferred.Mixed() // FIXME
         }
     } else if(node.kind == "parameter") {
         // node.byref
@@ -376,14 +363,14 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
         }
         // node.variadic
         context.set("$" + node.name, type)
-        return [type]
+        return type
     } else if(node.kind == "parenthesis") {
         return context.check(node.inner)
     } else if(node.kind == "program") {
         node.children.forEach(
             child => context.check(child)
         )
-        return []
+        return new Known.Void()
     } else if(node.kind == "property") {
         // node.isFinal
         // node.isStatic
@@ -392,41 +379,45 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
             context.check(node.value)
         }
         // node.visibility
-        return []
+        return new Known.Void()
     } else if(node.kind == "propertylookup") {
-        context.check(node.what)
-        context.check(node.offset)
-        return [
-            new Inferred.Mixed()
-        ] // FIXME
+        const what_type = context.check(node.what)
+        const offset_type = context.check(node.offset)
+        if(what_type instanceof Known.Class || what_type instanceof Known.ClassInstance) {
+            // ...
+        } else {
+            // console.log("Not a class")
+            return new Inferred.Mixed()
+        }
+        console.log(what_type!.shortType, offset_type, node)
+        return new Inferred.Mixed() // FIXME
     } else if(node.kind == "retif") {
         const test = context.check(node.test)
         const true_branch = node.trueExpr ? context.check(node.trueExpr) : test
-        return true_branch.concat(context.check(node.falseExpr))
+        return Context.combineTypes([
+            true_branch,
+            context.check(node.falseExpr)
+        ])
     } else if(node.kind == "return") {
-        const types = node.expr ? context.check(node.expr) : []
+        const type = node.expr ? context.check(node.expr) : new Known.Void()
         const expected_type = context.returnType
         if(expected_type) {
             context.assert(
                 node,
-                types.every(t => t.matches(expected_type)),
-                `Wrong type for return: ${types.map(t => t.shortType).join(", ")} should be ${expected_type.shortType}`
+                !!(type && type.matches(expected_type)),
+                `Wrong type for return: ${type!.shortType} should be ${expected_type.shortType}`
             )
         }
-        context.realReturnTypes.push(...types)
-        return types
+        context.realReturnType = Context.combineTypes([type, context.realReturnType])
+        return type
     } else if(node.kind == "staticlookup") {
         context.check(node.what)
         context.check(node.offset)
-        return [
-            new Inferred.Mixed()
-        ] // FIXME
+        return new Inferred.Mixed() // FIXME
     } else if(node.kind == "string") {
         // node.raw
         // node.value
-        return [
-            new Known.String(node.raw)
-        ]
+        return new Known.String(node.raw)
     } else if(node.kind == "traituse") {
         if(node.adaptations) {
             node.adaptations.forEach(
@@ -436,13 +427,11 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
         node.traits.forEach(
             t => context.check(t)
         )
-        return []
+        return new Known.Void()
     } else if(node.kind == "unary") {
         // node.type
         context.check(node.what)
-        return [
-            new Inferred.Mixed()
-        ] // FIXME
+        return new Inferred.Mixed() // FIXME
     } else if(node.kind == "usegroup") {
         // type
         if(node.name) {
@@ -454,10 +443,10 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
                 context.importName(u.name, u.alias)
             }
         }
-        return []
+        return new Known.Void()
     } else if(node.kind == "useitem") {
         context.importName(node.name, node.alias)
-        return []
+        return new Known.Void()
     } else if(node.kind == "variable") {
         // this.node.curly
         if(typeof node.name == "string") {
@@ -474,9 +463,9 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Array<Type
                     `Unassigned variable ${name}`
                 )
             }
-            return [context.get(name)!]
+            return context.get(name)!
         } else {
-            return [new Inferred.Mixed()] // FIXME
+            return new Inferred.Mixed() // FIXME
         }
     }
     throw new Error(`Unknown type: ${node.kind}`)

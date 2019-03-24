@@ -8,6 +8,30 @@ import {FunctionTypeInfo} from "./build"
 
 export class Context {
     /**
+     * Returns a single type given multiple.
+     *
+     * @param types
+     */
+    static combineTypes(types: Array<Type.Base | null>): Type.Base {
+        const defined_types: Array<Type.Base> = []
+        for(const t of types) {
+            if(t) {
+                defined_types.push(t)
+            }
+        }
+        if(defined_types.length == 1) {
+            return defined_types[0]
+        } else if(defined_types.length == 2) {
+            const alt_type = types[1]
+            if(alt_type instanceof Known.Bool && alt_type.value === false) {
+                return new Known.OptionalFalse(defined_types[0])
+            } else if(alt_type instanceof Known.Null) {
+                return new Known.OptionalNull(defined_types[0])
+            }
+        }
+        return new Inferred.Mixed()
+    }
+    /**
      * If you have a name which does not begin with a slash, it sticks a slash there.
      *
      * Used for contexts where you know the name is fully qualified but may not
@@ -37,7 +61,7 @@ export class Context {
 
     public assigning: Type.Base | null = null
     public namespacePrefix: string | null = null
-    public realReturnTypes: Type.Base[] = []
+    public realReturnType: Type.Base | null = null
     public returnType: Type.Base | null = null
     constructor(from_context?: Context) {
         this.localNamespace = new Map()
@@ -117,16 +141,16 @@ export class Context {
                             !!a.optionalDepth
                         )
                     ),
-                    documented_info.returnTypes.map(
+                    Context.combineTypes(documented_info.returnTypes.map(
                         t => this.documentedType(t, "qn")
-                    )
+                    ))
                 ))
             } else {
                 this.constantNamespace.set(name, new Function(
                     info.arguments.map(
                         a => new Argument(new Known.String(), a.pbr, a.optional)
                     ),
-                    [new Known.String()]
+                    new Known.String()
                 ))
             }
         }
@@ -145,9 +169,9 @@ export class Context {
                                     !!a.optionalDepth
                                 )
                             ),
-                            documented_info.returnTypes.map(
+                            Context.combineTypes(documented_info.returnTypes.map(
                                 t => this.documentedType(t, "qn")
-                            )
+                            ))
                         )
                     )
                 } else {
@@ -159,7 +183,7 @@ export class Context {
                                     this.documentedType(a.type, "qn"),
                                 )
                             ),
-                            [this.documentedType(method.returnType, "qn")]
+                            this.documentedType(method.returnType, "qn")
                         )
                     )
                 }
@@ -177,7 +201,7 @@ export class Context {
      * @param node The node to check next
      * @param assigning A type, if this starts an assignment
      */
-    check(node: NodeTypes.Node, assigning: Type.Base | null = null): Array<Type.Base> {
+    check(node: NodeTypes.Node, assigning: Type.Base | null = null): Type.Base {
         if(assigning !== null && assigning != this.assigning) {
             const was_assigning = this.assigning
             this.assigning = assigning
@@ -203,6 +227,8 @@ export class Context {
     ): Type.Base {
         if(!name || name == "mixed" || name == "\\mixed") {
             return new Inferred.Mixed()
+        } else if(name == "null" || name == "\\null") {
+            return new Known.Null()
         } else {
             return this.namedType(name, resolution)
         }

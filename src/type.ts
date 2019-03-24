@@ -8,6 +8,13 @@ export abstract class Base {
     abstract get shortType(): string
 
     /**
+     * Returns a type which is abstract enough to express this type and the other.
+     *
+     * @param type
+     */
+    abstract combinedWith(type: Base): Base
+
+    /**
      * Returns true if this matches the supplied type, ie if every possible
      * value of this is covered by at least one possible value of type.
      *
