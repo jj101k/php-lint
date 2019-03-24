@@ -1,12 +1,16 @@
-import { Base } from "./base";
-import { Mixed } from "../inferred";
+import { Base, Mixed } from "./base";
 
 /**
- * A null value
+ * A floating-point number
  */
-export class Null extends Base {
+export class Float extends Base {
     get shortType() {
-        return "null"
+        return "float"
+    }
+    public value: number | null
+    constructor(value: number | null = null) {
+        super()
+        this.value = value
     }
     combinedWith(type: Base): Base {
         if(type.matches(this)) {

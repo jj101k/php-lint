@@ -1,6 +1,5 @@
-import * as Type from "../../type"
-import { Base } from "./base";
-import { Mixed } from "../inferred";
+import * as Type from "../type"
+import { Base, Mixed } from "./base";
 
 /**
  * A general PHP optional value

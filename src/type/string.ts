@@ -1,6 +1,5 @@
-import { Base } from "./base";
-import * as Type from "../../type"
-import { Mixed } from "../inferred";
+import { Base, Mixed } from "./base";
+import * as Type from "../type"
 
 /**
  * A string of text

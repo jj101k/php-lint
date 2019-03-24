@@ -1,12 +1,12 @@
-import { Base } from "./base";
-import { Mixed } from "../inferred";
+import { Base, Mixed } from "./base";
+import * as Type from "../type"
 
 /**
- * A floating-point number
+ * An integer
  */
-export class Float extends Base {
+export class Int extends Base {
     get shortType() {
-        return "float"
+        return "int"
     }
     public value: number | null
     constructor(value: number | null = null) {
@@ -20,6 +20,13 @@ export class Float extends Base {
             return type
         } else {
             return new Mixed()
+        }
+    }
+    matches(type: Type.Base): boolean {
+        if(type instanceof Int) {
+            return true
+        } else {
+            return super.matches(type)
         }
     }
 }

@@ -1,7 +1,5 @@
-import * as Inferred from "./type/inferred";
-import * as Known from "./type/known";
 import * as Type from "./type"
-import { Function, Argument } from "./type/known/function";
+import { Function, Argument } from "./type/function";
 import { NodeTypes } from "./content/ast";
 import { checkForNode } from "./content/considered/for-node";
 import {FunctionTypeInfo} from "./build"
@@ -23,13 +21,13 @@ export class Context {
             return defined_types[0]
         } else if(defined_types.length == 2) {
             const alt_type = types[1]
-            if(alt_type instanceof Known.Bool && alt_type.value === false) {
-                return new Known.OptionalFalse(defined_types[0])
-            } else if(alt_type instanceof Known.Null) {
-                return new Known.OptionalNull(defined_types[0])
+            if(alt_type instanceof Type.Bool && alt_type.value === false) {
+                return new Type.OptionalFalse(defined_types[0])
+            } else if(alt_type instanceof Type.Null) {
+                return new Type.OptionalNull(defined_types[0])
             }
         }
-        return new Inferred.Mixed()
+        return new Type.Mixed()
     }
     /**
      * If you have a name which does not begin with a slash, it sticks a slash there.
@@ -148,20 +146,20 @@ export class Context {
             } else {
                 this.constantNamespace.set(name, new Function(
                     info.arguments.map(
-                        a => new Argument(new Known.String(), a.pbr, a.optional)
+                        a => new Argument(new Type.String(), a.pbr, a.optional)
                     ),
-                    new Known.String()
+                    new Type.String()
                 ))
             }
         }
         for(const [name, info] of Object.entries(class_info)) {
-            const c = new Known.Class(Context.pseudoQualify(name))
+            const c = new Type.Class(Context.pseudoQualify(name))
             for(const method of info.methods) {
                 const documented_info = function_type_info[`${name}::${method.name}`]
                 if(documented_info) {
                     c.methods.set(
                         method.name,
-                        new Known.Function(
+                        new Type.Function(
                             documented_info.args.map(
                                 a => new Argument(
                                     this.documentedType(a.type, "qn"),
@@ -177,7 +175,7 @@ export class Context {
                 } else {
                     c.methods.set(
                         method.name,
-                        new Known.Function(
+                        new Type.Function(
                             method.arguments.map(
                                 a => new Argument(
                                     this.documentedType(a.type, "qn"),
@@ -226,9 +224,9 @@ export class Context {
         resolution: "fqn" | "qn" | "uqn" | "rn"
     ): Type.Base {
         if(!name || name == "mixed" || name == "\\mixed") {
-            return new Inferred.Mixed()
+            return new Type.Mixed()
         } else if(name == "null" || name == "\\null") {
-            return new Known.Null()
+            return new Type.Null()
         } else {
             return this.namedType(name, resolution)
         }
@@ -268,23 +266,23 @@ export class Context {
         const qualified_type_name = this.qualifyName(name, resolution)
         switch(qualified_type_name) {
             case "\\array":
-                return new Known.IndexedArray()
+                return new Type.IndexedArray()
             case "\\bool":
-                return new Known.Bool()
+                return new Type.Bool()
             case "\\callable":
-                return new Known.Function([]) // FIXME
+                return new Type.Function([]) // FIXME
             case "\\float":
-                return new Known.Float()
+                return new Type.Float()
             case "\\int":
-                return new Known.Int()
+                return new Type.Int()
             case "\\iterable":
             case "\\object":
-                return new Inferred.Mixed() // FIXME
+                return new Type.Mixed() // FIXME
             case "\\string":
-                return new Known.String()
+                return new Type.String()
             default:
-                return new Known.ClassInstance(
-                    Inferred.ClassInstance.classRef(qualified_type_name)
+                return new Type.ClassInstance(
+                    Type.ClassInstance.classRef(qualified_type_name)
                 )
         }
     }

@@ -1,5 +1,4 @@
-import { Base } from "./base";
-import { Mixed } from "../inferred";
+import { Base, Mixed } from "./base";
 
 /**
  * A true/false value

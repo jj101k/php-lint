@@ -1,16 +1,6 @@
+import { Base, Mixed } from "./base";
+import { Class as _Class } from "./class"
 import * as Type from "../type"
-/**
- * A type which you assume exists
- */
-export abstract class Base extends Type.Base {
-    matches(type: Base): boolean {
-        if(type instanceof Mixed) {
-            return true
-        } else {
-            return super.matches(type)
-        }
-    }
-}
 
 /**
  * A class or similar.
@@ -45,13 +35,14 @@ export class ClassInstance extends Base {
         }
         return this.refs.get(name)!
     }
-    get shortType() {
-        return ClassInstance.className(this.classRef)
-    }
-    public classRef: number
+
+    private classRef: number
     constructor(class_ref: number) {
         super()
         this.classRef = class_ref
+    }
+    get shortType() {
+        return ClassInstance.className(this.classRef)
     }
     combinedWith(type: Base): Base {
         if(type.matches(this)) {
@@ -62,13 +53,15 @@ export class ClassInstance extends Base {
             return new Mixed()
         }
     }
-}
-
-export class Mixed extends Base {
-    get shortType() {
-        return "mixed"
-    }
-    combinedWith(type: Base): Base {
-        return this
+    matches(type: Type.Base): boolean {
+        if(type instanceof ClassInstance) {
+            return type.classRef == this.classRef
+        } else if(type instanceof ClassInstance) {
+            return type.classRef == this.classRef
+        } else if(type instanceof _Class) {
+            return type.ref == this.classRef
+        } else {
+            return super.matches(type)
+        }
     }
 }

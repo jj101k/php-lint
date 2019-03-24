@@ -1,12 +1,11 @@
-import { Base } from "./base";
-import { Mixed } from "../inferred";
+import { Base, Mixed } from "./base";
 
 /**
- * No value
+ * A null value
  */
-export class Void extends Base {
+export class Null extends Base {
     get shortType() {
-        return "void"
+        return "null"
     }
     combinedWith(type: Base): Base {
         if(type.matches(this)) {

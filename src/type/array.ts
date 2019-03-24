@@ -1,8 +1,7 @@
 import { isNumber } from "util";
-import * as Type from "../../type"
-import { Base } from "./base";
+import * as Type from "../type"
+import { Base, Mixed } from "./base";
 import { Int } from "./int";
-import { Mixed } from "../inferred";
 
 /**
  * A general PHP array

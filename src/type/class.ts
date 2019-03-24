@@ -1,7 +1,7 @@
-import { Base } from "./base";
-import { ClassInstance, Mixed } from "../inferred";
+import { Base, Mixed } from "./base";
 
 import {Function as _Function} from "./function"
+import { ClassInstance } from "./class-instance";
 
 /**
  * A class or similar.

@@ -1,26 +1,12 @@
-/**
- * Some kind of type
- */
-export abstract class Base {
-    /**
-     * The type signature usable in PHP function declarations
-     */
-    abstract get shortType(): string
-
-    /**
-     * Returns a type which is abstract enough to express this type and the other.
-     *
-     * @param type
-     */
-    abstract combinedWith(type: Base): Base
-
-    /**
-     * Returns true if this matches the supplied type, ie if every possible
-     * value of this is covered by at least one possible value of type.
-     *
-     * @param type
-     */
-    matches(type: Base): boolean {
-        return type == this
-    }
-}
+export { AssociativeArray, BaseArray, IndexedArray } from "./type/array"
+export { Base, Mixed } from "./type/base"
+export { Bool } from "./type/bool"
+export { Class } from "./type/class"
+export { ClassInstance } from "./type/class-instance"
+export { Float } from "./type/float"
+export { Function } from "./type/function"
+export { Int } from "./type/int"
+export { Null } from "./type/null"
+export { Optional, OptionalFalse, OptionalNull } from "./type/optional"
+export { String } from "./type/string"
+export { Void } from "./type/void"
