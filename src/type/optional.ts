@@ -1,5 +1,7 @@
 import * as Type from "../type";
 import { Base } from "./base";
+import { Null } from "./null";
+import { Bool } from "./bool";
 
 /**
  * A general PHP optional value
@@ -8,6 +10,7 @@ export abstract class Optional extends Base {
     get combinePriority() {
         return -1
     }
+    abstract get falseValue(): Base
     public content: Type.Base
     constructor(content: Type.Base) {
         super()
@@ -16,6 +19,9 @@ export abstract class Optional extends Base {
 }
 
 export class OptionalFalse extends Optional {
+    get falseValue() {
+        return new Bool(false)
+    }
     get shortType() {
         return this.content.shortType + " | false"
     }
@@ -29,6 +35,9 @@ export class OptionalFalse extends Optional {
 }
 
 export class OptionalNull extends Optional {
+    get falseValue() {
+        return new Null()
+    }
     get shortType() {
         return this.content.shortType + " | null"
     }
