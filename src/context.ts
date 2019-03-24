@@ -265,6 +265,8 @@ export class Context {
                 return new Type.Bool()
             case "\\callable":
                 return new Type.Function([]) // FIXME
+            case "\\false": // Sometimes used in doc
+                return new Type.Bool(false)
             case "\\float":
                 return new Type.Float()
             case "\\int":
@@ -274,6 +276,8 @@ export class Context {
                 return new Type.Mixed() // FIXME
             case "\\string":
                 return new Type.String()
+            case "\\true": // Sometimes used in doc
+                return new Type.Bool(false)
             default:
                 return new Type.ClassInstance(
                     Type.ClassInstance.classRef(qualified_type_name)
