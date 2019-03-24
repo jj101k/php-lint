@@ -5,6 +5,9 @@ import { Base } from "./base";
  * An integer
  */
 export class Int extends Base {
+    get combinePriority() {
+        return -Infinity
+    }
     get shortType() {
         return "int"
     }

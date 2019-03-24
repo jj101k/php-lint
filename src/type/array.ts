@@ -18,6 +18,9 @@ export abstract class BaseArray extends Base {
  */
 export class AssociativeArray extends BaseArray {
     public cursor: number = 0
+    get combinePriority() {
+        return -Infinity
+    }
     public content: Map<string, Type.Base> | null
     public otherValue: Type.Base | null = null
     constructor(from: AssociativeArray | IndexedArray | null = null) {
@@ -65,6 +68,9 @@ export class AssociativeArray extends BaseArray {
  * An array of things
  */
 export class IndexedArray extends BaseArray {
+    get combinePriority() {
+        return -Infinity
+    }
     public content: Array<Type.Base> | null
     constructor(content: Array<Type.Base> | null = null) {
         super()

@@ -5,6 +5,9 @@ import { Base } from "./base";
  * A string of text
  */
 export class String extends Base {
+    get combinePriority() {
+        return -Infinity
+    }
     get shortType() {
         return "string"
     }

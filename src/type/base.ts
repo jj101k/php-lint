@@ -3,6 +3,25 @@
  */
 export abstract class Base {
     /**
+     * Returns a type which is abstract enough to express this type and the
+     * other, where this type is known to be as or less specific than the other
+     * type.
+     *
+     * This is what runs after ordering and trivial type merging has been attempted.
+     *
+     * @param type
+     */
+    protected combinedWithSpecific(type: Base): Base {
+        return new Mixed()
+    }
+
+    /**
+     * Returns the priority for combination, so that types which have a clearer
+     * combination mode will dictate what happens. Higher number is higher
+     * priority.
+     */
+    abstract get combinePriority(): number
+    /**
      * The type signature usable in PHP function declarations
      */
     abstract get shortType(): string
@@ -13,7 +32,9 @@ export abstract class Base {
      * @param type
      */
     combinedWith(type: Base): Base {
-        if(type.matches(this)) {
+        if(this.combinePriority < type.combinePriority) {
+            return type.combinedWith(this)
+        } else if(type.matches(this)) {
             return this
         } else if(this.matches(type)) {
             return type
@@ -34,10 +55,13 @@ export abstract class Base {
  * The catch-all "any type" type
  */
 export class Mixed extends Base {
+    get combinePriority() {
+        return 0
+    }
     get shortType() {
         return "mixed"
     }
-    combinedWith(type: Base): Base {
+    protected combinedWithSpecific(type: Base): Base {
         return this
     }
 }

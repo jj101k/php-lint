@@ -32,6 +32,9 @@ export class Argument {
  * A function declaration
  */
 class _Function extends Base {
+    get combinePriority() {
+        return -Infinity
+    }
     get shortType() {
         return "callable"
     }

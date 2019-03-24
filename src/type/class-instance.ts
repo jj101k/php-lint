@@ -37,6 +37,9 @@ export class ClassInstance extends Base {
     }
 
     private classRef: number
+    get combinePriority() {
+        return -Infinity
+    }
     constructor(class_ref: number) {
         super()
         this.classRef = class_ref
