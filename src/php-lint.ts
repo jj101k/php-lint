@@ -9,13 +9,13 @@ export default class PHPLint {
     private _lint: Lint|null = null
     private _parser: phpParser.default | null = null
 
-    get lint(): Lint {
+    protected get lint(): Lint {
         if(!this._lint) {
             this._lint = new Lint()
         }
         return this._lint
     }
-    get parser(): phpParser.default {
+    protected get parser(): phpParser.default {
         if(!this._parser) {
             this._parser = new phpParser.default({
                 parser: {
