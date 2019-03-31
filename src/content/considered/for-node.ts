@@ -90,18 +90,26 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
                 const type = context.get(node.what.name)
                 if(type instanceof Type.Function) {
                     function_type = type
+                } else {
+                    debug("type miss!")
                 }
             } else if(node.what.kind == "propertylookup") {
                 if(what_type instanceof Type.Function) {
+                    debug("PL hit")
                     function_type = what_type
                 } else {
+                    debug("PL MISS")
                     debug(what_type)
                 }
             } else {
+                debug("Node miss")
                 debug(node)
             }
+        } else {
+            debug("What miss")
         }
         if(function_type) {
+            debug("Function type go")
             for(const [i, a] of Object.entries(function_type.args)) {
                 if(!a.hasDefaultValue) {
                     context.assert(
@@ -133,12 +141,14 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
                     context.check(a)
                 }
             }
+            debug(function_type.returnType)
             if(function_type.returnType) {
                 return function_type.returnType
             } else {
                 return new Type.Void()
             }
         } else {
+            debug("Function type no")
             node.arguments.forEach((a, i) => {
                 context.check(a)
             })
@@ -419,6 +429,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
             // debug("Not a class")
             return new Type.Mixed()
         }
+        debug("Object type hit")
         debug(what_type!.shortType, offset_type, node)
         if(offset_type instanceof Type.String) {
             if(what_type instanceof Type.ClassInstance) {
@@ -427,9 +438,12 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
                 if(class_type instanceof Type.Class) {
                     const method_type = class_type.methods.get(offset_type.value!)
                     if(method_type) {
+                        debug(`${class_name}::${offset_type.value} HIT`)
                         return method_type
                     }
                     // TODO: properties
+                    debug(context)
+                    debug(`${class_name}::${offset_type.value} MISS`)
                     return new Type.Mixed()
                 } else {
                     throw new Error("Internal error: no class " + class_name)

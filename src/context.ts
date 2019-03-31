@@ -143,6 +143,7 @@ export class Context {
             const c = new Type.Class(Context.pseudoQualify(name))
             for(const method of info.methods) {
                 const documented_info = function_type_info[`${name}::${method.name}`]
+                debug(`${name}::${method.name} (${!!documented_info})`)
                 if(documented_info) {
                     c.methods.set(
                         method.name,
