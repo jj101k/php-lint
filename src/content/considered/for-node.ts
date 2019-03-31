@@ -134,7 +134,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
                         context.assert(
                             a,
                             arg_possibility.matches(type),
-                            `Wrong type for argument ${i}: ${arg_possibility.shortType} should be ${type.shortType}`
+                            `Wrong type for argument ${i}: ${arg_possibility} should be ${type}`
                         )
                     }
                 } else {
@@ -466,7 +466,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
             context.assert(
                 node,
                 !!(type && type.matches(expected_type)),
-                `Wrong type for return: ${type!.shortType} should be ${expected_type.shortType}`
+                `Wrong type for return: ${type} should be ${expected_type}`
             )
         }
         context.realReturnType = context.realReturnType ?

@@ -50,6 +50,13 @@ export abstract class Base {
             return type == this
         }
     }
+
+    /**
+     * This should express enough info to clearly identify mismatching types
+     */
+    toString() {
+        return `${this.shortType} (${this.constructor.name})`
+    }
 }
 /**
  * The catch-all "any type" type
