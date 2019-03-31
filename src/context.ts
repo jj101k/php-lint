@@ -184,6 +184,7 @@ export class Context {
             // properties
             // interfaces
             // parentClass
+            this.constantNamespace.set(name, c)
         }
     }
 

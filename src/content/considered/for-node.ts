@@ -93,7 +93,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
                 if(what_type instanceof Type.Function) {
                     function_type = what_type
                 } else {
-                    console.log(node.what)
+                    console.log(what_type)
                 }
             } else {
                 console.log(node)
@@ -418,7 +418,27 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
             return new Type.Mixed()
         }
         console.log(what_type!.shortType, offset_type, node)
-        return new Type.Mixed() // FIXME
+        if(offset_type instanceof Type.String) {
+            if(what_type instanceof Type.ClassInstance) {
+                const class_name = what_type.shortType.replace(/^\\/, "")
+                const class_type = context.get(class_name)
+                if(class_type instanceof Type.Class) {
+                    const method_type = class_type.methods.get(offset_type.value!)
+                    if(method_type) {
+                        return method_type
+                    }
+                    // TODO: properties
+                    return new Type.Mixed()
+                } else {
+                    throw new Error("Internal error: no class " + class_name)
+                }
+            } else {
+                throw new Error("Bad type: " + what_type.constructor.name)
+            }
+        } else {
+            console.log("Non-string offset")
+            return new Type.Mixed() // FIXME
+        }
     } else if(node.kind == "retif") {
         const test = context.check(node.test)
         const true_branch = node.trueExpr ? context.check(node.trueExpr) : test
