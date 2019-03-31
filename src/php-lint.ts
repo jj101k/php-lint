@@ -11,7 +11,7 @@ export default class PHPLint {
 
     protected get lint(): Lint {
         if(!this._lint) {
-            this._lint = new Lint()
+            this._lint = new Lint(this)
         }
         return this._lint
     }
