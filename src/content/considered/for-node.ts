@@ -480,7 +480,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
     } else if(node.kind == "string") {
         // node.raw
         // node.value
-        return new Type.String(node.raw)
+        return new Type.String(node.value)
     } else if(node.kind == "traituse") {
         if(node.adaptations) {
             node.adaptations.forEach(

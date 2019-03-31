@@ -53,7 +53,7 @@ export namespace NodeTypes {
     export type RetIf = AnyStatement & {kind: "retif", test: Expression, trueExpr: Expression | null, falseExpr: Expression}
     export type Return = AnyNode & {kind: "return", expr: Expression | null}
     export type StaticLookup = AnyLookup & {kind: "staticlookup"}
-    export type String = AnyLiteral & {kind: "string", unicode: boolean, isDoubleQuote: boolean}
+    export type String = AnyLiteral & {kind: "string", unicode: boolean, isDoubleQuote: boolean, value: string}
     export type TraitUse = AnyNode & {kind: "traituse", traits: Identifier[], adaptations: Node[] | null}
     export type Unary = AnyOperation & {kind: "unary", type: string, what: Expression}
     export type UseGroup = AnyStatement & {kind: "usegroup", name: string | null, type: string | null, item: UseItem[]}
