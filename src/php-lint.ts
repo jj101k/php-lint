@@ -2,26 +2,32 @@ import * as phpParser from "php-parser"
 import * as fs from "fs"
 
 import Lint from "./lint"
-const parser = new phpParser.default({
-    parser: {
-        debug: false,
-        extractDoc: true,
-    },
-    ast: {
-        withPositions: true,
-    },
-})
 /**
  * The top-level lint support
  */
 export default class PHPLint {
     private _lint: Lint|null = null
+    private _parser: phpParser.default | null = null
 
     get lint(): Lint {
         if(!this._lint) {
             this._lint = new Lint()
         }
         return this._lint
+    }
+    get parser(): phpParser.default {
+        if(!this._parser) {
+            this._parser = new phpParser.default({
+                parser: {
+                    debug: false,
+                    extractDoc: true,
+                },
+                ast: {
+                    withPositions: true,
+                },
+            })
+        }
+        return this._parser
     }
 
     /**
@@ -40,7 +46,7 @@ export default class PHPLint {
                     reject(err)
                 } else {
                     try {
-                        const tree: any = parser.parseCode(data)
+                        const tree: any = this.parser.parseCode(data)
                         resolve(this.lint.checkTree(tree))
                     } catch(e) {
                         reject(e)
@@ -72,7 +78,7 @@ export default class PHPLint {
     ): boolean|null {
         const data = fs.readFileSync(filename, "utf8")
         try {
-            const tree: any = parser.parseCode(data)
+            const tree: any = this.parser.parseCode(data)
             return this.lint.checkTree(tree)
         } catch(e) {
             if(e.message.match(/^Line/)) { // FIXME
@@ -93,7 +99,7 @@ export default class PHPLint {
     ): Promise<boolean|null> {
         return new Promise((resolve, reject) => {
             try {
-                const tree: any = parser.parseCode(code)
+                const tree: any = this.parser.parseCode(code)
                 resolve(this.lint.checkTree(tree))
             } catch(e) {
                 reject(e)
@@ -111,7 +117,7 @@ export default class PHPLint {
         throw_on_error: boolean = true,
         depth: number = 0
     ): boolean|null {
-        const tree: any = parser.parseCode(code)
+        const tree: any = this.parser.parseCode(code)
         return this.lint.checkTree(tree)
     }
 }
