@@ -23,4 +23,11 @@ export class Bool extends Base {
             return super.combinedWithSpecific(type)
         }
     }
+    toString() {
+        if(this.value === null) {
+            return super.toString()
+        } else {
+            return super.toString() + ` = ${this.value}`
+        }
+    }
 }
