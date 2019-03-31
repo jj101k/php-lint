@@ -3,6 +3,8 @@ import { Context } from "../../context"
 import * as Type from "../../type"
 import { Argument } from "../../type/function";
 
+const debug = require("debug")("php-lint:context")
+
 /**
  *
  * @param context The effective PHP state machine context
@@ -93,10 +95,10 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
                 if(what_type instanceof Type.Function) {
                     function_type = what_type
                 } else {
-                    console.log(what_type)
+                    debug(what_type)
                 }
             } else {
-                console.log(node)
+                debug(node)
             }
         }
         if(function_type) {
@@ -120,7 +122,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
                     }
                     if(expected_type) {
                         const type = expected_type
-                        console.log(arg_possibility, type)
+                        debug(arg_possibility, type)
                         context.assert(
                             a,
                             arg_possibility.matches(type),
@@ -353,7 +355,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
         if(type instanceof Type.Class) {
             return new Type.ClassInstance(type.ref)
         }
-        console.log(type)
+        debug(type)
         return new Type.Void()
     } else if(node.kind == "number") {
         // node.raw
@@ -414,10 +416,10 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
         if(what_type instanceof Type.Class || what_type instanceof Type.ClassInstance) {
             // ...
         } else {
-            // console.log("Not a class")
+            // debug("Not a class")
             return new Type.Mixed()
         }
-        console.log(what_type!.shortType, offset_type, node)
+        debug(what_type!.shortType, offset_type, node)
         if(offset_type instanceof Type.String) {
             if(what_type instanceof Type.ClassInstance) {
                 const class_name = what_type.shortType.replace(/^\\/, "")
@@ -436,7 +438,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
                 throw new Error("Bad type: " + what_type.constructor.name)
             }
         } else {
-            console.log("Non-string offset")
+            debug("Non-string offset")
             return new Type.Mixed() // FIXME
         }
     } else if(node.kind == "retif") {

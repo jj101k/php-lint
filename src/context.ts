@@ -4,6 +4,8 @@ import { NodeTypes } from "./content/ast";
 import { checkForNode } from "./content/considered/for-node";
 import {FunctionTypeInfo} from "./build"
 
+const debug = require("debug")("php-lint:context")
+
 export class Context {
     /**
      * If you have a name which does not begin with a slash, it sticks a slash there.

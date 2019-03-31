@@ -6,6 +6,7 @@
   "types": "dist/index.d.ts",
   "dependencies": {
     "@types/glob": "^7.1.1",
+    "debug": "^4.1.1",
     "fast-sha256": "^1.1.0",
     "php-parser": "^3.0.0-alpha2"
   },
