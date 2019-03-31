@@ -175,6 +175,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
         )
         const class_structure = new Type.Class(context.qualifyName(node.name, "qn"))
         context.setConstant(node.name, class_structure)
+        debug(`Setting ${node.name} as a class`)
         return class_structure
     } else if(node.kind == "classconstant") {
         // node.isStatic
@@ -318,7 +319,13 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
     } else if(node.kind == "include") {
         // node.once
         // node.require
-        context.check(node.target)
+        const v = context.check(node.target)
+        if(v instanceof Type.String && v.value) {
+            debug(`Include for ${v.value}`)
+        } else {
+            debug(`Include (unknown)`)
+        }
+
         return new Type.Bool()
     } else if(node.kind == "isset") {
         node.arguments.forEach(
