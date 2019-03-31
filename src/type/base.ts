@@ -47,7 +47,7 @@ export abstract class Base {
         if(type instanceof Mixed) {
             return true
         } else {
-            return type == this
+            return type.constructor === this.constructor
         }
     }
 
