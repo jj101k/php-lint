@@ -279,7 +279,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
         // node.resolution
         return new Type.Class(context.qualifyName(node.name, node.resolution))
     } else if(node.kind == "if") {
-        context.check(node.test)
+        const check_value = context.check(node.test)
         const true_namespace_override: Map<string, Type.Base> = new Map()
         const false_namespace_override: Map<string, Type.Base> = new Map()
         if(node.test.kind == "variable" && typeof node.test.name == "string") {
@@ -295,23 +295,31 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
                 false_namespace_override.set("$" + node.test.what.name, v.content)
             }
         }
+        let inner_context_true: Context
+        let inner_context_false: Context
         if(true_namespace_override.size) {
-            const inner_context_true = new Context(context)
+            inner_context_true = new Context(context)
             for(const [name, v] of true_namespace_override.entries()) {
                 inner_context_true.set(name, v)
             }
-            const inner_context_false = new Context(context)
+            inner_context_false = new Context(context)
             for(const [name, v] of false_namespace_override.entries()) {
                 inner_context_false.set(name, v)
             }
-            inner_context_true.check(node.body)
-            if(node.alternate) {
-                inner_context_false.check(node.alternate)
-            }
         } else {
-            context.check(node.body)
-            if(node.alternate) {
-                context.check(node.alternate)
+            inner_context_true = context
+            inner_context_false = context
+        }
+        if(check_value.asBoolean === false) {
+            debug("Skipping impossible if branch")
+        } else {
+            inner_context_true.check(node.body)
+        }
+        if(node.alternate) {
+            if(check_value.asBoolean === true) {
+                debug("Skipping impossible else branch")
+            } else {
+                inner_context_false.check(node.alternate)
             }
         }
         // node.shortForm

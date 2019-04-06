@@ -3,6 +3,12 @@
  */
 export abstract class Base {
     /**
+     * If this value is definitely or false, returns those values; otherwise null
+     */
+    get asBoolean(): boolean | null {
+        return null
+    }
+    /**
      * Returns a type which is abstract enough to express this type and the
      * other, where this type is known to be as or less specific than the other
      * type.
@@ -21,6 +27,7 @@ export abstract class Base {
      * priority.
      */
     abstract get combinePriority(): number
+
     /**
      * The type signature usable in PHP function declarations
      */

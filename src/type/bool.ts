@@ -5,6 +5,9 @@ import { OptionalFalse } from "./optional";
  * A true/false value
  */
 export class Bool extends Base {
+    get asBoolean() {
+        return this.value
+    }
     get combinePriority() {
         return -4
     }
