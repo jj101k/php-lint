@@ -6,7 +6,7 @@ import Lint from "./lint"
  * The top-level lint support
  */
 export default class PHPLint {
-    private _lint: Lint|null = null
+    private _lint: Lint | null = null
     private _parser: phpParser.default | null = null
 
     protected get lint(): Lint {
@@ -31,6 +31,39 @@ export default class PHPLint {
     }
 
     /**
+     * Gives you back a full filename and, where needed, and inferred working
+     * directory.
+     *
+     * @param working_directory
+     * @param filename
+     */
+    protected expandFilename(
+        working_directory: string | null,
+        filename: string
+    ): {workingDirectory: string, expandedFilename: string} {
+        if(working_directory !== null) {
+            return {
+                workingDirectory: working_directory,
+                expandedFilename: working_directory + "/" + filename,
+            }
+        } else {
+            // Infer WD
+            let md: RegExpMatchArray | null
+            if(md = filename.match(new RegExp("(.*)/"))) {
+                return {
+                    workingDirectory: md[1],
+                    expandedFilename: filename,
+                }
+            } else {
+                return {
+                    workingDirectory: ".",
+                    expandedFilename: filename,
+                }
+            }
+        }
+    }
+
+    /**
      * Checks the file
      *
      * @param depth How far recursion has gone. Very deep code may be skipped.
@@ -40,13 +73,15 @@ export default class PHPLint {
         depth: number = 0,
         working_directory: string|null = null
     ): Promise<boolean|null> {
+        const expanded = this.expandFilename(working_directory, filename)
         return new Promise<boolean|null>((resolve, reject) => {
-            fs.readFile(filename, "utf8", (err, data) => {
+            fs.readFile(expanded.expandedFilename, "utf8", (err, data) => {
                 if(err) {
                     reject(err)
                 } else {
                     try {
                         const tree: any = this.parser.parseCode(data)
+                        this.lint.workingDirectory = expanded.workingDirectory
                         resolve(this.lint.checkTree(tree))
                     } catch(e) {
                         reject(e)
@@ -56,7 +91,7 @@ export default class PHPLint {
         }).catch(
             e => {
                 if(e.message.match(/^Line/)) { // FIXME
-                    console.log(new Error(`${filename}: ${e.message}`))
+                    console.log(new Error(`${expanded.expandedFilename}: ${e.message}`))
                 } else {
                     console.log(e)
                 }
@@ -74,15 +109,18 @@ export default class PHPLint {
         filename: string,
         throw_on_error: boolean = true,
         depth: number = 0,
-        working_directory: string|null = null
+        working_directory: string|null = null,
+        reuse_context: boolean = false
     ): boolean|null {
-        const data = fs.readFileSync(filename, "utf8")
+        const expanded = this.expandFilename(working_directory, filename)
+        const data = fs.readFileSync(expanded.expandedFilename, "utf8")
         try {
             const tree: any = this.parser.parseCode(data)
-            return this.lint.checkTree(tree)
+            this.lint.workingDirectory = expanded.workingDirectory
+            return this.lint.checkTree(tree, reuse_context)
         } catch(e) {
             if(e.message.match(/^Line/)) { // FIXME
-                throw new Error(`${filename}: ${e.message}`)
+                throw new Error(`${expanded.expandedFilename}: ${e.message}`)
             } else {
                 throw e
             }

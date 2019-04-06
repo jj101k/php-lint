@@ -3,6 +3,7 @@ import { Function, Argument } from "./type/function";
 import { NodeTypes } from "./content/ast";
 import { checkForNode } from "./content/considered/for-node";
 import {FunctionTypeInfo} from "./build"
+import Lint from "./lint";
 
 const debug = require("debug")("php-lint:context")
 
@@ -37,6 +38,7 @@ export class Context {
 
     public assigning: Type.Base | null = null
     public namespacePrefix: string | null = null
+    public lint: Lint | null = null
     public realReturnType: Type.Base | null = null
     public returnType: Type.Base | null = null
     constructor(from_context?: Context) {
@@ -44,6 +46,7 @@ export class Context {
         if(from_context) {
             this.constantNamespace = from_context.constantNamespace
             this.globalNamespace = from_context.globalNamespace
+            this.lint = from_context.lint
         } else {
             this.globalNamespace = new Map()
             this.constantNamespace = new Map()
@@ -208,6 +211,11 @@ export class Context {
             return checkForNode(this, node)
         }
     }
+
+    checkFile(filename: string): boolean | null {
+        return this.lint!.checkFile(filename)
+    }
+
     /**
      * Given a supplied documented type name, returns the counterpart type object.
      *

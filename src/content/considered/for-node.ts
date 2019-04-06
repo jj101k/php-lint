@@ -322,6 +322,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
         const v = context.check(node.target)
         if(v instanceof Type.String && v.value) {
             debug(`Include for ${v.value}`)
+            context.checkFile(v.value)
         } else {
             debug(`Include (unknown)`)
         }
