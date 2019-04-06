@@ -2,9 +2,8 @@ import { Base } from "./base";
 import { ClassInstance } from "./class-instance";
 import { Function as _Function } from "./function";
 
-
 /**
- * A class or similar.
+ * A class!
  */
 class _Class extends Base {
     get combinePriority() {
@@ -20,4 +19,19 @@ class _Class extends Base {
         this.ref = ClassInstance.classRef(name)
     }
 }
-export { _Class as Class };
+/**
+ * A trait
+ */
+class Trait extends Base {
+    get combinePriority(): number {
+        throw new Error("Cannot combine traits")
+    }
+    get shortType() {
+        return "trait" // Not actually usable in any meaningful sense
+    }
+    public methods: Map<string, _Function> = new Map()
+    constructor(name: string) {
+        super()
+    }
+}
+export { _Class as Class, Trait };

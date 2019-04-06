@@ -489,6 +489,26 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
         // node.raw
         // node.value
         return new Type.String(node.value)
+    } else if(node.kind == "trait") {
+        node.body.forEach(
+            b => context.check(b)
+        )
+        // node.extends
+        // node.implements
+        context.assert(
+            node,
+            node.name.length > 1,
+            "Single-character trait names are too likely to conflict"
+        )
+        context.assert(
+            node,
+            !!node.name.match(/^([A-Z0-9][a-z0-9]*)+$/),
+            "PSR1 3: trait names must be in camel case"
+        )
+        const trait_structure = new Type.Trait(context.qualifyName(node.name, "qn"))
+        context.setConstant(node.name, trait_structure)
+        debug(`Setting ${node.name} as a trait`)
+        return trait_structure
     } else if(node.kind == "traituse") {
         if(node.adaptations) {
             node.adaptations.forEach(

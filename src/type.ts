@@ -1,7 +1,7 @@
 export { AssociativeArray, BaseArray, IndexedArray } from "./type/array"
 export { Base, Mixed } from "./type/base"
 export { Bool } from "./type/bool"
-export { Class } from "./type/class"
+export { Class, Trait } from "./type/class"
 export { ClassInstance } from "./type/class-instance"
 export { Float } from "./type/float"
 export { Function } from "./type/function"

@@ -54,6 +54,7 @@ export namespace NodeTypes {
     export type Return = AnyNode & {kind: "return", expr: Expression | null}
     export type StaticLookup = AnyLookup & {kind: "staticlookup"}
     export type String = AnyLiteral & {kind: "string", unicode: boolean, isDoubleQuote: boolean, value: string}
+    export type Trait = AnyDeclaration & {kind: "trait", extends: Identifier | null, implements: Identifier[], body: Declaration[]}
     export type TraitUse = AnyNode & {kind: "traituse", traits: Identifier[], adaptations: Node[] | null}
     export type Unary = AnyOperation & {kind: "unary", type: string, what: Expression}
     export type UseGroup = AnyStatement & {kind: "usegroup", name: string | null, type: string | null, item: UseItem[]}
@@ -63,7 +64,7 @@ export namespace NodeTypes {
     type AllBlock = Block | Namespace | Program
     type AllConstant = ClassConstant
     type AllFunction = Function | Method
-    type Declaration = Class | AllFunction | Parameter | Property | AllConstant
+    type Declaration = Class | AllFunction | Parameter | Property | Trait | AllConstant
     type Expression = Array | ConstRef | Operation | Lookup | Variable
     type Literal = String | Number | Boolean
     type Lookup = PropertyLookup | StaticLookup | OffsetLookup
