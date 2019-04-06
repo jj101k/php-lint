@@ -1,5 +1,5 @@
 <?php
-trait D {
+trait LateTraitD {
     /**
      * @return int
      */

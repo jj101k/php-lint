@@ -1,10 +1,10 @@
 <?php
-require_once "lib/d.php";
-require_once "lib/e.php";
+require_once "lib/LateTraitD.php";
+require_once "lib/LateTraitE.php";
 /**
  *
  */
 class Foo {
-    use D;
-    use E;
+    use LateTraitD;
+    use LateTraitE;
 }
