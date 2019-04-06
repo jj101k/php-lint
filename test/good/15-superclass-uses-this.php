@@ -1,9 +1,9 @@
 <?php
-require_once "lib/f.php";
+require_once "lib/SuperclassF.php";
 /**
  *
  */
-class FF extends F {
+class FF extends SuperclassF {
     /**
      * @return int
      */

@@ -2,7 +2,7 @@
 /**
  *
  */
-class F {
+class SuperclassF {
     /**
      * @return self|FF
      */
