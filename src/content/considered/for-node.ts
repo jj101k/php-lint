@@ -329,9 +329,13 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
 
         return new Type.Bool()
     } else if(node.kind == "isset") {
-        node.arguments.forEach(
-            n => context.check(n)
-        )
+        for(const n of node.arguments) {
+            try {
+                context.check(n)
+            } catch(e) {
+                return new Type.Bool(false)
+            }
+        }
         return new Type.Bool()
     } else if(node.kind == "method") {
         const inner_context = new Context(context)
