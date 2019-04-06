@@ -1,6 +1,6 @@
 <?php
 /** test */
-class B extends A {
+class InheritB extends InheritA {
     /** test */
     public function bb() {
     }

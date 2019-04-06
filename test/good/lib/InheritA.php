@@ -1,6 +1,6 @@
 <?php
 /** test */
-class A {
+class InheritA {
     /** @return self */
     public function aa() {
         return $this;

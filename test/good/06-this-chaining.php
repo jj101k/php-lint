@@ -1,4 +1,4 @@
 <?php
-require_once "lib/a.php";
-require_once "lib/b.php";
-require_once "lib/c.php";
+require_once "lib/InheritA.php";
+require_once "lib/InheritB.php";
+require_once "lib/InheritC.php";

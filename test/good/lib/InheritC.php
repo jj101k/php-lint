@@ -1,9 +1,9 @@
 <?php
 /** test */
-class C {
+class InheritC {
     /** test */
     public function c() {
-        $bee = new B();
+        $bee = new InheritB();
         $bee->a()->bb();
     }
 }
