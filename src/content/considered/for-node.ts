@@ -209,9 +209,13 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
         // Stuff like method names
         return new Type.String(node.name)
     } else if(node.kind == "echo") {
-        node.arguments.forEach(
-            n => context.check(n)
-        )
+        const expectedType = new Type.String()
+        for(const n of node.arguments) {
+            const type = context.check(n)
+            if(!type.matches(expectedType)) {
+                throw new Error(`Echo arguments: ${type} does not match ${expectedType}`)
+            }
+        }
         // node.shortForm
         return new Type.Void()
     } else if(node.kind == "entry") {
