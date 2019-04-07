@@ -17,7 +17,7 @@ export class Int extends Base {
         this.value = value
     }
     matches(type: Type.Base): boolean {
-        if(type instanceof Int) {
+        if(type instanceof Int || type instanceof Type.String) {
             return true
         } else {
             return super.matches(type)
