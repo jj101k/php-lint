@@ -486,18 +486,19 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
     } else if(node.kind == "propertylookup") {
         const what_type = context.check(node.what)
         const offset_type = context.check(node.offset)
+        let ctype: Type.Class | Type.ClassInstance
         if(what_type instanceof Type.Class || what_type instanceof Type.ClassInstance) {
-            // ...
+            ctype = what_type
         } else {
             debug(`${what_type}: Not a class?`)
             debug(node.what)
             return new Type.Mixed()
         }
         debug("Object type hit")
-        debug(what_type!.shortType, offset_type, node)
+        debug(ctype!.shortType, offset_type, node)
         if(offset_type instanceof Type.String) {
-            if(what_type instanceof Type.ClassInstance) {
-                const class_name = what_type.shortType.replace(/^\\/, "")
+            if(ctype instanceof Type.ClassInstance) {
+                const class_name = ctype.shortType.replace(/^\\/, "")
                 const class_type = context.get(class_name)
                 if(class_type instanceof Type.Class) {
                     const method_type = class_type.methods.get(offset_type.value!)
@@ -513,7 +514,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
                     throw new Error("Internal error: no class " + class_name)
                 }
             } else {
-                throw new Error("Bad type: " + what_type.constructor.name)
+                throw new Error("Bad type: " + ctype.constructor.name)
             }
         } else {
             debug("Non-string offset")
