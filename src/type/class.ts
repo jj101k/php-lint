@@ -12,6 +12,7 @@ class _Class extends Base {
     get shortType() {
         return ClassInstance.className(this.ref)
     }
+    public classMethods: Map<string, _Function> = new Map()
     public methods: Map<string, _Function> = new Map()
     public ref: number
     constructor(name: string) {
@@ -29,6 +30,7 @@ class Trait extends Base {
     get shortType() {
         return "trait" // Not actually usable in any meaningful sense
     }
+    public classMethods: Map<string, _Function> = new Map()
     public methods: Map<string, _Function> = new Map()
     constructor(name: string) {
         super()
