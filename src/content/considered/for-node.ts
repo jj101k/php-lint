@@ -385,7 +385,13 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
             !!node.name.match(/^[a-z]+([A-Z0-9][a-z0-9]*)*$/),
             "PSR1 4.3: method names must be in camel case (lower)"
         )
-        return new Type.Void()
+        const returnType = node.type ?
+            context.check(node.type) :
+            new Type.Mixed()
+        return new Type.Function(
+            args,
+            returnType
+        )
     } else if(node.kind == "namespace") {
         // node.withBrackets
         context.namespacePrefix = node.name
