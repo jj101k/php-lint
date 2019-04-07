@@ -547,9 +547,26 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
         // node.value
         return new Type.String(node.value)
     } else if(node.kind == "trait") {
-        node.body.forEach(
-            b => context.check(b)
-        )
+        const qname = context.qualifyName(node.name, "qn")
+        const trait_structure = new Type.Trait(qname)
+        for(const b of node.body) {
+            if(b.kind == "method") {
+                const t = context.check(b)
+                if(t instanceof Type.Function) {
+                    debug(`Attaching function ${b.name} to ${qname}`)
+                    if(b.isStatic) {
+                        trait_structure.classMethods.set(b.name, t)
+                    } else {
+                        trait_structure.methods.set(b.name, t)
+                    }
+                } else {
+                    debug("Method type miss")
+                    debug(t)
+                }
+            } else {
+                context.check(b)
+            }
+        }
         // node.extends
         // node.implements
         context.assert(
@@ -562,9 +579,8 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
             !!node.name.match(/^([A-Z0-9][a-z0-9]*)+$/),
             "PSR1 3: trait names must be in camel case"
         )
-        const trait_structure = new Type.Trait(context.qualifyName(node.name, "qn"))
-        context.setConstant(node.name, trait_structure)
-        debug(`Setting ${node.name} as a trait`)
+        context.setConstant(qname.replace(/^\\/, ""), trait_structure)
+        debug(`Setting ${qname} as a trait`)
         return trait_structure
     } else if(node.kind == "traituse") {
         if(node.adaptations) {
