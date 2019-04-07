@@ -307,7 +307,14 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
          * namespace. It doesn't have an actual type.
          */
         // node.resolution
-        return new Type.Class(context.qualifyName(node.name, node.resolution))
+        const v = context.get(
+            context.qualifyName(node.name, node.resolution).replace(/^\\/, "")
+        )
+        if(v) {
+            return v
+        } else {
+            return context.namedType(node.name, node.resolution)
+        }
     } else if(node.kind == "if") {
         const check_value = context.check(node.test)
         const true_namespace_override: Map<string, Type.Base> = new Map()
