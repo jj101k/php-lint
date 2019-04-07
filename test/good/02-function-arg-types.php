@@ -4,13 +4,13 @@ class Foo {
     /** test
       * @return int
       */
-    public static function f() {
+    public static function f(): int {
         return 1;
     }
     /** test
       * @return string
       */
-    public function g() {
+    public function g(): string {
         return "2";
     }
 }
