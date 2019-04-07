@@ -24,6 +24,5 @@ function foo(Foo $test_fat, array $bar, Foo $f = null, array $b = null) {
     echo \Foo::f();
     echo Foo::f();
     echo $test_fat->g();
-    echo $b;
 }
 foo(new Foo(), []);
