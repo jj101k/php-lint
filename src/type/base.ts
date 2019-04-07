@@ -68,7 +68,9 @@ export abstract class Base {
         } else {
             const types = type.types
             if(types.length > 1) {
-                return types.some(t => this.matches(t))
+                return this.types.every(
+                    tt => types.some(t => tt.matches(t))
+                )
             } else {
                 return type.constructor === this.constructor
             }
