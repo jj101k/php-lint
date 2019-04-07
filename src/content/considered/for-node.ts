@@ -531,9 +531,19 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
             type
         return type
     } else if(node.kind == "staticlookup") {
-        context.check(node.what)
-        context.check(node.offset)
-        return new Type.Mixed() // FIXME
+        const t = context.check(node.what)
+        const o = context.check(node.offset)
+        if(t instanceof Type.Class && node.offset.kind == "constref") {
+            const l = t.classMethods.get(node.offset.name)
+            if(l) {
+                return l
+            } else {
+                debug(`SL search failure on ${t} (${node.offset.name})`)
+            }
+        } else {
+            debug(node)
+        }
+        return new Type.Mixed()
     } else if(node.kind == "string") {
         // node.raw
         // node.value
