@@ -212,9 +212,11 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
         const expectedType = new Type.String()
         for(const n of node.arguments) {
             const type = context.check(n)
-            if(!type.matches(expectedType)) {
-                throw new Error(`Echo arguments: ${type} does not match ${expectedType}`)
-            }
+            context.assert(
+                node,
+                type.matches(expectedType),
+                `Echo arguments: ${type} does not match ${expectedType}`
+            )
         }
         // node.shortForm
         return new Type.Void()
