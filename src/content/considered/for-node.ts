@@ -6,6 +6,12 @@ import { Argument } from "../../type/function";
 const debug = require("debug")("php-lint:context")
 
 /**
+ * True to support the pattern $a->b()->c()->d() where each method returns $this
+ * OR some false value.
+ */
+const FLUENT_ASSERT_CHAIN = true
+
+/**
  *
  * @param context The effective PHP state machine context
  * @param node The node to examine
@@ -489,6 +495,12 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
         let ctype: Type.Class | Type.ClassInstance
         if(what_type instanceof Type.Class || what_type instanceof Type.ClassInstance) {
             ctype = what_type
+        } else if(
+            FLUENT_ASSERT_CHAIN &&
+            what_type instanceof Type.Optional &&
+            (what_type.content instanceof Type.Class || what_type.content instanceof Type.ClassInstance)
+        ) {
+            ctype = what_type.content
         } else {
             debug(`${what_type}: Not a class?`)
             debug(node.what)
