@@ -101,6 +101,14 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
                     debug("PL MISS")
                     debug(what_type)
                 }
+            } else if(node.what.kind == "staticlookup") {
+                if(what_type instanceof Type.Function) {
+                    debug("SL hit")
+                    function_type = what_type
+                } else {
+                    debug("SL MISS")
+                    debug(what_type)
+                }
             } else {
                 debug("Node miss")
                 debug(node)
