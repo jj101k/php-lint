@@ -163,12 +163,13 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
             return new Type.Mixed()
         }
     } else if(node.kind == "class") {
-        const class_structure = new Type.Class(context.qualifyName(node.name, "qn"))
+        const qname = context.qualifyName(node.name, "qn")
+        const class_structure = new Type.Class(qname)
         for(const b of node.body) {
             if(b.kind == "method") {
                 const t = context.check(b)
                 if(t instanceof Type.Function) {
-                    debug(`Attaching function ${b.name} to ${node.name}`)
+                    debug(`Attaching function ${b.name} to ${qname}`)
                     if(b.isStatic) {
                         class_structure.classMethods.set(b.name, t)
                     } else {
@@ -200,8 +201,8 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
             !!node.name.match(/^([A-Z0-9][a-z0-9]*)+$/),
             "PSR1 3: class names must be in camel case"
         )
-        context.setConstant(node.name, class_structure)
-        debug(`Setting ${node.name} as a class`)
+        context.setConstant(qname.replace(/^\\/, ""), class_structure)
+        debug(`Setting ${qname} as a class`)
         return class_structure
     } else if(node.kind == "classconstant") {
         // node.isStatic
