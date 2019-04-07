@@ -145,10 +145,16 @@ export class Context {
         for(const [name, info] of Object.entries(class_info)) {
             const c = new Type.Class(Context.pseudoQualify(name))
             for(const method of info.methods) {
+                let collection: Map<string, Type.Function>
+                if(method.isStatic) {
+                    collection = c.classMethods
+                } else {
+                    collection = c.methods
+                }
                 const documented_info = function_type_info[`${name}::${method.name}`]
                 debug(`${name}::${method.name} (${!!documented_info})`)
                 if(documented_info) {
-                    c.methods.set(
+                    collection.set(
                         method.name,
                         new Type.Function(
                             documented_info.args.map(
@@ -173,7 +179,7 @@ export class Context {
                         )
                     )
                 } else {
-                    c.methods.set(
+                    collection.set(
                         method.name,
                         new Type.Function(
                             method.arguments.map(

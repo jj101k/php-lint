@@ -163,6 +163,25 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
             return new Type.Mixed()
         }
     } else if(node.kind == "class") {
+        const class_structure = new Type.Class(context.qualifyName(node.name, "qn"))
+        for(const b of node.body) {
+            if(b.kind == "method") {
+                const t = context.check(b)
+                if(t instanceof Type.Function) {
+                    debug(`Attaching function ${b.name} to ${node.name}`)
+                    if(b.isStatic) {
+                        class_structure.classMethods.set(b.name, t)
+                    } else {
+                        class_structure.methods.set(b.name, t)
+                    }
+                } else {
+                    debug("Method type miss")
+                    debug(t)
+                }
+            } else {
+                context.check(b)
+            }
+        }
         node.body.forEach(
             b => context.check(b)
         )
@@ -181,7 +200,6 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
             !!node.name.match(/^([A-Z0-9][a-z0-9]*)+$/),
             "PSR1 3: class names must be in camel case"
         )
-        const class_structure = new Type.Class(context.qualifyName(node.name, "qn"))
         context.setConstant(node.name, class_structure)
         debug(`Setting ${node.name} as a class`)
         return class_structure
