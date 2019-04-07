@@ -99,6 +99,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
                     function_type = what_type
                 } else {
                     debug("PL MISS")
+                    debug(node.what)
                     debug(what_type)
                 }
             } else if(node.what.kind == "staticlookup") {
@@ -488,7 +489,8 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
         if(what_type instanceof Type.Class || what_type instanceof Type.ClassInstance) {
             // ...
         } else {
-            // debug("Not a class")
+            debug(`${what_type}: Not a class?`)
+            debug(node.what)
             return new Type.Mixed()
         }
         debug("Object type hit")
