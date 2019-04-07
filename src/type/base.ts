@@ -34,6 +34,13 @@ export abstract class Base {
     abstract get shortType(): string
 
     /**
+     * Returns the possible types that this expresses, for multi-type values.
+     */
+    public get types(): Base[] {
+        return [this]
+    }
+
+    /**
      * Returns a type which is abstract enough to express this type and the other.
      *
      * @param type
@@ -50,11 +57,21 @@ export abstract class Base {
         }
     }
 
+    /**
+     * Returns true if this type is a subset of the supplied type.
+     *
+     * @param type
+     */
     matches(type: Base): boolean {
         if(type instanceof Mixed) {
             return true
         } else {
-            return type.constructor === this.constructor
+            const types = type.types
+            if(types.length > 1) {
+                return types.some(t => this.matches(t))
+            } else {
+                return type.constructor === this.constructor
+            }
         }
     }
 

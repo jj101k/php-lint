@@ -12,6 +12,10 @@ export abstract class Optional extends Base {
     }
     abstract get falseValue(): Base
     public content: Type.Base
+
+    public get types() {
+        return [this.content, this.falseValue]
+    }
     constructor(content: Type.Base) {
         super()
         this.content = content
