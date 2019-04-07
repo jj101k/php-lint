@@ -183,9 +183,6 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
                 context.check(b)
             }
         }
-        node.body.forEach(
-            b => context.check(b)
-        )
         // node.extends
         // node.implements
         // node.isAbstract
