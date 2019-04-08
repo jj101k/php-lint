@@ -31,7 +31,7 @@ export namespace NodeTypes {
     export type Class = AnyDeclaration & {kind: "class", extends: Identifier | null, implements: Identifier[], body: Declaration[], isAnonymous: boolean, isAbstract: boolean, isFinal: boolean}
     export type ClassConstant = AnyConstant & {kind: "classconstant", isStatic: boolean, visibility: string}
     export type Closure = AnyStatement & {kind: "closure", arguments: Parameter[], uses: Variable[], type: Identifier, byref: boolean, nullable: boolean, body: Block, isStatic: boolean}
-    export type ConstRef = AnyExpression & {kind: "constref", name: string}
+    export type ConstRef = AnyExpression & {kind: "constref", name: string | Identifier}
     export type Echo = AnySys & {kind: "echo", shortForm: boolean}
     export type Entry = AnyNode & {kind: "entry", key: Node | null, value: Node}
     export type Foreach = AnyStatement & {kind: "foreach", source: Expression, key: Expression | null, value: Expression, body: Statement, shortForm: boolean}

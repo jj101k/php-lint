@@ -238,7 +238,13 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
         )
     } else if(node.kind == "constref") {
         // Stuff like method names
-        return new Type.String(node.name)
+        if(typeof node.name == "string") {
+            return new Type.String(node.name)
+        } else {
+            return new Type.String(
+                context.qualifyName(node.name.name, node.name.resolution)
+            )
+        }
     } else if(node.kind == "echo") {
         const expectedType = new Type.String()
         for(const n of node.arguments) {
@@ -553,12 +559,12 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
     } else if(node.kind == "staticlookup") {
         const t = context.check(node.what)
         const o = context.check(node.offset)
-        if(t instanceof Type.Class && node.offset.kind == "constref") {
-            const l = t.classMethods.get(node.offset.name)
+        if(t instanceof Type.Class && o instanceof Type.String && o.value) {
+            const l = t.classMethods.get(o.value)
             if(l) {
                 return l
             } else {
-                debug(`SL search failure on ${t} (${node.offset.name})`)
+                debug(`SL search failure on ${t} (${o.value})`)
             }
         } else {
             debug(node)
