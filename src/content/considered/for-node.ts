@@ -12,6 +12,11 @@ const debug = require("debug")("php-lint:context")
 const FLUENT_ASSERT_CHAIN = true
 
 /**
+ * True to allow echo of false for the common case where that echoes nothing.
+ */
+const OPTIONAL_ECHO = true
+
+/**
  *
  * @param context The effective PHP state machine context
  * @param node The node to examine
@@ -262,7 +267,9 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
             )
         }
     } else if(node.kind == "echo") {
-        const expectedType = new Type.String()
+        const expectedType = OPTIONAL_ECHO ?
+            new Type.OptionalFalse(new Type.String()) :
+            new Type.String()
         for(const n of node.arguments) {
             const type = context.check(n)
             context.assert(
