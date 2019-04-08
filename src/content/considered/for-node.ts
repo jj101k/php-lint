@@ -38,7 +38,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
         return type
     } else if(node.kind == "bin") {
         // node.type
-        context.check(node.left)
+        const type = context.check(node.left)
         const rtype = context.check(node.right)
         switch(node.type) {
             case "!=":
@@ -51,11 +51,27 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
             case ">":
             case ">=":
             case "and":
-            case "instanceof":
             case "or":
             case "xor":
             case "||":
                 return new Type.Bool()
+            case "instanceof":
+                if(rtype instanceof Type.String && rtype.value) {
+                    const c = context.get(rtype.value)
+                    if(
+                        c instanceof Type.Class &&
+                        type instanceof Type.ClassInstance &&
+                        c.matches(type)
+                    ) {
+                        return new Type.Bool(true)
+                    } else if(c && type.matches(c)) {
+                        return new Type.Bool()
+                    } else {
+                        return new Type.Bool(false)
+                    }
+                } else {
+                    return new Type.Bool()
+                }
             case "<=>":
                 return (new Type.Int(-1)).combinedWith(
                     new Type.Int(0)
