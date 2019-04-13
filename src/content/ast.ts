@@ -57,7 +57,7 @@ export namespace NodeTypes {
     export type Trait = AnyDeclaration & {kind: "trait", extends: Identifier | null, implements: Identifier[], body: Declaration[]}
     export type TraitUse = AnyNode & {kind: "traituse", traits: Identifier[], adaptations: Node[] | null}
     export type Unary = AnyOperation & {kind: "unary", type: string, what: Expression}
-    export type UseGroup = AnyStatement & {kind: "usegroup", name: string | null, type: string | null, item: UseItem[]}
+    export type UseGroup = AnyStatement & {kind: "usegroup", name: string | null, type: string | null, items: UseItem[]}
     export type UseItem = AnyStatement & {kind: "useitem", name: string, type: string | null, alias: string | null}
     export type Variable = AnyExpression & {kind: "variable", name: string | Node, byref: boolean, curly: boolean}
 

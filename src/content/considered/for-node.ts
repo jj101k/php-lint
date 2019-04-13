@@ -657,11 +657,11 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
     } else if(node.kind == "usegroup") {
         // type
         if(node.name) {
-            for(const u of node.item) {
+            for(const u of node.items) {
                 context.importName(node.name + u.name, u.alias)
             }
         } else {
-            for(const u of node.item) {
+            for(const u of node.items) {
                 context.importName(u.name, u.alias)
             }
         }
