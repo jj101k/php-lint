@@ -47,6 +47,17 @@ export default class PHPLint {
                 expandedFilename: working_directory + "/" + filename,
             }
         } else {
+            let d = filename
+            do {
+                d = d.replace(/\/*[^\/]+$/, "")
+                const composer_filename = d ? d + "/composer.json" : "composer.json"
+                if(fs.existsSync(composer_filename)) {
+                    return {
+                        workingDirectory: d,
+                        expandedFilename: filename,
+                    }
+                }
+            } while(d)
             // Infer WD
             let md: RegExpMatchArray | null
             if(md = filename.match(new RegExp("(.*)/"))) {
