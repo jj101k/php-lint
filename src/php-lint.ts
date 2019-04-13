@@ -1,5 +1,6 @@
 import * as phpParser from "php-parser"
 import * as fs from "fs"
+import * as path from "path"
 
 import Lint from "./lint"
 /**
@@ -44,13 +45,13 @@ export default class PHPLint {
         if(working_directory !== null) {
             return {
                 workingDirectory: working_directory,
-                expandedFilename: working_directory + "/" + filename,
+                expandedFilename: path.resolve(working_directory, filename),
             }
         } else {
             let d = filename
             do {
-                d = d.replace(/\/*[^\/]+$/, "")
-                const composer_filename = d ? d + "/composer.json" : "composer.json"
+                d = path.dirname(d)
+                const composer_filename = path.resolve(d, "composer.json")
                 if(fs.existsSync(composer_filename)) {
                     return {
                         workingDirectory: d,
@@ -58,18 +59,10 @@ export default class PHPLint {
                     }
                 }
             } while(d)
-            // Infer WD
-            let md: RegExpMatchArray | null
-            if(md = filename.match(new RegExp("(.*)/"))) {
-                return {
-                    workingDirectory: md[1],
-                    expandedFilename: filename,
-                }
-            } else {
-                return {
-                    workingDirectory: ".",
-                    expandedFilename: filename,
-                }
+
+            return {
+                workingDirectory: path.dirname(filename),
+                expandedFilename: filename,
             }
         }
     }
