@@ -564,7 +564,14 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
     } else if(node.kind == "retif") {
         const test = context.check(node.test)
         const true_branch = node.trueExpr ? context.check(node.trueExpr) : test
-        return true_branch.combinedWith(context.check(node.falseExpr))
+        const false_branch = context.check(node.falseExpr)
+        if(test.asBoolean === true) {
+            return true_branch
+        } else if(test.asBoolean === false) {
+            return false_branch
+        } else {
+            return true_branch.combinedWith(false_branch)
+        }
     } else if(node.kind == "return") {
         const type = node.expr ? context.check(node.expr) : new Type.Void()
         const expected_type = context.returnType
