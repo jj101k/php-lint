@@ -1,4 +1,5 @@
 import * as fs from "fs"
+const debug = require("debug")("php-lint:autoloader")
 /**
  * Approximates PHP's autoload behaviour
  */
@@ -61,8 +62,11 @@ export class PHPAutoloader {
      * @param name
      */
     findClassFiles(name: string): string[] {
+        debug([...this.paths.keys()])
         for(const [class_ns, s] of this.paths.entries()) {
+            debug([class_ns, name])
             if(class_ns.length < name.length && class_ns == name.substr(0, class_ns.length)) {
+                debug("HIT", s)
                 const path_tail = name.substr(class_ns.length).replace(/\\/g, "/") + ".php"
                 const full_path = s.map(
                     path => path + path_tail

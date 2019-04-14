@@ -218,6 +218,7 @@ export class Context {
      * @param assigning A type, if this starts an assignment
      */
     check(node: NodeTypes.Node, assigning: Type.Base | null = null): Type.Base {
+        debug(`Checking node of type ${node.kind}`)
         if(assigning !== null && assigning != this.assigning) {
             const was_assigning = this.assigning
             this.assigning = assigning
