@@ -17,21 +17,37 @@ export default class Lint {
     constructor(phplint: PHPLint) {
         this.phplint = phplint
     }
+    /**
+     *
+     * @param filename
+     */
     checkFile(filename: string): boolean | null {
-        return this.phplint.checkFileSync(
-            filename,
-            false,
-            1,
-            this.workingDirectory,
-            true
-        )
+        try {
+            return this.phplint.checkFileSync(
+                filename,
+                false,
+                1,
+                this.workingDirectory,
+                true
+            )
+        } catch(e) {
+            throw new Error(`${filename}: ${e.message}`)
+        }
     }
     checkTree(tree: NodeTypes.Program, reuse_context = false, filename: string | null = null): boolean {
-        if(!(this.lastContext && reuse_context)) {
-            this.lastContext = new Context()
-            this.lastContext.lint = this
+        try {
+            if(!(this.lastContext && reuse_context)) {
+                this.lastContext = new Context()
+                this.lastContext.lint = this
+            }
+            this.lastContext.check(tree)
+            return true
+        } catch(e) {
+            if(filename) {
+                throw new Error(`${filename}: ${e.message}`)
+            } else {
+                throw e
+            }
         }
-        this.lastContext.check(tree)
-        return true
     }
 }
