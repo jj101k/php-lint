@@ -26,7 +26,7 @@ export default class Lint {
             true
         )
     }
-    checkTree(tree: NodeTypes.Program, reuse_context = false): boolean {
+    checkTree(tree: NodeTypes.Program, reuse_context = false, filename: string | null = null): boolean {
         if(!(this.lastContext && reuse_context)) {
             this.lastContext = new Context()
             this.lastContext.lint = this
