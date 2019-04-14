@@ -124,17 +124,13 @@ export default class Lint {
      * @param filename
      */
     checkFile(filename: string): boolean | null {
-        try {
-            return this.phplint.checkFileSync(
-                filename,
-                false,
-                1,
-                this.workingDirectory,
-                true
-            )
-        } catch(e) {
-            throw new Error(`${filename}: ${e.message}`)
-        }
+        return this.phplint.checkFileSync(
+            filename,
+            false,
+            1,
+            this.workingDirectory,
+            true
+        )
     }
     checkTree(tree: NodeTypes.Program, reuse_context = false, filename: string | null = null): boolean {
         try {
