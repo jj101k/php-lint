@@ -29,7 +29,12 @@ export class Context {
      * This is where functions go, as well as explicit constants. These get
      * inherited everywhere.
      */
-    private constantNamespace: Map<string, Type.Base>
+
+    /**
+     * Contains all constants, including null for any which failed autoload
+     */
+    private constantNamespace: Map<string, Type.Base | null>
+
     private globalNamespace: Map<string, Type.Base>
     /**
      * Stuff that has been defined here, ie variables
@@ -253,7 +258,7 @@ export class Context {
         if(name.match(/^[$]/)) {
             return this.localNamespace.get(name)
         } else {
-            return this.constantNamespace.get(name)
+            return this.constantNamespace.get(name) || undefined
         }
     }
     /**
@@ -352,7 +357,7 @@ export class Context {
      * @param name eg. "$foo"
      * @param value
      */
-    setConstant(name: string, value: Type.Base) {
+    setConstant(name: string, value: Type.Base | null) {
         this.constantNamespace.set(name, value)
     }
 }
