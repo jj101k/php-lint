@@ -45,6 +45,7 @@ export class PHPAutoloader {
      * @param autoloader
      */
     add(autoloader: PHPAutoloader): void {
+        const paths = this.paths
         for(const [class_ns, s] of autoloader.paths.entries()) {
             this.paths.set(
                 class_ns,
@@ -52,6 +53,13 @@ export class PHPAutoloader {
                     this.paths.get(class_ns)!.concat(s) :
                     s
             )
+        }
+        const class_prefixes = [...paths.keys()]
+        class_prefixes.sort((a, b) => b.length - a.length || a.localeCompare(b))
+
+        this.paths = new Map()
+        for(const prefix of class_prefixes) {
+            this.paths.set(prefix, paths.get(prefix)!)
         }
         this.classmapPaths = this.classmapPaths.concat(autoloader.classmapPaths)
     }
