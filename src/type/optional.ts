@@ -20,6 +20,17 @@ export abstract class Optional extends Base {
         super()
         this.content = content
     }
+
+    /**
+     * For types which have multiple expressions, returns true if *any* of them
+     * match. In particular, if this is mixed it may match any type and if this
+     * is optional it may match either.
+     *
+     * @param type
+     */
+    mayMatch(type: Base): boolean {
+        return this.content.matches(type) || this.falseValue.matches(type)
+    }
 }
 
 export class OptionalFalse extends Optional {

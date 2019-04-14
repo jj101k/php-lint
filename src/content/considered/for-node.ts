@@ -17,6 +17,11 @@ const FLUENT_ASSERT_CHAIN = true
 const OPTIONAL_ECHO = true
 
 /**
+ * True to consider the mixed type to not match any other type.
+ */
+const STRICT_MIXED = false
+
+/**
  *
  * @param context The effective PHP state machine context
  * @param node The node to examine
@@ -170,11 +175,19 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
                     if(expected_type) {
                         const type = expected_type
                         debug(arg_possibility, type)
-                        context.assert(
-                            a,
-                            arg_possibility.matches(type),
-                            `Wrong type for argument ${i}: ${arg_possibility} should be ${type}`
-                        )
+                        if(STRICT_MIXED) {
+                            context.assert(
+                                a,
+                                arg_possibility.matches(type),
+                                `Wrong type for argument ${i}: ${arg_possibility} should be ${type}`
+                            )
+                        } else {
+                            context.assert(
+                                a,
+                                arg_possibility.mayMatch(type),
+                                `Invalid type for argument ${i}: ${arg_possibility} should be ${type}`
+                            )
+                        }
                     }
                 } else {
                     context.check(a)

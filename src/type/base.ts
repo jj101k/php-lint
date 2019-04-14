@@ -78,6 +78,17 @@ export abstract class Base {
     }
 
     /**
+     * For types which have multiple expressions, returns true if *any* of them
+     * match. In particular, if this is mixed it may match any type and if this
+     * is optional it may match either.
+     *
+     * @param type
+     */
+    mayMatch(type: Base): boolean {
+        return this.matches(type)
+    }
+
+    /**
      * This should express enough info to clearly identify mismatching types
      */
     toString() {
@@ -96,5 +107,16 @@ export class Mixed extends Base {
     }
     protected combinedWithSpecific(type: Base): Base {
         return this
+    }
+
+    /**
+     * For types which have multiple expressions, returns true if *any* of them
+     * match. In particular, if this is mixed it may match any type and if this
+     * is optional it may match either.
+     *
+     * @param type
+     */
+    mayMatch(type: Base): boolean {
+        return true
     }
 }
