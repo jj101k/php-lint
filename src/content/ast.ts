@@ -32,6 +32,7 @@ export namespace NodeTypes {
     export type ClassConstant = AnyConstant & {kind: "classconstant", isStatic: boolean, visibility: string}
     export type Closure = AnyStatement & {kind: "closure", arguments: Parameter[], uses: Variable[], type: Identifier, byref: boolean, nullable: boolean, body: Block, isStatic: boolean}
     export type ConstRef = AnyExpression & {kind: "constref", name: string | Identifier}
+    export type Declare = AnyBlock & {kind: "declare", what: {[ref: string]: Expression}, mode: string}
     export type Echo = AnySys & {kind: "echo", shortForm: boolean}
     export type Entry = AnyNode & {kind: "entry", key: Node | null, value: Node}
     export type Foreach = AnyStatement & {kind: "foreach", source: Expression, key: Expression | null, value: Expression, body: Statement, shortForm: boolean}
@@ -40,6 +41,8 @@ export namespace NodeTypes {
     export type Isset = AnySys & {kind: "isset"}
     export type Function = AnyFunction & {kind: "function"}
     export type Include = AnyStatement & {kind: "include", target: Node, once: boolean, require: boolean}
+    export type Inline = AnyLiteral & {kind: "inline", value: string}
+    export type Magic = AnyLiteral & {kind: "magic"}
     export type Method = AnyFunction & {kind: "method", isAbstract: boolean, isFinal: boolean, isStatic: boolean, visibility: string}
     export type Namespace = AnyBlock & {kind: "namespace", name: string, withBrackets: boolean}
     export type New = AnyStatement & {kind: "new", what: Identifier | Variable | Class, arguments: Expression[]}
@@ -59,17 +62,18 @@ export namespace NodeTypes {
     export type Unary = AnyOperation & {kind: "unary", type: string, what: Expression}
     export type UseGroup = AnyStatement & {kind: "usegroup", name: string | null, type: string | null, items: UseItem[]}
     export type UseItem = AnyStatement & {kind: "useitem", name: string, type: string | null, alias: string | null}
+    export type While = AnyStatement & {kind: "while", test: Expression, body: Statement, shortForm: boolean}
     export type Variable = AnyExpression & {kind: "variable", name: string | Node, byref: boolean, curly: boolean}
 
-    type AllBlock = Block | Namespace | Program
+    type AllBlock = Block | Declare | Namespace | Program
     type AllConstant = ClassConstant
     type AllFunction = Function | Method
     type Declaration = Class | AllFunction | Parameter | Property | Trait | AllConstant
     type Expression = Array | ConstRef | Operation | Lookup | Variable
-    type Literal = String | Number | Boolean
+    type Literal = String | Number | Boolean | Inline | Magic
     type Lookup = PropertyLookup | StaticLookup | OffsetLookup
     type Operation = Bin | Parenthesis | Unary
-    type Statement = Array | Assign | Call | Closure | Foreach | If | Include | New | RetIf | UseGroup | UseItem
+    type Statement = Array | Assign | Call | Closure | Foreach | If | Include | New | RetIf | UseGroup | UseItem | While
     type Sys = Echo | Isset
     export type Node =
         AllBlock |

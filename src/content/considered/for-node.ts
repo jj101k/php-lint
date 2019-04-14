@@ -266,6 +266,13 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
                 context.qualifyName(node.name.name, node.name.resolution)
             )
         }
+    } else if(node.kind == "declare") {
+        // node.mode
+        // node.what
+        for(const c of node.children) {
+            context.check(c)
+        }
+        return new Type.Void()
     } else if(node.kind == "echo") {
         const expectedType = OPTIONAL_ECHO ?
             new Type.OptionalFalse(new Type.String()) :
@@ -409,6 +416,10 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
         }
 
         return new Type.Bool()
+    } else if(node.kind == "inline") {
+        // node.raw
+        // node.value
+        return new Type.String(node.value)
     } else if(node.kind == "isset") {
         for(const n of node.arguments) {
             try {
@@ -418,6 +429,8 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
             }
         }
         return new Type.Bool()
+    } else if(node.kind == "magic") {
+        return new Type.Mixed()
     } else if(node.kind == "method") {
         const inner_context = new Context(context)
         if(!node.isStatic) {
@@ -689,6 +702,36 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
         } else {
             return new Type.Mixed() // FIXME
         }
+    } else if(node.kind == "while") {
+        const check_value = context.check(node.test)
+        const body_namespace_override: Map<string, Type.Base> = new Map()
+        if(node.test.kind == "variable" && typeof node.test.name == "string") {
+            const v = context.get("$" + node.test.name)
+            if(v instanceof Type.Optional) {
+                body_namespace_override.set("$" + node.test.name, v.content)
+            }
+        } else if(node.test.kind == "unary" && node.test.what.kind == "variable" && typeof node.test.what.name == "string") {
+            const v = context.get("$" + node.test.what.name)
+            if(v instanceof Type.Optional) {
+                body_namespace_override.set("$" + node.test.what.name, v.falseValue)
+            }
+        }
+        let inner_context: Context
+        if(body_namespace_override.size) {
+            inner_context = new Context(context)
+            for(const [name, v] of body_namespace_override.entries()) {
+                inner_context.set(name, v)
+            }
+        } else {
+            inner_context = context
+        }
+        if(check_value.asBoolean === false) {
+            debug("Skipping impossible while body")
+        } else {
+            inner_context.check(node.body)
+        }
+        // node.shortForm
+        return new Type.Void()
     }
     throw new Error(`Unknown type: ${node.kind}`)
 }
