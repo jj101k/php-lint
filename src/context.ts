@@ -243,8 +243,18 @@ export class Context {
             return this.namedType(name, resolution)
         }
     }
+
+    /**
+     * Find the symbol in whichever contextual namespace
+     *
+     * @param name eg. "$foo" or "Bar"
+     */
     get(name: string): Type.Base | undefined {
-        return this.constantNamespace.get(name) || this.localNamespace.get(name)
+        if(name.match(/^[$]/)) {
+            return this.localNamespace.get(name)
+        } else {
+            return this.constantNamespace.get(name)
+        }
     }
     /**
      * Returns true if the current (global) namespace has the given name.
