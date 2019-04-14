@@ -515,6 +515,9 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
     } else if(node.kind == "namespace") {
         // node.withBrackets
         context.namespacePrefix = node.name
+        for(const c of node.children) {
+            context.check(c)
+        }
         return new Type.Void()
     } else if(node.kind == "new") {
         const type = context.check(node.what)
