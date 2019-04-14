@@ -536,7 +536,10 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
         }
     } else if(node.kind == "offsetlookup") {
         const type = context.check(node.what)
-        context.check(node.offset)
+        if(node.offset) {
+            // This is unset for `$foo[] = 1;`
+            context.check(node.offset)
+        }
         if(type) {
             return(
                 type instanceof Type.IndexedArray && type.memberType || new Type.Mixed()
