@@ -138,7 +138,9 @@ export default class Lint {
     }
     checkTree(tree: NodeTypes.Program, reuse_context = false, filename: string | null = null): boolean {
         try {
-            if(!(this.lastContext && reuse_context)) {
+            if(this.lastContext && reuse_context) {
+                this.lastContext = new Context(this.lastContext)
+            } else {
                 this.lastContext = new Context()
                 this.lastContext.lint = this
             }
