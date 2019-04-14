@@ -132,10 +132,20 @@ export default class Lint {
             true
         )
     }
-    checkTree(tree: NodeTypes.Program, reuse_context = false, filename: string | null = null): boolean {
+    /**
+     *
+     * @param tree
+     * @param reuse_context
+     * @param filename
+     * @param depth
+     */
+    checkTree(tree: NodeTypes.Program, reuse_context = false, filename: string | null = null, depth = 0): boolean {
         try {
             if(this.lastContext && reuse_context) {
                 this.lastContext = new Context(this.lastContext)
+                if(depth > 0) {
+                    this.lastContext.including = true
+                }
             } else {
                 this.lastContext = new Context()
                 this.lastContext.lint = this

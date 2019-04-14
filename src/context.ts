@@ -42,6 +42,11 @@ export class Context {
     private localNamespace: Map<string, Type.Base>
 
     public assigning: Type.Base | null = null
+    /**
+     * When true, the current action is an include which should be less strict
+     * and is only required to detect all global/constant types
+     */
+    public including = false
     public namespacePrefix: string | null = null
     public lint: Lint | null = null
     public realReturnType: Type.Base | null = null
@@ -51,6 +56,7 @@ export class Context {
         if(from_context) {
             this.constantNamespace = from_context.constantNamespace
             this.globalNamespace = from_context.globalNamespace
+            this.including = from_context.including
             this.lint = from_context.lint
         } else {
             this.globalNamespace = new Map()
@@ -71,7 +77,7 @@ export class Context {
         test: boolean,
         message: string = "Invalid syntax",
     ): void {
-        if(!test) {
+        if(!this.including && !test) {
             if(node.loc) {
                 throw new Error(
                     `Line ${node.loc.start.line} column ${node.loc.start.column}: ` +
