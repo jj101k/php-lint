@@ -72,36 +72,33 @@ export default class PHPLint {
      *
      * @param depth How far recursion has gone. Very deep code may be skipped.
      */
-    checkFile(
+    async checkFile(
         filename: string,
         depth: number = 0,
         working_directory: string|null = null
-    ): Promise<boolean|null> {
+    ): Promise<boolean | null> {
         const expanded = this.expandFilename(working_directory, filename)
-        return new Promise<boolean|null>((resolve, reject) => {
-            fs.readFile(expanded.expandedFilename, "utf8", (err, data) => {
-                if(err) {
-                    reject(err)
-                } else {
-                    try {
-                        const tree: any = this.parser.parseCode(data)
-                        this.lint.workingDirectory = expanded.workingDirectory
-                        resolve(this.lint.checkTree(tree))
-                    } catch(e) {
-                        reject(e)
+        try {
+            const data = await new Promise<string>(
+                (resolve, reject) => fs.readFile(expanded.expandedFilename, "utf8", (err, data) => {
+                    if(err) {
+                        reject(err)
+                    } else {
+                        resolve(data)
                     }
-                }
-            })
-        }).catch(
-            e => {
-                if(e.message.match(/^Line/)) { // FIXME
-                    console.log(new Error(`${expanded.expandedFilename}: ${e.message}`))
-                } else {
-                    console.log(e)
-                }
-                return null
+                })
+            )
+            const tree: any = this.parser.parseCode(data)
+            this.lint.workingDirectory = expanded.workingDirectory
+            return this.lint.checkTree(tree)
+        } catch(e) {
+            if(e.message.match(/^Line/)) { // FIXME
+                console.log(new Error(`${expanded.expandedFilename}: ${e.message}`))
+            } else {
+                console.log(e)
             }
-        )
+            return null
+        }
     }
     /**
      * Checks the file and maybe throws (or warns)
