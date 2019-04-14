@@ -109,6 +109,9 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
         return new Type.Void()
     } else if(node.kind == "boolean") {
         return new Type.Bool(node.value)
+    } else if(node.kind == "break") {
+        // node.level
+        return new Type.Void()
     } else if(node.kind == "call") {
         let function_type: Type.Function | null = null
         if(node.what) {
@@ -190,6 +193,19 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
             })
             return new Type.Mixed()
         }
+    } else if(node.kind == "case") {
+        if(node.test) {
+            context.check(node.test)
+        }
+        if(node.body) {
+            context.check(node.body)
+        }
+        return new Type.Void()
+    } else if(node.kind == "cast") {
+        // node.type
+        // node.raw
+        context.check(node.what)
+        return context.namedType(node.type, "fqn")
     } else if(node.kind == "class") {
         const qname = context.qualifyName(node.name, "qn")
         const class_structure = new Type.Class(qname)
@@ -287,6 +303,19 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
         }
         // node.shortForm
         return new Type.Void()
+    } else if(node.kind == "empty") {
+        for(const n of node.arguments) {
+            try {
+                context.check(n)
+            } catch(e) {
+                //
+            }
+        }
+        return new Type.Bool()
+    } else if(node.kind == "encapsed") {
+        // node.type
+        // node.label
+        return new Type.String(node.value)
     } else if(node.kind == "entry") {
         if(node.key) {
             context.check(node.key)
@@ -439,6 +468,15 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
             }
         }
         return new Type.Bool()
+    } else if(node.kind == "list") {
+        for(const n of node.arguments) {
+            try {
+                context.check(n)
+            } catch(e) {
+                //
+            }
+        }
+        return new Type.IndexedArray()
     } else if(node.kind == "magic") {
         return new Type.Mixed()
     } else if(node.kind == "method") {
@@ -627,6 +665,14 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
         // node.raw
         // node.value
         return new Type.String(node.value)
+    } else if(node.kind == "switch") {
+        const check_value = context.check(node.test)
+        context.check(node.body)
+        // node.shortForm
+        return new Type.Void()
+    } else if(node.kind == "throw") {
+        context.check(node.what)
+        return new Type.Void()
     } else if(node.kind == "trait") {
         const qname = context.qualifyName(node.name, "qn")
         const trait_structure = new Type.Trait(qname)
