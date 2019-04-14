@@ -258,7 +258,13 @@ export class Context {
         if(name.match(/^[$]/)) {
             return this.localNamespace.get(name)
         } else {
-            return this.constantNamespace.get(name) || undefined
+            const v = this.constantNamespace.get(name)
+            if(v === undefined) {
+                this.lint!.autoload(name)
+                return this.constantNamespace.get(name) || undefined
+            } else {
+                return v || undefined
+            }
         }
     }
     /**
