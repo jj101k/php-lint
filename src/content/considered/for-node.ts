@@ -410,12 +410,22 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
         const v = context.check(node.target)
         if(v instanceof Type.String && v.value) {
             debug(`Include for ${v.value}`)
-            context.checkFile(v.value)
+            if(node.require) {
+                context.checkFile(v.value)
+                return new Type.Bool(true)
+            } else {
+                try {
+                    context.checkFile(v.value)
+                    return new Type.Bool(true)
+                } catch(e) {
+                    debug(e)
+                    return new Type.Bool(false)
+                }
+            }
         } else {
             debug(`Include (unknown)`)
+            return new Type.Bool()
         }
-
-        return new Type.Bool()
     } else if(node.kind == "inline") {
         // node.raw
         // node.value
