@@ -90,7 +90,7 @@ export default class PHPLint {
             )
             const tree: any = this.parser.parseCode(data)
             this.lint.workingDirectory = expanded.workingDirectory
-            return this.lint.checkTree(tree)
+            return this.lint.checkTree(tree, false, filename)
         } catch(e) {
             if(e.message.match(/^Line/)) { // FIXME
                 console.log(new Error(`${expanded.expandedFilename}: ${e.message}`))
