@@ -64,6 +64,7 @@ export namespace NodeTypes {
     export type RetIf = AnyStatement & {kind: "retif", test: Expression, trueExpr: Expression | null, falseExpr: Expression}
     export type Return = AnyNode & {kind: "return", expr: Expression | null}
     export type Silent = AnyStatement & {kind: "silent", expr: Expression | null}
+    export type Static = AnyStatement & {kind: "static", items: Variable[] | Assign[]}
     export type StaticLookup = AnyLookup & {kind: "staticlookup"}
     export type String = AnyLiteral & {kind: "string", unicode: boolean, isDoubleQuote: boolean, value: string}
     export type Switch = AnyStatement & {kind: "switch", test: Expression, body: Block, shortForm: boolean}
@@ -72,6 +73,7 @@ export namespace NodeTypes {
     export type TraitUse = AnyNode & {kind: "traituse", traits: Identifier[], adaptations: Node[] | null}
     export type Try = AnyStatement & {kind: "try", body: Block, catches: Catch[], always: Block | null}
     export type Unary = AnyOperation & {kind: "unary", type: string, what: Expression}
+    export type Unset = AnySys & {kind: "unset"}
     export type UseGroup = AnyStatement & {kind: "usegroup", name: string | null, type: string | null, items: UseItem[]}
     export type UseItem = AnyStatement & {kind: "useitem", name: string, type: string | null, alias: string | null}
     export type While = AnyStatement & {kind: "while", test: Expression, body: Statement, shortForm: boolean}
@@ -85,8 +87,8 @@ export namespace NodeTypes {
     type Literal = Encapsed | Boolean | Inline | Magic | Number | String
     type Lookup = PropertyLookup | StaticLookup | OffsetLookup
     type Operation = Bin | Cast | Parenthesis | Unary
-    type Statement = Array | Assign | Call | Catch | Closure | Foreach | If | Include | New | RetIf | Silent | Switch | Throw | Try | UseGroup | UseItem | While
-    type Sys = Echo | Empty | Isset | List
+    type Statement = Array | Assign | Call | Catch | Closure | Foreach | If | Include | New | RetIf | Silent | Static | Switch | Throw | Try | UseGroup | UseItem | While
+    type Sys = Echo | Empty | Isset | List | Unset
     export type Node =
         AllBlock |
         Break |

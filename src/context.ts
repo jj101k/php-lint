@@ -374,4 +374,13 @@ export class Context {
     setConstant(name: string, value: Type.Base | null) {
         this.constantNamespace.set(name, value)
     }
+
+    /**
+     * Removes an entry in the current namespace.
+     *
+     * @param name eg. "$foo"
+     */
+    unset(name: string) {
+        this.localNamespace.delete(name)
+    }
 }

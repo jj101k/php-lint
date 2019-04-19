@@ -719,6 +719,12 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
         } else {
             return new Type.Void()
         }
+    } else if(node.kind == "static") {
+        // TODO add tests relating to staticness
+        for(const i of node.items) {
+            context.check(i)
+        }
+        return new Type.Void()
     } else if(node.kind == "staticlookup") {
         const t = context.check(node.what)
         const o = context.check(node.offset)
@@ -804,6 +810,15 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
         // node.type
         context.check(node.what)
         return new Type.Mixed() // FIXME
+    } else if(node.kind == "unset") {
+        for(const a of node.arguments) {
+            if(a.kind == "variable") {
+                if(typeof a.name == "string") {
+                    context.unset(a.name)
+                }
+            }
+        }
+        return new Type.Void()
     } else if(node.kind == "usegroup") {
         // type
         if(node.name) {
