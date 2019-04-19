@@ -713,6 +713,12 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
             type.combinedWith(context.realReturnType) :
             type
         return type
+    } else if(node.kind == "silent") {
+        if(node.expr) {
+            return context.check(node.expr)
+        } else {
+            return new Type.Void()
+        }
     } else if(node.kind == "staticlookup") {
         const t = context.check(node.what)
         const o = context.check(node.offset)

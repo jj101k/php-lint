@@ -63,6 +63,7 @@ export namespace NodeTypes {
     export type PropertyLookup = AnyLookup & {kind: "propertylookup"}
     export type RetIf = AnyStatement & {kind: "retif", test: Expression, trueExpr: Expression | null, falseExpr: Expression}
     export type Return = AnyNode & {kind: "return", expr: Expression | null}
+    export type Silent = AnyStatement & {kind: "silent", expr: Expression | null}
     export type StaticLookup = AnyLookup & {kind: "staticlookup"}
     export type String = AnyLiteral & {kind: "string", unicode: boolean, isDoubleQuote: boolean, value: string}
     export type Switch = AnyStatement & {kind: "switch", test: Expression, body: Block, shortForm: boolean}
@@ -84,7 +85,7 @@ export namespace NodeTypes {
     type Literal = Encapsed | Boolean | Inline | Magic | Number | String
     type Lookup = PropertyLookup | StaticLookup | OffsetLookup
     type Operation = Bin | Cast | Parenthesis | Unary
-    type Statement = Array | Assign | Call | Catch | Closure | Foreach | If | Include | New | RetIf | Switch | Throw | Try | UseGroup | UseItem | While
+    type Statement = Array | Assign | Call | Catch | Closure | Foreach | If | Include | New | RetIf | Silent | Switch | Throw | Try | UseGroup | UseItem | While
     type Sys = Echo | Empty | Isset | List
     export type Node =
         AllBlock |
