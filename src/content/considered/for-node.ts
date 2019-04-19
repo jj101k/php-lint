@@ -829,7 +829,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
                     `Unassigned variable ${name}`
                 )
             }
-            return context.get(name)!
+            return context.get(name) || new Type.Mixed()
         } else {
             return new Type.Mixed() // FIXME
         }
