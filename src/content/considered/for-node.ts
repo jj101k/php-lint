@@ -885,6 +885,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
         // node.shortForm
         return new Type.Void()
     } else {
+        debug(node)
         //@ts-ignore
         throw new Error(`Unknown type: ${node.kind}`)
     }
