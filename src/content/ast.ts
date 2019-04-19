@@ -31,6 +31,7 @@ export namespace NodeTypes {
     export type Call = AnyStatement & {kind: "call", what: Identifier | PropertyLookup | StaticLookup | Variable | null, arguments: Expression[]}
     export type Case = AnyNode & {kind: "case", test: Expression | null, body: Block | null}
     export type Cast = AnyOperation & {kind: "cast", type: string, raw: string, what: Expression}
+    export type Catch = AnyStatement & {kind: "catch", what: Identifier[], variable: Variable, body: Statement}
     export type Class = AnyDeclaration & {kind: "class", extends: Identifier | null, implements: Identifier[], body: Declaration[], isAnonymous: boolean, isAbstract: boolean, isFinal: boolean}
     export type ClassConstant = AnyConstant & {kind: "classconstant", isStatic: boolean, visibility: string}
     export type Closure = AnyStatement & {kind: "closure", arguments: Parameter[], uses: Variable[], type: Identifier, byref: boolean, nullable: boolean, body: Block, isStatic: boolean}
@@ -47,6 +48,7 @@ export namespace NodeTypes {
     export type Function = AnyFunction & {kind: "function"}
     export type Include = AnyStatement & {kind: "include", target: Node, once: boolean, require: boolean}
     export type Inline = AnyLiteral & {kind: "inline", value: string}
+    export type Interface = AnyDeclaration & {kind: "interface", extends: Identifier[], body: Declaration[]}
     export type List = AnySys & {kind: "list", shortForm: boolean}
     export type Magic = AnyLiteral & {kind: "magic"}
     export type Method = AnyFunction & {kind: "method", isAbstract: boolean, isFinal: boolean, isStatic: boolean, visibility: string}
@@ -67,6 +69,7 @@ export namespace NodeTypes {
     export type Throw = AnyStatement & {kind: "throw", what: Expression}
     export type Trait = AnyDeclaration & {kind: "trait", extends: Identifier | null, implements: Identifier[], body: Declaration[]}
     export type TraitUse = AnyNode & {kind: "traituse", traits: Identifier[], adaptations: Node[] | null}
+    export type Try = AnyStatement & {kind: "try", body: Block, catches: Catch[], always: Block | null}
     export type Unary = AnyOperation & {kind: "unary", type: string, what: Expression}
     export type UseGroup = AnyStatement & {kind: "usegroup", name: string | null, type: string | null, items: UseItem[]}
     export type UseItem = AnyStatement & {kind: "useitem", name: string, type: string | null, alias: string | null}
@@ -76,12 +79,12 @@ export namespace NodeTypes {
     type AllBlock = Block | Declare | Namespace | Program
     type AllConstant = ClassConstant
     type AllFunction = Function | Method
-    type Declaration = Class | AllFunction | Parameter | Property | Trait | AllConstant
+    type Declaration = Class | AllFunction | Interface | Parameter | Property | Trait | AllConstant
     type Expression = Array | ConstRef | Operation | Lookup | Variable
     type Literal = Encapsed | Boolean | Inline | Magic | Number | String
     type Lookup = PropertyLookup | StaticLookup | OffsetLookup
     type Operation = Bin | Cast | Parenthesis | Unary
-    type Statement = Array | Assign | Call | Closure | Foreach | If | Include | New | RetIf | Switch | Throw | UseGroup | UseItem | While
+    type Statement = Array | Assign | Call | Catch | Closure | Foreach | If | Include | New | RetIf | Switch | Throw | Try | UseGroup | UseItem | While
     type Sys = Echo | Empty | Isset | List
     export type Node =
         AllBlock |

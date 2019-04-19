@@ -220,6 +220,13 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
         // node.raw
         context.check(node.what)
         return context.namedType(node.type, "fqn")
+    } else if(node.kind == "catch") {
+        for(const w of node.what) {
+            context.check(w)
+        }
+        context.check(node.variable)
+        context.check(node.body)
+        return new Type.Void()
     } else if(node.kind == "class") {
         const qname = context.qualifyName(node.name, "qn")
         const class_structure = new Type.Class(qname)
@@ -473,6 +480,45 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
         // node.raw
         // node.value
         return new Type.String(node.value)
+    } else if(node.kind == "interface") {
+        const qname = context.qualifyName(node.name, "qn")
+        const interface_structure = new Type.Class(qname)
+        for(const b of node.body) {
+            if(b.kind == "method") {
+                const t = context.check(b)
+                if(t instanceof Type.Function) {
+                    debug(`Attaching function ${b.name} to ${qname}`)
+                    if(b.isStatic) {
+                        interface_structure.classMethods.set(b.name, t)
+                    } else {
+                        interface_structure.methods.set(b.name, t)
+                    }
+                } else {
+                    debug("Method type miss")
+                    debug(t)
+                }
+            } else {
+                context.check(b)
+            }
+        }
+        // node.extends
+        // node.implements
+        // node.isAbstract
+        // node.isAnonymous
+        // node.isFinal
+        context.assert(
+            node,
+            node.name.length > 1,
+            "Single-character interface names are too likely to conflict"
+        )
+        context.assert(
+            node,
+            !!node.name.match(/^([A-Z0-9][a-z0-9]*)+$/),
+            "PSR1 3: interface names must be in camel case"
+        )
+        context.setConstant(qname.replace(/^\\/, ""), interface_structure)
+        debug(`Setting ${qname} as an interface`)
+        return interface_structure
     } else if(node.kind == "isset") {
         for(const n of node.arguments) {
             try {
@@ -738,6 +784,15 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
         node.traits.forEach(
             t => context.check(t)
         )
+        return new Type.Void()
+    } else if(node.kind == "try") {
+        context.check(node.body)
+        for(const c of node.catches) {
+            context.check(c)
+        }
+        if(node.always) {
+            context.check(node.always)
+        }
         return new Type.Void()
     } else if(node.kind == "unary") {
         // node.type
