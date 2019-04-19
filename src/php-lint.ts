@@ -3,6 +3,7 @@ import * as fs from "fs"
 import * as path from "path"
 
 import Lint from "./lint"
+import { LintError } from "./lint-error";
 /**
  * The top-level lint support
  */
@@ -92,8 +93,8 @@ export default class PHPLint {
             this.lint.workingDirectory = expanded.workingDirectory
             return this.lint.checkTree(tree, false, filename)
         } catch(e) {
-            if(e.message.match(/^Line/)) { // FIXME
-                console.log(new Error(`${expanded.expandedFilename}: ${e.message}`))
+            if(e instanceof LintError) {
+                console.log(new LintError(`${expanded.expandedFilename}: ${e.message}`))
             } else {
                 console.log(e)
             }
@@ -120,8 +121,8 @@ export default class PHPLint {
             this.lint.workingDirectory = expanded.workingDirectory
             return this.lint.checkTree(tree, reuse_context, filename, depth)
         } catch(e) {
-            if(e.message.match(/^Line/)) { // FIXME
-                throw new Error(`${expanded.expandedFilename}: ${e.message}`)
+            if(e instanceof LintError) {
+                throw new LintError(`${expanded.expandedFilename}: ${e.message}`)
             } else {
                 throw e
             }

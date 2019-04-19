@@ -2,6 +2,7 @@ import { NodeTypes } from "../ast";
 import { Context } from "../../context"
 import * as Type from "../../type"
 import { Argument } from "../../type/function";
+import { LintError } from "../../lint-error";
 
 const debug = require("debug")("php-lint:context")
 
@@ -635,7 +636,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
                     throw new Error("Internal error: no class " + class_name)
                 }
             } else {
-                throw new Error("Bad type: " + ctype.constructor.name)
+                throw new LintError("Bad type: " + ctype.constructor.name)
             }
         } else {
             debug("Non-string offset")

@@ -4,6 +4,7 @@ import PHPLint from "./php-lint";
 import {PHPAutoloader} from "./php-autoloader";
 import * as fs from "fs"
 import * as path from "path"
+import { LintError } from "./lint-error";
 export default class Lint {
     private lastContext: Context | null = null
     private phplint: PHPLint
@@ -153,8 +154,8 @@ export default class Lint {
             this.lastContext.check(tree)
             return true
         } catch(e) {
-            if(filename) {
-                throw new Error(`${filename}: ${e.message}`)
+            if(e instanceof LintError && filename) {
+                throw new LintError(`${filename}: ${e.message}`)
             } else {
                 throw e
             }

@@ -4,6 +4,7 @@ import { NodeTypes } from "./content/ast";
 import { checkForNode } from "./content/considered/for-node";
 import {FunctionTypeInfo} from "./build"
 import Lint from "./lint";
+import { LintError } from "./lint-error";
 
 const debug = require("debug")("php-lint:context")
 
@@ -79,12 +80,12 @@ export class Context {
     ): void {
         if(!this.including && !test) {
             if(node.loc) {
-                throw new Error(
+                throw new LintError(
                     `Line ${node.loc.start.line} column ${node.loc.start.column}: ` +
                         message
                 )
             } else {
-                throw new Error(message)
+                throw new LintError(message)
             }
         }
     }
