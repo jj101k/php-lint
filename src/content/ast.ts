@@ -101,5 +101,5 @@ export namespace NodeTypes {
         Return |
         Statement |
         Sys |
-        TraitUse
+        TraitUse //| (AnyExpression & {type: "yield"})
 }
