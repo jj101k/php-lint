@@ -48,10 +48,7 @@ export const Handlers: {[kind: string]: Handler} = {
     },
     assign(node: NodeTypes.Assign, context: Context) {
         const type = Handlers[node.right.kind](node.right, context)
-        context.assign(
-            type || new Type.Mixed(),
-            () => Handlers[node.left.kind](node.left, context)
-        )
+        context.assign(type || new Type.Mixed(), node.left)
         return type
     },
     bin(node: NodeTypes.Bin, context: Context) {
@@ -182,7 +179,7 @@ export const Handlers: {[kind: string]: Handler} = {
                     if(function_type.args[+i].byRef) {
                         arg_possibility = context.assign(
                             expected_type || new Type.Mixed(),
-                            () => Handlers[a.kind](a, context)
+                            a
                         )!
                     } else {
                         arg_possibility = Handlers[a.kind](a, context)
@@ -303,10 +300,7 @@ export const Handlers: {[kind: string]: Handler} = {
         // node.isStatic
         // node.nullable
         for(const u of node.uses) {
-            inner_context.assign(
-                Handlers[u.kind](u, context),
-                () => Handlers[u.kind](u, inner_context)
-            )
+            inner_context.assign(Handlers[u.kind](u, context), u)
         }
         Handlers[node.body.kind](node.body, inner_context)
         return new Type.Function(
@@ -392,30 +386,15 @@ export const Handlers: {[kind: string]: Handler} = {
     },
     foreach(node: NodeTypes.Foreach, context: Context) {
         const source_type = Handlers[node.source.kind](node.source, context)
+        let assign_type: Type.Base
         if(node.key) {
-            context.assign(
-                new Type.String(),
-                () => Handlers[node.key!.kind](node.key!, context)
-            )
-        }
-        if(source_type) {
-            if(source_type instanceof Type.IndexedArray && source_type.memberType) {
-                context.assign(
-                    source_type.memberType,
-                    () => Handlers[node.value.kind](node.value, context)
-                )
-            } else {
-                context.assign(
-                    new Type.Mixed(),
-                    () => Handlers[node.value.kind](node.value, context)
-                )
-            }
+            assign_type = new Type.String()
+        } else if(source_type && source_type instanceof Type.IndexedArray && source_type.memberType) {
+            assign_type = source_type.memberType
         } else {
-            context.assign(
-                new Type.Mixed(),
-                () => Handlers[node.value.kind](node.value, context)
-            )
+            assign_type = new Type.Mixed()
         }
+        context.assign(assign_type, node.value)
 
         Handlers[node.body.kind](node.body, context)
         // node.shortForm

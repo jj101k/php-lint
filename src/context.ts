@@ -94,12 +94,12 @@ export class Context {
      * Checks a node, performing necessary state transitions
      *
      * @param type The type to assign
-     * @param f The method to use with this context
+     * @param node The node defining the assign target
      */
-    assign(type: Type.Base, f: () => Type.Base | null): Type.Base | null {
+    assign(type: Type.Base, node: NodeTypes.Node): Type.Base | null {
         const was_assigning = this.assigning
         this.assigning = type
-        const r = f()
+        const r = Handlers[node.kind](node, this)
         this.assigning = was_assigning
         return r
     }
