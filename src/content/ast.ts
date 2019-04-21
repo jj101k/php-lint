@@ -37,10 +37,12 @@ export namespace NodeTypes {
     export type Closure = AnyStatement & {kind: "closure", arguments: Parameter[], uses: Variable[], type: Identifier, byref: boolean, nullable: boolean, body: Block, isStatic: boolean}
     export type ConstRef = AnyExpression & {kind: "constref", name: string | Identifier}
     export type Declare = AnyBlock & {kind: "declare", what: {[ref: string]: Expression}, mode: string}
+    export type Do = AnyStatement & {kind: "do", test: Expression, body: Statement}
     export type Echo = AnySys & {kind: "echo", shortForm: boolean}
     export type Empty = AnySys & {kind: "empty"}
     export type Encapsed = AnyLiteral & {kind: "encapsed", label: string | null, type: string, value: string}
     export type Entry = AnyNode & {kind: "entry", key: Node | null, value: Node}
+    export type For = AnyStatement & {kind: "for", init: Expression[], test: Expression[], increment: Expression[], body: Statement, shortForm: boolean}
     export type Foreach = AnyStatement & {kind: "foreach", source: Expression, key: Expression | null, value: Expression, body: Statement, shortForm: boolean}
     export type Identifier = AnyNode & {kind: "identifier", name: string, resolution: "uqn" | "qn" | "fqn" | "rn"}
     export type If = AnyStatement & {kind: "if", test: Expression, body: Block, alternate: Block | If | null, shortForm: boolean}
@@ -58,6 +60,7 @@ export namespace NodeTypes {
     export type OffsetLookup = AnyLookup & {kind: "offsetlookup"}
     export type Parameter = AnyDeclaration & {kind: "parameter", type: Identifier | null, value: Node | null, byref: boolean, variadic: boolean, nullable: boolean}
     export type Parenthesis = AnyOperation & {kind: "parenthesis", inner: Expression}
+    export type Post = AnyOperation & {kind: "post", type: string, what: Variable}
     export type Program = AnyBlock & {kind: "program", errors: Error[], comments: Comment[], tokens: string[]}
     export type Property = AnyDeclaration & {kind: "property", isFinal: boolean, isStatic: boolean, visibility: string, value: Node | null}
     export type PropertyLookup = AnyLookup & {kind: "propertylookup"}
@@ -78,16 +81,17 @@ export namespace NodeTypes {
     export type UseItem = AnyStatement & {kind: "useitem", name: string, type: string | null, alias: string | null}
     export type While = AnyStatement & {kind: "while", test: Expression, body: Statement, shortForm: boolean}
     export type Variable = AnyExpression & {kind: "variable", name: string | Node, byref: boolean, curly: boolean}
+    export type Yield = AnyExpression & {kind: "yield", key: Expression | null, value: Expression | null}
 
     type AllBlock = Block | Declare | Namespace | Program
     type AllConstant = ClassConstant
     type AllFunction = Function | Method
     type Declaration = Class | AllFunction | Interface | Parameter | Property | Trait | AllConstant
-    type Expression = Array | ConstRef | Operation | Lookup | Variable
+    type Expression = Array | ConstRef | Operation | Lookup | Variable | Yield
     type Literal = Encapsed | Boolean | Inline | Magic | Number | String
     type Lookup = PropertyLookup | StaticLookup | OffsetLookup
-    type Operation = Bin | Cast | Parenthesis | Unary
-    type Statement = Array | Assign | Call | Catch | Closure | Foreach | If | Include | New | RetIf | Silent | Static | Switch | Throw | Try | UseGroup | UseItem | While
+    type Operation = Bin | Cast | Parenthesis | Post | Unary
+    type Statement = Array | Assign | Call | Catch | Closure | Do | For | Foreach | If | Include | New | RetIf | Silent | Static | Switch | Throw | Try | UseGroup | UseItem | While
     type Sys = Echo | Empty | Isset | List | Unset
     export type Node =
         AllBlock |

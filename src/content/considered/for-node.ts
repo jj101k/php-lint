@@ -310,6 +310,10 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
             context.check(c)
         }
         return new Type.Void()
+    } else if(node.kind == "do") {
+        context.check(node.test)
+        context.check(node.body)
+        return new Type.Void()
     } else if(node.kind == "echo") {
         const expectedType = OPTIONAL_ECHO ?
             new Type.OptionalFalse(new Type.String()) :
@@ -342,6 +346,18 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
             context.check(node.key)
         }
         return context.check(node.value)
+    } else if(node.kind == "for") {
+        for(const i of node.init) {
+            context.check(i)
+        }
+        for(const t of node.test) {
+            context.check(t)
+        }
+        for(const c of node.increment) {
+            context.check(c)
+        }
+        context.check(node.body)
+        return new Type.Void()
     } else if(node.kind == "foreach") {
         const source_type = context.check(node.source)
         if(node.key) {
@@ -631,6 +647,14 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
         return type
     } else if(node.kind == "parenthesis") {
         return context.check(node.inner)
+    } else if(node.kind == "post") {
+        // node.type
+        const type = context.check(node.what)
+        if(type instanceof Type.Int) {
+            return type
+        } else {
+            return new Type.Float()
+        }
     } else if(node.kind == "program") {
         node.children.forEach(
             child => context.check(child)
@@ -883,6 +907,14 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
             inner_context.check(node.body)
         }
         // node.shortForm
+        return new Type.Void()
+    } else if(node.kind == "yield") {
+        if(node.key) {
+            context.check(node.key)
+        }
+        if(node.value) {
+            context.check(node.value)
+        }
         return new Type.Void()
     } else {
         debug(node)
