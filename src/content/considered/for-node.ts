@@ -37,23 +37,23 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
         for(const i of node.items) {
             let key = null
             if(i.kind == "entry" && i.key) {
-                key = context.check(i.key)
+                key = checkForNode(context, i.key)
             }
-            const v = context.check(i)
+            const v = checkForNode(context, i)
             out = out.set(key, v)
         }
         return out
     } else if(node.kind == "assign") {
-        const type = context.check(node.right)
+        const type = checkForNode(context, node.right)
         context.assign(
             type || new Type.Mixed(),
-            () => context.check(node.left)
+            () => checkForNode(context, node.left)
         )
         return type
     } else if(node.kind == "bin") {
         // node.type
-        const type = context.check(node.left)
-        const rtype = context.check(node.right)
+        const type = checkForNode(context, node.left)
+        const rtype = checkForNode(context, node.right)
         switch(node.type) {
             case "!=":
             case "!==":
@@ -113,7 +113,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
         }
     } else if(node.kind == "block") {
         node.children.forEach(
-            child => context.check(child)
+            child => checkForNode(context, child)
         )
         return new Type.Void()
     } else if(node.kind == "boolean") {
@@ -124,7 +124,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
     } else if(node.kind == "call") {
         let function_type: Type.Function | null = null
         if(node.what) {
-            const what_type = context.check(node.what)
+            const what_type = checkForNode(context, node.what)
             if(node.what.kind == "identifier") {
                 const type = context.get(node.what.name)
                 if(type instanceof Type.Function) {
@@ -174,10 +174,10 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
                     if(function_type.args[+i].byRef) {
                         arg_possibility = context.assign(
                             expected_type || new Type.Mixed(),
-                            () => context.check(a)
+                            () => checkForNode(context, a)
                         )!
                     } else {
-                        arg_possibility = context.check(a)
+                        arg_possibility = checkForNode(context, a)
                     }
                     if(expected_type) {
                         const type = expected_type
@@ -197,7 +197,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
                         }
                     }
                 } else {
-                    context.check(a)
+                    checkForNode(context, a)
                 }
             }
             debug(function_type.returnType)
@@ -209,36 +209,36 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
         } else {
             debug("Function type no")
             node.arguments.forEach((a, i) => {
-                context.check(a)
+                checkForNode(context, a)
             })
             return new Type.Mixed()
         }
     } else if(node.kind == "case") {
         if(node.test) {
-            context.check(node.test)
+            checkForNode(context, node.test)
         }
         if(node.body) {
-            context.check(node.body)
+            checkForNode(context, node.body)
         }
         return new Type.Void()
     } else if(node.kind == "cast") {
         // node.type
         // node.raw
-        context.check(node.what)
+        checkForNode(context, node.what)
         return context.namedType(node.type, "fqn")
     } else if(node.kind == "catch") {
         for(const w of node.what) {
-            context.check(w)
+            checkForNode(context, w)
         }
-        context.check(node.variable)
-        context.check(node.body)
+        checkForNode(context, node.variable)
+        checkForNode(context, node.body)
         return new Type.Void()
     } else if(node.kind == "class") {
         const qname = context.qualifyName(node.name, "qn")
         const class_structure = new Type.Class(qname)
         for(const b of node.body) {
             if(b.kind == "method") {
-                const t = context.check(b)
+                const t = checkForNode(context, b)
                 if(t instanceof Type.Function) {
                     debug(`Attaching function ${b.name} to ${qname}`)
                     if(b.isStatic) {
@@ -251,7 +251,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
                     debug(t)
                 }
             } else {
-                context.check(b)
+                checkForNode(context, b)
             }
         }
         // node.extends
@@ -276,25 +276,25 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
         // node.isStatic
         // node.name
         if(node.value) {
-            context.check(node.value)
+            checkForNode(context, node.value)
         }
         // node.visibility
         return new Type.Void()
     } else if(node.kind == "closure") {
         const inner_context = new Context(context)
         node.arguments.forEach(
-            a => inner_context.check(a)
+            a => checkForNode(inner_context, a)
         )
         // node.byref
         // node.isStatic
         // node.nullable
         for(const u of node.uses) {
             inner_context.assign(
-                context.check(u),
-                () => inner_context.check(u)
+                checkForNode(context, u),
+                () => checkForNode(inner_context, u)
             )
         }
-        inner_context.check(node.body)
+        checkForNode(inner_context, node.body)
         return new Type.Function(
             node.arguments.map(a => new Argument(
                 new Type.Mixed(),
@@ -316,19 +316,19 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
         // node.mode
         // node.what
         for(const c of node.children) {
-            context.check(c)
+            checkForNode(context, c)
         }
         return new Type.Void()
     } else if(node.kind == "do") {
-        context.check(node.test)
-        context.check(node.body)
+        checkForNode(context, node.test)
+        checkForNode(context, node.body)
         return new Type.Void()
     } else if(node.kind == "echo") {
         const expectedType = OPTIONAL_ECHO ?
             new Type.OptionalFalse(new Type.String()) :
             new Type.String()
         for(const n of node.arguments) {
-            const type = context.check(n)
+            const type = checkForNode(context, n)
             context.assert(
                 node,
                 type.matches(expectedType),
@@ -340,7 +340,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
     } else if(node.kind == "empty") {
         for(const n of node.arguments) {
             try {
-                context.check(n)
+                checkForNode(context, n)
             } catch(e) {
                 //
             }
@@ -352,58 +352,58 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
         return new Type.String(node.value)
     } else if(node.kind == "entry") {
         if(node.key) {
-            context.check(node.key)
+            checkForNode(context, node.key)
         }
-        return context.check(node.value)
+        return checkForNode(context, node.value)
     } else if(node.kind == "for") {
         for(const i of node.init) {
-            context.check(i)
+            checkForNode(context, i)
         }
         for(const t of node.test) {
-            context.check(t)
+            checkForNode(context, t)
         }
         for(const c of node.increment) {
-            context.check(c)
+            checkForNode(context, c)
         }
-        context.check(node.body)
+        checkForNode(context, node.body)
         return new Type.Void()
     } else if(node.kind == "foreach") {
-        const source_type = context.check(node.source)
+        const source_type = checkForNode(context, node.source)
         if(node.key) {
             context.assign(
                 new Type.String(),
-                () => context.check(node.key!)
+                () => checkForNode(context, node.key!)
             )
         }
         if(source_type) {
             if(source_type instanceof Type.IndexedArray && source_type.memberType) {
                 context.assign(
                     source_type.memberType,
-                    () => context.check(node.value)
+                    () => checkForNode(context, node.value)
                 )
             } else {
                 context.assign(
                     new Type.Mixed(),
-                    () => context.check(node.value)
+                    () => checkForNode(context, node.value)
                 )
             }
         } else {
             context.assign(
                 new Type.Mixed(),
-                () => context.check(node.value)
+                () => checkForNode(context, node.value)
             )
         }
 
-        context.check(node.body)
+        checkForNode(context, node.body)
         // node.shortForm
-        context.check(node.source)
+        checkForNode(context, node.source)
         return new Type.Void()
     } else if(node.kind == "function") {
         const inner_context = new Context(context)
         const args: Argument[] = []
         node.arguments.forEach(
             a => args.push(new Argument(
-                inner_context.check(a), // FIXME
+                checkForNode(inner_context, a), // FIXME
                 a.byref,
                 !!a.value,
             )) // FIXME
@@ -413,7 +413,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
             null
         inner_context.realReturnType = null
         if(node.body) {
-            inner_context.check(node.body)
+            checkForNode(inner_context, node.body)
         }
         context.setConstant(node.name, new Type.Function(
             args,
@@ -437,7 +437,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
             return context.namedType(node.name, node.resolution)
         }
     } else if(node.kind == "if") {
-        const check_value = context.check(node.test)
+        const check_value = checkForNode(context, node.test)
         const true_namespace_override: Map<string, Type.Base> = new Map()
         const false_namespace_override: Map<string, Type.Base> = new Map()
         if(node.test.kind == "variable" && typeof node.test.name == "string") {
@@ -471,13 +471,13 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
         if(check_value.asBoolean === false) {
             debug("Skipping impossible if branch")
         } else {
-            inner_context_true.check(node.body)
+            checkForNode(inner_context_true, node.body)
         }
         if(node.alternate) {
             if(check_value.asBoolean === true) {
                 debug("Skipping impossible else branch")
             } else {
-                inner_context_false.check(node.alternate)
+                checkForNode(inner_context_false, node.alternate)
             }
         }
         // node.shortForm
@@ -485,7 +485,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
     } else if(node.kind == "include") {
         // node.once
         // node.require
-        const v = context.check(node.target)
+        const v = checkForNode(context, node.target)
         if(v instanceof Type.String && v.value) {
             debug(`Include for ${v.value}`)
             if(node.require) {
@@ -513,7 +513,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
         const interface_structure = new Type.Class(qname)
         for(const b of node.body) {
             if(b.kind == "method") {
-                const t = context.check(b)
+                const t = checkForNode(context, b)
                 if(t instanceof Type.Function) {
                     debug(`Attaching function ${b.name} to ${qname}`)
                     if(b.isStatic) {
@@ -526,7 +526,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
                     debug(t)
                 }
             } else {
-                context.check(b)
+                checkForNode(context, b)
             }
         }
         // node.extends
@@ -550,7 +550,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
     } else if(node.kind == "isset") {
         for(const n of node.arguments) {
             try {
-                context.check(n)
+                checkForNode(context, n)
             } catch(e) {
                 return new Type.Bool(false)
             }
@@ -559,7 +559,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
     } else if(node.kind == "list") {
         for(const n of node.arguments) {
             try {
-                context.check(n)
+                checkForNode(context, n)
             } catch(e) {
                 //
             }
@@ -575,13 +575,13 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
         const args: Argument[] = []
         node.arguments.forEach(
             a => args.push(new Argument(
-                inner_context.check(a), // FIXME
+                checkForNode(inner_context, a), // FIXME
                 a.byref,
                 !!a.value,
             )) // FIXME
         )
         if(node.body) {
-            inner_context.check(node.body)
+            checkForNode(inner_context, node.body)
         }
         // node.byref
         // node.nullable
@@ -594,7 +594,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
             "PSR1 4.3: method names must be in camel case (lower)"
         )
         const returnType = node.type ?
-            context.check(node.type) :
+            checkForNode(context, node.type) :
             new Type.Mixed()
         return new Type.Function(
             args,
@@ -604,13 +604,13 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
         // node.withBrackets
         context.namespacePrefix = node.name
         for(const c of node.children) {
-            context.check(c)
+            checkForNode(context, c)
         }
         return new Type.Void()
     } else if(node.kind == "new") {
-        const type = context.check(node.what)
+        const type = checkForNode(context, node.what)
         node.arguments.forEach(
-            a => context.check(a)
+            a => checkForNode(context, a)
         )
         if(type instanceof Type.Class) {
             return new Type.ClassInstance(type.ref)
@@ -626,10 +626,10 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
             return new Type.Float(node.value)
         }
     } else if(node.kind == "offsetlookup") {
-        const type = context.check(node.what)
+        const type = checkForNode(context, node.what)
         if(node.offset) {
             // This is unset for `$foo[] = 1;`
-            context.check(node.offset)
+            checkForNode(context, node.offset)
         }
         if(type) {
             return(
@@ -644,7 +644,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
 
         let type: Type.Base
         if(node.type) {
-            context.check(node.type)
+            checkForNode(context, node.type)
             // Identifiers don't have a type, but now that we're here we know
             // that there is one.
             type = context.namedType(node.type.name, node.type.resolution)
@@ -652,16 +652,16 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
             type = new Type.Mixed()
         }
         if(node.value) {
-            context.check(node.value)
+            checkForNode(context, node.value)
         }
         // node.variadic
         context.set("$" + node.name, type)
         return type
     } else if(node.kind == "parenthesis") {
-        return context.check(node.inner)
+        return checkForNode(context, node.inner)
     } else if(node.kind == "post") {
         // node.type
-        const type = context.check(node.what)
+        const type = checkForNode(context, node.what)
         if(type instanceof Type.Int) {
             return type
         } else {
@@ -669,7 +669,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
         }
     } else if(node.kind == "program") {
         node.children.forEach(
-            child => context.check(child)
+            child => checkForNode(context, child)
         )
         return new Type.Void()
     } else if(node.kind == "property") {
@@ -677,13 +677,13 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
         // node.isStatic
         // node.name
         if(node.value) {
-            context.check(node.value)
+            checkForNode(context, node.value)
         }
         // node.visibility
         return new Type.Void()
     } else if(node.kind == "propertylookup") {
-        const what_type = context.check(node.what)
-        const offset_type = context.check(node.offset)
+        const what_type = checkForNode(context, node.what)
+        const offset_type = checkForNode(context, node.offset)
         let ctype: Type.Class | Type.ClassInstance
         if(what_type instanceof Type.Class || what_type instanceof Type.ClassInstance) {
             ctype = what_type
@@ -725,9 +725,9 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
             return new Type.Mixed() // FIXME
         }
     } else if(node.kind == "retif") {
-        const test = context.check(node.test)
-        const true_branch = node.trueExpr ? context.check(node.trueExpr) : test
-        const false_branch = context.check(node.falseExpr)
+        const test = checkForNode(context, node.test)
+        const true_branch = node.trueExpr ? checkForNode(context, node.trueExpr) : test
+        const false_branch = checkForNode(context, node.falseExpr)
         if(test.asBoolean === true) {
             return true_branch
         } else if(test.asBoolean === false) {
@@ -736,7 +736,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
             return true_branch.combinedWith(false_branch)
         }
     } else if(node.kind == "return") {
-        const type = node.expr ? context.check(node.expr) : new Type.Void()
+        const type = node.expr ? checkForNode(context, node.expr) : new Type.Void()
         const expected_type = context.returnType
         if(expected_type) {
             context.assert(
@@ -751,19 +751,19 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
         return type
     } else if(node.kind == "silent") {
         if(node.expr) {
-            return context.check(node.expr)
+            return checkForNode(context, node.expr)
         } else {
             return new Type.Void()
         }
     } else if(node.kind == "static") {
         // TODO add tests relating to staticness
         for(const i of node.items) {
-            context.check(i)
+            checkForNode(context, i)
         }
         return new Type.Void()
     } else if(node.kind == "staticlookup") {
-        const t = context.check(node.what)
-        const o = context.check(node.offset)
+        const t = checkForNode(context, node.what)
+        const o = checkForNode(context, node.offset)
         if(t instanceof Type.Class && o instanceof Type.String && o.value) {
             const l = t.classMethods.get(o.value)
             if(l) {
@@ -780,19 +780,19 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
         // node.value
         return new Type.String(node.value)
     } else if(node.kind == "switch") {
-        const check_value = context.check(node.test)
-        context.check(node.body)
+        const check_value = checkForNode(context, node.test)
+        checkForNode(context, node.body)
         // node.shortForm
         return new Type.Void()
     } else if(node.kind == "throw") {
-        context.check(node.what)
+        checkForNode(context, node.what)
         return new Type.Void()
     } else if(node.kind == "trait") {
         const qname = context.qualifyName(node.name, "qn")
         const trait_structure = new Type.Trait(qname)
         for(const b of node.body) {
             if(b.kind == "method") {
-                const t = context.check(b)
+                const t = checkForNode(context, b)
                 if(t instanceof Type.Function) {
                     debug(`Attaching function ${b.name} to ${qname}`)
                     if(b.isStatic) {
@@ -805,7 +805,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
                     debug(t)
                 }
             } else {
-                context.check(b)
+                checkForNode(context, b)
             }
         }
         // node.extends
@@ -826,25 +826,25 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
     } else if(node.kind == "traituse") {
         if(node.adaptations) {
             node.adaptations.forEach(
-                a => context.check(a)
+                a => checkForNode(context, a)
             )
         }
         node.traits.forEach(
-            t => context.check(t)
+            t => checkForNode(context, t)
         )
         return new Type.Void()
     } else if(node.kind == "try") {
-        context.check(node.body)
+        checkForNode(context, node.body)
         for(const c of node.catches) {
-            context.check(c)
+            checkForNode(context, c)
         }
         if(node.always) {
-            context.check(node.always)
+            checkForNode(context, node.always)
         }
         return new Type.Void()
     } else if(node.kind == "unary") {
         // node.type
-        context.check(node.what)
+        checkForNode(context, node.what)
         return new Type.Mixed() // FIXME
     } else if(node.kind == "unset") {
         for(const a of node.arguments) {
@@ -891,7 +891,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
             return new Type.Mixed() // FIXME
         }
     } else if(node.kind == "while") {
-        const check_value = context.check(node.test)
+        const check_value = checkForNode(context, node.test)
         const body_namespace_override: Map<string, Type.Base> = new Map()
         if(node.test.kind == "variable" && typeof node.test.name == "string") {
             const v = context.get("$" + node.test.name)
@@ -916,16 +916,16 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
         if(check_value.asBoolean === false) {
             debug("Skipping impossible while body")
         } else {
-            inner_context.check(node.body)
+            checkForNode(inner_context, node.body)
         }
         // node.shortForm
         return new Type.Void()
     } else if(node.kind == "yield") {
         if(node.key) {
-            context.check(node.key)
+            checkForNode(context, node.key)
         }
         if(node.value) {
-            context.check(node.value)
+            checkForNode(context, node.value)
         }
         return new Type.Void()
     } else {
