@@ -45,7 +45,10 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
         return out
     } else if(node.kind == "assign") {
         const type = context.check(node.right)
-        context.check(node.left, type || new Type.Mixed())
+        context.assign(
+            type || new Type.Mixed(),
+            () => context.check(node.left)
+        )
         return type
     } else if(node.kind == "bin") {
         // node.type
@@ -169,7 +172,10 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
                     let arg_possibility: Type.Base | null
                     const expected_type = function_type.args[+i].type
                     if(function_type.args[+i].byRef) {
-                        arg_possibility = context.check(a, expected_type || new Type.Mixed())
+                        arg_possibility = context.assign(
+                            expected_type || new Type.Mixed(),
+                            () => context.check(a)
+                        )!
                     } else {
                         arg_possibility = context.check(a)
                     }
@@ -282,9 +288,12 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
         // node.byref
         // node.isStatic
         // node.nullable
-        node.uses.forEach(u => {
-            inner_context.check(u, context.check(u))
-        })
+        for(const u of node.uses) {
+            inner_context.assign(
+                context.check(u),
+                () => inner_context.check(u)
+            )
+        }
         inner_context.check(node.body)
         return new Type.Function(
             node.arguments.map(a => new Argument(
@@ -361,24 +370,27 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
     } else if(node.kind == "foreach") {
         const source_type = context.check(node.source)
         if(node.key) {
-            context.check(node.key, new Type.String())
+            context.assign(
+                new Type.String(),
+                () => context.check(node.key!)
+            )
         }
         if(source_type) {
             if(source_type instanceof Type.IndexedArray && source_type.memberType) {
-                context.check(
-                    node.value,
-                    source_type.memberType
+                context.assign(
+                    source_type.memberType,
+                    () => context.check(node.value)
                 )
             } else {
-                context.check(
-                    node.value,
-                    new Type.Mixed()
+                context.assign(
+                    new Type.Mixed(),
+                    () => context.check(node.value)
                 )
             }
         } else {
-            context.check(
-                node.value,
-                new Type.Mixed()
+            context.assign(
+                new Type.Mixed(),
+                () => context.check(node.value)
             )
         }
 

@@ -91,6 +91,20 @@ export class Context {
     }
 
     /**
+     * Checks a node, performing necessary state transitions
+     *
+     * @param type The type to assign
+     * @param f The method to use with this context
+     */
+    assign(type: Type.Base, f: () => Type.Base | null): Type.Base | null {
+        const was_assigning = this.assigning
+        this.assigning = type
+        const r = f()
+        this.assigning = was_assigning
+        return r
+    }
+
+    /**
      * Adds all known global symbols to the constant namespace
      */
     buildGlobalSymbols(): void {
@@ -216,19 +230,10 @@ export class Context {
      * Checks a node, performing necessary state transitions
      *
      * @param node The node to check next
-     * @param assigning A type, if this starts an assignment
      */
-    check(node: NodeTypes.Node, assigning: Type.Base | null = null): Type.Base {
+    check(node: NodeTypes.Node): Type.Base {
         debug(`Checking node of type ${node.kind}`)
-        if(assigning !== null && assigning != this.assigning) {
-            const was_assigning = this.assigning
-            this.assigning = assigning
-            const r = checkForNode(this, node)
-            this.assigning = was_assigning
-            return r
-        } else {
-            return checkForNode(this, node)
-        }
+        return checkForNode(this, node)
     }
 
     checkFile(filename: string): boolean | null {
