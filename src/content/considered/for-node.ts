@@ -913,6 +913,12 @@ export const Handlers: {[kind: string]: Handler} = {
         if(typeof node.name == "string") {
             const name = "$" + node.name
             if(context.assigning) {
+                if(name == "$this") {
+                    throw new LintError(
+                        "Internal error: attempt to assign $this",
+                        node
+                    )
+                }
                 context.set(name, context.assigning)
             } else {
                 if(node.byref && !context.has(name)) {
