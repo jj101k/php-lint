@@ -129,7 +129,7 @@ export const Handlers: {[kind: string]: Handler} = {
     call(node: NodeTypes.Call, context: Context) {
         let function_type: Type.Function | null = null
         if(node.what) {
-            const what_type = Handlers[node.what.kind](node.what, context)
+            const what_type = context.noAssign(node.what)
             if(node.what.kind == "identifier") {
                 const type = context.get(node.what.name)
                 if(type instanceof Type.Function) {
@@ -704,8 +704,8 @@ export const Handlers: {[kind: string]: Handler} = {
         return new Type.Void()
     },
     propertylookup(node: NodeTypes.PropertyLookup, context: Context) {
-        const what_type = Handlers[node.what.kind](node.what, context)
-        const offset_type = Handlers[node.offset.kind](node.offset, context)
+        const what_type = context.noAssign(node.what)
+        const offset_type = context.noAssign(node.offset)
         let ctype: Type.Class | Type.ClassInstance
         if(what_type instanceof Type.Class || what_type instanceof Type.ClassInstance) {
             ctype = what_type

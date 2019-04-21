@@ -331,6 +331,19 @@ export class Context {
     }
 
     /**
+     * Checks a node, performing necessary state transitions
+     *
+     * @param node The node defining the assign target
+     */
+    noAssign(node: NodeTypes.Node): Type.Base | null {
+        const was_assigning = this.assigning
+        this.assigning = null
+        const r = Handlers[node.kind](node, this)
+        this.assigning = was_assigning
+        return r
+    }
+
+    /**
      * Given a supplied actual type name, returns the fully qualified name.
      *
      * Here, "fully qualified names" are ones which start with a "\\",
