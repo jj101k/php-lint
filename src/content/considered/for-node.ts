@@ -776,6 +776,13 @@ export const Handlers: {[kind: string]: Handler} = {
         context.realReturnType = context.realReturnType ?
             type.combinedWith(context.realReturnType) :
             type
+        if(context.realReturnType instanceof Type.Class) {
+            console.log(node)
+            throw new LintError(
+                "Internal error: class returned not class instance",
+                node
+            )
+        }
         return type
     },
     silent(node: NodeTypes.Silent, context: Context) {
