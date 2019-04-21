@@ -50,7 +50,9 @@ export default class PHPLint {
             }
         } else {
             let d = filename
+            let o: string
             do {
+                o = d
                 d = path.dirname(d)
                 const composer_filename = path.resolve(d, "composer.json")
                 if(fs.existsSync(composer_filename)) {
@@ -59,7 +61,7 @@ export default class PHPLint {
                         expandedFilename: filename,
                     }
                 }
-            } while(d)
+            } while(d && (o != d))
 
             return {
                 workingDirectory: path.dirname(filename),
