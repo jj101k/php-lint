@@ -155,7 +155,9 @@ export default class Lint {
             return true
         } catch(e) {
             if(e instanceof LintError && filename) {
-                throw new LintError(`${filename}: ${e.message}`)
+                throw new Error(
+                    `${filename}: ${e.message}`
+                )
             } else {
                 throw e
             }

@@ -737,10 +737,10 @@ export const Handlers: {[kind: string]: Handler} = {
                     debug(`${class_name}::${offset_type.value} MISS`)
                     return new Type.Mixed()
                 } else {
-                    throw new Error("Internal error: no class " + class_name)
+                    throw new LintError("Internal error: no class " + class_name, node)
                 }
             } else {
-                throw new LintError("Bad type: " + ctype.constructor.name)
+                throw new LintError("Bad type: " + ctype.constructor.name, node)
             }
         } else {
             debug("Non-string offset")

@@ -79,14 +79,7 @@ export class Context {
         message: string = "Invalid syntax",
     ): void {
         if(!this.including && !test) {
-            if(node.loc) {
-                throw new LintError(
-                    `Line ${node.loc.start.line} column ${node.loc.start.column}: ` +
-                        message
-                )
-            } else {
-                throw new LintError(message)
-            }
+            throw new LintError(message, node)
         }
     }
 

@@ -96,7 +96,7 @@ export default class PHPLint {
             return this.lint.checkTree(tree, false, filename)
         } catch(e) {
             if(e instanceof LintError) {
-                console.log(new LintError(`${expanded.expandedFilename}: ${e.message}`))
+                console.log(new Error(`${expanded.expandedFilename}: ${e.message}`))
             } else {
                 console.log(e)
             }
@@ -124,7 +124,7 @@ export default class PHPLint {
             return this.lint.checkTree(tree, reuse_context, filename, depth)
         } catch(e) {
             if(e instanceof LintError) {
-                throw new LintError(`${expanded.expandedFilename}: ${e.message}`)
+                throw new Error(`${expanded.expandedFilename}: ${e.message}`)
             } else {
                 throw e
             }
