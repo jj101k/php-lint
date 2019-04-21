@@ -24,36 +24,40 @@ const STRICT_MIXED = false
 
 /**
  *
- * @param context The effective PHP state machine context
  * @param node The node to examine
+ * @param context The effective PHP state machine context
  * @returns A single expression type. If an unknown thing would be returned,
  * this should be just Type.Base; if no thing would be returned, this should be
  * Type.Void. Anything which cannot be to the right of "=" should be
  * Type.Void.
  */
-export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base {
-    if(node.kind == "array") {
+type Handler = (node: any, context: Context) => Type.Base
+
+export const Handlers: {[kind: string]: Handler} = {
+    array(node: NodeTypes.Array, context: Context) {
         let out: Type.BaseArray = new Type.IndexedArray()
         for(const i of node.items) {
             let key = null
             if(i.kind == "entry" && i.key) {
-                key = checkForNode(context, i.key)
+                key = Handlers[i.key.kind](i.key, context)
             }
-            const v = checkForNode(context, i)
+            const v = Handlers[i.kind](i, context)
             out = out.set(key, v)
         }
         return out
-    } else if(node.kind == "assign") {
-        const type = checkForNode(context, node.right)
+    },
+    assign(node: NodeTypes.Assign, context: Context) {
+        const type = Handlers[node.right.kind](node.right, context)
         context.assign(
             type || new Type.Mixed(),
-            () => checkForNode(context, node.left)
+            () => Handlers[node.left.kind](node.left, context)
         )
         return type
-    } else if(node.kind == "bin") {
+    },
+    bin(node: NodeTypes.Bin, context: Context) {
         // node.type
-        const type = checkForNode(context, node.left)
-        const rtype = checkForNode(context, node.right)
+        const type = Handlers[node.left.kind](node.left, context)
+        const rtype = Handlers[node.right.kind](node.right, context)
         switch(node.type) {
             case "!=":
             case "!==":
@@ -111,20 +115,24 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
             case "??":
                 return rtype
         }
-    } else if(node.kind == "block") {
+    },
+    block(node: NodeTypes.Block, context: Context) {
         node.children.forEach(
-            child => checkForNode(context, child)
+            child => Handlers[child.kind](child, context)
         )
         return new Type.Void()
-    } else if(node.kind == "boolean") {
+    },
+    boolean(node: NodeTypes.Boolean) {
         return new Type.Bool(node.value)
-    } else if(node.kind == "break") {
+    },
+    break(node: NodeTypes.Break) {
         // node.level
         return new Type.Void()
-    } else if(node.kind == "call") {
+    },
+    call(node: NodeTypes.Call, context: Context) {
         let function_type: Type.Function | null = null
         if(node.what) {
-            const what_type = checkForNode(context, node.what)
+            const what_type = Handlers[node.what.kind](node.what, context)
             if(node.what.kind == "identifier") {
                 const type = context.get(node.what.name)
                 if(type instanceof Type.Function) {
@@ -174,10 +182,10 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
                     if(function_type.args[+i].byRef) {
                         arg_possibility = context.assign(
                             expected_type || new Type.Mixed(),
-                            () => checkForNode(context, a)
+                            () => Handlers[a.kind](a, context)
                         )!
                     } else {
-                        arg_possibility = checkForNode(context, a)
+                        arg_possibility = Handlers[a.kind](a, context)
                     }
                     if(expected_type) {
                         const type = expected_type
@@ -197,7 +205,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
                         }
                     }
                 } else {
-                    checkForNode(context, a)
+                    Handlers[a.kind](a, context)
                 }
             }
             debug(function_type.returnType)
@@ -209,36 +217,40 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
         } else {
             debug("Function type no")
             node.arguments.forEach((a, i) => {
-                checkForNode(context, a)
+                Handlers[a.kind](a, context)
             })
             return new Type.Mixed()
         }
-    } else if(node.kind == "case") {
+    },
+    case(node: NodeTypes.Case, context: Context) {
         if(node.test) {
-            checkForNode(context, node.test)
+            Handlers[node.test.kind](node.test, context)
         }
         if(node.body) {
-            checkForNode(context, node.body)
+            Handlers[node.body.kind](node.body, context)
         }
         return new Type.Void()
-    } else if(node.kind == "cast") {
+    },
+    cast(node: NodeTypes.Cast, context: Context) {
         // node.type
         // node.raw
-        checkForNode(context, node.what)
+        Handlers[node.what.kind](node.what, context)
         return context.namedType(node.type, "fqn")
-    } else if(node.kind == "catch") {
+    },
+    catch(node: NodeTypes.Catch, context: Context) {
         for(const w of node.what) {
-            checkForNode(context, w)
+            Handlers[w.kind](w, context)
         }
-        checkForNode(context, node.variable)
-        checkForNode(context, node.body)
+        Handlers[node.variable.kind](node.variable, context)
+        Handlers[node.body.kind](node.body, context)
         return new Type.Void()
-    } else if(node.kind == "class") {
+    },
+    class(node: NodeTypes.Class, context: Context) {
         const qname = context.qualifyName(node.name, "qn")
         const class_structure = new Type.Class(qname)
         for(const b of node.body) {
             if(b.kind == "method") {
-                const t = checkForNode(context, b)
+                const t = Handlers[b.kind](b, context)
                 if(t instanceof Type.Function) {
                     debug(`Attaching function ${b.name} to ${qname}`)
                     if(b.isStatic) {
@@ -251,7 +263,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
                     debug(t)
                 }
             } else {
-                checkForNode(context, b)
+                Handlers[b.kind](b, context)
             }
         }
         // node.extends
@@ -272,29 +284,31 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
         context.setConstant(qname.replace(/^\\/, ""), class_structure)
         debug(`Setting ${qname} as a class`)
         return class_structure
-    } else if(node.kind == "classconstant") {
+    },
+    classconstant(node: NodeTypes.ClassConstant, context: Context) {
         // node.isStatic
         // node.name
         if(node.value) {
-            checkForNode(context, node.value)
+            Handlers[node.value.kind](node.value, context)
         }
         // node.visibility
         return new Type.Void()
-    } else if(node.kind == "closure") {
+    },
+    closure(node: NodeTypes.Closure, context: Context) {
         const inner_context = new Context(context)
         node.arguments.forEach(
-            a => checkForNode(inner_context, a)
+            a => Handlers[a.kind](a, inner_context)
         )
         // node.byref
         // node.isStatic
         // node.nullable
         for(const u of node.uses) {
             inner_context.assign(
-                checkForNode(context, u),
-                () => checkForNode(inner_context, u)
+                Handlers[u.kind](u, context),
+                () => Handlers[u.kind](u, inner_context)
             )
         }
-        checkForNode(inner_context, node.body)
+        Handlers[node.body.kind](node.body, inner_context)
         return new Type.Function(
             node.arguments.map(a => new Argument(
                 new Type.Mixed(),
@@ -303,7 +317,8 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
             )),
             // FIXME return
         )
-    } else if(node.kind == "constref") {
+    },
+    constref(node: NodeTypes.ConstRef, context: Context) {
         // Stuff like method names
         if(typeof node.name == "string") {
             return new Type.String(node.name)
@@ -312,23 +327,26 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
                 context.qualifyName(node.name.name, node.name.resolution)
             )
         }
-    } else if(node.kind == "declare") {
+    },
+    declare(node: NodeTypes.Declare, context: Context) {
         // node.mode
         // node.what
         for(const c of node.children) {
-            checkForNode(context, c)
+            Handlers[c.kind](c, context)
         }
         return new Type.Void()
-    } else if(node.kind == "do") {
-        checkForNode(context, node.test)
-        checkForNode(context, node.body)
+    },
+    do(node: NodeTypes.Do, context: Context) {
+        Handlers[node.test.kind](node.test, context)
+        Handlers[node.body.kind](node.body, context)
         return new Type.Void()
-    } else if(node.kind == "echo") {
+    },
+    echo(node: NodeTypes.Echo, context: Context) {
         const expectedType = OPTIONAL_ECHO ?
             new Type.OptionalFalse(new Type.String()) :
             new Type.String()
         for(const n of node.arguments) {
-            const type = checkForNode(context, n)
+            const type = Handlers[n.kind](n, context)
             context.assert(
                 node,
                 type.matches(expectedType),
@@ -337,73 +355,79 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
         }
         // node.shortForm
         return new Type.Void()
-    } else if(node.kind == "empty") {
+    },
+    empty(node: NodeTypes.Empty, context: Context) {
         for(const n of node.arguments) {
             try {
-                checkForNode(context, n)
+                Handlers[n.kind](n, context)
             } catch(e) {
                 //
             }
         }
         return new Type.Bool()
-    } else if(node.kind == "encapsed") {
+    },
+    encapsed(node: NodeTypes.Encapsed) {
         // node.type
         // node.label
         return new Type.String(node.value)
-    } else if(node.kind == "entry") {
+    },
+    entry(node: NodeTypes.Entry, context: Context) {
         if(node.key) {
-            checkForNode(context, node.key)
+            Handlers[node.key.kind](node.key, context)
         }
-        return checkForNode(context, node.value)
-    } else if(node.kind == "for") {
+        return Handlers[node.value.kind](node.value, context)
+    },
+    for(node: NodeTypes.For, context: Context) {
         for(const i of node.init) {
-            checkForNode(context, i)
+            Handlers[i.kind](i, context)
         }
         for(const t of node.test) {
-            checkForNode(context, t)
+            Handlers[t.kind](t, context)
         }
         for(const c of node.increment) {
-            checkForNode(context, c)
+            Handlers[c.kind](c, context)
         }
-        checkForNode(context, node.body)
+        Handlers[node.body.kind](node.body, context)
         return new Type.Void()
-    } else if(node.kind == "foreach") {
-        const source_type = checkForNode(context, node.source)
+    },
+    foreach(node: NodeTypes.Foreach, context: Context) {
+        const source_type = Handlers[node.source.kind](node.source, context)
         if(node.key) {
             context.assign(
                 new Type.String(),
-                () => checkForNode(context, node.key!)
+                () => Handlers[node.key!.kind](node.key!, context)
             )
         }
         if(source_type) {
             if(source_type instanceof Type.IndexedArray && source_type.memberType) {
                 context.assign(
                     source_type.memberType,
-                    () => checkForNode(context, node.value)
+                    () => Handlers[node.value.kind](node.value, context)
                 )
             } else {
                 context.assign(
                     new Type.Mixed(),
-                    () => checkForNode(context, node.value)
+                    () => Handlers[node.value.kind](node.value, context)
                 )
             }
         } else {
             context.assign(
                 new Type.Mixed(),
-                () => checkForNode(context, node.value)
+                () => Handlers[node.value.kind](node.value, context)
             )
         }
 
-        checkForNode(context, node.body)
+        Handlers[node.body.kind](node.body, context)
         // node.shortForm
-        checkForNode(context, node.source)
+        Handlers[node.source.kind](node.source, context)
         return new Type.Void()
-    } else if(node.kind == "function") {
+    },
+    function(node: NodeTypes.Function, context: Context) {
         const inner_context = new Context(context)
         const args: Argument[] = []
         node.arguments.forEach(
             a => args.push(new Argument(
-                checkForNode(inner_context, a), // FIXME
+                Handlers[a.kind](a, inner_context), // FIXME
                 a.byref,
                 !!a.value,
             )) // FIXME
@@ -413,7 +437,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
             null
         inner_context.realReturnType = null
         if(node.body) {
-            checkForNode(inner_context, node.body)
+            Handlers[node.body.kind](node.body, inner_context)
         }
         context.setConstant(node.name, new Type.Function(
             args,
@@ -422,7 +446,8 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
         // node.byref
         // node.nullable
         return new Type.Void()
-    } else if(node.kind == "identifier") {
+    },
+    identifier(node: NodeTypes.Identifier, context: Context) {
         /**
          * This represents a _name_ which may be aliased or use an implicit
          * namespace. It doesn't have an actual type.
@@ -436,8 +461,9 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
         } else {
             return context.namedType(node.name, node.resolution)
         }
-    } else if(node.kind == "if") {
-        const check_value = checkForNode(context, node.test)
+    },
+    if(node: NodeTypes.If, context: Context) {
+        const check_value = Handlers[node.test.kind](node.test, context)
         const true_namespace_override: Map<string, Type.Base> = new Map()
         const false_namespace_override: Map<string, Type.Base> = new Map()
         if(node.test.kind == "variable" && typeof node.test.name == "string") {
@@ -471,21 +497,22 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
         if(check_value.asBoolean === false) {
             debug("Skipping impossible if branch")
         } else {
-            checkForNode(inner_context_true, node.body)
+            Handlers[node.body.kind](node.body, inner_context_true)
         }
         if(node.alternate) {
             if(check_value.asBoolean === true) {
                 debug("Skipping impossible else branch")
             } else {
-                checkForNode(inner_context_false, node.alternate)
+                Handlers[node.alternate.kind](node.alternate, inner_context_false)
             }
         }
         // node.shortForm
         return new Type.Void()
-    } else if(node.kind == "include") {
+    },
+    include(node: NodeTypes.Include, context: Context) {
         // node.once
         // node.require
-        const v = checkForNode(context, node.target)
+        const v = Handlers[node.target.kind](node.target, context)
         if(v instanceof Type.String && v.value) {
             debug(`Include for ${v.value}`)
             if(node.require) {
@@ -504,16 +531,18 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
             debug(`Include (unknown)`)
             return new Type.Bool()
         }
-    } else if(node.kind == "inline") {
+    },
+    inline(node: NodeTypes.Inline) {
         // node.raw
         // node.value
         return new Type.String(node.value)
-    } else if(node.kind == "interface") {
+    },
+    interface(node: NodeTypes.Interface, context: Context) {
         const qname = context.qualifyName(node.name, "qn")
         const interface_structure = new Type.Class(qname)
         for(const b of node.body) {
             if(b.kind == "method") {
-                const t = checkForNode(context, b)
+                const t = Handlers[b.kind](b, context)
                 if(t instanceof Type.Function) {
                     debug(`Attaching function ${b.name} to ${qname}`)
                     if(b.isStatic) {
@@ -526,7 +555,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
                     debug(t)
                 }
             } else {
-                checkForNode(context, b)
+                Handlers[b.kind](b, context)
             }
         }
         // node.extends
@@ -547,27 +576,31 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
         context.setConstant(qname.replace(/^\\/, ""), interface_structure)
         debug(`Setting ${qname} as an interface`)
         return interface_structure
-    } else if(node.kind == "isset") {
+    },
+    isset(node: NodeTypes.Isset, context: Context) {
         for(const n of node.arguments) {
             try {
-                checkForNode(context, n)
+                Handlers[n.kind](n, context)
             } catch(e) {
                 return new Type.Bool(false)
             }
         }
         return new Type.Bool()
-    } else if(node.kind == "list") {
+    },
+    list(node: NodeTypes.List, context: Context) {
         for(const n of node.arguments) {
             try {
-                checkForNode(context, n)
+                Handlers[n.kind](n, context)
             } catch(e) {
                 //
             }
         }
         return new Type.IndexedArray()
-    } else if(node.kind == "magic") {
+    },
+    magic(node: NodeTypes.Magic) {
         return new Type.Mixed()
-    } else if(node.kind == "method") {
+    },
+    method(node: NodeTypes.Method, context: Context) {
         const inner_context = new Context(context)
         if(!node.isStatic) {
             inner_context.set("$this", new Type.Mixed()) // FIXME
@@ -575,13 +608,13 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
         const args: Argument[] = []
         node.arguments.forEach(
             a => args.push(new Argument(
-                checkForNode(inner_context, a), // FIXME
+                Handlers[a.kind](a, inner_context), // FIXME
                 a.byref,
                 !!a.value,
             )) // FIXME
         )
         if(node.body) {
-            checkForNode(inner_context, node.body)
+            Handlers[node.body.kind](node.body, inner_context)
         }
         // node.byref
         // node.nullable
@@ -594,30 +627,33 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
             "PSR1 4.3: method names must be in camel case (lower)"
         )
         const returnType = node.type ?
-            checkForNode(context, node.type) :
+            Handlers[node.type.kind](node.type, context) :
             new Type.Mixed()
         return new Type.Function(
             args,
             returnType
         )
-    } else if(node.kind == "namespace") {
+    },
+    namespace(node: NodeTypes.Namespace, context: Context) {
         // node.withBrackets
         context.namespacePrefix = node.name
         for(const c of node.children) {
-            checkForNode(context, c)
+            Handlers[c.kind](c, context)
         }
         return new Type.Void()
-    } else if(node.kind == "new") {
-        const type = checkForNode(context, node.what)
+    },
+    new(node: NodeTypes.New, context: Context) {
+        const type = Handlers[node.what.kind](node.what, context)
         node.arguments.forEach(
-            a => checkForNode(context, a)
+            a => Handlers[a.kind](a, context)
         )
         if(type instanceof Type.Class) {
             return new Type.ClassInstance(type.ref)
         }
         debug(type)
         return new Type.Void()
-    } else if(node.kind == "number") {
+    },
+    number(node: NodeTypes.Number) {
         // node.raw
         // node.value
         if(Math.floor(node.value) == node.value) {
@@ -625,11 +661,12 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
         } else {
             return new Type.Float(node.value)
         }
-    } else if(node.kind == "offsetlookup") {
-        const type = checkForNode(context, node.what)
+    },
+    offsetlookup(node: NodeTypes.OffsetLookup, context: Context) {
+        const type = Handlers[node.what.kind](node.what, context)
         if(node.offset) {
             // This is unset for `$foo[] = 1;`
-            checkForNode(context, node.offset)
+            Handlers[node.offset.kind](node.offset, context)
         }
         if(type) {
             return(
@@ -638,13 +675,14 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
         } else {
             return new Type.Mixed() // FIXME
         }
-    } else if(node.kind == "parameter") {
+    },
+    parameter(node: NodeTypes.Parameter, context: Context) {
         // node.byref
         // node.nullable
 
         let type: Type.Base
         if(node.type) {
-            checkForNode(context, node.type)
+            Handlers[node.type.kind](node.type, context)
             // Identifiers don't have a type, but now that we're here we know
             // that there is one.
             type = context.namedType(node.type.name, node.type.resolution)
@@ -652,38 +690,43 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
             type = new Type.Mixed()
         }
         if(node.value) {
-            checkForNode(context, node.value)
+            Handlers[node.value.kind](node.value, context)
         }
         // node.variadic
         context.set("$" + node.name, type)
         return type
-    } else if(node.kind == "parenthesis") {
-        return checkForNode(context, node.inner)
-    } else if(node.kind == "post") {
+    },
+    parenthesis(node: NodeTypes.Parenthesis, context: Context) {
+        return Handlers[node.inner.kind](node.inner, context)
+    },
+    post(node: NodeTypes.Post, context: Context) {
         // node.type
-        const type = checkForNode(context, node.what)
+        const type = Handlers[node.what.kind](node.what, context)
         if(type instanceof Type.Int) {
             return type
         } else {
             return new Type.Float()
         }
-    } else if(node.kind == "program") {
+    },
+    program(node: NodeTypes.Program, context: Context) {
         node.children.forEach(
-            child => checkForNode(context, child)
+            child => Handlers[child.kind](child, context)
         )
         return new Type.Void()
-    } else if(node.kind == "property") {
+    },
+    property(node: NodeTypes.Property, context: Context) {
         // node.isFinal
         // node.isStatic
         // node.name
         if(node.value) {
-            checkForNode(context, node.value)
+            Handlers[node.value.kind](node.value, context)
         }
         // node.visibility
         return new Type.Void()
-    } else if(node.kind == "propertylookup") {
-        const what_type = checkForNode(context, node.what)
-        const offset_type = checkForNode(context, node.offset)
+    },
+    propertylookup(node: NodeTypes.PropertyLookup, context: Context) {
+        const what_type = Handlers[node.what.kind](node.what, context)
+        const offset_type = Handlers[node.offset.kind](node.offset, context)
         let ctype: Type.Class | Type.ClassInstance
         if(what_type instanceof Type.Class || what_type instanceof Type.ClassInstance) {
             ctype = what_type
@@ -724,10 +767,11 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
             debug("Non-string offset")
             return new Type.Mixed() // FIXME
         }
-    } else if(node.kind == "retif") {
-        const test = checkForNode(context, node.test)
-        const true_branch = node.trueExpr ? checkForNode(context, node.trueExpr) : test
-        const false_branch = checkForNode(context, node.falseExpr)
+    },
+    retif(node: NodeTypes.RetIf, context: Context) {
+        const test = Handlers[node.test.kind](node.test, context)
+        const true_branch = node.trueExpr ? Handlers[node.trueExpr.kind](node.trueExpr, context) : test
+        const false_branch = Handlers[node.falseExpr.kind](node.falseExpr, context)
         if(test.asBoolean === true) {
             return true_branch
         } else if(test.asBoolean === false) {
@@ -735,8 +779,9 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
         } else {
             return true_branch.combinedWith(false_branch)
         }
-    } else if(node.kind == "return") {
-        const type = node.expr ? checkForNode(context, node.expr) : new Type.Void()
+    },
+    return(node: NodeTypes.Return, context: Context) {
+        const type = node.expr ? Handlers[node.expr.kind](node.expr, context) : new Type.Void()
         const expected_type = context.returnType
         if(expected_type) {
             context.assert(
@@ -749,21 +794,24 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
             type.combinedWith(context.realReturnType) :
             type
         return type
-    } else if(node.kind == "silent") {
+    },
+    silent(node: NodeTypes.Silent, context: Context) {
         if(node.expr) {
-            return checkForNode(context, node.expr)
+            return Handlers[node.expr.kind](node.expr, context)
         } else {
             return new Type.Void()
         }
-    } else if(node.kind == "static") {
+    },
+    static(node: NodeTypes.Static, context: Context) {
         // TODO add tests relating to staticness
         for(const i of node.items) {
-            checkForNode(context, i)
+            Handlers[i.kind](i, context)
         }
         return new Type.Void()
-    } else if(node.kind == "staticlookup") {
-        const t = checkForNode(context, node.what)
-        const o = checkForNode(context, node.offset)
+    },
+    staticlookup(node: NodeTypes.StaticLookup, context: Context) {
+        const t = Handlers[node.what.kind](node.what, context)
+        const o = Handlers[node.offset.kind](node.offset, context)
         if(t instanceof Type.Class && o instanceof Type.String && o.value) {
             const l = t.classMethods.get(o.value)
             if(l) {
@@ -775,24 +823,28 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
             debug(node)
         }
         return new Type.Mixed()
-    } else if(node.kind == "string") {
+    },
+    string(node: NodeTypes.String) {
         // node.raw
         // node.value
         return new Type.String(node.value)
-    } else if(node.kind == "switch") {
-        const check_value = checkForNode(context, node.test)
-        checkForNode(context, node.body)
+    },
+    switch(node: NodeTypes.Switch, context: Context) {
+        const check_value = Handlers[node.test.kind](node.test, context)
+        Handlers[node.body.kind](node.body, context)
         // node.shortForm
         return new Type.Void()
-    } else if(node.kind == "throw") {
-        checkForNode(context, node.what)
+    },
+    throw(node: NodeTypes.Throw, context: Context) {
+        Handlers[node.what.kind](node.what, context)
         return new Type.Void()
-    } else if(node.kind == "trait") {
+    },
+    trait(node: NodeTypes.Trait, context: Context) {
         const qname = context.qualifyName(node.name, "qn")
         const trait_structure = new Type.Trait(qname)
         for(const b of node.body) {
             if(b.kind == "method") {
-                const t = checkForNode(context, b)
+                const t = Handlers[b.kind](b, context)
                 if(t instanceof Type.Function) {
                     debug(`Attaching function ${b.name} to ${qname}`)
                     if(b.isStatic) {
@@ -805,7 +857,7 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
                     debug(t)
                 }
             } else {
-                checkForNode(context, b)
+                Handlers[b.kind](b, context)
             }
         }
         // node.extends
@@ -823,30 +875,34 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
         context.setConstant(qname.replace(/^\\/, ""), trait_structure)
         debug(`Setting ${qname} as a trait`)
         return trait_structure
-    } else if(node.kind == "traituse") {
+    },
+    traituse(node: NodeTypes.TraitUse, context: Context) {
         if(node.adaptations) {
             node.adaptations.forEach(
-                a => checkForNode(context, a)
+                a => Handlers[a.kind](a, context)
             )
         }
         node.traits.forEach(
-            t => checkForNode(context, t)
+            t => Handlers[t.kind](t, context)
         )
         return new Type.Void()
-    } else if(node.kind == "try") {
-        checkForNode(context, node.body)
+    },
+    try(node: NodeTypes.Try, context: Context) {
+        Handlers[node.body.kind](node.body, context)
         for(const c of node.catches) {
-            checkForNode(context, c)
+            Handlers[c.kind](c, context)
         }
         if(node.always) {
-            checkForNode(context, node.always)
+            Handlers[node.always.kind](node.always, context)
         }
         return new Type.Void()
-    } else if(node.kind == "unary") {
+    },
+    unary(node: NodeTypes.Unary, context: Context) {
         // node.type
-        checkForNode(context, node.what)
+        Handlers[node.what.kind](node.what, context)
         return new Type.Mixed() // FIXME
-    } else if(node.kind == "unset") {
+    },
+    unset(node: NodeTypes.Unset, context: Context) {
         for(const a of node.arguments) {
             if(a.kind == "variable") {
                 if(typeof a.name == "string") {
@@ -855,7 +911,8 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
             }
         }
         return new Type.Void()
-    } else if(node.kind == "usegroup") {
+    },
+    usegroup(node: NodeTypes.UseGroup, context: Context) {
         // type
         if(node.name) {
             for(const u of node.items) {
@@ -867,10 +924,12 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
             }
         }
         return new Type.Void()
-    } else if(node.kind == "useitem") {
+    },
+    useitem(node: NodeTypes.UseItem, context: Context) {
         context.importName(node.name, node.alias)
         return new Type.Void()
-    } else if(node.kind == "variable") {
+    },
+    variable(node: NodeTypes.Variable, context: Context) {
         // this.node.curly
         if(typeof node.name == "string") {
             const name = "$" + node.name
@@ -890,8 +949,9 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
         } else {
             return new Type.Mixed() // FIXME
         }
-    } else if(node.kind == "while") {
-        const check_value = checkForNode(context, node.test)
+    },
+    while(node: NodeTypes.While, context: Context) {
+        const check_value = Handlers[node.test.kind](node.test, context)
         const body_namespace_override: Map<string, Type.Base> = new Map()
         if(node.test.kind == "variable" && typeof node.test.name == "string") {
             const v = context.get("$" + node.test.name)
@@ -916,22 +976,18 @@ export function checkForNode(context: Context, node: NodeTypes.Node): Type.Base 
         if(check_value.asBoolean === false) {
             debug("Skipping impossible while body")
         } else {
-            checkForNode(inner_context, node.body)
+            Handlers[node.body.kind](node.body, inner_context)
         }
         // node.shortForm
         return new Type.Void()
-    } else if(node.kind == "yield") {
+    },
+    yield(node: NodeTypes.Yield, context: Context) {
         if(node.key) {
-            checkForNode(context, node.key)
+            Handlers[node.key.kind](node.key, context)
         }
         if(node.value) {
-            checkForNode(context, node.value)
+            Handlers[node.value.kind](node.value, context)
         }
         return new Type.Void()
-    } else {
-        debug(node)
-        //@ts-ignore
-        throw new Error(`Unknown type: ${node.kind}`)
     }
-    throw new Error("Internal error: missing return")
 }

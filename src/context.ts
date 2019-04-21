@@ -1,7 +1,7 @@
 import * as Type from "./type"
 import { Function, Argument } from "./type/function";
 import { NodeTypes } from "./content/ast";
-import { checkForNode } from "./content/considered/for-node";
+import { Handlers } from "./content/considered/for-node";
 import {FunctionTypeInfo} from "./build"
 import Lint from "./lint";
 import { LintError } from "./lint-error";
@@ -233,7 +233,7 @@ export class Context {
      */
     check(node: NodeTypes.Node): Type.Base {
         debug(`Checking node of type ${node.kind}`)
-        return checkForNode(this, node)
+        return Handlers[node.kind](node, this)
     }
 
     checkFile(filename: string): boolean | null {
