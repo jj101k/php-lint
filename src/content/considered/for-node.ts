@@ -322,6 +322,10 @@ export const Handlers: {[kind: string]: Handler} = {
             )
         }
     },
+    continue(node: NodeTypes.Continue) {
+        // node.level
+        return new Type.Void()
+    },
     declare(node: NodeTypes.Declare, context: Context) {
         // node.mode
         // node.what

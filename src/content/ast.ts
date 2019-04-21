@@ -36,6 +36,7 @@ export namespace NodeTypes {
     export type ClassConstant = AnyConstant & {kind: "classconstant", isStatic: boolean, visibility: string}
     export type Closure = AnyStatement & {kind: "closure", arguments: Parameter[], uses: Variable[], type: Identifier, byref: boolean, nullable: boolean, body: Block, isStatic: boolean}
     export type ConstRef = AnyExpression & {kind: "constref", name: string | Identifier}
+    export type Continue = AnyNode & {kind: "continue", level: Number | null}
     export type Declare = AnyBlock & {kind: "declare", what: {[ref: string]: Expression}, mode: string}
     export type Do = AnyStatement & {kind: "do", test: Expression, body: Statement}
     export type Echo = AnySys & {kind: "echo", shortForm: boolean}
@@ -97,6 +98,7 @@ export namespace NodeTypes {
         AllBlock |
         Break |
         Case |
+        Continue |
         Declaration |
         Entry |
         Expression |
