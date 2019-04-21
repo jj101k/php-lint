@@ -114,9 +114,9 @@ export const Handlers: {[kind: string]: Handler} = {
         }
     },
     block(node: NodeTypes.Block, context: Context) {
-        node.children.forEach(
-            child => Handlers[child.kind](child, context)
-        )
+        for(const child of node.children) {
+            Handlers[child.kind](child, context)
+        }
         return new Type.Void()
     },
     boolean(node: NodeTypes.Boolean) {
@@ -213,9 +213,9 @@ export const Handlers: {[kind: string]: Handler} = {
             }
         } else {
             debug("Function type no")
-            node.arguments.forEach((a, i) => {
+            for(const a of node.arguments) {
                 Handlers[a.kind](a, context)
-            })
+            }
             return new Type.Mixed()
         }
     },
@@ -293,9 +293,9 @@ export const Handlers: {[kind: string]: Handler} = {
     },
     closure(node: NodeTypes.Closure, context: Context) {
         const inner_context = new Context(context)
-        node.arguments.forEach(
-            a => Handlers[a.kind](a, inner_context)
-        )
+        for(const a of node.arguments) {
+            Handlers[a.kind](a, inner_context)
+        }
         // node.byref
         // node.isStatic
         // node.nullable
@@ -404,13 +404,13 @@ export const Handlers: {[kind: string]: Handler} = {
     function(node: NodeTypes.Function, context: Context) {
         const inner_context = new Context(context)
         const args: Argument[] = []
-        node.arguments.forEach(
-            a => args.push(new Argument(
+        for(const a of node.arguments) {
+            args.push(new Argument(
                 Handlers[a.kind](a, inner_context), // FIXME
                 a.byref,
                 !!a.value,
             )) // FIXME
-        )
+        }
         inner_context.returnType = node.type ?
             context.namedType(node.type.name, node.type.resolution) :
             null
@@ -585,13 +585,13 @@ export const Handlers: {[kind: string]: Handler} = {
             inner_context.set("$this", new Type.Mixed()) // FIXME
         }
         const args: Argument[] = []
-        node.arguments.forEach(
-            a => args.push(new Argument(
+        for(const a of node.arguments) {
+            args.push(new Argument(
                 Handlers[a.kind](a, inner_context), // FIXME
                 a.byref,
                 !!a.value,
             )) // FIXME
-        )
+        }
         if(node.body) {
             Handlers[node.body.kind](node.body, inner_context)
         }
@@ -623,9 +623,9 @@ export const Handlers: {[kind: string]: Handler} = {
     },
     new(node: NodeTypes.New, context: Context) {
         const type = Handlers[node.what.kind](node.what, context)
-        node.arguments.forEach(
-            a => Handlers[a.kind](a, context)
-        )
+        for(const a of node.arguments) {
+            Handlers[a.kind](a, context)
+        }
         if(type instanceof Type.Class) {
             return new Type.ClassInstance(type.ref)
         }
@@ -688,9 +688,9 @@ export const Handlers: {[kind: string]: Handler} = {
         }
     },
     program(node: NodeTypes.Program, context: Context) {
-        node.children.forEach(
-            child => Handlers[child.kind](child, context)
-        )
+        for(const child of node.children) {
+            Handlers[child.kind](child, context)
+        }
         return new Type.Void()
     },
     property(node: NodeTypes.Property, context: Context) {
@@ -857,13 +857,13 @@ export const Handlers: {[kind: string]: Handler} = {
     },
     traituse(node: NodeTypes.TraitUse, context: Context) {
         if(node.adaptations) {
-            node.adaptations.forEach(
-                a => Handlers[a.kind](a, context)
-            )
+            for(const a of node.adaptations) {
+                Handlers[a.kind](a, context)
+            }
         }
-        node.traits.forEach(
-            t => Handlers[t.kind](t, context)
-        )
+        for(const t of node.traits) {
+            Handlers[t.kind](t, context)
+        }
         return new Type.Void()
     },
     try(node: NodeTypes.Try, context: Context) {

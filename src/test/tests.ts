@@ -54,24 +54,32 @@ export function sync(assert: assert) {
     const result = new PHPLint().checkSourceCodeSync(good_code)
     assert.ok(result, "Valid code looks ok")
 
-    good_files.forEach(good_file => assert.ok(
-        new PHPLint().checkFileSync(good_file),
-        `Valid file ${good_file} looks ok`
-    ))
-    bug_files.forEach(file => assert.ok(
-        new PHPLint().checkFileSync(file),
-        `Valid file ${file} looks ok`
-    ))
+    for(const good_file of good_files) {
+        assert.ok(
+            new PHPLint().checkFileSync(good_file),
+            `Valid file ${good_file} looks ok`
+        )
+    }
+    for(const file of bug_files) {
+        assert.ok(
+            new PHPLint().checkFileSync(file),
+            `Valid file ${file} looks ok`
+        )
+    }
     assert.throws(
         () => new PHPLint().checkSourceCodeSync(bad_code),
         "Invalid code looks bad"
     )
-    bad_files.forEach(bad_file => assert.throws(
-        () => new PHPLint().checkFileSync(bad_file),
-        `Invalid file ${bad_file} looks bad`
-    ))
-    skip_files.forEach(skip_file => assert.throws(
-        () => new PHPLint().checkFileSync(skip_file),
-        `Skip ${skip_file}`
-    ))
+    for(const bad_file of bad_files) {
+        assert.throws(
+            () => new PHPLint().checkFileSync(bad_file),
+            `Invalid file ${bad_file} looks bad`
+        )
+    }
+    for(const skip_file of skip_files) {
+        assert.throws(
+            () => new PHPLint().checkFileSync(skip_file),
+            `Skip ${skip_file}`
+        )
+    }
 }
