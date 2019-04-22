@@ -2,4 +2,60 @@
 <?php
 $interfaces = get_declared_interfaces();
 sort($interfaces);
-print json_encode($interfaces, JSON_PRETTY_PRINT);
+$out = [];
+foreach($interfaces as $interface) {
+    $info = [];
+    $reflection = new \ReflectionClass($interface);
+    $info["constants"] = array_map(
+        function($p) {
+            return [
+                "name" => $p->getName(),
+                "isPublic" => $p->isPublic(),
+                "value" => $p->getValue(),
+            ];
+        },
+        $reflection->getReflectionConstants()
+    );
+    $info["methods"] = array_map(
+        function($p) {
+            return [
+                "name" => $p->getName(),
+                "isAbstract" => $p->isAbstract(),
+                "isPublic" => $p->isPublic(),
+                "isStatic" => $p->isStatic(),
+                "arguments" => array_map(
+                    function($arg) {
+                        return [
+                            "type" => $arg->getType() ? "" . $arg->getType() : null,
+                        ];
+                    },
+                    $p->getParameters()
+                ),
+                "returnType" => $p->getReturnType() ? "" . $p->getReturnType() : null,
+            ];
+        },
+        $reflection->getMethods(
+            \ReflectionMethod::IS_PUBLIC |
+            \ReflectionMethod::IS_PROTECTED
+        )
+    );
+    $info["properties"] = array_map(
+        function($p) {
+            return [
+                "name" => $p->getName(),
+                "isPublic" => $p->isPublic(),
+                "isStatic" => $p->isStatic(),
+            ];
+        },
+        $reflection->getProperties(
+            \ReflectionProperty::IS_PUBLIC |
+            \ReflectionProperty::IS_PROTECTED
+        )
+    );
+    $info["interfaces"] = array_keys($reflection->getInterfaces());
+    $info["parentClass"] = $reflection->getParentClass() ?
+        $reflection->getParentClass()->getName() :
+        null;
+    $out[$interface] = $info;
+}
+print json_encode($out, JSON_PRETTY_PRINT);

@@ -1,20 +1,741 @@
-[
-    "ArrayAccess",
-    "Countable",
-    "DateTimeInterface",
-    "Iterator",
-    "IteratorAggregate",
-    "JsonSerializable",
-    "OuterIterator",
-    "RecursiveIterator",
-    "Reflector",
-    "SeekableIterator",
-    "Serializable",
-    "SessionHandlerInterface",
-    "SessionIdInterface",
-    "SessionUpdateTimestampHandlerInterface",
-    "SplObserver",
-    "SplSubject",
-    "Throwable",
-    "Traversable"
-]
+{
+    "ArrayAccess": {
+        "constants": [],
+        "methods": [
+            {
+                "name": "offsetExists",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": false,
+                "arguments": [
+                    {
+                        "type": null
+                    }
+                ],
+                "returnType": null
+            },
+            {
+                "name": "offsetGet",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": false,
+                "arguments": [
+                    {
+                        "type": null
+                    }
+                ],
+                "returnType": null
+            },
+            {
+                "name": "offsetSet",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": false,
+                "arguments": [
+                    {
+                        "type": null
+                    },
+                    {
+                        "type": null
+                    }
+                ],
+                "returnType": null
+            },
+            {
+                "name": "offsetUnset",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": false,
+                "arguments": [
+                    {
+                        "type": null
+                    }
+                ],
+                "returnType": null
+            }
+        ],
+        "properties": [],
+        "interfaces": [],
+        "parentClass": null
+    },
+    "Countable": {
+        "constants": [],
+        "methods": [
+            {
+                "name": "count",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": false,
+                "arguments": [],
+                "returnType": null
+            }
+        ],
+        "properties": [],
+        "interfaces": [],
+        "parentClass": null
+    },
+    "DateTimeInterface": {
+        "constants": [],
+        "methods": [
+            {
+                "name": "format",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": false,
+                "arguments": [
+                    {
+                        "type": null
+                    }
+                ],
+                "returnType": null
+            },
+            {
+                "name": "getTimezone",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": false,
+                "arguments": [],
+                "returnType": null
+            },
+            {
+                "name": "getOffset",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": false,
+                "arguments": [],
+                "returnType": null
+            },
+            {
+                "name": "getTimestamp",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": false,
+                "arguments": [],
+                "returnType": null
+            },
+            {
+                "name": "diff",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": false,
+                "arguments": [
+                    {
+                        "type": null
+                    },
+                    {
+                        "type": null
+                    }
+                ],
+                "returnType": null
+            },
+            {
+                "name": "__wakeup",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": false,
+                "arguments": [],
+                "returnType": null
+            }
+        ],
+        "properties": [],
+        "interfaces": [],
+        "parentClass": null
+    },
+    "Iterator": {
+        "constants": [],
+        "methods": [
+            {
+                "name": "current",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": false,
+                "arguments": [],
+                "returnType": null
+            },
+            {
+                "name": "next",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": false,
+                "arguments": [],
+                "returnType": null
+            },
+            {
+                "name": "key",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": false,
+                "arguments": [],
+                "returnType": null
+            },
+            {
+                "name": "valid",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": false,
+                "arguments": [],
+                "returnType": null
+            },
+            {
+                "name": "rewind",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": false,
+                "arguments": [],
+                "returnType": null
+            }
+        ],
+        "properties": [],
+        "interfaces": [
+            "Traversable"
+        ],
+        "parentClass": null
+    },
+    "IteratorAggregate": {
+        "constants": [],
+        "methods": [
+            {
+                "name": "getIterator",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": false,
+                "arguments": [],
+                "returnType": null
+            }
+        ],
+        "properties": [],
+        "interfaces": [
+            "Traversable"
+        ],
+        "parentClass": null
+    },
+    "JsonSerializable": {
+        "constants": [],
+        "methods": [
+            {
+                "name": "jsonSerialize",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": false,
+                "arguments": [],
+                "returnType": null
+            }
+        ],
+        "properties": [],
+        "interfaces": [],
+        "parentClass": null
+    },
+    "OuterIterator": {
+        "constants": [],
+        "methods": [
+            {
+                "name": "getInnerIterator",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": false,
+                "arguments": [],
+                "returnType": null
+            },
+            {
+                "name": "current",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": false,
+                "arguments": [],
+                "returnType": null
+            },
+            {
+                "name": "next",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": false,
+                "arguments": [],
+                "returnType": null
+            },
+            {
+                "name": "key",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": false,
+                "arguments": [],
+                "returnType": null
+            },
+            {
+                "name": "valid",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": false,
+                "arguments": [],
+                "returnType": null
+            },
+            {
+                "name": "rewind",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": false,
+                "arguments": [],
+                "returnType": null
+            }
+        ],
+        "properties": [],
+        "interfaces": [
+            "Iterator",
+            "Traversable"
+        ],
+        "parentClass": null
+    },
+    "RecursiveIterator": {
+        "constants": [],
+        "methods": [
+            {
+                "name": "hasChildren",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": false,
+                "arguments": [],
+                "returnType": null
+            },
+            {
+                "name": "getChildren",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": false,
+                "arguments": [],
+                "returnType": null
+            },
+            {
+                "name": "current",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": false,
+                "arguments": [],
+                "returnType": null
+            },
+            {
+                "name": "next",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": false,
+                "arguments": [],
+                "returnType": null
+            },
+            {
+                "name": "key",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": false,
+                "arguments": [],
+                "returnType": null
+            },
+            {
+                "name": "valid",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": false,
+                "arguments": [],
+                "returnType": null
+            },
+            {
+                "name": "rewind",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": false,
+                "arguments": [],
+                "returnType": null
+            }
+        ],
+        "properties": [],
+        "interfaces": [
+            "Iterator",
+            "Traversable"
+        ],
+        "parentClass": null
+    },
+    "Reflector": {
+        "constants": [],
+        "methods": [
+            {
+                "name": "export",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": true,
+                "arguments": [],
+                "returnType": null
+            },
+            {
+                "name": "__toString",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": false,
+                "arguments": [],
+                "returnType": null
+            }
+        ],
+        "properties": [],
+        "interfaces": [],
+        "parentClass": null
+    },
+    "SeekableIterator": {
+        "constants": [],
+        "methods": [
+            {
+                "name": "seek",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": false,
+                "arguments": [
+                    {
+                        "type": null
+                    }
+                ],
+                "returnType": null
+            },
+            {
+                "name": "current",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": false,
+                "arguments": [],
+                "returnType": null
+            },
+            {
+                "name": "next",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": false,
+                "arguments": [],
+                "returnType": null
+            },
+            {
+                "name": "key",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": false,
+                "arguments": [],
+                "returnType": null
+            },
+            {
+                "name": "valid",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": false,
+                "arguments": [],
+                "returnType": null
+            },
+            {
+                "name": "rewind",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": false,
+                "arguments": [],
+                "returnType": null
+            }
+        ],
+        "properties": [],
+        "interfaces": [
+            "Iterator",
+            "Traversable"
+        ],
+        "parentClass": null
+    },
+    "Serializable": {
+        "constants": [],
+        "methods": [
+            {
+                "name": "serialize",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": false,
+                "arguments": [],
+                "returnType": null
+            },
+            {
+                "name": "unserialize",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": false,
+                "arguments": [
+                    {
+                        "type": null
+                    }
+                ],
+                "returnType": null
+            }
+        ],
+        "properties": [],
+        "interfaces": [],
+        "parentClass": null
+    },
+    "SessionHandlerInterface": {
+        "constants": [],
+        "methods": [
+            {
+                "name": "open",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": false,
+                "arguments": [
+                    {
+                        "type": null
+                    },
+                    {
+                        "type": null
+                    }
+                ],
+                "returnType": null
+            },
+            {
+                "name": "close",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": false,
+                "arguments": [],
+                "returnType": null
+            },
+            {
+                "name": "read",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": false,
+                "arguments": [
+                    {
+                        "type": null
+                    }
+                ],
+                "returnType": null
+            },
+            {
+                "name": "write",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": false,
+                "arguments": [
+                    {
+                        "type": null
+                    },
+                    {
+                        "type": null
+                    }
+                ],
+                "returnType": null
+            },
+            {
+                "name": "destroy",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": false,
+                "arguments": [
+                    {
+                        "type": null
+                    }
+                ],
+                "returnType": null
+            },
+            {
+                "name": "gc",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": false,
+                "arguments": [
+                    {
+                        "type": null
+                    }
+                ],
+                "returnType": null
+            }
+        ],
+        "properties": [],
+        "interfaces": [],
+        "parentClass": null
+    },
+    "SessionIdInterface": {
+        "constants": [],
+        "methods": [
+            {
+                "name": "create_sid",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": false,
+                "arguments": [],
+                "returnType": null
+            }
+        ],
+        "properties": [],
+        "interfaces": [],
+        "parentClass": null
+    },
+    "SessionUpdateTimestampHandlerInterface": {
+        "constants": [],
+        "methods": [
+            {
+                "name": "validateId",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": false,
+                "arguments": [
+                    {
+                        "type": null
+                    }
+                ],
+                "returnType": null
+            },
+            {
+                "name": "updateTimestamp",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": false,
+                "arguments": [
+                    {
+                        "type": null
+                    },
+                    {
+                        "type": null
+                    }
+                ],
+                "returnType": null
+            }
+        ],
+        "properties": [],
+        "interfaces": [],
+        "parentClass": null
+    },
+    "SplObserver": {
+        "constants": [],
+        "methods": [
+            {
+                "name": "update",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": false,
+                "arguments": [
+                    {
+                        "type": "SplSubject"
+                    }
+                ],
+                "returnType": null
+            }
+        ],
+        "properties": [],
+        "interfaces": [],
+        "parentClass": null
+    },
+    "SplSubject": {
+        "constants": [],
+        "methods": [
+            {
+                "name": "attach",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": false,
+                "arguments": [
+                    {
+                        "type": "SplObserver"
+                    }
+                ],
+                "returnType": null
+            },
+            {
+                "name": "detach",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": false,
+                "arguments": [
+                    {
+                        "type": "SplObserver"
+                    }
+                ],
+                "returnType": null
+            },
+            {
+                "name": "notify",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": false,
+                "arguments": [],
+                "returnType": null
+            }
+        ],
+        "properties": [],
+        "interfaces": [],
+        "parentClass": null
+    },
+    "Throwable": {
+        "constants": [],
+        "methods": [
+            {
+                "name": "getMessage",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": false,
+                "arguments": [],
+                "returnType": null
+            },
+            {
+                "name": "getCode",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": false,
+                "arguments": [],
+                "returnType": null
+            },
+            {
+                "name": "getFile",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": false,
+                "arguments": [],
+                "returnType": null
+            },
+            {
+                "name": "getLine",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": false,
+                "arguments": [],
+                "returnType": null
+            },
+            {
+                "name": "getTrace",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": false,
+                "arguments": [],
+                "returnType": null
+            },
+            {
+                "name": "getPrevious",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": false,
+                "arguments": [],
+                "returnType": null
+            },
+            {
+                "name": "getTraceAsString",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": false,
+                "arguments": [],
+                "returnType": null
+            },
+            {
+                "name": "__toString",
+                "isAbstract": true,
+                "isPublic": true,
+                "isStatic": false,
+                "arguments": [],
+                "returnType": null
+            }
+        ],
+        "properties": [],
+        "interfaces": [],
+        "parentClass": null
+    },
+    "Traversable": {
+        "constants": [],
+        "methods": [],
+        "properties": [],
+        "interfaces": [],
+        "parentClass": null
+    }
+}
