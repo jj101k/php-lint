@@ -58,6 +58,7 @@ export namespace NodeTypes {
     export type Method = AnyFunction & {kind: "method", isAbstract: boolean, isFinal: boolean, isStatic: boolean, visibility: string}
     export type Namespace = AnyBlock & {kind: "namespace", name: string, withBrackets: boolean}
     export type New = AnyStatement & {kind: "new", what: Identifier | Variable | Class, arguments: Expression[]}
+    export type Nowdoc = AnyLiteral & {kind: "nowdoc", label: string | null, raw: string, value: string, quote: boolean}
     export type Number = AnyLiteral & {kind: "number", value: number}
     export type OffsetLookup = AnyLookup & {kind: "offsetlookup"}
     export type Parameter = AnyDeclaration & {kind: "parameter", type: Identifier | null, value: Node | null, byref: boolean, variadic: boolean, nullable: boolean}
@@ -83,14 +84,15 @@ export namespace NodeTypes {
     export type UseItem = AnyStatement & {kind: "useitem", name: string, type: string | null, alias: string | null}
     export type While = AnyStatement & {kind: "while", test: Expression, body: Statement, shortForm: boolean}
     export type Variable = AnyExpression & {kind: "variable", name: string | Node, byref: boolean, curly: boolean}
+    export type Variadic = AnyExpression & {kind: "variadic", what: Expression | Array}
     export type Yield = AnyExpression & {kind: "yield", key: Expression | null, value: Expression | null}
 
     type AllBlock = Block | Declare | Namespace | Program
     type AllConstant = ClassConstant
     type AllFunction = Function | Method
     type Declaration = Class | AllFunction | Interface | Parameter | Property | Trait | AllConstant
-    type Expression = Array | ConstRef | Operation | Lookup | Variable | Yield
-    type Literal = Encapsed | Boolean | Inline | Magic | Number | String
+    type Expression = Array | ConstRef | Operation | Lookup | Variable | Variadic | Yield
+    type Literal = Encapsed | Boolean | Inline | Magic | Nowdoc | Number | String
     type Lookup = PropertyLookup | StaticLookup | OffsetLookup
     type Operation = Bin | Cast | Parenthesis | Post | Unary
     type Statement = Array | Assign | Call | Catch | Clone | Closure | Do | For | Foreach | If | Include | New | RetIf | Silent | Static | Switch | Throw | Try | UseGroup | UseItem | While

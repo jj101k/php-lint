@@ -655,6 +655,10 @@ export const Handlers: {[kind: string]: Handler} = {
         debug(type)
         return new Type.Void()
     },
+    nowdoc(node: NodeTypes.Nowdoc) {
+        // node.raw
+        return new Type.String(node.value)
+    },
     number(node: NodeTypes.Number) {
         // node.raw
         // node.value
@@ -958,6 +962,10 @@ export const Handlers: {[kind: string]: Handler} = {
         } else {
             return new Type.Mixed() // FIXME
         }
+    },
+    variadic(node: NodeTypes.Variadic, context: Context) {
+        // This is for calls like foo(...$bar) or foo(...[$a, $b])
+        return Handlers[node.what.kind](node.what, context)
     },
     while(node: NodeTypes.While, context: Context) {
         const check_value = Handlers[node.test.kind](node.test, context)
