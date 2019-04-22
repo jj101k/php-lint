@@ -325,7 +325,7 @@ export class Context {
         } else if(name == "null" || name == "\\null") {
             return new Type.Null()
         } else {
-            return this.namedType(name, resolution)
+            return this.namedType(name, resolution).instanceType
         }
     }
 

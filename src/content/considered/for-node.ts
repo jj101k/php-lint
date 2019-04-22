@@ -232,7 +232,7 @@ export const Handlers: {[kind: string]: Handler} = {
         // node.type
         // node.raw
         Handlers[node.what.kind](node.what, context)
-        return context.namedType(node.type, "fqn")
+        return context.namedType(node.type, "fqn").instanceType
     },
     catch(node: NodeTypes.Catch, context: Context) {
         let t: Type.Base | null = null
