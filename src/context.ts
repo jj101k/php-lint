@@ -125,6 +125,24 @@ export class Context {
         } = JSON.parse(
             fs.readFileSync(__dirname + "/../data/php-classes.json")
         )
+        const interface_info: {
+            [name: string]: {
+                constants: {name: string, isPublic: boolean, value: any}[],
+                methods: {
+                    name: string,
+                    isAbstract: boolean,
+                    isPublic: boolean,
+                    isStatic: boolean,
+                    arguments: {type: string|null}[],
+                    returnType: string | null,
+                }[],
+                properties: {name: string, isPublic: boolean, isStatic: boolean}[],
+                interfaces: string[],
+                parentClass: string | null,
+            }
+        } = JSON.parse(
+            fs.readFileSync(__dirname + "/../data/php-interfaces.json")
+        )
         const function_type_info: {[name: string]: FunctionTypeInfo} = JSON.parse(
             fs.readFileSync(__dirname + "/../data/php-function-types.json")
         )
@@ -216,6 +234,62 @@ export class Context {
             // interfaces
             // parentClass
             this.constantNamespace.set(name, c)
+        }
+        for(const [name, info] of Object.entries(interface_info)) {
+            const i = new Type.Class(Context.pseudoQualify(name))
+            for(const method of info.methods) {
+                let collection: Map<string, Type.Function>
+                if(method.isStatic) {
+                    collection = i.classMethods
+                } else {
+                    collection = i.methods
+                }
+                const documented_info = function_type_info[`${name}::${method.name}`]
+                debug(`${name}::${method.name} (${!!documented_info})`)
+                if(documented_info) {
+                    collection.set(
+                        method.name,
+                        new Type.Function(
+                            documented_info.args.map(
+                                a => new Argument(
+                                    this.documentedType(a.type, "qn"),
+                                    a.byReference,
+                                    !!a.optionalDepth
+                                )
+                            ),
+                            documented_info.returnTypes.reduce(
+                                (carry: Type.Base | null, item): Type.Base => {
+                                    if(carry) {
+                                        return carry.combinedWith(
+                                            this.documentedType(item, "qn")
+                                        )
+                                    } else {
+                                        return this.documentedType(item, "qn")
+                                    }
+                                },
+                                null
+                            )
+                        )
+                    )
+                } else {
+                    collection.set(
+                        method.name,
+                        new Type.Function(
+                            method.arguments.map(
+                                a => new Argument(
+                                    this.documentedType(a.type, "qn"),
+                                )
+                            ),
+                            this.documentedType(method.returnType, "qn")
+                        )
+                    )
+                }
+            }
+            // constants
+            // properties
+            // interfaces
+            // parentClass
+            this.constantNamespace.set(name, i)
         }
     }
 
