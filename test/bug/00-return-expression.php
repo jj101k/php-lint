@@ -1,7 +1,7 @@
 <?php
 namespace Auth;
 /** Is something */
-class G {
+class Gee {
     /** Does something */
     public function e() {
         list($xa, $ya) = [[], 1];
