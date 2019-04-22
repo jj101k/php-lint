@@ -244,6 +244,7 @@ export const Handlers: {[kind: string]: Handler} = {
     },
     class(node: NodeTypes.Class, context: Context) {
         const qname = context.qualifyName(node.name, "qn")
+        context.importName(qname, "self")
         const class_structure = new Type.Class(qname)
         for(const b of node.body) {
             if(b.kind == "method") {
@@ -525,6 +526,7 @@ export const Handlers: {[kind: string]: Handler} = {
     },
     interface(node: NodeTypes.Interface, context: Context) {
         const qname = context.qualifyName(node.name, "qn")
+        context.importName(qname, "self")
         const interface_structure = new Type.Class(qname)
         for(const b of node.body) {
             if(b.kind == "method") {
