@@ -833,7 +833,6 @@ export const Handlers: {[kind: string]: Handler} = {
     },
     string(node: NodeTypes.String) {
         // node.raw
-        // node.value
         return new Type.String(node.value)
     },
     switch(node: NodeTypes.Switch, context: Context) {
