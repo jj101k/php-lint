@@ -291,6 +291,9 @@ export const Handlers: {[kind: string]: Handler} = {
         // node.visibility
         return new Type.Void()
     },
+    clone(node: NodeTypes.Clone, context: Context) {
+        return Handlers[node.what.kind](node.what, context)
+    },
     closure(node: NodeTypes.Closure, context: Context) {
         const inner_context = new Context(context)
         for(const a of node.arguments) {

@@ -34,6 +34,7 @@ export namespace NodeTypes {
     export type Catch = AnyStatement & {kind: "catch", what: Identifier[], variable: Variable, body: Statement}
     export type Class = AnyDeclaration & {kind: "class", extends: Identifier | null, implements: Identifier[], body: Declaration[], isAnonymous: boolean, isAbstract: boolean, isFinal: boolean}
     export type ClassConstant = AnyConstant & {kind: "classconstant", isStatic: boolean, visibility: string}
+    export type Clone = AnyStatement & {kind: "clone", what: Expression}
     export type Closure = AnyStatement & {kind: "closure", arguments: Parameter[], uses: Variable[], type: Identifier, byref: boolean, nullable: boolean, body: Block, isStatic: boolean}
     export type ConstRef = AnyExpression & {kind: "constref", name: string | Identifier}
     export type Continue = AnyNode & {kind: "continue", level: Number | null}
@@ -92,7 +93,7 @@ export namespace NodeTypes {
     type Literal = Encapsed | Boolean | Inline | Magic | Number | String
     type Lookup = PropertyLookup | StaticLookup | OffsetLookup
     type Operation = Bin | Cast | Parenthesis | Post | Unary
-    type Statement = Array | Assign | Call | Catch | Closure | Do | For | Foreach | If | Include | New | RetIf | Silent | Static | Switch | Throw | Try | UseGroup | UseItem | While
+    type Statement = Array | Assign | Call | Catch | Clone | Closure | Do | For | Foreach | If | Include | New | RetIf | Silent | Static | Switch | Throw | Try | UseGroup | UseItem | While
     type Sys = Echo | Empty | Isset | List | Unset
     export type Node =
         AllBlock |
