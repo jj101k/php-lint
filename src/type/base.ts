@@ -29,6 +29,14 @@ export abstract class Base {
     abstract get combinePriority(): number
 
     /**
+     * Returns the instance counterpart of the type. Only defined for class-like
+     * structures.
+     */
+    get instanceType(): Base {
+        return this
+    }
+
+    /**
      * The type signature usable in PHP function declarations
      */
     abstract get shortType(): string

@@ -416,7 +416,7 @@ export const Handlers: {[kind: string]: Handler} = {
             )) // FIXME
         }
         inner_context.returnType = node.type ?
-            context.namedType(node.type.name, node.type.resolution) :
+            Handlers[node.type.kind](node.type, context).instanceType :
             null
         inner_context.realReturnType = null
         if(node.body) {
@@ -610,7 +610,7 @@ export const Handlers: {[kind: string]: Handler} = {
             "PSR1 4.3: method names must be in camel case (lower)"
         )
         const returnType = node.type ?
-            Handlers[node.type.kind](node.type, context) :
+            Handlers[node.type.kind](node.type, context).instanceType :
             new Type.Mixed()
         return new Type.Function(
             args,
@@ -663,15 +663,9 @@ export const Handlers: {[kind: string]: Handler} = {
         // node.byref
         // node.nullable
 
-        let type: Type.Base
-        if(node.type) {
-            Handlers[node.type.kind](node.type, context)
-            // Identifiers don't have a type, but now that we're here we know
-            // that there is one.
-            type = context.namedType(node.type.name, node.type.resolution)
-        } else {
-            type = new Type.Mixed()
-        }
+        const type: Type.Base = node.type ?
+            Handlers[node.type.kind](node.type, context).instanceType :
+            new Type.Mixed()
         if(node.value) {
             Handlers[node.value.kind](node.value, context)
         }

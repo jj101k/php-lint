@@ -9,6 +9,13 @@ class _Class extends Base {
     get combinePriority() {
         return -Infinity
     }
+    /**
+     * Returns the instance counterpart of the type. Only defined for class-like
+     * structures.
+     */
+    get instanceType(): Base {
+        return new ClassInstance(this.ref)
+    }
     get shortType() {
         return ClassInstance.className(this.ref)
     }
