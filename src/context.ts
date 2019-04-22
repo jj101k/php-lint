@@ -319,12 +319,13 @@ export class Context {
     documentedType(
         name: string | null,
         resolution: "fqn" | "qn" | "uqn" | "rn"
-    ): Type.Base {
+    ): Type.InstanceType {
         if(!name || name == "mixed" || name == "\\mixed") {
             return new Type.Mixed()
         } else if(name == "null" || name == "\\null") {
             return new Type.Null()
         } else {
+            //@ts-ignore
             return this.namedType(name, resolution).instanceType
         }
     }
@@ -375,7 +376,7 @@ export class Context {
      * @param name eg. "\\Foo" (fqn), "Foo" (other)
      * @param resolution
      */
-    namedType(name: string, resolution: "fqn" | "qn" | "uqn" | "rn"): Type.Base {
+    namedType(name: string, resolution: "fqn" | "qn" | "uqn" | "rn"): Type.StaticType {
         const qualified_type_name = this.qualifyName(name, resolution)
         switch(qualified_type_name) {
             case "\\array":
