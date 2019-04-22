@@ -757,7 +757,6 @@ export const Handlers: {[kind: string]: Handler} = {
                     debug(`${class_name}::${offset_type.value} MISS`)
                     return new Type.Mixed()
                 } else {
-                    debug(context)
                     throw new LintError(`Internal error: no class ${class_name} (${class_type})`, node)
                 }
             } else {
