@@ -398,9 +398,8 @@ export class Context {
             case "\\true": // Sometimes used in doc
                 return new Type.Bool(false)
             default:
-                return new Type.ClassInstance(
-                    Type.ClassInstance.classRef(qualified_type_name)
-                )
+                const ref = Type.ClassInstance.classRef(qualified_type_name)
+                return Type.Class.byRef(ref) || new Type.Class(qualified_type_name)
         }
     }
 
