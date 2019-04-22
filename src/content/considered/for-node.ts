@@ -306,6 +306,10 @@ export const Handlers: {[kind: string]: Handler} = {
         for(const u of node.uses) {
             inner_context.assign(Handlers[u.kind](u, context), u)
         }
+        const $this = context.get("$this")
+        if($this) {
+            inner_context.set("$this", $this)
+        }
         Handlers[node.body.kind](node.body, inner_context)
         return new Type.Function(
             node.arguments.map(a => new Argument(
