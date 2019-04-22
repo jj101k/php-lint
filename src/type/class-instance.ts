@@ -1,6 +1,7 @@
 import * as Type from "../type";
 import { Base } from "./base";
 import { Class as _Class } from "./class";
+import { String as _String} from "./string"
 
 /**
  * A class or similar.
@@ -54,6 +55,9 @@ export class ClassInstance extends Base {
             return type.classRef == this.classRef
         } else if(type instanceof _Class) {
             return type.ref == this.classRef
+        } else if(type instanceof _String) {
+            const c = _Class.byRef(this.classRef)
+            return c ? c.hasMethod("__toString") : false
         } else {
             return super.matches(type)
         }

@@ -6,6 +6,10 @@ import { Function as _Function } from "./function";
  * A class!
  */
 class _Class extends Base {
+    private static _byRef: Map<number, _Class> = new Map()
+    static byRef(ref: number): _Class | undefined {
+        return this._byRef.get(ref)
+    }
     get combinePriority() {
         return -Infinity
     }
@@ -26,6 +30,11 @@ class _Class extends Base {
     constructor(name: string) {
         super()
         this.ref = ClassInstance.classRef(name)
+        _Class._byRef.set(this.ref, this)
+    }
+
+    hasMethod(name: string): boolean {
+        return this.methods.has(name) || (this.parent && this.parent.hasMethod(name)) || false
     }
 }
 /**
