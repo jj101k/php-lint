@@ -750,11 +750,11 @@ export const Handlers: {[kind: string]: Handler} = {
                         return method_type
                     }
                     // TODO: properties
-                    debug(context)
                     debug(`${class_name}::${offset_type.value} MISS`)
                     return new Type.Mixed()
                 } else {
-                    throw new LintError("Internal error: no class " + class_name, node)
+                    debug(context)
+                    throw new LintError(`Internal error: no class ${class_name} (${class_type})`, node)
                 }
             } else {
                 throw new LintError("Bad type: " + ctype.constructor.name, node)
