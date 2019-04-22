@@ -4,7 +4,7 @@ import * as Type from "../../type"
 import { Argument } from "../../type/function";
 import { LintError } from "../../lint-error";
 
-const debug = require("debug")("php-lint:context")
+const debug = require("debug")("php-lint:for-node")
 
 /**
  * True to support the pattern $a->b()->c()->d() where each method returns $this
