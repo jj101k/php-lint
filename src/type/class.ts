@@ -21,6 +21,7 @@ class _Class extends Base {
     }
     public classMethods: Map<string, _Function> = new Map()
     public methods: Map<string, _Function> = new Map()
+    public parent: _Class | null = null
     public ref: number
     constructor(name: string) {
         super()

@@ -248,6 +248,14 @@ export const Handlers: {[kind: string]: Handler} = {
         const qname = context.qualifyName(node.name, "qn")
         context.importName(qname, "self")
         const class_structure = new Type.Class(qname)
+        if(node.extends) {
+            const etype = Handlers[node.extends.kind](node.extends, context)
+            if(etype instanceof Type.Class) {
+                class_structure.parent = etype
+            } else {
+                throw new LintError(`Internal Error: not a class: ${etype}`, node.extends)
+            }
+        }
         for(const b of node.body) {
             if(b.kind == "method") {
                 const t = Handlers[b.kind](b, context)
