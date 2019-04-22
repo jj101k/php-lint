@@ -235,10 +235,12 @@ export const Handlers: {[kind: string]: Handler} = {
         return context.namedType(node.type, "fqn")
     },
     catch(node: NodeTypes.Catch, context: Context) {
+        let t: Type.Base | null = null
         for(const w of node.what) {
-            Handlers[w.kind](w, context)
+            const wt = Handlers[w.kind](w, context).instanceType
+            t = t ? t.combinedWith(wt) : wt
         }
-        Handlers[node.variable.kind](node.variable, context)
+        context.assign(t!, node.variable)
         Handlers[node.body.kind](node.body, context)
         return new Type.Void()
     },
