@@ -138,8 +138,8 @@ export const Handlers = {
                     debug("SL hit")
                     function_type = what_type
                 } else {
-                    debug("SL MISS")
-                    debug(what_type)
+                    debug(`SL MISS: ${what_type}`)
+                    return new Type.Mixed()
                 }
             } else {
                 debug("Node miss")
