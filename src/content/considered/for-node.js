@@ -130,9 +130,7 @@ export const Handlers = {
                     debug("PL hit")
                     function_type = what_type
                 } else {
-                    debug("PL MISS")
-                    debug(node.what)
-                    debug(what_type)
+                    debug(`PL MISS: ${what_type}`)
                 }
             } else if(node.what.kind == "staticlookup") {
                 if(what_type instanceof Type.Function) {
