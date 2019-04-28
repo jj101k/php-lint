@@ -613,7 +613,7 @@ export const Handlers = {
         context.assert(
             node,
             !!node.name.match(/^[a-z]+([A-Z0-9][a-z0-9]*)*$/),
-            "PSR1 4.3: method names must be in camel case (lower)"
+            `PSR1 4.3: method names must be in camel case (lower), not: ${node.name}`
         )
         const returnType = node.type ?
             Handlers[node.type.kind](node.type, context).instanceType :
