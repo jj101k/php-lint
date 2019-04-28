@@ -724,6 +724,14 @@ export const Handlers = {
             (what_type.content instanceof Type.Class || what_type.content instanceof Type.ClassInstance)
         ) {
             ctype = what_type.content
+        } else if(what_type instanceof Type.Mixed) {
+            return what_type
+        } else if(
+            FLUENT_ASSERT_CHAIN &&
+            (what_type instanceof Type.Optional) &&
+            (what_type.content instanceof Type.Mixed)
+        ) {
+            return what_type.content
         } else {
             debug(`${what_type}: Not a class?`)
             debug(node.what)
