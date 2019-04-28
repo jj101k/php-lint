@@ -131,6 +131,7 @@ export const Handlers = {
                     function_type = what_type
                 } else {
                     debug(`PL MISS: ${what_type}`)
+                    return new Type.Mixed()
                 }
             } else if(node.what.kind == "staticlookup") {
                 if(what_type instanceof Type.Function) {
