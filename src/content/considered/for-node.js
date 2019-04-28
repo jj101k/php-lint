@@ -807,7 +807,10 @@ export const Handlers = {
     static(node, context) {
         // TODO add tests relating to staticness
         for(const i of node.items) {
-            Handlers[i.kind](i, context)
+            context.assign(
+                new Type.Mixed(),
+                i
+            )
         }
         return new Type.Void()
     },
