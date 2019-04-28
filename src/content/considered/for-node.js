@@ -920,7 +920,7 @@ export const Handlers = {
             }
         } else {
             for(const u of node.items) {
-                context.importName(u.name, u.alias)
+                Handlers[u.kind](u, context)
             }
         }
         return new Type.Void()
