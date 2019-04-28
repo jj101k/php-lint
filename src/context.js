@@ -52,6 +52,7 @@ export class Context {
     constructor(from_context = null) {
         this.#localNamespace = new Map()
         if(from_context) {
+            this.#aliases = from_context.#aliases
             this.#constantNamespace = from_context.#constantNamespace
             this.#globalNamespace = from_context.#globalNamespace
             this.including = from_context.including
