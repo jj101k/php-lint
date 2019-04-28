@@ -1,34 +1,32 @@
-import { NodeTypes } from "./content/ast";
 import { Context } from "./context";
-import PHPLint from "./php-lint";
 import {PHPAutoloader} from "./php-autoloader";
 import * as fs from "fs"
 import * as path from "path"
 import { LintError } from "./lint-error";
 export default class Lint {
-    private lastContext: Context | null = null
-    private phplint: PHPLint
+    #lastContext = null
+    #phplint
 
     /**
      * The directory for relative includes. This may be mutated.
      */
-    public workingDirectory: string | null = null
+    workingDirectory = null
 
     /**
      *
      * @param phplint The parent object, for recursive file lint requests
      */
-    constructor(phplint: PHPLint) {
-        this.phplint = phplint
+    constructor(phplint) {
+        this.#phplint = phplint
     }
     /**
      *
      * @param name
      */
-    autoload(name: string): boolean | null {
-        this.lastContext!.setConstant(name, null)
+    autoload(name) {
+        this.#lastContext.setConstant(name, null)
         const filenames = Lint.autoloadFromComposer("composer.json").findClassFiles(name)
-        let last_file_state: boolean | null = null
+        let last_file_state = null
         for(const filename of filenames) {
             last_file_state = this.checkFile(filename)
         }
@@ -40,22 +38,15 @@ export default class Lint {
      * @param vendor_path If unset, this will be based on the filename
      */
     static autoloadFromComposer(
-        filename: string,
-        vendor_path: string | null = null
-    ): PHPAutoloader {
+        filename,
+        vendor_path = null
+    ) {
         /** The current module (or whole project) root */
         const current_module_path = path.dirname(filename)
         try {
-            const composer_config: {
-                autoload?: {
-                    classmap: string[],
-                    "psr-0"?: {[prefix: string]: string},
-                    "psr-4"?: {[prefix: string]: string | string[]}
-                },
-                require?: {[name: string]: string},
-            } = JSON.parse(fs.readFileSync(filename, "utf8"))
-            const autoload_paths = new Map<string, string[]>()
-            let classmap_paths: string[] = []
+            const composer_config = JSON.parse(fs.readFileSync(filename, "utf8"))
+            const autoload_paths = new Map()
+            let classmap_paths = []
             if(composer_config.autoload) {
                 const psr0 = composer_config.autoload["psr-0"]
                 if(psr0) {
@@ -124,8 +115,8 @@ export default class Lint {
      *
      * @param filename
      */
-    checkFile(filename: string): boolean | null {
-        return this.phplint.checkFileSync(
+    checkFile(filename) {
+        return this.#phplint.checkFileSync(
             filename,
             false,
             1,
@@ -140,18 +131,18 @@ export default class Lint {
      * @param filename
      * @param depth
      */
-    checkTree(tree: NodeTypes.Program, reuse_context = false, filename: string | null = null, depth = 0): boolean {
+    checkTree(tree, reuse_context = false, filename = null, depth = 0) {
         try {
-            if(this.lastContext && reuse_context) {
-                this.lastContext = new Context(this.lastContext)
+            if(this.#lastContext && reuse_context) {
+                this.#lastContext = new Context(this.#lastContext)
                 if(depth > 0) {
-                    this.lastContext.including = true
+                    this.#lastContext.including = true
                 }
             } else {
-                this.lastContext = new Context()
-                this.lastContext.lint = this
+                this.#lastContext = new Context()
+                this.#lastContext.lint = this
             }
-            this.lastContext.check(tree)
+            this.#lastContext.check(tree)
             return true
         } catch(e) {
             if(e instanceof LintError && filename) {

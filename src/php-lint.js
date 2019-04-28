@@ -8,18 +8,18 @@ import { LintError } from "./lint-error";
  * The top-level lint support
  */
 export default class PHPLint {
-    private _lint: Lint | null = null
-    private _parser: phpParser.default | null = null
+    #_lint = null
+    #_parser = null
 
-    protected get lint(): Lint {
-        if(!this._lint) {
-            this._lint = new Lint(this)
+    get lint() {
+        if(!this.#_lint) {
+            this.#_lint = new Lint(this)
         }
-        return this._lint
+        return this.#_lint
     }
-    protected get parser(): phpParser.default {
-        if(!this._parser) {
-            this._parser = new phpParser.default({
+    get parser() {
+        if(!this.#_parser) {
+            this.#_parser = new phpParser.default({
                 parser: {
                     debug: false,
                     extractDoc: true,
@@ -29,7 +29,7 @@ export default class PHPLint {
                 },
             })
         }
-        return this._parser
+        return this.#_parser
     }
 
     /**
@@ -39,10 +39,10 @@ export default class PHPLint {
      * @param working_directory
      * @param filename
      */
-    protected expandFilename(
-        working_directory: string | null,
-        filename: string
-    ): {workingDirectory: string, expandedFilename: string} {
+    expandFilename(
+        working_directory,
+        filename
+    ) {
         if(working_directory !== null) {
             return {
                 workingDirectory: working_directory,
@@ -50,7 +50,7 @@ export default class PHPLint {
             }
         } else {
             let d = filename
-            let o: string
+            let o
             do {
                 o = d
                 d = path.dirname(d)
@@ -76,13 +76,13 @@ export default class PHPLint {
      * @param depth How far recursion has gone. Very deep code may be skipped.
      */
     async checkFile(
-        filename: string,
-        depth: number = 0,
-        working_directory: string|null = null
-    ): Promise<boolean | null> {
+        filename,
+        depth = 0,
+        working_directory = null
+    ) {
         const expanded = this.expandFilename(working_directory, filename)
         try {
-            const data = await new Promise<string>(
+            const data = await new Promise(
                 (resolve, reject) => fs.readFile(expanded.expandedFilename, "utf8", (err, data) => {
                     if(err) {
                         reject(err)
@@ -91,7 +91,7 @@ export default class PHPLint {
                     }
                 })
             )
-            const tree: any = this.parser.parseCode(data)
+            const tree = this.parser.parseCode(data)
             this.lint.workingDirectory = expanded.workingDirectory
             return this.lint.checkTree(tree, false, filename)
         } catch(e) {
@@ -110,16 +110,16 @@ export default class PHPLint {
      * @throws
      */
     checkFileSync(
-        filename: string,
-        throw_on_error: boolean = true,
-        depth: number = 0,
-        working_directory: string|null = null,
-        reuse_context: boolean = false
-    ): boolean|null {
+        filename,
+        throw_on_error = true,
+        depth = 0,
+        working_directory = null,
+        reuse_context = false
+    ) {
         const expanded = this.expandFilename(working_directory, filename)
         const data = fs.readFileSync(expanded.expandedFilename, "utf8")
         try {
-            const tree: any = this.parser.parseCode(data)
+            const tree = this.parser.parseCode(data)
             this.lint.workingDirectory = expanded.workingDirectory
             return this.lint.checkTree(tree, reuse_context, filename, depth)
         } catch(e) {
@@ -136,12 +136,12 @@ export default class PHPLint {
      * @param depth How far recursion has gone. Very deep code may be skipped.
      */
     checkSourceCode(
-        code: string,
-        depth: number = 0
-    ): Promise<boolean|null> {
+        code,
+        depth = 0
+    ) {
         return new Promise((resolve, reject) => {
             try {
-                const tree: any = this.parser.parseCode(code)
+                const tree = this.parser.parseCode(code)
                 resolve(this.lint.checkTree(tree))
             } catch(e) {
                 reject(e)
@@ -155,11 +155,11 @@ export default class PHPLint {
      * @throws
      */
     checkSourceCodeSync(
-        code: string,
-        throw_on_error: boolean = true,
-        depth: number = 0
-    ): boolean|null {
-        const tree: any = this.parser.parseCode(code)
+        code,
+        throw_on_error = true,
+        depth = 0
+    ) {
+        const tree = this.parser.parseCode(code)
         return this.lint.checkTree(tree)
     }
 }

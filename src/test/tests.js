@@ -9,12 +9,7 @@ const bad_files = glob.sync("test/bad/*.php").sort()
 const skip_files = glob.sync("test/skip/*.php").sort()
 const bug_files = glob.sync("test/bug/*.php").sort()
 
-type assert = {
-    ok(result: any, message: string): boolean,
-    throws(callable: () => any, message: string): boolean,
-}
-
-export function async(assert: assert, done: () => void) {
+export function async(assert, done) {
     return Promise.all(
         [
             new PHPLint().checkSourceCode(good_code).then(
@@ -50,7 +45,7 @@ export function async(assert: assert, done: () => void) {
         )
     ).then(done)
 }
-export function sync(assert: assert) {
+export function sync(assert) {
     const result = new PHPLint().checkSourceCodeSync(good_code)
     assert.ok(result, "Valid code looks ok")
 

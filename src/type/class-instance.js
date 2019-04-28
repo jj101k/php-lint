@@ -1,4 +1,3 @@
-import * as Type from "../type";
 import { Base } from "./base";
 import { Class as _Class } from "./class";
 import { String as _String} from "./string"
@@ -7,16 +6,16 @@ import { String as _String} from "./string"
  * A class or similar.
  */
 export class ClassInstance extends Base {
-    private static lastRef: number = 0
-    private static refs: Map<string, number> = new Map()
+    static #lastRef = 0
+    static #refs = new Map()
     /**
      * Returns the name for a ref, mostly of interest during debugging.
      *
      * @param ref Internal reference value
      * @returns eg. "\\Foo"
      */
-    static className(ref: number): string {
-        for(const [name, i] of this.refs.entries()) {
+    static className(ref) {
+        for(const [name, i] of this.#refs.entries()) {
             if(+i == ref) return name
         }
         throw new Error(`Unrecognised ref: ${ref}`)
@@ -29,34 +28,34 @@ export class ClassInstance extends Base {
      * @param name eg. "\\Foo"
      * @returns Internal reference value
      */
-    static classRef(name: string): number {
-        if(!this.refs.get(name)) {
-            this.lastRef++
-            this.refs.set(name, this.lastRef)
+    static classRef(name) {
+        if(!this.#refs.get(name)) {
+            this.#lastRef++
+            this.#refs.set(name, this.#lastRef)
         }
-        return this.refs.get(name)!
+        return this.#refs.get(name)
     }
 
-    private classRef: number
+    #classRef
     get combinePriority() {
         return -Infinity
     }
-    constructor(class_ref: number) {
+    constructor(class_ref) {
         super()
-        this.classRef = class_ref
+        this.#classRef = class_ref
     }
     get shortType() {
-        return ClassInstance.className(this.classRef)
+        return ClassInstance.className(this.#classRef)
     }
-    matches(type: Type.Base): boolean {
+    matches(type) {
         if(type instanceof ClassInstance) {
-            return type.classRef == this.classRef
+            return type.#classRef == this.#classRef
         } else if(type instanceof ClassInstance) {
-            return type.classRef == this.classRef
+            return type.#classRef == this.#classRef
         } else if(type instanceof _Class) {
-            return type.ref == this.classRef
+            return type.ref == this.#classRef
         } else if(type instanceof _String) {
-            const c = _Class.byRef(this.classRef)
+            const c = _Class.byRef(this.#classRef)
             return c ? c.hasMethod("__toString") : false
         } else {
             return super.matches(type)

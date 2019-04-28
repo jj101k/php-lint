@@ -1,4 +1,3 @@
-import { NodeTypes } from "../ast";
 import { Context } from "../../context"
 import * as Type from "../../type"
 import { Argument } from "../../type/function";
@@ -22,20 +21,9 @@ const OPTIONAL_ECHO = true
  */
 const STRICT_MIXED = false
 
-/**
- *
- * @param node The node to examine
- * @param context The effective PHP state machine context
- * @returns A single expression type. If an unknown thing would be returned,
- * this should be just Type.Base; if no thing would be returned, this should be
- * Type.Void. Anything which cannot be to the right of "=" should be
- * Type.Void.
- */
-type Handler = (node: any, context: Context) => Type.Base
-
-export const Handlers: {[kind: string]: Handler} = {
-    array(node: NodeTypes.Array, context: Context) {
-        let out: Type.BaseArray = new Type.IndexedArray()
+export const Handlers = {
+    array(node, context) {
+        let out = new Type.IndexedArray()
         for(const i of node.items) {
             let key = null
             if(i.kind == "entry" && i.key) {
@@ -46,12 +34,12 @@ export const Handlers: {[kind: string]: Handler} = {
         }
         return out
     },
-    assign(node: NodeTypes.Assign, context: Context) {
+    assign(node, context) {
         const type = Handlers[node.right.kind](node.right, context)
         context.assign(type || new Type.Mixed(), node.left)
         return type
     },
-    bin(node: NodeTypes.Bin, context: Context) {
+    bin(node, context) {
         // node.type
         const type = Handlers[node.left.kind](node.left, context)
         const rtype = Handlers[node.right.kind](node.right, context)
@@ -113,21 +101,21 @@ export const Handlers: {[kind: string]: Handler} = {
                 return rtype
         }
     },
-    block(node: NodeTypes.Block, context: Context) {
+    block(node, context) {
         for(const child of node.children) {
             Handlers[child.kind](child, context)
         }
         return new Type.Void()
     },
-    boolean(node: NodeTypes.Boolean) {
+    boolean(node) {
         return new Type.Bool(node.value)
     },
-    break(node: NodeTypes.Break) {
+    break(node) {
         // node.level
         return new Type.Void()
     },
-    call(node: NodeTypes.Call, context: Context) {
-        let function_type: Type.Function | null = null
+    call(node, context) {
+        let function_type = null
         if(node.what) {
             const what_type = context.noAssign(node.what)
             if(node.what.kind == "identifier") {
@@ -174,13 +162,13 @@ export const Handlers: {[kind: string]: Handler} = {
             }
             for(const [i, a] of Object.entries(node.arguments)) {
                 if(function_type.args[+i]) {
-                    let arg_possibility: Type.Base | null
+                    let arg_possibility
                     const expected_type = function_type.args[+i].type
                     if(function_type.args[+i].byRef) {
                         arg_possibility = context.assign(
                             expected_type || new Type.Mixed(),
                             a
-                        )!
+                        )
                     } else {
                         arg_possibility = Handlers[a.kind](a, context)
                     }
@@ -219,7 +207,7 @@ export const Handlers: {[kind: string]: Handler} = {
             return new Type.Mixed()
         }
     },
-    case(node: NodeTypes.Case, context: Context) {
+    case(node, context) {
         if(node.test) {
             Handlers[node.test.kind](node.test, context)
         }
@@ -228,23 +216,23 @@ export const Handlers: {[kind: string]: Handler} = {
         }
         return new Type.Void()
     },
-    cast(node: NodeTypes.Cast, context: Context) {
+    cast(node, context) {
         // node.type
         // node.raw
         Handlers[node.what.kind](node.what, context)
         return context.namedType(node.type, "fqn").instanceType
     },
-    catch(node: NodeTypes.Catch, context: Context) {
-        let t: Type.Base | null = null
+    catch(node, context) {
+        let t = null
         for(const w of node.what) {
             const wt = Handlers[w.kind](w, context).instanceType
             t = t ? t.combinedWith(wt) : wt
         }
-        context.assign(t!, node.variable)
+        context.assign(t, node.variable)
         Handlers[node.body.kind](node.body, context)
         return new Type.Void()
     },
-    class(node: NodeTypes.Class, context: Context) {
+    class(node, context) {
         const qname = context.qualifyName(node.name, "qn")
         context.importName(qname, "self")
         const class_structure = new Type.Class(qname)
@@ -253,7 +241,7 @@ export const Handlers: {[kind: string]: Handler} = {
             if(etype instanceof Type.Class) {
                 class_structure.parent = etype
             } else {
-                throw new LintError(`Internal Error: not a class: ${etype}`, node.extends)
+                throw new LintError(`Internal Error: ${etype}`, node.extends)
             }
         }
         for(const b of node.body) {
@@ -293,7 +281,7 @@ export const Handlers: {[kind: string]: Handler} = {
         debug(`Setting ${qname} as a class`)
         return class_structure
     },
-    classconstant(node: NodeTypes.ClassConstant, context: Context) {
+    classconstant(node, context) {
         // node.isStatic
         // node.name
         if(node.value) {
@@ -302,10 +290,10 @@ export const Handlers: {[kind: string]: Handler} = {
         // node.visibility
         return new Type.Void()
     },
-    clone(node: NodeTypes.Clone, context: Context) {
+    clone(node, context) {
         return Handlers[node.what.kind](node.what, context)
     },
-    closure(node: NodeTypes.Closure, context: Context) {
+    closure(node, context) {
         const inner_context = new Context(context)
         for(const a of node.arguments) {
             Handlers[a.kind](a, inner_context)
@@ -330,7 +318,7 @@ export const Handlers: {[kind: string]: Handler} = {
             // FIXME return
         )
     },
-    constref(node: NodeTypes.ConstRef, context: Context) {
+    constref(node, context) {
         // Stuff like method names
         if(typeof node.name == "string") {
             return new Type.String(node.name)
@@ -340,11 +328,11 @@ export const Handlers: {[kind: string]: Handler} = {
             )
         }
     },
-    continue(node: NodeTypes.Continue) {
+    continue(node) {
         // node.level
         return new Type.Void()
     },
-    declare(node: NodeTypes.Declare, context: Context) {
+    declare(node, context) {
         // node.mode
         // node.what
         for(const c of node.children) {
@@ -352,12 +340,12 @@ export const Handlers: {[kind: string]: Handler} = {
         }
         return new Type.Void()
     },
-    do(node: NodeTypes.Do, context: Context) {
+    do(node, context) {
         Handlers[node.test.kind](node.test, context)
         Handlers[node.body.kind](node.body, context)
         return new Type.Void()
     },
-    echo(node: NodeTypes.Echo, context: Context) {
+    echo(node, context) {
         const expectedType = OPTIONAL_ECHO ?
             new Type.OptionalFalse(new Type.String()) :
             new Type.String()
@@ -372,7 +360,7 @@ export const Handlers: {[kind: string]: Handler} = {
         // node.shortForm
         return new Type.Void()
     },
-    empty(node: NodeTypes.Empty, context: Context) {
+    empty(node, context) {
         for(const n of node.arguments) {
             try {
                 Handlers[n.kind](n, context)
@@ -382,18 +370,18 @@ export const Handlers: {[kind: string]: Handler} = {
         }
         return new Type.Bool()
     },
-    encapsed(node: NodeTypes.Encapsed) {
+    encapsed(node) {
         // node.type
         // node.label
         return new Type.String(node.value)
     },
-    entry(node: NodeTypes.Entry, context: Context) {
+    entry(node, context) {
         if(node.key) {
             Handlers[node.key.kind](node.key, context)
         }
         return Handlers[node.value.kind](node.value, context)
     },
-    for(node: NodeTypes.For, context: Context) {
+    for(node, context) {
         for(const i of node.init) {
             Handlers[i.kind](i, context)
         }
@@ -406,9 +394,9 @@ export const Handlers: {[kind: string]: Handler} = {
         Handlers[node.body.kind](node.body, context)
         return new Type.Void()
     },
-    foreach(node: NodeTypes.Foreach, context: Context) {
+    foreach(node, context) {
         const source_type = Handlers[node.source.kind](node.source, context)
-        let assign_type: Type.Base
+        let assign_type
         if(node.key) {
             assign_type = new Type.String()
         } else if(source_type && source_type instanceof Type.IndexedArray && source_type.memberType) {
@@ -423,9 +411,9 @@ export const Handlers: {[kind: string]: Handler} = {
         Handlers[node.source.kind](node.source, context)
         return new Type.Void()
     },
-    function(node: NodeTypes.Function, context: Context) {
+    function(node, context) {
         const inner_context = new Context(context)
-        const args: Argument[] = []
+        const args = []
         for(const a of node.arguments) {
             args.push(new Argument(
                 Handlers[a.kind](a, inner_context), // FIXME
@@ -448,7 +436,7 @@ export const Handlers: {[kind: string]: Handler} = {
         // node.nullable
         return new Type.Void()
     },
-    identifier(node: NodeTypes.Identifier, context: Context) {
+    identifier(node, context) {
         /**
          * This represents a _name_ which may be aliased or use an implicit
          * namespace. It doesn't have an actual type.
@@ -463,10 +451,10 @@ export const Handlers: {[kind: string]: Handler} = {
             return context.namedType(node.name, node.resolution)
         }
     },
-    if(node: NodeTypes.If, context: Context) {
+    if(node, context) {
         const check_value = Handlers[node.test.kind](node.test, context)
-        const true_namespace_override: Map<string, Type.Base> = new Map()
-        const false_namespace_override: Map<string, Type.Base> = new Map()
+        const true_namespace_override = new Map()
+        const false_namespace_override = new Map()
         if(node.test.kind == "variable" && typeof node.test.name == "string") {
             const v = context.get("$" + node.test.name)
             if(v instanceof Type.Optional) {
@@ -480,8 +468,8 @@ export const Handlers: {[kind: string]: Handler} = {
                 false_namespace_override.set("$" + node.test.what.name, v.content)
             }
         }
-        let inner_context_true: Context
-        let inner_context_false: Context
+        let inner_context_true
+        let inner_context_false
         if(true_namespace_override.size) {
             inner_context_true = new Context(context)
             for(const [name, v] of true_namespace_override.entries()) {
@@ -510,7 +498,7 @@ export const Handlers: {[kind: string]: Handler} = {
         // node.shortForm
         return new Type.Void()
     },
-    include(node: NodeTypes.Include, context: Context) {
+    include(node, context) {
         // node.once
         // node.require
         const v = Handlers[node.target.kind](node.target, context)
@@ -533,12 +521,12 @@ export const Handlers: {[kind: string]: Handler} = {
             return new Type.Bool()
         }
     },
-    inline(node: NodeTypes.Inline) {
+    inline(node) {
         // node.raw
         // node.value
         return new Type.String(node.value)
     },
-    interface(node: NodeTypes.Interface, context: Context) {
+    interface(node, context) {
         const qname = context.qualifyName(node.name, "qn")
         context.importName(qname, "self")
         const interface_structure = new Type.Class(qname)
@@ -579,7 +567,7 @@ export const Handlers: {[kind: string]: Handler} = {
         debug(`Setting ${qname} as an interface`)
         return interface_structure
     },
-    isset(node: NodeTypes.Isset, context: Context) {
+    isset(node, context) {
         for(const n of node.arguments) {
             try {
                 Handlers[n.kind](n, context)
@@ -589,7 +577,7 @@ export const Handlers: {[kind: string]: Handler} = {
         }
         return new Type.Bool()
     },
-    list(node: NodeTypes.List, context: Context) {
+    list(node, context) {
         for(const n of node.arguments) {
             try {
                 Handlers[n.kind](n, context)
@@ -599,15 +587,15 @@ export const Handlers: {[kind: string]: Handler} = {
         }
         return new Type.IndexedArray()
     },
-    magic(node: NodeTypes.Magic) {
+    magic(node) {
         return new Type.Mixed()
     },
-    method(node: NodeTypes.Method, context: Context) {
+    method(node, context) {
         const inner_context = new Context(context)
         if(!node.isStatic) {
             inner_context.set("$this", new Type.Mixed()) // FIXME
         }
-        const args: Argument[] = []
+        const args = []
         for(const a of node.arguments) {
             args.push(new Argument(
                 Handlers[a.kind](a, inner_context), // FIXME
@@ -636,7 +624,7 @@ export const Handlers: {[kind: string]: Handler} = {
             returnType
         )
     },
-    namespace(node: NodeTypes.Namespace, context: Context) {
+    namespace(node, context) {
         // node.withBrackets
         context.namespacePrefix = node.name
         for(const c of node.children) {
@@ -644,7 +632,7 @@ export const Handlers: {[kind: string]: Handler} = {
         }
         return new Type.Void()
     },
-    new(node: NodeTypes.New, context: Context) {
+    new(node, context) {
         const type = Handlers[node.what.kind](node.what, context)
         for(const a of node.arguments) {
             Handlers[a.kind](a, context)
@@ -655,11 +643,11 @@ export const Handlers: {[kind: string]: Handler} = {
         debug(type)
         return new Type.Void()
     },
-    nowdoc(node: NodeTypes.Nowdoc) {
+    nowdoc(node) {
         // node.raw
         return new Type.String(node.value)
     },
-    number(node: NodeTypes.Number) {
+    number(node) {
         // node.raw
         // node.value
         if(Math.floor(node.value) == node.value) {
@@ -668,7 +656,7 @@ export const Handlers: {[kind: string]: Handler} = {
             return new Type.Float(node.value)
         }
     },
-    offsetlookup(node: NodeTypes.OffsetLookup, context: Context) {
+    offsetlookup(node, context) {
         const type = Handlers[node.what.kind](node.what, context)
         if(node.offset) {
             // This is unset for `$foo[] = 1;`
@@ -682,11 +670,11 @@ export const Handlers: {[kind: string]: Handler} = {
             return new Type.Mixed() // FIXME
         }
     },
-    parameter(node: NodeTypes.Parameter, context: Context) {
+    parameter(node, context) {
         // node.byref
         // node.nullable
 
-        const type: Type.Base = node.type ?
+        const type = node.type ?
             Handlers[node.type.kind](node.type, context).instanceType :
             new Type.Mixed()
         if(node.value) {
@@ -696,10 +684,10 @@ export const Handlers: {[kind: string]: Handler} = {
         context.set("$" + node.name, type)
         return type
     },
-    parenthesis(node: NodeTypes.Parenthesis, context: Context) {
+    parenthesis(node, context) {
         return Handlers[node.inner.kind](node.inner, context)
     },
-    post(node: NodeTypes.Post, context: Context) {
+    post(node, context) {
         // node.type
         const type = Handlers[node.what.kind](node.what, context)
         if(type instanceof Type.Int) {
@@ -708,13 +696,13 @@ export const Handlers: {[kind: string]: Handler} = {
             return new Type.Float()
         }
     },
-    program(node: NodeTypes.Program, context: Context) {
+    program(node, context) {
         for(const child of node.children) {
             Handlers[child.kind](child, context)
         }
         return new Type.Void()
     },
-    property(node: NodeTypes.Property, context: Context) {
+    property(node, context) {
         // node.isFinal
         // node.isStatic
         // node.name
@@ -724,10 +712,10 @@ export const Handlers: {[kind: string]: Handler} = {
         // node.visibility
         return new Type.Void()
     },
-    propertylookup(node: NodeTypes.PropertyLookup, context: Context) {
+    propertylookup(node, context) {
         const what_type = context.noAssign(node.what)
         const offset_type = context.noAssign(node.offset)
-        let ctype: Type.Class | Type.ClassInstance
+        let ctype
         if(what_type instanceof Type.Class || what_type instanceof Type.ClassInstance) {
             ctype = what_type
         } else if(
@@ -742,13 +730,13 @@ export const Handlers: {[kind: string]: Handler} = {
             return new Type.Mixed()
         }
         debug("Object type hit")
-        debug(ctype!.shortType, offset_type, node)
+        debug(ctype.shortType, offset_type, node)
         if(offset_type instanceof Type.String) {
             if(ctype instanceof Type.ClassInstance) {
                 const class_name = ctype.shortType.replace(/^\\/, "")
                 const class_type = context.get(class_name)
                 if(class_type instanceof Type.Class) {
-                    const method_type = class_type.methods.get(offset_type.value!)
+                    const method_type = class_type.methods.get(offset_type.value)
                     if(method_type) {
                         debug(`${class_name}::${offset_type.value} HIT`)
                         return method_type
@@ -767,7 +755,7 @@ export const Handlers: {[kind: string]: Handler} = {
             return new Type.Mixed() // FIXME
         }
     },
-    retif(node: NodeTypes.RetIf, context: Context) {
+    retif(node, context) {
         const test = Handlers[node.test.kind](node.test, context)
         const true_branch = node.trueExpr ? Handlers[node.trueExpr.kind](node.trueExpr, context) : test
         const false_branch = Handlers[node.falseExpr.kind](node.falseExpr, context)
@@ -779,7 +767,7 @@ export const Handlers: {[kind: string]: Handler} = {
             return true_branch.combinedWith(false_branch)
         }
     },
-    return(node: NodeTypes.Return, context: Context) {
+    return(node, context) {
         const type = node.expr ? Handlers[node.expr.kind](node.expr, context) : new Type.Void()
         const expected_type = context.returnType
         if(expected_type) {
@@ -801,21 +789,21 @@ export const Handlers: {[kind: string]: Handler} = {
         }
         return type
     },
-    silent(node: NodeTypes.Silent, context: Context) {
+    silent(node, context) {
         if(node.expr) {
             return Handlers[node.expr.kind](node.expr, context)
         } else {
             return new Type.Void()
         }
     },
-    static(node: NodeTypes.Static, context: Context) {
+    static(node, context) {
         // TODO add tests relating to staticness
         for(const i of node.items) {
             Handlers[i.kind](i, context)
         }
         return new Type.Void()
     },
-    staticlookup(node: NodeTypes.StaticLookup, context: Context) {
+    staticlookup(node, context) {
         const t = Handlers[node.what.kind](node.what, context)
         const o = Handlers[node.offset.kind](node.offset, context)
         if(t instanceof Type.Class && o instanceof Type.String && o.value) {
@@ -830,21 +818,21 @@ export const Handlers: {[kind: string]: Handler} = {
         }
         return new Type.Mixed()
     },
-    string(node: NodeTypes.String) {
+    string(node) {
         // node.raw
         return new Type.String(node.value)
     },
-    switch(node: NodeTypes.Switch, context: Context) {
+    switch(node, context) {
         const check_value = Handlers[node.test.kind](node.test, context)
         Handlers[node.body.kind](node.body, context)
         // node.shortForm
         return new Type.Void()
     },
-    throw(node: NodeTypes.Throw, context: Context) {
+    throw(node, context) {
         Handlers[node.what.kind](node.what, context)
         return new Type.Void()
     },
-    trait(node: NodeTypes.Trait, context: Context) {
+    trait(node, context) {
         const qname = context.qualifyName(node.name, "qn")
         const trait_structure = new Type.Trait(qname)
         for(const b of node.body) {
@@ -881,7 +869,7 @@ export const Handlers: {[kind: string]: Handler} = {
         debug(`Setting ${qname} as a trait`)
         return trait_structure
     },
-    traituse(node: NodeTypes.TraitUse, context: Context) {
+    traituse(node, context) {
         if(node.adaptations) {
             for(const a of node.adaptations) {
                 Handlers[a.kind](a, context)
@@ -892,7 +880,7 @@ export const Handlers: {[kind: string]: Handler} = {
         }
         return new Type.Void()
     },
-    try(node: NodeTypes.Try, context: Context) {
+    try(node, context) {
         Handlers[node.body.kind](node.body, context)
         for(const c of node.catches) {
             Handlers[c.kind](c, context)
@@ -902,12 +890,12 @@ export const Handlers: {[kind: string]: Handler} = {
         }
         return new Type.Void()
     },
-    unary(node: NodeTypes.Unary, context: Context) {
+    unary(node, context) {
         // node.type
         Handlers[node.what.kind](node.what, context)
         return new Type.Mixed() // FIXME
     },
-    unset(node: NodeTypes.Unset, context: Context) {
+    unset(node, context) {
         for(const a of node.arguments) {
             if(a.kind == "variable") {
                 if(typeof a.name == "string") {
@@ -917,7 +905,7 @@ export const Handlers: {[kind: string]: Handler} = {
         }
         return new Type.Void()
     },
-    usegroup(node: NodeTypes.UseGroup, context: Context) {
+    usegroup(node, context) {
         // type
         if(node.name) {
             for(const u of node.items) {
@@ -930,11 +918,11 @@ export const Handlers: {[kind: string]: Handler} = {
         }
         return new Type.Void()
     },
-    useitem(node: NodeTypes.UseItem, context: Context) {
+    useitem(node, context) {
         context.importName(node.name, node.alias)
         return new Type.Void()
     },
-    variable(node: NodeTypes.Variable, context: Context) {
+    variable(node, context) {
         // this.node.curly
         if(typeof node.name == "string") {
             const name = "$" + node.name
@@ -961,13 +949,13 @@ export const Handlers: {[kind: string]: Handler} = {
             return new Type.Mixed() // FIXME
         }
     },
-    variadic(node: NodeTypes.Variadic, context: Context) {
+    variadic(node, context) {
         // This is for calls like foo(...$bar) or foo(...[$a, $b])
         return Handlers[node.what.kind](node.what, context)
     },
-    while(node: NodeTypes.While, context: Context) {
+    while(node, context) {
         const check_value = Handlers[node.test.kind](node.test, context)
-        const body_namespace_override: Map<string, Type.Base> = new Map()
+        const body_namespace_override = new Map()
         if(node.test.kind == "variable" && typeof node.test.name == "string") {
             const v = context.get("$" + node.test.name)
             if(v instanceof Type.Optional) {
@@ -979,7 +967,7 @@ export const Handlers: {[kind: string]: Handler} = {
                 body_namespace_override.set("$" + node.test.what.name, v.falseValue)
             }
         }
-        let inner_context: Context
+        let inner_context
         if(body_namespace_override.size) {
             inner_context = new Context(context)
             for(const [name, v] of body_namespace_override.entries()) {
@@ -996,7 +984,7 @@ export const Handlers: {[kind: string]: Handler} = {
         // node.shortForm
         return new Type.Void()
     },
-    yield(node: NodeTypes.Yield, context: Context) {
+    yield(node, context) {
         if(node.key) {
             Handlers[node.key.kind](node.key, context)
         }

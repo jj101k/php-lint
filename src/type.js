@@ -14,6 +14,3 @@ export { Void } from "./type/void"
 
 
 export { AssociativeArray, Base, BaseArray, Bool, _Class as Class, ClassInstance, Float, _Function as Function, IndexedArray, Int, Mixed, _Null as Null, _String as String, Trait }
-
-export type InstanceType = Bool | ClassInstance | _Function | Float | IndexedArray | Int | Mixed | _Null | _String
-export type StaticType = Bool | _Class | _Function | Float | IndexedArray | Int | Mixed | _Null | _String

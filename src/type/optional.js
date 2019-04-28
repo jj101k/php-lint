@@ -6,17 +6,20 @@ import { Bool } from "./bool";
 /**
  * A general PHP optional value
  */
-export abstract class Optional extends Base {
+export class Optional extends Base {
     get combinePriority() {
         return -1
     }
-    abstract get falseValue(): Base
-    public content: Type.Base
+    get falseValue() {
+        throw new Error("Not implemented")
+    }
 
-    public get types() {
+    content
+
+    get types() {
         return [this.content, this.falseValue]
     }
-    constructor(content: Type.Base) {
+    constructor(content) {
         super()
         this.content = content
     }
@@ -28,7 +31,7 @@ export abstract class Optional extends Base {
      *
      * @param type
      */
-    mayMatch(type: Base): boolean {
+    mayMatch(type) {
         return this.content.matches(type) || this.falseValue.matches(type)
     }
 }
@@ -40,7 +43,7 @@ export class OptionalFalse extends Optional {
     get shortType() {
         return this.content.shortType + " | false"
     }
-    protected combinedWithSpecific(type: Base): Base {
+    combinedWithSpecific(type) {
         if(type instanceof Type.Bool && type.value === false) {
             return this
         } else {
@@ -56,7 +59,7 @@ export class OptionalNull extends Optional {
     get shortType() {
         return this.content.shortType + " | null"
     }
-    protected combinedWithSpecific(type: Base): Base {
+    combinedWithSpecific(type) {
         if(type instanceof Type.Null || type instanceof Type.Void) {
             return this
         } else {

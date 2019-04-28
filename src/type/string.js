@@ -1,4 +1,3 @@
-import * as Type from "../type";
 import { Base } from "./base";
 
 /**
@@ -11,12 +10,12 @@ export class String extends Base {
     get shortType() {
         return "string"
     }
-    public value: string | null
-    constructor(value: string | null = null) {
+    value
+    constructor(value = null) {
         super()
         this.value = value
     }
-    matches(type: Type.Base): boolean {
+    matches(type) {
         if(type instanceof String) {
             return true
         } else {

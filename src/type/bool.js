@@ -14,12 +14,12 @@ export class Bool extends Base {
     get shortType() {
         return "bool"
     }
-    public value: boolean | null
-    constructor(value: boolean | null = null) {
+    value
+    constructor(value = null) {
         super()
         this.value = value
     }
-    protected combinedWithSpecific(type: Base): Base {
+    combinedWithSpecific(type) {
         if(this.value === false) {
             return new OptionalFalse(type)
         } else {

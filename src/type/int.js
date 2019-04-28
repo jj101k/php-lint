@@ -2,17 +2,22 @@ import * as Type from "../type";
 import { Base } from "./base";
 
 /**
- * A "resource", normally mapping to an OS-level file descriptor or similar.
+ * An integer
  */
-export class Resource extends Base {
+export class Int extends Base {
     get combinePriority() {
         return -Infinity
     }
     get shortType() {
-        return "resource"
+        return "int"
     }
-    matches(type: Type.Base): boolean {
-        if(type instanceof Resource) {
+    value
+    constructor(value = null) {
+        super()
+        this.value = value
+    }
+    matches(type) {
+        if(type instanceof Int || type instanceof Type.String) {
             return true
         } else {
             return super.matches(type)

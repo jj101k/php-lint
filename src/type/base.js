@@ -1,11 +1,11 @@
 /**
  * A type which you can be certain about
  */
-export abstract class Base {
+export class Base {
     /**
      * If this value is definitely or false, returns those values; otherwise null
      */
-    get asBoolean(): boolean | null {
+    get asBoolean() {
         return null
     }
     /**
@@ -17,7 +17,7 @@ export abstract class Base {
      *
      * @param type
      */
-    protected combinedWithSpecific(type: Base): Base {
+    combinedWithSpecific(type) {
         return new Mixed()
     }
 
@@ -26,25 +26,29 @@ export abstract class Base {
      * combination mode will dictate what happens. Higher number is higher
      * priority.
      */
-    abstract get combinePriority(): number
+    get combinePriority() {
+        throw new Error("Not implemented")
+    }
 
     /**
      * Returns the instance counterpart of the type. Only defined for class-like
      * structures.
      */
-    get instanceType(): Base {
+    get instanceType() {
         return this
     }
 
     /**
      * The type signature usable in PHP function declarations
      */
-    abstract get shortType(): string
+    get shortType() {
+        throw new Error("Not implemented")
+    }
 
     /**
      * Returns the possible types that this expresses, for multi-type values.
      */
-    public get types(): Base[] {
+    get types() {
         return [this]
     }
 
@@ -53,7 +57,7 @@ export abstract class Base {
      *
      * @param type
      */
-    combinedWith(type: Base): Base {
+    combinedWith(type) {
         if(this.combinePriority < type.combinePriority) {
             return type.combinedWith(this)
         } else if(type.matches(this)) {
@@ -70,7 +74,7 @@ export abstract class Base {
      *
      * @param type
      */
-    matches(type: Base): boolean {
+    matches(type) {
         if(type instanceof Mixed) {
             return true
         } else {
@@ -92,7 +96,7 @@ export abstract class Base {
      *
      * @param type
      */
-    mayMatch(type: Base): boolean {
+    mayMatch(type) {
         return this.matches(type)
     }
 
@@ -113,7 +117,7 @@ export class Mixed extends Base {
     get shortType() {
         return "mixed"
     }
-    protected combinedWithSpecific(type: Base): Base {
+    combinedWithSpecific(type) {
         return this
     }
 
@@ -124,7 +128,7 @@ export class Mixed extends Base {
      *
      * @param type
      */
-    mayMatch(type: Base): boolean {
+    mayMatch(type) {
         return true
     }
 }

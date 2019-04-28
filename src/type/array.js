@@ -1,33 +1,34 @@
 import { isNumber } from "util";
-import * as Type from "../type";
 import { Base } from "./base";
 import { Int } from "./int";
 
 /**
  * A general PHP array
  */
-export abstract class BaseArray extends Base {
+export class BaseArray extends Base {
     get shortType() {
         return "array"
     }
-    abstract set(key: Type.Base | null, value: Type.Base): BaseArray
+    set(key, value) {
+        throw new Error("Not implemented")
+    }
 }
 
 /**
  * A key-value map of things
  */
 export class AssociativeArray extends BaseArray {
-    public cursor: number = 0
+    cursor = 0
     get combinePriority() {
         return -Infinity
     }
-    public content: Map<string, Type.Base> | null
-    public otherValue: Type.Base | null = null
-    constructor(from: AssociativeArray | IndexedArray | null = null) {
+    content
+    otherValue = null
+    constructor(from = null) {
         super()
         if(from instanceof IndexedArray) {
             if(from.content) {
-                const m: Map<string, Type.Base> = new Map()
+                const m = new Map()
                 for(const [i, v] of Object.entries(from.content)) {
                     m.set(i, v)
                 }
@@ -42,7 +43,7 @@ export class AssociativeArray extends BaseArray {
             this.content = null
         }
     }
-    set(key: Type.Base | null, value: Type.Base): BaseArray {
+    set(key, value) {
         if(key) {
             if(key) {
                 if(!this.content) this.content = new Map()
@@ -71,8 +72,8 @@ export class IndexedArray extends BaseArray {
     get combinePriority() {
         return -Infinity
     }
-    public content: Array<Type.Base> | null
-    constructor(content: Array<Type.Base> | null = null) {
+    content
+    constructor(content = null) {
         super()
         this.content = content
     }
@@ -86,7 +87,7 @@ export class IndexedArray extends BaseArray {
             return null
         }
     }
-    matches(type: Type.Base): boolean {
+    matches(type) {
         if(type instanceof IndexedArray) {
             return !(
                 this.memberType &&
@@ -97,7 +98,7 @@ export class IndexedArray extends BaseArray {
             return super.matches(type)
         }
     }
-    set(key: Type.Base | null, value: Type.Base): BaseArray {
+    set(key, value) {
         if(key) {
             if(
                 key instanceof Int &&

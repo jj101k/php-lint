@@ -8,16 +8,16 @@ export class PHPAutoloader {
      * True if the classmap files have been returned (if so, they should now all
      * be loaded and thus no longer needed).
      */
-    private checkedClassmap = false
+    #checkedClassmap = false
     /**
      * These are files or directories where *everything* is scanned for classes.
      */
-    private classmapPaths: string[]
+    #classmapPaths
     /**
      * Class name prefixes mapped to arrays of
      * paths. Each path should end with a /, and most prefixes will also.
      */
-    private paths: Map<string, string[]>
+    #paths
 
     /**
      * Build the object
@@ -26,16 +26,16 @@ export class PHPAutoloader {
      * @param classmap_paths Files or directories where *everything* is scanned
      * for classes. Hopefully you have none of these.
      */
-    constructor(paths: Map<string, string[]>, classmap_paths: string[] = []) {
-        this.classmapPaths = classmap_paths
+    constructor(paths, classmap_paths = []) {
+        this.#classmapPaths = classmap_paths
         // We want this order so that Foo\Bar comes before Foo; and otherwise
         // just a defined order.
         const class_prefixes = [...paths.keys()]
         class_prefixes.sort((a, b) => b.length - a.length || a.localeCompare(b))
 
-        this.paths = new Map()
+        this.#paths = new Map()
         for(const prefix of class_prefixes) {
-            this.paths.set(prefix, paths.get(prefix)!)
+            this.#paths.set(prefix, paths.get(prefix))
         }
     }
 
@@ -44,24 +44,24 @@ export class PHPAutoloader {
      *
      * @param autoloader
      */
-    add(autoloader: PHPAutoloader): void {
-        const paths = this.paths
-        for(const [class_ns, s] of autoloader.paths.entries()) {
-            this.paths.set(
+    add(autoloader) {
+        const paths = this.#paths
+        for(const [class_ns, s] of autoloader.#paths.entries()) {
+            this.#paths.set(
                 class_ns,
-                this.paths.has(class_ns) ?
-                    this.paths.get(class_ns)!.concat(s) :
+                this.#paths.has(class_ns) ?
+                    this.#paths.get(class_ns).concat(s) :
                     s
             )
         }
         const class_prefixes = [...paths.keys()]
         class_prefixes.sort((a, b) => b.length - a.length || a.localeCompare(b))
 
-        this.paths = new Map()
+        this.#paths = new Map()
         for(const prefix of class_prefixes) {
-            this.paths.set(prefix, paths.get(prefix)!)
+            this.#paths.set(prefix, paths.get(prefix))
         }
-        this.classmapPaths = this.classmapPaths.concat(autoloader.classmapPaths)
+        this.#classmapPaths = this.#classmapPaths.concat(autoloader.#classmapPaths)
     }
 
     /**
@@ -69,9 +69,9 @@ export class PHPAutoloader {
      *
      * @param name
      */
-    findClassFiles(name: string): string[] {
-        debug([...this.paths.keys()])
-        for(const [class_ns, s] of this.paths.entries()) {
+    findClassFiles(name) {
+        debug([...this.#paths.keys()])
+        for(const [class_ns, s] of this.#paths.entries()) {
             debug([class_ns, name])
             if(class_ns.length < name.length && class_ns == name.substr(0, class_ns.length)) {
                 debug("HIT", s)
@@ -86,14 +86,14 @@ export class PHPAutoloader {
                 }
             }
         }
-        if(!this.checkedClassmap) {
+        if(!this.#checkedClassmap) {
             /** Files (*.php / *.inc only) */
-            const filenames: string[] = []
-            for(const path of this.classmapPaths) {
+            const filenames = []
+            for(const path of this.#classmapPaths) {
                 /** Files (any) or directories */
                 let paths = [path]
                 while(paths.length) {
-                    const pd: string = paths.shift()!
+                    const pd = paths.shift()
                     if(fs.statSync(pd).isDirectory()) {
                         paths = paths.concat(
                             fs.readdirSync(pd).filter(

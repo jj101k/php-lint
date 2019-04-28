@@ -10,8 +10,8 @@ export class Float extends Base {
     get shortType() {
         return "float"
     }
-    public value: number | null
-    constructor(value: number | null = null) {
+    value
+    constructor(value = null) {
         super()
         this.value = value
     }

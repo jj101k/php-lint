@@ -1,13 +1,12 @@
-import * as Type from "../type";
 import { Base } from "./base";
 
 /**
  * An argument spec for a function.
  */
 export class Argument {
-    public byRef: boolean
-    public hasDefaultValue: boolean
-    public type: Base | null
+    byRef
+    hasDefaultValue
+    type
     /**
      *
      * @param type The type the arg is required to have, if any.
@@ -18,9 +17,9 @@ export class Argument {
      * the default is null, may also affect the accepted types.
      */
     constructor(
-        type: Base | null,
-        by_ref: boolean = false,
-        has_default_value: boolean = false
+        type,
+        by_ref = false,
+        has_default_value = false
     ) {
         this.byRef = by_ref
         this.hasDefaultValue = has_default_value
@@ -38,8 +37,8 @@ class _Function extends Base {
     get shortType() {
         return "callable"
     }
-    public args: Array<Argument>
-    public returnType: Base | null
+    args
+    returnType
     /**
      *
      * @param args The arguments supported
@@ -47,12 +46,12 @@ class _Function extends Base {
      * non-returning functions, null for functions with a completely
      * indeterminate (mixed) return.
      */
-    constructor(args: Array<Argument>, returnType: Base | null = null) {
+    constructor(args, returnType = null) {
         super()
         this.args = args
         this.returnType = returnType
     }
-    matches(type: Type.Base): boolean {
+    matches(type) {
         if(type instanceof _Function) {
             return true
         } else {

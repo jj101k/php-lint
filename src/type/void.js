@@ -2,16 +2,16 @@ import { Base } from "./base";
 import { OptionalNull } from "./optional";
 
 /**
- * A null value
+ * No value
  */
-export class Null extends Base {
+export class Void extends Base {
     get combinePriority() {
-        return -2
+        return -3
     }
     get shortType() {
-        return "null"
+        return "void"
     }
-    protected combinedWithSpecific(type: Base): Base {
+    combinedWithSpecific(type) {
         return new OptionalNull(type)
     }
 }

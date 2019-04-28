@@ -1,9 +1,6 @@
 import * as Type from "./type"
 import { Function, Argument } from "./type/function";
-import { NodeTypes } from "./content/ast";
 import { Handlers } from "./content/considered/for-node";
-import {FunctionTypeInfo} from "./build"
-import Lint from "./lint";
 import { LintError } from "./lint-error";
 
 const debug = require("debug")("php-lint:context")
@@ -18,14 +15,14 @@ export class Context {
      * @param name eg. "\\Foo" or "Foo"
      * @returns eg "\\Foo"
      */
-    static pseudoQualify(name: string): string {
+    static pseudoQualify(name) {
         if(name[0] == "\\") {
             return name
         } else {
             return "\\" + name
         }
     }
-    private aliases: Map<string, string> = new Map()
+    #aliases = new Map()
     /**
      * This is where functions go, as well as explicit constants. These get
      * inherited everywhere.
@@ -34,34 +31,34 @@ export class Context {
     /**
      * Contains all constants, including null for any which failed autoload
      */
-    private constantNamespace: Map<string, Type.Base | null>
+    #constantNamespace
 
-    private globalNamespace: Map<string, Type.Base>
+    #globalNamespace
     /**
      * Stuff that has been defined here, ie variables
      */
-    private localNamespace: Map<string, Type.Base>
+    #localNamespace
 
-    public assigning: Type.Base | null = null
+    assigning = null
     /**
      * When true, the current action is an include which should be less strict
      * and is only required to detect all global/constant types
      */
-    public including = false
-    public namespacePrefix: string | null = null
-    public lint: Lint | null = null
-    public realReturnType: Type.Base | null = null
-    public returnType: Type.Base | null = null
-    constructor(from_context?: Context) {
-        this.localNamespace = new Map()
+    including = false
+    namespacePrefix = null
+    lint = null
+    realReturnType = null
+    returnType = null
+    constructor(from_context = null) {
+        this.#localNamespace = new Map()
         if(from_context) {
-            this.constantNamespace = from_context.constantNamespace
-            this.globalNamespace = from_context.globalNamespace
+            this.#constantNamespace = from_context.#constantNamespace
+            this.#globalNamespace = from_context.#globalNamespace
             this.including = from_context.including
             this.lint = from_context.lint
         } else {
-            this.globalNamespace = new Map()
-            this.constantNamespace = new Map()
+            this.#globalNamespace = new Map()
+            this.#constantNamespace = new Map()
             this.buildGlobalSymbols()
         }
     }
@@ -74,10 +71,10 @@ export class Context {
      * @throws {Error} Invalid syntax
      */
     assert(
-        node: NodeTypes.Node,
-        test: boolean,
-        message: string = "Invalid syntax",
-    ): void {
+        node,
+        test,
+        message = "Invalid syntax",
+    ) {
         if(!this.including && !test) {
             throw new LintError(message, node)
         }
@@ -89,7 +86,7 @@ export class Context {
      * @param type The type to assign
      * @param node The node defining the assign target
      */
-    assign(type: Type.Base, node: NodeTypes.Node): Type.Base | null {
+    assign(type, node) {
         const was_assigning = this.assigning
         this.assigning = type
         const r = Handlers[node.kind](node, this)
@@ -100,56 +97,24 @@ export class Context {
     /**
      * Adds all known global symbols to the constant namespace
      */
-    buildGlobalSymbols(): void {
+    buildGlobalSymbols() {
         const fs = require("fs")
-        const function_info: {
-            [name: string]: {arguments: {optional: boolean, pbr: boolean}[]}
-        } = JSON.parse(
+        const function_info = JSON.parse(
             fs.readFileSync(__dirname + "/../data/php-functions.json")
         )
-        const class_info: {
-            [name: string]: {
-                constants: {name: string, isPublic: boolean, value: any}[],
-                methods: {
-                    name: string,
-                    isAbstract: boolean,
-                    isPublic: boolean,
-                    isStatic: boolean,
-                    arguments: {type: string|null}[],
-                    returnType: string | null,
-                }[],
-                properties: {name: string, isPublic: boolean, isStatic: boolean}[],
-                interfaces: string[],
-                parentClass: string | null,
-            }
-        } = JSON.parse(
+        const class_info = JSON.parse(
             fs.readFileSync(__dirname + "/../data/php-classes.json")
         )
-        const interface_info: {
-            [name: string]: {
-                constants: {name: string, isPublic: boolean, value: any}[],
-                methods: {
-                    name: string,
-                    isAbstract: boolean,
-                    isPublic: boolean,
-                    isStatic: boolean,
-                    arguments: {type: string|null}[],
-                    returnType: string | null,
-                }[],
-                properties: {name: string, isPublic: boolean, isStatic: boolean}[],
-                interfaces: string[],
-                parentClass: string | null,
-            }
-        } = JSON.parse(
+        const interface_info = JSON.parse(
             fs.readFileSync(__dirname + "/../data/php-interfaces.json")
         )
-        const function_type_info: {[name: string]: FunctionTypeInfo} = JSON.parse(
+        const function_type_info = JSON.parse(
             fs.readFileSync(__dirname + "/../data/php-function-types.json")
         )
         for(const [name, info] of Object.entries(function_info)) {
             const documented_info = function_type_info[name]
             if(documented_info) {
-                this.constantNamespace.set(name, new Function(
+                this.#constantNamespace.set(name, new Function(
                     documented_info.args.map(
                         a => new Argument(
                             this.documentedType(a.type, "qn"),
@@ -158,7 +123,7 @@ export class Context {
                         )
                     ),
                     documented_info.returnTypes.reduce(
-                        (carry: Type.Base | null, item): Type.Base => {
+                        (carry, item) => {
                             if(carry) {
                                 return carry.combinedWith(
                                     this.documentedType(item, "qn")
@@ -171,7 +136,7 @@ export class Context {
                     )
                 ))
             } else {
-                this.constantNamespace.set(name, new Function(
+                this.#constantNamespace.set(name, new Function(
                     info.arguments.map(
                         a => new Argument(new Type.String(), a.pbr, a.optional)
                     ),
@@ -182,7 +147,7 @@ export class Context {
         for(const [name, info] of Object.entries(class_info)) {
             const c = new Type.Class(Context.pseudoQualify(name))
             for(const method of info.methods) {
-                let collection: Map<string, Type.Function>
+                let collection
                 if(method.isStatic) {
                     collection = c.classMethods
                 } else {
@@ -202,7 +167,7 @@ export class Context {
                                 )
                             ),
                             documented_info.returnTypes.reduce(
-                                (carry: Type.Base | null, item): Type.Base => {
+                                (carry, item) => {
                                     if(carry) {
                                         return carry.combinedWith(
                                             this.documentedType(item, "qn")
@@ -233,12 +198,12 @@ export class Context {
             // properties
             // interfaces
             // parentClass
-            this.constantNamespace.set(name, c)
+            this.#constantNamespace.set(name, c)
         }
         for(const [name, info] of Object.entries(interface_info)) {
             const i = new Type.Class(Context.pseudoQualify(name))
             for(const method of info.methods) {
-                let collection: Map<string, Type.Function>
+                let collection
                 if(method.isStatic) {
                     collection = i.classMethods
                 } else {
@@ -258,7 +223,7 @@ export class Context {
                                 )
                             ),
                             documented_info.returnTypes.reduce(
-                                (carry: Type.Base | null, item): Type.Base => {
+                                (carry, item) => {
                                     if(carry) {
                                         return carry.combinedWith(
                                             this.documentedType(item, "qn")
@@ -289,7 +254,7 @@ export class Context {
             // properties
             // interfaces
             // parentClass
-            this.constantNamespace.set(name, i)
+            this.#constantNamespace.set(name, i)
         }
     }
 
@@ -298,13 +263,13 @@ export class Context {
      *
      * @param node The node to check next
      */
-    check(node: NodeTypes.Node): Type.Base {
+    check(node) {
         debug(`Checking node of type ${node.kind}`)
         return Handlers[node.kind](node, this)
     }
 
-    checkFile(filename: string): boolean | null {
-        return this.lint!.checkFile(filename)
+    checkFile(filename) {
+        return this.lint.checkFile(filename)
     }
 
     /**
@@ -317,9 +282,9 @@ export class Context {
      * @param resolution
      */
     documentedType(
-        name: string | null,
-        resolution: "fqn" | "qn" | "uqn" | "rn"
-    ): Type.InstanceType {
+        name,
+        resolution
+    ) {
         if(!name || name == "mixed" || name == "\\mixed") {
             return new Type.Mixed()
         } else if(name == "null" || name == "\\null") {
@@ -335,14 +300,14 @@ export class Context {
      *
      * @param name eg. "$foo" or "Bar"
      */
-    get(name: string): Type.Base | undefined {
+    get(name) {
         if(name.match(/^[$]/)) {
-            return this.localNamespace.get(name)
+            return this.#localNamespace.get(name)
         } else {
-            const v = this.constantNamespace.get(name)
+            const v = this.#constantNamespace.get(name)
             if(v === undefined) {
-                this.lint!.autoload(name)
-                return this.constantNamespace.get(name) || undefined
+                this.lint.autoload(name)
+                return this.#constantNamespace.get(name) || undefined
             } else {
                 return v || undefined
             }
@@ -353,8 +318,8 @@ export class Context {
      *
      * @param name eg. "$foo"
      */
-    has(name: string): boolean {
-        return this.constantNamespace.has(name) || this.localNamespace.has(name)
+    has(name) {
+        return this.#constantNamespace.has(name) || this.#localNamespace.has(name)
     }
 
     /**
@@ -363,8 +328,8 @@ export class Context {
      * @param name eg "Foo\\Bar". No leading slash needed.
      * @param alias
      */
-    importName(name: string, alias: string | null): void {
-        this.aliases.set(
+    importName(name, alias) {
+        this.#aliases.set(
             alias || name.replace(/.*\\/, ""),
             Context.pseudoQualify(name)
         )
@@ -376,7 +341,7 @@ export class Context {
      * @param name eg. "\\Foo" (fqn), "Foo" (other)
      * @param resolution
      */
-    namedType(name: string, resolution: "fqn" | "qn" | "uqn" | "rn"): Type.StaticType {
+    namedType(name, resolution) {
         const qualified_type_name = this.qualifyName(name, resolution)
         switch(qualified_type_name) {
             case "\\array":
@@ -409,7 +374,7 @@ export class Context {
      *
      * @param node The node defining the assign target
      */
-    noAssign(node: NodeTypes.Node): Type.Base | null {
+    noAssign(node) {
         const was_assigning = this.assigning
         this.assigning = null
         const r = Handlers[node.kind](node, this)
@@ -428,11 +393,11 @@ export class Context {
      * @param resolution
      * @returns eg "\\Foo"
      */
-    qualifyName(name: string, resolution: "fqn" | "qn" | "uqn" | "rn"): string {
+    qualifyName(name, resolution) {
         if(resolution == "fqn" || name.match(/^[\\]/)) {
             return name
-        } else if(this.aliases.has(name)) {
-            return this.aliases.get(name)!
+        } else if(this.#aliases.has(name)) {
+            return this.#aliases.get(name)
         } else if(this.namespacePrefix) {
             return "\\" + this.namespacePrefix + "\\" + name
         } else {
@@ -446,8 +411,8 @@ export class Context {
      * @param name eg. "$foo"
      * @param value
      */
-    set(name: string, value: Type.Base) {
-        this.localNamespace.set(name, value)
+    set(name, value) {
+        this.#localNamespace.set(name, value)
     }
 
     /**
@@ -456,8 +421,8 @@ export class Context {
      * @param name eg. "$foo"
      * @param value
      */
-    setConstant(name: string, value: Type.Base | null) {
-        this.constantNamespace.set(name, value)
+    setConstant(name, value) {
+        this.#constantNamespace.set(name, value)
     }
 
     /**
@@ -465,7 +430,7 @@ export class Context {
      *
      * @param name eg. "$foo"
      */
-    unset(name: string) {
-        this.localNamespace.delete(name)
+    unset(name) {
+        this.#localNamespace.delete(name)
     }
 }
